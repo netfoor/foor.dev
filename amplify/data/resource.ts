@@ -5,7 +5,6 @@ const schema = a.schema({
     .model({
       title: a.string().required(),
       issuer: a.string().required(),
-      issuerUrl: a.url(),
       credentialId: a.string(),
       issueDate: a.date().required(),
       expirationDate: a.date(),
@@ -47,7 +46,7 @@ const schema = a.schema({
       allow.owner()
     ]),
 
-    
+
 });
 
 export type Schema = ClientSchema<typeof schema>;
