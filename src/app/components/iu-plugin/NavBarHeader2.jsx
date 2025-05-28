@@ -3,29 +3,32 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
 import { getOverrideProps } from "@/utils/utils.js";
-import { Flex, Icon, Text, Button, View } from '@aws-amplify/ui-react';
+import { Flex, Icon, Text, Button, View, useTheme } from '@aws-amplify/ui-react';
 import Link from 'next/link';
-import { ThemeToggle } from "../ThemeToggle";
+import { ThemeToggle }  from "../../components/ThemeToggle";
 
 export default function NavBarHeader2(props) {
   const { overrides, ...rest } = props;
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [windowWidth, setWindowWidth] = useState(0);
+  const { tokens } = useTheme();
 
   // Track window size for responsive behavior
   useEffect(() => {
-    const handleResize = () => {
+    if (typeof window !== 'undefined') {
+      const handleResize = () => {
+        setWindowWidth(window.innerWidth);
+        if (window.innerWidth > 768) {
+          setIsMenuOpen(false);
+        }
+      };
+      
+      // Set initial width
       setWindowWidth(window.innerWidth);
-      if (window.innerWidth > 768) {
-        setIsMenuOpen(false);
-      }
-    };
-    
-    // Set initial width
-    setWindowWidth(window.innerWidth);
-    
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+      
+      window.addEventListener('resize', handleResize);
+      return () => window.removeEventListener('resize', handleResize);
+    }
   }, []);
 
   const isMobile = windowWidth < 768;
@@ -43,16 +46,13 @@ export default function NavBarHeader2(props) {
     alignItems="center"
     overflow="hidden"
     position="relative"
-    boxShadow="0px 2px 6px rgba(0.05, 0.10, 0.15, 0.15)"
+    boxShadow={tokens.shadows.small.value}
     padding={{
       base: "12px 16px",
       small: "14px 24px",
       medium: "16px 32px"
     }}
-    backgroundColor={{ 
-      light: "background.primary",
-      dark: "neutral.80"
-    }}
+    backgroundColor={tokens.colors.background.secondary}
     {...getOverrideProps(overrides, "NavBarHeader2")}
     {...rest}
   >
@@ -99,7 +99,7 @@ export default function NavBarHeader2(props) {
       {/* Mobile menu toggle button */}
       {isMobile && (
         <Button
-          variant="link"
+          variation="link"
           onClick={toggleMenu}
           ariaLabel="Toggle menu"
           display={{ base: "block", medium: "none" }}
@@ -112,6 +112,7 @@ export default function NavBarHeader2(props) {
             paths={[
               { d: isMenuOpen ? "M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" : "M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" },
             ]}
+            color={tokens.colors.font.primary}
           />
         </Button>
       )}
@@ -149,7 +150,7 @@ export default function NavBarHeader2(props) {
         medium: "auto"
       }}
       backgroundColor={{
-        base: "background.primary",
+        base: tokens.colors.background.secondary,
         medium: "transparent"
       }}
       padding={{
@@ -158,7 +159,7 @@ export default function NavBarHeader2(props) {
       }}
       zindex="10"
       boxShadow={{
-        base: isMenuOpen ? "0px 4px 6px rgba(0, 0, 0, 0.1)" : "none",
+        base: isMenuOpen ? tokens.shadows.small.value : "none",
         medium: "none"
       }}
       transition="top 0.3s ease-in-out"
@@ -177,16 +178,13 @@ export default function NavBarHeader2(props) {
       ].map((link, index) => (
         <Link href={link.href} key={index} style={{ textDecoration: 'none' }}>
           <Text
-            fontFamily="Inter"
+            fontFamily={tokens.fonts.default.variable.value}
             fontSize={{
               base: "18px",
               medium: "16px"
             }}
             fontWeight="400"
-            color={{
-              light: "font.primary",
-              dark: "font.inverse"
-            }}
+            color={tokens.colors.font.primary}  // Usar directamente el token
             lineHeight="24px"
             textAlign="left"
             display="block"
@@ -199,7 +197,7 @@ export default function NavBarHeader2(props) {
             }}
             cursor="pointer"
             _hover={{
-              opacity: 0.8
+              color: tokens.colors.font.secondary
             }}
           >
             {link.label}
@@ -222,10 +220,10 @@ export default function NavBarHeader2(props) {
       }}
       {...getOverrideProps(overrides, "actions")}
     >
-      {/* Añadir ThemeToggle aquí */}
-        <View marginRight="8px">
-          <ThemeToggle />
-        </View>
+      {/* ThemeToggle */}
+      <View marginRight="8px">
+        <ThemeToggle />
+      </View>
       <Button
         shrink="0"
         size={{

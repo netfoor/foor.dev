@@ -1,47 +1,26 @@
-'use client';
-
-import { Geist, Geist_Mono } from "next/font/google";
 import './globals.css';
+import './theme-colors.css';
 import '@aws-amplify/ui-react/styles.css';
-import { AmplifyWrapper } from "./components/AmplifyWrapper";
-import { useEffect } from "react";
+import { AmplifyWrapper } from '@/app/components/AmplifyWrapper';
+import { ThemeSynchronizer } from '@/app/components/ThemeSynchronizer';
+import { ThemeDebugger } from '@/app/components/ThemeDebugger';
+import NavBarHeader2 from '@/app/components/iu-plugin/NavBarHeader2';
 
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  // Initialize theme on client side
-  useEffect(() => {
-    const savedTheme = localStorage.getItem('theme');
-    const isDark = savedTheme === 'dark' || 
-      (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches);
-    
-    if (isDark) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, []);
-
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}
-      >
+      <body>
         <AmplifyWrapper>
-          {children}
+          {/* ThemeSynchronizer component ensures theme is applied at document level */}
+          <ThemeSynchronizer />
+          <div className="flex flex-col min-h-screen">
+            <NavBarHeader2 />
+            <main className="flex-grow">
+              {children}
+            </main>
+            {/* Comprehensive theme debugger */}
+            <ThemeDebugger />
+          </div>
         </AmplifyWrapper>
       </body>
     </html>

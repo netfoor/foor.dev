@@ -1,0 +1,47 @@
+/* Dark mode colors */
+.dark {
+  --amplify-colors-background-primary: #1a1a1a;
+  --amplify-colors-background-secondary: #2a2a2a;
+  --amplify-colors-background-tertiary: #333333;
+  --amplify-colors-font-primary: #ffffff;
+  --amplify-colors-font-secondary: #a0a0a0;
+  --amplify-colors-font-interactive: #5bafdf;
+
+  /* Apply directly to body as well */
+  & body {
+    background-color: #1a1a1a;
+    color: #ffffff;
+  }
+
+  /* Apply to Amplify UI components */
+  & [data-amplify-theme] {
+    --amplify-colors-background-primary: #1a1a1a;
+    --amplify-colors-background-secondary: #2a2a2a;
+    --amplify-colors-font-primary: #ffffff;
+    --amplify-colors-font-secondary: #a0a0a0;
+  }
+}
+
+/* Light mode colors */
+:root:not(.dark) {
+  --amplify-colors-background-primary: #ffffff;
+  --amplify-colors-background-secondary: #f5f5f5;
+  --amplify-colors-background-tertiary: #eeeeee;
+  --amplify-colors-font-primary: #000000;
+  --amplify-colors-font-secondary: #666666;
+  --amplify-colors-font-interactive: #007eb9;
+
+  /* Apply directly to body as well */
+  & body {
+    background-color: #ffffff;
+    color: #000000;
+  }
+
+  /* Apply to Amplify UI components */
+  & [data-amplify-theme] {
+    --amplify-colors-background-primary: #ffffff;
+    --amplify-colors-background-secondary: #f5f5f5;
+    --amplify-colors-font-primary: #000000;
+    --amplify-colors-font-secondary: #666666;
+  }
+}

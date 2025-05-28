@@ -2,27 +2,36 @@
 
 import Image from 'next/image';
 import { Heading, Text, Flex, View } from '@aws-amplify/ui-react';
+import { useAmplifyTheme } from './AmplifyWrapper';
 
 export default function Hero() {
+  const { colorMode } = useAmplifyTheme();
+  
+  console.log('Hero component: Current colorMode:', colorMode);
+  
   return (
     <View 
       as="section"
-      backgroundColor={{ 
-        light: "background.primary", 
-        dark: "neutral.90" 
+      backgroundColor="background.primary"
+      padding={{ base: "2rem", medium: "4rem" }}
+      style={{
+        height: "100vh",    
+        width: "100%",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: `var(--amplify-colors-background-primary)`
       }}
-      className="min-h-screen flex flex-col items-center justify-center"
     >
       <Flex
         direction="column"
         alignItems="center"
         justifyContent="center"
-        padding={{ base: "2rem", medium: "4rem" }}
         width="100%"
         maxWidth="1200px"
         margin="0 auto"
       >
-        <View className="w-36 h-36 md:w-40 md:h-40 relative mb-6">
+        <View width="150px" height="150px" marginBottom="1.5rem" position="relative">
           <Image
             src="/images/profile.jpeg"
             alt="Fortino Romero Mantilla"
@@ -30,28 +39,33 @@ export default function Hero() {
             fill
             priority
           />
-        </View>
-
-        <Heading 
+        </View>        <Heading 
           level={1}
-          color="secondary"
+          color="font.primary"
           fontWeight="bold"
           marginBottom="0.5rem"
           textAlign="center"
-          className="text-2xl md:text-3xl lg:text-4xl"
+          fontSize={{ base: '1.5rem', medium: '1.875rem', large: '2.25rem' }}
+          style={{
+            color: `var(--amplify-colors-font-primary)`
+          }}
         >
           Fortino Romero Mantilla
         </Heading>
 
         <Text
-          variation="tertiary"
-          className="text-md md:text-lg mt-2 mb-8"
+          color="font.secondary"
+          marginTop="0.5rem"
+          marginBottom="2rem"
           textAlign="center"
+          fontSize={{ base: '1rem', medium: '1.125rem' }}
+          style={{
+            color: `var(--amplify-colors-font-secondary)`
+          }}
         >
-          Cloud Engineer <span className="mx-2">|</span> AWS Advocate <span className="mx-2">|</span> DevOps Enthusiast
+          Cloud Engineer <span style={{margin: '0 0.5rem'}}>|</span> AWS Advocate <span style={{margin: '0 0.5rem'}}>|</span> DevOps Enthusiast
         </Text>
 
-        {/* Íconos sociales con Amplify UI */}
         <Flex
           direction="row"
           gap="2rem"
@@ -62,21 +76,33 @@ export default function Hero() {
             <img
               src="https://img.icons8.com/color/48/instagram-new--v1.png"
               alt="Instagram"
-              className="w-8 h-8 hover:scale-110 transition-transform"
+              width={32}
+              height={32}
+              style={{transition: 'transform 0.2s'}}
+              onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.1)'}
+              onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
             />
           </a>
           <a href="mailto:example@example.com">
             <img
               src="https://img.icons8.com/color/48/apple-mail.png"
               alt="Email"
-              className="w-8 h-8 hover:scale-110 transition-transform"
+              width={32}
+              height={32}
+              style={{transition: 'transform 0.2s'}}
+              onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.1)'}
+              onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
             />
           </a>
           <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
             <img
               src="https://img.icons8.com/color/48/twitter--v1.png"
               alt="Twitter"
-              className="w-8 h-8 hover:scale-110 transition-transform"
+              width={32}
+              height={32}
+              style={{transition: 'transform 0.2s'}}
+              onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.1)'}
+              onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
             />
           </a>
         </Flex>
