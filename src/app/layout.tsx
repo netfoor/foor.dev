@@ -1,9 +1,11 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+'use client';
 
+import { Geist, Geist_Mono } from "next/font/google";
+import './globals.css';
 import '@aws-amplify/ui-react/styles.css';
 import { AmplifyWrapper } from "./components/AmplifyWrapper";
-
+import { ThemeToggle } from "./components/ThemeToggle";
+import { useEffect } from "react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,26 +17,35 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Fortino Romero Mantilla",
-  description: "Official website of Fortino Romero Mantilla",
-};
-
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Initialize theme on client side
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme');
+    const isDark = savedTheme === 'dark' || 
+      (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    
+    if (isDark) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, []);
+
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}
       >
+        <div className="fixed top-4 right-4 z-50">
+          <ThemeToggle />
+        </div>
         <AmplifyWrapper>
           {children}
-          
         </AmplifyWrapper>
-        
       </body>
     </html>
   );
