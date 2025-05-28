@@ -22,20 +22,3 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
-
-/* Add visible contrast between light and dark modes */
-.amplify-button--primary {
-  background-color: #0070f3;
-}
-
-.dark .amplify-button--primary {
-  background-color: #0284c7;
-}
-
-.amplify-heading {
-  color: var(--foreground);
-}
-
-.amplify-text {
-  color: var(--foreground);
-}
