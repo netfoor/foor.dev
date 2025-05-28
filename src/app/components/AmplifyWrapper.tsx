@@ -120,8 +120,7 @@ export function AmplifyWrapper({ children }: { children: React.ReactNode }) {
               primary: colorMode === 'dark' ? '#ffffff' : '#000000',
               secondary: colorMode === 'dark' ? '#a0a0a0' : '#666666',
               interactive: colorMode === 'dark' ? '#5bafdf' : '#007eb9',
-            },
-            brand: {
+            },            brand: {
               primary: {
                 10: colorMode === 'dark' ? '#D9F2FF' : '#C4DBFF',
                 20: colorMode === 'dark' ? '#B5E6FF' : '#A8CAFF',
@@ -131,6 +130,15 @@ export function AmplifyWrapper({ children }: { children: React.ReactNode }) {
                 90: colorMode === 'dark' ? '#26B5FF' : '#1B6EFF',
                 100: colorMode === 'dark' ? '#0CAFFF' : '#0162FF',
               }
+            },
+            primary: {
+              10: colorMode === 'dark' ? '#e6f7ff' : '#f0f9ff',
+              20: colorMode === 'dark' ? '#bae7ff' : '#e0f2fe',
+              40: colorMode === 'dark' ? '#87d068' : '#7dd3fc',
+              60: colorMode === 'dark' ? '#52c41a' : '#38bdf8',
+              80: colorMode === 'dark' ? '#389e0d' : '#0ea5e9',
+              90: colorMode === 'dark' ? '#237804' : '#0284c7',
+              100: colorMode === 'dark' ? '#135200' : '#0369a1',
             }
           }
         }
