@@ -10,7 +10,8 @@ export default function AboutSection() {
     <View 
       id="about" 
       position="relative" 
-      paddingBlock={{ base: '1.5rem', medium: '1rem' }}
+      paddingTop={tokens.space.xxxl}
+      paddingBottom={tokens.space.xxxl}
     >
       {/* Background blur layers */}
       <View

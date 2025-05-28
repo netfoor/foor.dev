@@ -5,7 +5,6 @@ import { AmplifyWrapper } from '@/app/components/AmplifyWrapper';
 import { ThemeSynchronizer } from '@/app/components/ThemeSynchronizer';
 import { ThemeDebugger } from '@/app/components/ThemeDebugger';
 import NavBarHeader2 from '@/app/components/iu-plugin/NavBarHeader2';
-import AboutSection from './components/AboutSection';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -23,7 +22,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             
             <ThemeDebugger />
 
-            <AboutSection />
+            
           </div>
         </AmplifyWrapper>
       </body>

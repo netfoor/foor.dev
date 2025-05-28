@@ -83,3 +83,10 @@ code {
   background-color: var(--amplify-colors-brand-primary);
   color: white;
 }
+
+/* Certification button hover effect */
+.certification-button:hover {
+  background-color: var(--amplify-colors-primary-90) !important;
+  transform: translateY(-1px);
+  transition: all 0.2s ease-in-out;
+}
