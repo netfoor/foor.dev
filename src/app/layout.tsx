@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import '@aws-amplify/ui-react/styles.css';
 import { AmplifyWrapper } from "./components/AmplifyWrapper";
 
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -31,6 +32,7 @@ export default function RootLayout({
       >
         <AmplifyWrapper>
           {children}
+          
         </AmplifyWrapper>
         
       </body>
