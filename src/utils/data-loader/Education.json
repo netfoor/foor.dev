@@ -1,0 +1,32 @@
+[
+  {
+    "institution": "Universidad Tecnológica de Puebla (UTP)",
+    "degree": "Bachelor’s Degree in Software Engineering",
+    "fieldOfStudy": "Software Engineering",
+    "startDate": "2023-08-01",
+    "endDate": "2027-04-01",
+    "description": "Relevant coursework and projects in software development, algorithms, and database management.",
+    "location": "Puebla, Mexico",
+    "recognition": [
+      "Academic Excellence",
+      "GPA: 10.0 / 10.0"
+    ],
+    "CertificateURL": "url",
+    "Photos": []
+  },
+  {
+    "institution": "BUAP: Preparatoria Alfonzo Calderon Moreno",
+    "degree": "High School Diploma",
+    "fieldOfStudy": null,
+    "startDate": "2020-08-01",
+    "endDate": "2023-06-01",
+    "description": "Completed general high school curriculum with a focus on science and mathematics.",
+    "location": "Puebla, Mexico",
+    "recognition": [
+      "Mérito Académico (Academic Merit - Awarded to top GPAs)",
+      "GPA: 9.6 / 10.0"
+    ],
+    "CertificateURL": "url",
+    "Photos": []
+  }
+]

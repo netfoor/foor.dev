@@ -1,0 +1,74 @@
+[
+  {
+    "company": "Mirai Innovation Research Institute",
+    "position": "Intern—Emerging Technologies Training Program",
+    "startDate": "2024-09-15",
+    "endDate": "2024-12-05",
+    "description": "Selected as an Emerging Technologies Fellow, I developed a flood monitoring and prediction system for Mexico using AWS. This role involved managing the project end-to-end, significantly strengthening autonomy and technical leadership, and combining communication skills with advanced international research knowledge.",
+    "location": "Osaka, Japan",
+    "skills": ["AWS", "IoT", "Real-time Data Visualization", "Project Management", "Communication", "Research"],
+    "activities": [
+      "Developed a flood monitoring and prediction system for Mexico using AWS.",
+      "Managed the project end-to-end, strengthening autonomy and technical leadership.",
+      "Combined communication skills with advanced international research knowledge during a 3-month stay."
+    ]
+  },
+  {
+    "company": "AWS User Group Puebla",
+    "position": "Founder & Leader",
+    "startDate": "2024-10-01",
+    "endDate": null,
+    "description": "Founded the first local AWS community in Puebla to foster learning and collaboration. Responsible for overall strategy, event organization, and community growth.",
+    "location": "Puebla, Mexico",
+    "skills": ["Leadership", "Community Management", "Event Organization", "Networking", "AWS"],
+    "activities": [
+      "Founded the first local AWS community in Puebla.",
+      "Organized and hosted meetups, technical talks, and hands-on workshops.",
+      "Acted as an active liaison with AWS Community Leaders Mexico at regional and national events.",
+      "Grew the community to over 150 active members.",
+      "Promoted networking opportunities and technology adoption within the local tech ecosystem."
+    ]
+  },
+  {
+    "company": "HackUTP (Universidad Tecnológica de Puebla)",
+    "position": "Organizer & Lead Developer",
+    "startDate": "2025-07-01",
+    "endDate": "2025-07-31",
+    "description": "Led the complete organization of the HackUTP 2025 university hackathon. Developed and deployed its official platform.",
+    "location": "Puebla, Mexico",
+    "skills": ["Event Management", "Web Development", "CI/CD", "AWS Elastic Beanstalk", "Leadership", "Partnership Management"],
+    "activities": [
+      "Led the entire organization of the student hackathon, from conceptualization to execution.",
+      "Developed and deployed the official event platform (hackutp.com) with CI/CD using AWS Elastic Beanstalk.",
+      "Coordinated partnerships with tech communities, sponsors, and companies to enhance student engagement and provide resources."
+    ]
+  },
+  {
+    "company": "Cadenas by St. Joseph",
+    "position": "Freelance Developer",
+    "startDate": "2025-05-01",
+    "endDate": "2025-05-31",
+    "description": "Led the full lifecycle of web development for cadenasbystjoseph.com, a project for a client based in Spokane, Washington. Focused on delivering a scalable and user-friendly solution.",
+    "location": "Remote—Spokane, Washington, USA",
+    "skills": ["Web Development", "WordPress", "Firebase Authentication", "Google Drive API", "Cloudflare", "AWS Lightsail", "Requirements Gathering", "UI/UX Design", "Testing"],
+    "activities": [
+      "Led web development for cadenasbystjoseph.com, handling requirements, design, implementation, and testing.",
+      "Implemented a scalable solution using WordPress, Firebase Auth, Google Drive API, Cloudflare, and AWS Lightsail.",
+      "Automated content publishing processes, boosting online visibility and attracting new clients for the customer."
+    ]
+  },
+  {
+    "company": "Universidad Tecnológica de Puebla (UTP)",
+    "position": "Academic Mentor & Editorial Contributor",
+    "startDate": "2024-01-01",
+    "endDate": null,
+    "description": "Supporting students in their technical journey and contributing to academic resources.",
+    "location": "Puebla, Mexico",
+    "skills": ["Mentorship", "Technical Writing", "Public Speaking", "Programming"],
+    "activities": [
+      "Provide technical mentorship to students, enhancing their programming and practical development skills.",
+      "Collaborate with university professors in editing and reviewing academic programming textbooks.",
+      "Organize and present talks and workshops to promote learning and professional growth among students."
+    ]
+  }
+]

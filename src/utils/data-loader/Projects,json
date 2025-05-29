@@ -1,0 +1,52 @@
+[
+  {
+    "title": "Flood Monitoring and Prediction System for Mexico",
+    "photoUrl": "",
+    "description": "Developed during an internship at Mirai Innovation Research Institute in Osaka, Japan. The system utilizes AWS services for data ingestion, processing, and real-time visualization to monitor and predict flood events, aiming to mitigate their impact in vulnerable regions of Mexico. Integrated IoT technologies for data collection.",
+    "projectUrl": null,
+    "place": "Osaka, Japan",
+    "skills": ["AWS", "IoT", "Real-time Data Processing", "Data Visualization", "Python", "Project Management"],
+    "gallery": [],
+    "categories": "Research"
+  },
+  {
+    "title": "HackUTP Official Platform (hackutp.com)",
+    "description": "Developed and deployed the official website and platform for HackUTP 2025. The platform managed registrations, information dissemination, and potentially project submissions. Implemented with CI/CD pipelines using AWS Elastic Beanstalk.",
+    "projectUrl": "http://hackutp.com",
+    "place": "Mexico, Puebla",
+    "skills": ["Web Development", "AWS Elastic Beanstalk", "CI/CD", "JavaScript", "HTML/CSS", "Backend Development"],
+    "categories": "Professional"
+  },
+  {
+    "title": "Cadenas by St. Joseph Website (cadenasbystjoseph.com)",
+    "description": "Freelance project involving the end-to-end development of a website for a client. The solution included a scalable architecture using WordPress, Firebase Authentication for user management, Google Drive API for content, Cloudflare for performance/security, and hosting on AWS Lightsail. Automated content publishing features were key deliverables.",
+    "projectUrl": "http://cadenasbystjoseph.com",
+    "place": "Remote, EUA",
+    "skills": ["WordPress", "Firebase Auth", "Google Drive API", "Cloudflare", "AWS Lightsail", "PHP", "JavaScript", "Content Management"],
+    "categories": "Professional"
+  },
+  {
+    "title": "SmartWaste Vision",
+    "description": "An intelligent waste classification system designed for Mexico, developed for the ANUIES4MX Challenge. The project aimed to improve recycling rates and waste management efficiency through technology.",
+    "projectUrl": null,
+    "place": "Valle de Bravo, EUA",
+    "skills": ["Machine Learning", "Computer Vision", "Python", "AWS (potentially SageMaker, S3)", "System Design"],
+    "categories": "Hackathon"
+  },
+  {
+    "title": "Cybersecurity Incident Management System",
+    "description": "Developed for LoboHackathon 2024 (Converge Category). This system provides real-time alerts and management capabilities for cybersecurity incidents, utilizing AWS Amplify and SNS for critical data flow and notifications. It was designed to improve emergency response times to digital threats.",
+    "projectUrl": null,
+    "place": "Benemerita Universidad Autonoma de Puebla, Puebla, Mexico",
+    "skills": ["AWS Amplify", "AWS SNS", "Cybersecurity", "Real-time Systems", "Web Development"],
+    "categories": "Hackathon"
+  },
+  {
+    "title": "Energy Control Mobile App",
+    "description": "Developed for HackMorelos 2024. A mobile application designed to help reduce energy consumption during peak hours by providing smart notifications and real-time data analysis. Implemented using AWS Amplify and SNS to promote conscious energy use.",
+    "projectUrl": null,
+    "skills": ["Mobile App Development", "AWS Amplify", "AWS SNS", "Real-time Data Analysis", "UI/UX"],
+    "place": "Tecnologico de Monterrey, Cuernavaca, Morelos, Mexico",
+    "categories": "Hackathon"
+  }
+]
