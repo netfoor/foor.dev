@@ -4,7 +4,7 @@
     "source": "Universidad Tecnológica de Puebla",
     "platform": "YouTube",
     "image": "https://example.com/image1.jpg",
-    "date": "2025-01-15",
+    "publicationDate": "2025-01-15",
     "description": "Recognition of international participation with Mirai Institute.",
     "type": "Official Bulletin & Social Media",
     "publicationUrl": "URL_DE_LA_PUBLICACION_1"
@@ -14,7 +14,7 @@
     "source": "ANUIES Official Website",
     "platform": "YouTube",
     "image": "https://example.com/image1.jpg",
-    "date": "2025-01-15",
+    "publicationDate": "2025-01-15",
     "description": "Fortino Romero Mantilla was one of the 20 national winners who participated in the technological innovation challenge.",
     "type": "National Recognition",
     "publicationUrl": "URL_DE_LA_PUBLICACION_2"
@@ -24,7 +24,7 @@
     "source": "Mirai Innovation Official Facebook",
     "platform": "YouTube",
     "image": "https://example.com/image1.jpg",
-    "date": "2025-01-15",
+    "publicationDate": "2025-01-15",
     "description": "Presentation video where you share your participation and your goals with technology.",
     "type": "Video Feature",
     "publicationUrl": "URL_DE_LA_PUBLICACION_3"
@@ -34,7 +34,7 @@
     "source": "Universidad Tecnológica de Puebla",
     "platform": "YouTube",
     "image": "https://example.com/image1.jpg",
-    "date": "2025-01-15",
+    "publicationDate": "2025-01-15",
     "description": "Mentions for achievements, book participation, hackathons, etc.",
     "type": "Various Mentions",
     "publicationUrl": "URL_DE_LA_PUBLICACION_4"

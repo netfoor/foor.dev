@@ -1,6 +1,5 @@
 import { type ClientSchema, a, defineData } from '@aws-amplify/backend';
-import { Certificate } from 'crypto';
-import { act } from 'react';
+
 
 const schema = a.schema({
   Certifications: a
@@ -82,6 +81,18 @@ const schema = a.schema({
       skills: a.string().array(),
       activities: a.string().array(),
     }),
+
+    SocialPublications: a
+    .model({
+      title: a.string().required(),
+      source: a.enum([]),
+      platform: a.enum(['LinkedIn', 'Twitter', 'GitHub', 'Blog', 'Youtube']),
+      image: a.url(),
+      description: a.string().required(),
+      publicationDate: a.date().required(),
+      type: a.enum(['Article', 'Blog', 'Video', 'Podcast', 'Book', 'Course', 'Conference', 'Presentation', 'Research', 'Workshop', 'Other']),
+      publicationUrl: a.url().required()
+    }), 
 
 
 
