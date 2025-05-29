@@ -1,0 +1,102 @@
+{
+  "Skills": {
+    "awsCoreServices": [
+      { "name": "Amplify", "image": "https://img.icons8.com/color/48/amplify.png" },
+      { "name": "Lambda", "image": "https://img.icons8.com/color/48/aws-lambda.png" },
+      { "name": "API Gateway", "image": "https://img.icons8.com/color/48/api-gateway.png" },
+      { "name": "Amazon Bedrock", "image": null },
+      { "name": "DynamoDB", "image": "https://img.icons8.com/color/48/amazon-dynamodb.png" },
+      { "name": "S3", "image": "https://img.icons8.com/color/48/amazon-s3.png" },
+      { "name": "CloudFront", "image": "https://img.icons8.com/color/48/amazon-cloudfront.png" },
+      { "name": "EventBridge", "image": "https://img.icons8.com/color/48/amazon-eventbridge.png" },
+      { "name": "Step Functions", "image": "https://img.icons8.com/color/48/aws-step-functions.png" },
+      { "name": "SNS", "image": "https://img.icons8.com/color/48/simple-notification-service.png" },
+      { "name": "SQS", "image": "https://img.icons8.com/color/48/simple-queue-service.png" },
+      { "name": "Cognito", "image": "https://img.icons8.com/color/48/aws-cognito.png" },
+      { "name": "Timestream", "image": "https://img.icons8.com/color/48/amazon-timestream.png" },
+      { "name": "AppSync", "image": "https://img.icons8.com/color/48/aws-appsync.png" },
+      { "name": "EC2", "image": "https://img.icons8.com/color/48/amazon-ec2.png" },
+      { "name": "RDS", "image": "https://img.icons8.com/color/48/amazon-rds.png" },
+      { "name": "Route 53", "image": "https://img.icons8.com/color/48/amazon-route-53.png" },
+      { "name": "ECS", "image": "https://img.icons8.com/color/48/amazon-ecs.png" },
+      { "name": "KMS", "image": "https://img.icons8.com/color/48/aws-key-management-service.png" },
+      { "name": "WAF & Shield", "image": "https://img.icons8.com/color/48/web-application-firewall.png" },
+      { "name": "AWS Backup", "image": "https://img.icons8.com/color/48/aws-backup.png" }
+    ],
+    "containersOrchestration": [
+      { "name": "Docker", "image": "https://img.icons8.com/color/48/docker.png" },
+      { "name": "Amazon EKS", "image": "https://img.icons8.com/color/48/amazon-elastic-kubernetes-service.png" },
+      { "name": "Kubernetes", "image": "https://img.icons8.com/color/48/kubernetes.png" }
+    ],
+    "infrastructureAsCode": [
+      { "name": "CloudFormation", "image": "https://img.icons8.com/color/48/aws-cloudformation.png" },
+      { "name": "Terraform", "image": "https://img.icons8.com/color/48/terraform.png" }
+    ],
+    "ciCdDevOps": [
+      { "name": "GitHub Actions", "image": "https://img.icons8.com/color/48/github-actions.png" },
+      { "name": "Amplify Console", "image": "https://img.icons8.com/color/48/amplify.png" },
+      { "name": "CodePipeline", "image": "https://img.icons8.com/color/48/aws-codepipeline.png" },
+      { "name": "CodeBuild", "image": "https://img.icons8.com/color/48/aws-codebuild.png" },
+      { "name": "GitLab CI", "image": "https://img.icons8.com/color/48/gitlab.png" },
+      { "name": "Jenkins", "image": "https://img.icons8.com/color/48/jenkins.png" },
+      { "name": "Git", "image": "https://img.icons8.com/color/48/git.png" }
+    ],
+    "programmingLanguages": [
+      { "name": "Python", "image": "https://img.icons8.com/color/48/python--v1.png" },
+      { "name": "Bash", "image": "https://img.icons8.com/color/48/bash.png" },
+      { "name": "TypeScript", "image": "https://img.icons8.com/color/48/typescript.png" }
+    ],
+    "monitoringObservability": [
+      { "name": "CloudWatch", "image": "https://img.icons8.com/color/48/amazon-cloudwatch.png" },
+      { "name": "Grafana", "image": "https://img.icons8.com/color/48/grafana.png" },
+      { "name": "Splunk", "image": "https://img.icons8.com/color/48/splunk.png" },
+      { "name": "Elasticsearch", "image": "https://img.icons8.com/color/48/elasticsearch.png" },
+      { "name": "Logstash", "image": "https://img.icons8.com/color/48/logstash.png" },
+      { "name": "Kibana", "image": "https://img.icons8.com/color/48/kibana.png" },
+      { "name": "Prometheus", "image": "https://img.icons8.com/color/48/prometheus.png" },
+      { "name": "CloudTrail", "image": "https://img.icons8.com/color/48/aws-cloudtrail.png" }
+    ],
+    "databases": [
+      { "name": "DynamoDB", "image": "https://img.icons8.com/color/48/amazon-dynamodb.png" },
+      { "name": "Timestream", "image": "https://img.icons8.com/color/48/amazon-timestream.png" },
+      { "name": "RDS (e.g., PostgreSQL)", "image": "https://img.icons8.com/color/48/amazon-rds.png" },
+      { "name": "Redshift", "image": "https://img.icons8.com/color/48/amazon-redshift.png" },
+      { "name": "Athena", "image": "https://img.icons8.com/color/48/amazon-athena.png" },
+      { "name": "Kinesis", "image": "https://img.icons8.com/color/48/amazon-kinesis.png" }
+    ],
+    "networkingSecurity": [
+      { "name": "IAM", "image": "https://img.icons8.com/color/48/aws-identity-and-access-management.png" },
+      { "name": "VPCs", "image": "https://img.icons8.com/color/48/aws-vpc.png" },
+      { "name": "Subnets (Concept)", "image": "https://img.icons8.com/color/48/network.png" },
+      { "name": "Security Groups (Concept)", "image": "https://img.icons8.com/color/48/security-shield.png" },
+      { "name": "Direct Connect", "image": "https://img.icons8.com/color/48/aws-direct-connect.png" },
+      { "name": "Global Accelerator", "image": "https://img.icons8.com/color/48/aws-global-accelerator.png" },
+      { "name": "VPN", "image": "https://img.icons8.com/color/48/vpn.png" }
+    ],
+    "managementGovernance": [
+      { "name": "AWS Organizations", "image": "https://img.icons8.com/color/48/aws-organizations.png" },
+      { "name": "Control Tower", "image": "https://img.icons8.com/color/48/aws-control-tower.png" },
+      { "name": "AWS Config", "image": "https://img.icons8.com/color/48/aws-config.png" },
+      { "name": "Systems Manager (SSM)", "image": "https://img.icons8.com/color/48/aws-systems-manager.png" },
+      { "name": "AWS Cost Explorer", "image": "https://img.icons8.com/color/48/aws-cost-explorer.png" }
+    ],
+    "architecturalConcepts": [
+      { "name": "AWS Well-Architected Framework", "image": null },
+      { "name": "Microservices", "image": "https://img.icons8.com/color/48/microservice.png" },
+      { "name": "Event-Driven Architecture", "image": "https://img.icons8.com/color/48/flow-chart.png" },
+      { "name": "Serverless Patterns", "image": "https://img.icons8.com/color/48/server-rack.png" },
+      { "name": "High Availability", "image": "https://img.icons8.com/color/48/high-availability.png" },
+      { "name": "Disaster Recovery", "image": "https://img.icons8.com/color/48/disaster.png" },
+      { "name": "Data Lakes", "image": "https://img.icons8.com/color/48/data-lake.png" },
+      { "name": "Cost Optimization", "image": "https://img.icons8.com/color/48/money-bag.png" },
+      { "name": "Security Best Practices", "image": "https://img.icons8.com/color/48/security-checked.png" },
+      { "name": "Cloud Migrations", "image": "https://img.icons8.com/color/48/data-transfer.png" }
+    ],
+    "systemsHardware": [
+      { "name": "Linux", "image": "https://img.icons8.com/color/48/linux.png" },
+      { "name": "Windows", "image": "https://img.icons8.com/color/48/windows-11.png" },
+      { "name": "Raspberry Pi", "image": "https://img.icons8.com/color/48/raspberry-pi.png" },
+      { "name": "Arduino", "image": "https://img.icons8.com/color/48/arduino.png" }
+    ]
+  }
+}
