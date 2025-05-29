@@ -90,3 +90,36 @@ code {
   transform: translateY(-1px);
   transition: all 0.2s ease-in-out;
 }
+
+/* Project card hover effects */
+.project-card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease-in-out;
+}
+
+.project-button-hover:hover {
+  background-color: var(--amplify-colors-primary-90) !important;
+  transform: translateX(4px);
+  transition: all 0.2s ease-in-out;
+}
+
+/* Recognition Card Hover Effects */
+.recognition-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  border-color: var(--amplify-colors-primary-80);
+}
+
+.recognition-card:hover .card-decoration {
+  opacity: 0.2;
+}
+
+.recognition-card .issuer-link:hover {
+  color: var(--amplify-colors-primary-90) !important;
+}
+
+/* Dark mode recognition card effects */
+[data-amplify-theme="dark"] .recognition-card:hover {
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
