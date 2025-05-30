@@ -123,3 +123,53 @@ code {
 [data-amplify-theme="dark"] .recognition-card:hover {
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
 }
+
+/* Publication Card Styles */
+.publication-card {
+  scroll-snap-align: start;
+}
+
+.publication-card:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 15px 35px rgba(var(--amplify-colors-primary-80-rgb), 0.15);
+  border-color: rgba(var(--amplify-colors-primary-80-rgb), 0.5);
+}
+
+/* Carousel ScrollView Styles */
+.publication-card:hover .card-image {
+  transform: scale(1.05);
+}
+
+.publication-card .card-image {
+  transition: transform 0.3s ease;
+}
+
+/* Publication carousel smooth scrolling */
+[data-amplify-component="scrollview"] {
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+}
+
+/* Custom scrollbar for publications carousel */
+[data-amplify-component="scrollview"]::-webkit-scrollbar {
+  height: 8px;
+}
+
+[data-amplify-component="scrollview"]::-webkit-scrollbar-track {
+  background: rgba(var(--amplify-colors-background-secondary-rgb), 0.5);
+  border-radius: 4px;
+}
+
+[data-amplify-component="scrollview"]::-webkit-scrollbar-thumb {
+  background: var(--amplify-colors-primary-80);
+  border-radius: 4px;
+}
+
+[data-amplify-component="scrollview"]::-webkit-scrollbar-thumb:hover {
+  background: var(--amplify-colors-primary-90);
+}
+
+/* Dark mode publication card effects */
+[data-amplify-theme="dark"] .publication-card:hover {
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}

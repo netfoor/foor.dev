@@ -4,6 +4,7 @@ import Hero from '@/app/components/Hero';
 import { CertificationsSection, getFeaturedCertifications } from '@/app/components/certifications';
 import { ProjectsSection, getFeaturedProjects } from '@/app/components/projects';
 import RecognitionsSection from '@/app/components/recognitions/RecognitionsSection';
+import PublicationsSection from '@/app/components/publications/PublicationsSection';
 import { View } from '@aws-amplify/ui-react';
 import AboutSection from '@/app/components/AboutSection';
 
@@ -17,12 +18,12 @@ export default function Home() {
       <CertificationsSection 
         certifications={featuredCertifications}
         maxDisplay={3}
-      />
-      <ProjectsSection 
+      />      <ProjectsSection 
         projects={featuredProjects}
         maxDisplay={4}
       />
       <RecognitionsSection />
+      <PublicationsSection />
     </View>
   );
 }

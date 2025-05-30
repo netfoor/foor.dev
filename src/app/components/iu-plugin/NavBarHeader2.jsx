@@ -168,12 +168,12 @@ export default function NavBarHeader2(props) {
         medium: "flex"
       }}
       {...getOverrideProps(overrides, "Frame 5")}
-    >
-      {[
+    >      {[
         { href: "/about", label: "About" },
         { href: "/projects", label: "Projects" },
         { href: "/certifications", label: "Certifications" },
         { href: "/recognitions", label: "Recognitions" },
+        { href: "/publications", label: "Publications" },
         { href: "/technologies", label: "Technologies & Tools" }
       ].map((link, index) => (
         <Link href={link.href} key={index} style={{ textDecoration: 'none' }}>
