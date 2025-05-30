@@ -33,20 +33,6 @@ body {
   color: var(--amplify-colors-font-primary);
 }
 
-/* Debug styles to check if dark mode is applied */
-.dark body::before {
-  content: 'DARK MODE';
-  position: fixed;
-  bottom: 10px;
-  right: 10px;
-  background-color: rgba(255, 0, 0, 0.5);
-  color: white;
-  padding: 5px 10px;
-  z-index: 9999;
-  font-size: 12px;
-  pointer-events: none;
-}
-
 /* Estilos para elementos comunes */
 a {
   color: var(--amplify-colors-font-interactive);
@@ -354,4 +340,112 @@ code {
 
 [data-amplify-theme="dark"] .timeline-item:hover .timeline-connector {
   box-shadow: 0 0 25px rgba(var(--amplify-colors-primary-80-rgb), 0.5);
+}
+
+/* ========================================
+   FOOTER STYLES
+======================================== */
+
+/* Footer Link Hover Effects */
+.footer-link {
+  transition: all 0.2s ease;
+  border-radius: 4px;
+}
+
+.footer-link:hover {
+  color: var(--amplify-colors-primary-80) !important;
+  background-color: rgba(var(--amplify-colors-primary-80-rgb), 0.1) !important;
+  transform: translateX(4px);
+}
+
+/* ========================================
+   SCROLL TO TOP STYLES
+======================================== */
+
+/* Scroll to Top Button Animation */
+.scroll-to-top {
+  transition: all 0.3s ease;
+}
+
+.scroll-to-top.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.scroll-to-top.hidden {
+  opacity: 0;
+  transform: translateY(100px);
+  pointer-events: none;
+}
+
+.scroll-to-top-button {
+  box-shadow: 0 4px 20px rgba(var(--amplify-colors-primary-80-rgb), 0.3);
+  transition: all 0.3s ease;
+}
+
+.scroll-to-top-button:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 8px 25px rgba(var(--amplify-colors-primary-80-rgb), 0.4);
+}
+
+.scroll-to-top-button:active {
+  transform: translateY(0) scale(0.95);
+}
+
+/* Responsive adjustments for scroll button */
+@media (max-width: 768px) {
+  .scroll-to-top {
+    bottom: 1rem;
+    right: 1rem;
+  }
+  
+  .scroll-to-top-button {
+    width: 48px;
+    height: 48px;
+  }
+}
+
+/* Dark mode scroll button effects */
+[data-amplify-theme="dark"] .scroll-to-top-button {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+[data-amplify-theme="dark"] .scroll-to-top-button:hover {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+}
+
+/* ===============================================
+   NAVIGATION BAR STYLES
+   =============================================== */
+
+/* Main navbar styling */
+.navbar-main {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Dark mode navbar adjustments */
+[data-amplify-theme="dark"] .navbar-main {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Navigation link hover effects */
+.nav-link {
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-link::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(64,170,191,1), rgba(100,210,231,1));
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+}
+
+.nav-link:hover::before {
+  width: 80%;
 }
