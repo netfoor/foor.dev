@@ -31,11 +31,11 @@ export default function PublicationCard({ publication, variant = 'carousel' }: P
         borderRadius: '16px',
         padding: '0',
         overflow: 'hidden',
-        transition: 'all 0.3s ease',
-        cursor: 'pointer',
+        transition: 'all 0.3s ease',        cursor: 'pointer',
         position: 'relative',
         display: 'flex',
         flexDirection: 'column',
+        zIndex: 1,
       }}
       onClick={handleViewPublication}
     >

@@ -12,8 +12,7 @@ export default function AboutSection() {
       position="relative" 
       paddingTop={tokens.space.xxxl}
       paddingBottom={tokens.space.xxxl}
-    >
-      {/* Background blur layers */}
+    >      {/* Background blur layers */}
       <View
         position="absolute"
         top="0"
@@ -25,26 +24,10 @@ export default function AboutSection() {
           gridTemplateColumns: '1fr 1fr',
           marginLeft: '-13rem',
           opacity: 0.4,
-          filter: 'blur(106px)',
+          zIndex: 0,
         }}
         className="dark:opacity-20"
       >
-        <View
-          height="14rem"
-          style={{
-            background: 'linear-gradient(to bottom right, var(--amplify-colors-primary-80), #a855f7)',
-            filter: 'blur(106px)',
-          }}
-          className="dark:bg-gradient-to-br dark:from-blue-700"
-        />
-        <View
-          height="8rem"
-          style={{
-            background: 'linear-gradient(to right, #22d3ee, #7dd3fc)',
-            filter: 'blur(106px)',
-          }}
-          className="dark:to-indigo-600"
-        />
       </View>
 
       <Container>

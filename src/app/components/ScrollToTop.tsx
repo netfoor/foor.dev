@@ -30,14 +30,12 @@ export const ScrollToTop: React.FC = () => {
       behavior: 'smooth',
     });
   };
-
-  return (
-    <View
+  return (    <View
       className={`scroll-to-top ${isVisible ? 'visible' : 'hidden'}`}
       position="fixed"
       bottom="2rem"
       right="2rem"
-      style={{ zIndex: 1000 }}
+      style={{ zIndex: 500 }}
     >
       <Button
         variation="primary"

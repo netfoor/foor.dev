@@ -27,9 +27,8 @@ export const TimelineSection: React.FC = () => {
 
       {/* Timeline Events */}      <Flex
         direction="column"
-        alignItems="center"
-        position="relative"
-        style={{ zIndex: 2 }}
+        alignItems="center"        position="relative"
+        style={{ zIndex: 1 }}
       >
         {timelineEvents.map((event, index) => (
           <TimelineCard 

@@ -36,9 +36,8 @@ export const TimelineCard: React.FC<TimelineCardProps> = ({ event, index }) => {
         height="60px"
         backgroundColor={event.highlight ? "var(--amplify-colors-primary-80)" : "var(--amplify-colors-background-secondary)"}
         borderRadius="50%"
-        border={event.highlight ? "4px solid var(--amplify-colors-primary-60)" : "4px solid var(--amplify-colors-border-primary)"}
-        position="relative"
-        style={{ zIndex: 2 }}
+        border={event.highlight ? "4px solid var(--amplify-colors-primary-60)" : "4px solid var(--amplify-colors-border-primary)"}        position="relative"
+        style={{ zIndex: 1 }}
       >
         <Text fontSize="xl">{event.icon}</Text>
       </Flex>

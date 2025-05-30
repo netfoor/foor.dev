@@ -9,13 +9,11 @@ interface RecognitionCardProps {
 }
 
 export default function RecognitionCard({ recognition }: RecognitionCardProps) {
-  return (
-    <Card
+  return (    <Card
       variation="outlined"
       className="recognition-card"
       style={{
-        background: 'rgba(var(--amplify-colors-background-primary-rgb), 0.7)',
-        backdropFilter: 'blur(10px)',
+        background: 'var(--amplify-colors-background-secondary)',
         border: '1px solid rgba(var(--amplify-colors-border-primary-rgb), 0.2)',
         borderRadius: '16px',
         padding: '1.5rem',
@@ -23,6 +21,7 @@ export default function RecognitionCard({ recognition }: RecognitionCardProps) {
         transition: 'all 0.3s ease',
         position: 'relative',
         overflow: 'hidden',
+        zIndex: 1,
       }}
     >
       {/* Subtle star decoration */}

@@ -31,7 +31,7 @@ export default function Hero() {
         maxWidth="1200px"
         margin="0 auto"
       >
-        <View width="150px" height="150px" marginBottom="1.5rem" position="relative">
+        <View width="150px" height="150px" marginBottom="1.5rem" position="relative" style={{ zIndex: 1 }}>
           <Image
             src="/images/profile.jpeg"
             alt="Fortino Romero Mantilla"

@@ -42,8 +42,7 @@ export default function NavBarHeader2(props) {
     <>
       {/* Main Navigation */}      <Flex
         gap="10px"
-        direction="row"
-        width="100%"
+        direction="row"        width="100%"
         justifyContent="space-between"
         alignItems="center"
         overflow="visible"
@@ -51,7 +50,7 @@ export default function NavBarHeader2(props) {
         top="0"
         left="0"
         right="0"
-        zIndex="1000"
+        style={{ zIndex: 1000 }}
         boxShadow={tokens.shadows.small.value}
         padding={{
           base: "12px 16px",
@@ -63,13 +62,12 @@ export default function NavBarHeader2(props) {
         {...getOverrideProps(overrides, "NavBarHeader2")}
         {...rest}
       >
-        {/* Logo Section */}
-        <Flex
+        {/* Logo Section */}        <Flex
           gap="16px"
           direction="row"
           justifyContent="center"
           alignItems="center"
-          shrink="0"
+          shrink={0}
           position="relative"
           {...getOverrideProps(overrides, "Logo")}
         >
@@ -81,9 +79,8 @@ export default function NavBarHeader2(props) {
               }}
               height={{
                 base: "24px",
-                medium: "30px"
-              }}
-              shrink="0"
+                medium: "30px"              }}
+              shrink={0}
               position="relative"
               transition="transform 0.3s ease"
               _hover={{
@@ -108,24 +105,24 @@ export default function NavBarHeader2(props) {
                 {...getOverrideProps(overrides, "Union")}
               />
             </Flex>
-            
-            {/* Brand Text */}
-            <Text
-              fontFamily={tokens.fonts.default.variable.value}
+              {/* Brand Text */}
+            <Text              fontFamily={tokens.fonts.default.variable.value}
               fontSize={{
                 base: "18px",
                 medium: "20px"
               }}
-              fontWeight="700"
+              fontWeight={700}
               color={tokens.colors.font.primary}
               display={{
                 base: "none",
                 small: "block"
               }}
-              background="linear-gradient(135deg, rgba(64,170,191,1) 0%, rgba(100,210,231,1) 100%)"
-              backgroundClip="text"
-              WebkitBackgroundClip="text"
-              WebkitTextFillColor="transparent"
+              style={{
+                background: "linear-gradient(135deg, rgba(64,170,191,1) 0%, rgba(100,210,231,1) 100%)",
+                backgroundClip: "text",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent"
+              }}
             >
               foor.dev
             </Text>
@@ -187,11 +184,10 @@ export default function NavBarHeader2(props) {
             { href: "/recognitions", label: "Recognitions" },
             { href: "/publications", label: "Publications" }
           ].map((link, index) => (
-            <Link href={link.href} key={index} style={{ textDecoration: 'none' }}>
-              <Text
+            <Link href={link.href} key={index} style={{ textDecoration: 'none' }}>              <Text
                 fontFamily={tokens.fonts.default.variable.value}
                 fontSize="16px"
-                fontWeight="500"
+                fontWeight={500}
                 color={tokens.colors.font.primary}
                 lineHeight="24px"
                 position="relative"
@@ -215,18 +211,16 @@ export default function NavBarHeader2(props) {
         {/* Action Buttons */}
         <Flex
           gap="8px"
-          direction="row"
-          justifyContent="flex-start"
+          direction="row"          justifyContent="flex-start"
           alignItems="center"
-          shrink="0"
+          shrink={0}
           position="relative"
           {...getOverrideProps(overrides, "actions")}
-        >
-          <View marginRight="8px">
+        >          <View marginRight="8px">
             <ThemeToggle />
           </View>
           <Button
-            shrink="0"
+            shrink={0}
             size={{
               base: "small",
               medium: "default"
@@ -239,18 +233,18 @@ export default function NavBarHeader2(props) {
             }}
             {...getOverrideProps(overrides, "Button39493466")}
           >
-            Log in
-          </Button>
+            Log in          </Button>
           <Button
-            shrink="0"
+            shrink={0}
             size={{
               base: "small",
               medium: "default"
-            }}
-            isDisabled={false}
+            }}            isDisabled={false}
             variation="primary"
             borderRadius="12px"
-            background="linear-gradient(135deg, rgba(64,170,191,1) 0%, rgba(100,210,231,1) 100%)"
+            style={{
+              background: "linear-gradient(135deg, rgba(64,170,191,1) 0%, rgba(100,210,231,1) 100%)"
+            }}
             transition="all 0.3s ease"
             _hover={{
               transform: "translateY(-2px)",
@@ -263,21 +257,19 @@ export default function NavBarHeader2(props) {
         </Flex>
       </Flex>      {/* Mobile Navigation Overlay */}
       {isMobile && isMenuOpen && (
-        <View
-          position="fixed"
+        <View          position="fixed"
           top="0"
           left="0"
           right="0"
           bottom="0"
           backgroundColor="rgba(0, 0, 0, 0.5)"
-          zIndex="999"
+          style={{ zIndex: 999 }}
           onClick={toggleMenu}
         />
       )}
 
       {/* Mobile Navigation Menu */}
-      {isMobile && (
-        <Flex
+      {isMobile && (        <Flex
           direction="column"
           position="fixed"
           top="0"
@@ -286,12 +278,12 @@ export default function NavBarHeader2(props) {
           height="100vh"
           backgroundColor={tokens.colors.background.secondary}
           boxShadow={tokens.shadows.large.value}
-          zIndex="1001"
+          style={{ zIndex: 1001 }}
           padding="80px 24px 24px"
           gap="8px"
           transition="right 0.3s ease"
           {...getOverrideProps(overrides, "MobileMenu")}
-        >          {[
+        >{[
             { href: "/about", label: "About", icon: "👨‍💻" },
             { href: "/projects", label: "Projects", icon: "🚀" },
             { href: "/certifications", label: "Certifications", icon: "🏆" },
@@ -312,11 +304,10 @@ export default function NavBarHeader2(props) {
                 }}
                 onClick={toggleMenu}
               >
-                <Text fontSize="20px">{link.icon}</Text>
-                <Text
+                <Text fontSize="20px">{link.icon}</Text>                <Text
                   fontFamily={tokens.fonts.default.variable.value}
                   fontSize="18px"
-                  fontWeight="500"
+                  fontWeight={500}
                   color={tokens.colors.font.primary}
                 >
                   {link.label}
@@ -342,11 +333,12 @@ export default function NavBarHeader2(props) {
             </Button>
             <Button
               variation="primary"
-              width="100%"
-              borderRadius="8px"
+              width="100%"              borderRadius="8px"
               padding="12px"
               fontSize="16px"
-              background="linear-gradient(135deg, rgba(64,170,191,1) 0%, rgba(100,210,231,1) 100%)"
+              style={{
+                background: "linear-gradient(135deg, rgba(64,170,191,1) 0%, rgba(100,210,231,1) 100%)"
+              }}
             >
               Sign up
             </Button>

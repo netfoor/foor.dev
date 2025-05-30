@@ -9,6 +9,15 @@
   --amplify-colors-font-secondary: #666666;
 }
 
+/* Z-index hierarchy:
+ * Mobile Menu: 1001 (highest)
+ * Navbar: 1000
+ * Mobile Overlay: 999
+ * ScrollToTop: 500
+ * Content (cards, timeline, etc.): 1-2
+ * Background elements: 0
+ */
+
 /* CSS Variables for Dark Mode */
 .dark {
   --amplify-colors-background-primary: #1a1a1a;
