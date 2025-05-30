@@ -5,20 +5,22 @@ import { CertificationsSection, getFeaturedCertifications } from '@/app/componen
 import { ProjectsSection, getFeaturedProjects } from '@/app/components/projects';
 import RecognitionsSection from '@/app/components/recognitions/RecognitionsSection';
 import PublicationsSection from '@/app/components/publications/PublicationsSection';
+import { SkillsSection } from '@/app/components/skills';
 import { View } from '@aws-amplify/ui-react';
 import AboutSection from '@/app/components/AboutSection';
 
 export default function Home() {
   const featuredCertifications = getFeaturedCertifications(3);
   const featuredProjects = getFeaturedProjects(4);
-  return (
-    <View className="flex flex-col min-h-screen">
+  return (    <View className="flex flex-col min-h-screen">
       <Hero />
       <AboutSection />
+      <SkillsSection />
       <CertificationsSection 
         certifications={featuredCertifications}
         maxDisplay={3}
-      />      <ProjectsSection 
+      />      
+      <ProjectsSection 
         projects={featuredProjects}
         maxDisplay={4}
       />

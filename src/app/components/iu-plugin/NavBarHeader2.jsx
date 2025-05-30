@@ -172,9 +172,9 @@ export default function NavBarHeader2(props) {
         { href: "/about", label: "About" },
         { href: "/projects", label: "Projects" },
         { href: "/certifications", label: "Certifications" },
+        { href: "/skills", label: "Skills" },
         { href: "/recognitions", label: "Recognitions" },
-        { href: "/publications", label: "Publications" },
-        { href: "/technologies", label: "Technologies & Tools" }
+        { href: "/publications", label: "Publications" }
       ].map((link, index) => (
         <Link href={link.href} key={index} style={{ textDecoration: 'none' }}>
           <Text

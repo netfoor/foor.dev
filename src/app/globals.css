@@ -173,3 +173,185 @@ code {
 [data-amplify-theme="dark"] .publication-card:hover {
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
 }
+
+/* ========================================
+   SKILLS SECTION STYLES
+======================================== */
+
+/* Skills Grid Layout */
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1rem;
+  max-width: 100%;
+}
+
+@media (min-width: 768px) {
+  .skills-grid {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1.5rem;
+  }
+}
+
+/* Skill Card Hover Effects */
+.skill-card {
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+
+.skill-card:hover {
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 10px 25px rgba(var(--amplify-colors-primary-80-rgb), 0.2);
+  border-color: var(--amplify-colors-primary-80);
+}
+
+/* Dark mode skill card effects */
+[data-amplify-theme="dark"] .skill-card:hover {
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* Soft Skills Grid Layout */
+.soft-skills-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .soft-skills-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .soft-skills-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Soft Skill Card Hover Effects */
+.soft-skill-card {
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+
+.soft-skill-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(var(--amplify-colors-primary-80-rgb), 0.15);
+  border-color: var(--amplify-colors-primary-80);
+}
+
+/* Dark mode soft skill card effects */
+[data-amplify-theme="dark"] .soft-skill-card:hover {
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+}
+
+/* ========================================
+   ABOUT PAGE STYLES
+======================================== */
+
+/* Profile Image Animation */
+.profile-image {
+  transition: transform 0.3s ease;
+  border: 4px solid var(--amplify-colors-primary-80);
+}
+
+.profile-image:hover {
+  transform: scale(1.05);
+}
+
+/* Timeline Styles */
+.timeline-container {
+  position: relative;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.timeline-line {
+  background: linear-gradient(
+    to bottom,
+    var(--amplify-colors-primary-80),
+    var(--amplify-colors-primary-60),
+    var(--amplify-colors-primary-80)
+  );
+}
+
+.timeline-item {
+  opacity: 0;
+  animation: fadeInUp 0.6s ease forwards;
+}
+
+.timeline-item:nth-child(1) { animation-delay: 0.1s; }
+.timeline-item:nth-child(2) { animation-delay: 0.2s; }
+.timeline-item:nth-child(3) { animation-delay: 0.3s; }
+.timeline-item:nth-child(4) { animation-delay: 0.4s; }
+.timeline-item:nth-child(5) { animation-delay: 0.5s; }
+.timeline-item:nth-child(6) { animation-delay: 0.6s; }
+.timeline-item:nth-child(7) { animation-delay: 0.7s; }
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Timeline Card Hover Effects */
+.timeline-card {
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.timeline-card:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 15px 35px rgba(var(--amplify-colors-primary-80-rgb), 0.15);
+  border-color: var(--amplify-colors-primary-80);
+}
+
+/* Timeline Connector Animation */
+.timeline-connector {
+  transition: all 0.3s ease;
+}
+
+.timeline-item:hover .timeline-connector {
+  transform: scale(1.2);
+  box-shadow: 0 0 20px rgba(var(--amplify-colors-primary-80-rgb), 0.3);
+}
+
+/* Responsive Timeline */
+@media (max-width: 768px) {
+  .timeline-left,
+  .timeline-right {
+    flex-direction: column !important;
+  }
+  
+  .timeline-line {
+    left: 30px !important;
+  }
+  
+  .timeline-connector {
+    position: absolute;
+    left: 0;
+  }
+  
+  .timeline-card {
+    margin-left: 80px;
+    max-width: calc(100% - 80px) !important;
+  }
+}
+
+/* Dark mode timeline effects */
+[data-amplify-theme="dark"] .timeline-card:hover {
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+[data-amplify-theme="dark"] .timeline-item:hover .timeline-connector {
+  box-shadow: 0 0 25px rgba(var(--amplify-colors-primary-80-rgb), 0.5);
+}

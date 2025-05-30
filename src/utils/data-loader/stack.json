@@ -91,12 +91,59 @@
       { "name": "Cost Optimization", "image": "https://img.icons8.com/color/48/money-bag.png" },
       { "name": "Security Best Practices", "image": "https://img.icons8.com/color/48/security-checked.png" },
       { "name": "Cloud Migrations", "image": "https://img.icons8.com/color/48/data-transfer.png" }
-    ],
-    "systemsHardware": [
+    ],    "systemsHardware": [
       { "name": "Linux", "image": "https://img.icons8.com/color/48/linux.png" },
       { "name": "Windows", "image": "https://img.icons8.com/color/48/windows-11.png" },
       { "name": "Raspberry Pi", "image": "https://img.icons8.com/color/48/raspberry-pi.png" },
       { "name": "Arduino", "image": "https://img.icons8.com/color/48/arduino.png" }
+    ],
+    "coreTechnologies": [
+      { "name": "AWS", "image": "https://img.icons8.com/color/48/amazon-web-services.png", "category": "Cloud Platform" },
+      { "name": "Amplify", "image": "https://img.icons8.com/color/48/amplify.png", "category": "Full-Stack Development" },
+      { "name": "Kubernetes", "image": "https://img.icons8.com/color/48/kubernetes.png", "category": "Container Orchestration" },
+      { "name": "Python", "image": "https://img.icons8.com/color/48/python--v1.png", "category": "Programming Language" },
+      { "name": "TypeScript", "image": "https://img.icons8.com/color/48/typescript.png", "category": "Programming Language" },
+      { "name": "Docker", "image": "https://img.icons8.com/color/48/docker.png", "category": "Containerization" },
+      { "name": "Terraform", "image": "https://img.icons8.com/color/48/terraform.png", "category": "Infrastructure as Code" },
+      { "name": "Lambda", "image": "https://img.icons8.com/color/48/aws-lambda.png", "category": "Serverless Computing" }
     ]
-  }
+  },
+  "SoftSkills": [
+    {
+      "name": "Technical Leadership",
+      "icon": "👥",
+      "description": "Led cross-functional teams through complex cloud migrations and architectural decisions",
+      "example": "Guided 15+ engineers through AWS Well-Architected implementations"
+    },
+    {
+      "name": "Problem Solving",
+      "icon": "🔍",
+      "description": "Analytical approach to debugging complex distributed systems and performance issues",
+      "example": "Reduced system latency by 60% through architectural optimization"
+    },
+    {
+      "name": "Communication",
+      "icon": "💬",
+      "description": "Translate technical concepts for stakeholders and mentor junior developers",
+      "example": "Regular technical presentations to C-level executives"
+    },
+    {
+      "name": "Continuous Learning",
+      "icon": "📚",
+      "description": "Stay current with emerging technologies and industry best practices",
+      "example": "AWS Solutions Architect Professional + 10+ technical certifications"
+    },
+    {
+      "name": "Project Management",
+      "icon": "📋",
+      "description": "End-to-end delivery of technical projects with strict timelines and budgets",
+      "example": "Delivered $2M+ cloud transformation projects on time and under budget"
+    },
+    {
+      "name": "Mentorship",
+      "icon": "🎯",
+      "description": "Develop technical talent and foster growth in engineering teams",
+      "example": "Mentored 20+ junior developers, 80% received promotions within 18 months"
+    }
+  ]
 }
