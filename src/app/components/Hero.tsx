@@ -72,9 +72,9 @@ export default function Hero() {
           marginTop="2rem"
           justifyContent="center"
         >
-          <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
+          <a href="https://instagram.com/foor.rm" target="_blank" rel="noopener noreferrer">
             <img
-              src="https://img.icons8.com/color/48/instagram-new--v1.png"
+              src="https://img.icons8.com/3d-fluency/94/instagram-new.png"
               alt="Instagram"
               width={32}
               height={32}
@@ -83,9 +83,9 @@ export default function Hero() {
               onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
             />
           </a>
-          <a href="mailto:example@example.com">
+          <a href="mailto:fortino.rom@gmail.com">
             <img
-              src="https://img.icons8.com/color/48/apple-mail.png"
+              src="https://img.icons8.com/3d-fluency/94/gmail.png"
               alt="Email"
               width={32}
               height={32}
@@ -94,10 +94,21 @@ export default function Hero() {
               onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
             />
           </a>
-          <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
+          <a href="https://linkedin.com/in/fortino-romero-mantilla" target="_blank" rel="noopener noreferrer">
             <img
-              src="https://img.icons8.com/color/48/twitter--v1.png"
-              alt="Twitter"
+              src="https://img.icons8.com/3d-fluency/94/linkedin--v2.png"
+              alt="LinkedIn"
+              width={32}
+              height={32}
+              style={{transition: 'transform 0.2s'}}
+              onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.1)'}
+              onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
+            />
+          </a>
+          <a href="https://github.com/netfoor" target="_blank" rel="noopener noreferrer">
+            <img
+              src="https://img.icons8.com/3d-fluency/94/github.png"
+              alt="GitHub"
               width={32}
               height={32}
               style={{transition: 'transform 0.2s'}}
