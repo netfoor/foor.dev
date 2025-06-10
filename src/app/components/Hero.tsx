@@ -7,7 +7,6 @@ import { useAmplifyTheme } from './AmplifyWrapper';
 export default function Hero() {
   const { colorMode } = useAmplifyTheme();
   
-  console.log('Hero component: Current colorMode:', colorMode);
   
   return (
     <View 

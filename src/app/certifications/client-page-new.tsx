@@ -1,0 +1,230 @@
+"use client";
+import { useState, useMemo } from 'react';
+import { 
+  Loader, 
+  View, 
+  Text, 
+  Heading, 
+  Flex, 
+  Button, 
+  Grid,
+  Badge
+} from '@aws-amplify/ui-react';
+import Container from '../components/Container';
+import { useAmplifyData, formatDate, getUniqueValues } from '../../utils/data-loader/common-data-hooks';
+
+// Define the Certification type
+interface Certification {
+  id: string;
+  title: string;
+  issuer: string;
+  issueDate: string;
+  expirationDate?: string;
+  credentialId?: string;
+  credentialUrl?: string;
+  category?: string;
+  skills?: string[];
+  badgeImageUrl?: string;
+  content?: string;
+}
+
+export default function CertificationsClient() {
+  const [activeCategory, setActiveCategory] = useState('all');
+
+  // Use our custom hook to fetch data
+  const { data: certifications, loading, error } = useAmplifyData<Certification>(
+    'Certifications',
+    {
+      sortBy: 'issueDate',
+      sortDirection: 'desc'
+    }
+  );
+
+  // Get all unique categories for filtering
+  const categories = useMemo(() => 
+    getUniqueValues(certifications, 'category'),
+    [certifications]
+  );
+
+  // Filter certifications by category
+  const filteredCertifications = useMemo(() => {
+    if (activeCategory === 'all') {
+      return certifications;
+    }
+    return certifications.filter(cert => cert.category === activeCategory);
+  }, [certifications, activeCategory]);
+
+  // Define category tabs for filtering
+  const categoryTabs = useMemo(() => {
+    const allTab = { value: 'all', label: 'All Certifications', count: certifications.length };
+    const categoryTabs = categories.map(category => ({
+      value: category,
+      label: category,
+      count: certifications.filter(cert => cert.category === category).length
+    }));
+    
+    return [allTab, ...categoryTabs];
+  }, [certifications, categories]);
+
+  if (loading) {
+    return (
+      <Flex justifyContent="center" padding="2rem">
+        <Loader size="large" />
+      </Flex>
+    );
+  }
+
+  if (error) {
+    return (
+      <Text variation="error" textAlign="center" padding="2rem">
+        Error loading certifications: {error}
+      </Text>
+    );
+  }
+
+  if (certifications.length === 0) {
+    return (
+      <Text textAlign="center" padding="2rem">
+        No certifications to display yet.
+      </Text>
+    );
+  }
+
+  return (
+    <View className="flex flex-col min-h-screen">
+      <View paddingTop="xl" paddingBottom="medium">
+        <Container>
+          <View textAlign="center" marginBottom="large">
+            <Heading level={1} marginBottom="small">
+              My Certifications
+            </Heading>
+            <Text fontSize="medium" color="font.secondary" maxWidth="700px" margin="0 auto">
+              Professional certifications and qualifications that validate my expertise and knowledge
+              across various technologies and domains.
+            </Text>
+          </View>
+        </Container>
+      </View>
+      
+      <Container>
+        {/* Category Filter Tabs */}
+        {categories.length > 0 && (
+          <Flex 
+            justifyContent="center" 
+            marginBottom="large" 
+            gap="small"
+            wrap="wrap"
+          >
+            {categoryTabs.map((tab) => (
+              <Button
+                key={tab.value}
+                variation={activeCategory === tab.value ? 'primary' : 'link'}
+                onClick={() => setActiveCategory(tab.value)}
+                backgroundColor={activeCategory === tab.value ? 'var(--amplify-colors-primary-80)' : undefined}
+              >
+                {tab.label} ({tab.count})
+              </Button>
+            ))}
+          </Flex>
+        )}
+        
+        {/* Certifications Grid */}
+        <Grid
+          templateColumns={{ base: '1fr', medium: '1fr 1fr', large: '1fr 1fr 1fr' }}
+          gap="1.5rem"
+          marginBottom="2rem"
+        >
+          {filteredCertifications.map((certification) => (
+            <View 
+              key={certification.id} 
+              backgroundColor="background.secondary"
+              borderRadius="medium"
+              overflow="hidden"
+              boxShadow="medium"
+            >
+              {certification.badgeImageUrl && (
+                <View height="180px" padding="medium" backgroundColor="white" textAlign="center">
+                  <img 
+                    src={certification.badgeImageUrl} 
+                    alt={certification.title} 
+                    style={{ 
+                      maxHeight: '150px', 
+                      maxWidth: '100%', 
+                      objectFit: 'contain',
+                      margin: '0 auto'
+                    }}
+                  />
+                </View>
+              )}
+              
+              <View padding="large">
+                <Heading level={3} marginBottom="xxs">{certification.title}</Heading>
+                <Text fontWeight="semibold" fontSize="small" marginBottom="xs">
+                  {certification.issuer}
+                  {certification.credentialId && <Text as="span" color="font.tertiary"> • ID: {certification.credentialId}</Text>}
+                </Text>
+                
+                <Flex marginBottom="sm">
+                  <Text fontSize="xs" color="font.tertiary">
+                    Issued: {formatDate(certification.issueDate)}
+                    {certification.expirationDate && <> • Expires: {formatDate(certification.expirationDate)}</>}
+                  </Text>
+                </Flex>
+                
+                {certification.content && (
+                  <Text fontSize="small" marginBottom="medium">
+                    {certification.content.substring(0, 120)}
+                    {certification.content.length > 120 ? '...' : ''}
+                  </Text>
+                )}
+                
+                {certification.skills && certification.skills.length > 0 && (
+                  <View marginTop="medium">
+                    <Text fontSize="xs" fontWeight="bold" marginBottom="2xs">Skills:</Text>
+                    <Flex wrap="wrap" gap="xs">
+                      {certification.skills.map((skill, i) => (
+                        <View 
+                          key={i} 
+                          backgroundColor="background.tertiary" 
+                          padding="xs" 
+                          borderRadius="small"
+                        >
+                          <Text fontSize="xs">{skill}</Text>
+                        </View>
+                      ))}
+                    </Flex>
+                  </View>
+                )}
+                
+                {certification.credentialUrl && (
+                  <View marginTop="medium">
+                    <a 
+                      href={certification.credentialUrl} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      style={{ 
+                        color: 'var(--amplify-colors-font-interactive)', 
+                        textDecoration: 'none',
+                        fontSize: '0.9rem',
+                        display: 'block',
+                        textAlign: 'right'
+                      }}
+                    >
+                      View Credential →
+                    </a>
+                  </View>
+                )}
+              </View>
+            </View>
+          ))}
+        </Grid>
+        
+        {filteredCertifications.length === 0 && (
+          <Text textAlign="center" padding="2rem">
+            No certifications found in this category.
+          </Text>
+        )}
+      </Container>
+    </View>
+  );
+}

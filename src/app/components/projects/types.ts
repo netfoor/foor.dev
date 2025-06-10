@@ -1,4 +1,5 @@
 export interface ProjectItem {
+  id?: string;
   title: string;
   photoUrl?: string;
   description: string;

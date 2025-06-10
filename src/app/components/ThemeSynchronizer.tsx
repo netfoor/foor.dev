@@ -9,10 +9,7 @@ import { useAmplifyTheme } from './AmplifyWrapper';
  */
 export function ThemeSynchronizer() {
   const { colorMode } = useAmplifyTheme();
-
   useEffect(() => {
-    console.log('ThemeSynchronizer: Syncing theme mode:', colorMode);
-    
     // Apply the theme to the body element
     document.body.style.backgroundColor = 
       colorMode === 'dark' ? '#1a1a1a' : '#ffffff';
@@ -31,14 +28,10 @@ export function ThemeSynchronizer() {
     document.documentElement.style.setProperty(
       '--amplify-colors-font-primary', 
       colorMode === 'dark' ? '#ffffff' : '#000000'
-    );
-    document.documentElement.style.setProperty(
+    );    document.documentElement.style.setProperty(
       '--amplify-colors-font-secondary', 
       colorMode === 'dark' ? '#a0a0a0' : '#666666'
     );
-
-    // Log that synchronization is complete
-    console.log('ThemeSynchronizer: Theme variables synchronized');
   }, [colorMode]);
 
   return null;

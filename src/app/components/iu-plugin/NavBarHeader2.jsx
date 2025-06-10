@@ -6,6 +6,13 @@ import { getOverrideProps } from "@/utils/utils.js";
 import { Flex, Icon, Text, Button, View, useTheme } from '@aws-amplify/ui-react';
 import Link from 'next/link';
 import { ThemeToggle }  from "../../components/ThemeToggle";
+import dynamic from 'next/dynamic';
+
+// Dynamically import the AuthButtons component to avoid SSR issues with auth
+const AuthButtons = dynamic(
+  () => import('../AuthButtons'),
+  { ssr: false }
+);
 
 export default function NavBarHeader2(props) {
   const { overrides, ...rest } = props;
@@ -208,32 +215,21 @@ export default function NavBarHeader2(props) {
           ))}
         </Flex>
 
-        {/* Action Buttons */}
-        <Flex
+        {/* Action Buttons */}        <Flex
           gap="8px"
-          direction="row"          justifyContent="flex-start"
+          direction="row"
+          justifyContent="flex-start"
           alignItems="center"
           shrink={0}
           position="relative"
           {...getOverrideProps(overrides, "actions")}
-        >          <View marginRight="8px">
+        >
+          <View marginRight="8px">
             <ThemeToggle />
           </View>
-          <Button
-            shrink={0}
-            size={{
-              base: "small",
-              medium: "default"
-            }}
-            isDisabled={false}
-            variation="link"
-            display={{
-              base: "none",
-              small: "flex"
-            }}
-            {...getOverrideProps(overrides, "Button39493466")}
-          >
-            Log in          </Button>
+          
+          {/* Authentication Buttons */}
+          <AuthButtons />
           <Button
             shrink={0}
             size={{
@@ -320,28 +316,15 @@ export default function NavBarHeader2(props) {
             direction="column"
             gap="12px"
             marginTop="32px"
-            width="100%"
           >
-            <Button
-              variation="outline"
+            {/* Mobile Auth Buttons */}
+            <Flex
+              direction="column"
+              gap="12px"
               width="100%"
-              borderRadius="8px"
-              padding="12px"
-              fontSize="16px"
             >
-              Log in
-            </Button>
-            <Button
-              variation="primary"
-              width="100%"              borderRadius="8px"
-              padding="12px"
-              fontSize="16px"
-              style={{
-                background: "linear-gradient(135deg, rgba(64,170,191,1) 0%, rgba(100,210,231,1) 100%)"
-              }}
-            >
-              Sign up
-            </Button>
+              <AuthButtons />
+            </Flex>
           </Flex>
         </Flex>
       )}

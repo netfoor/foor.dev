@@ -1,32 +1,19 @@
-'use client';
+import { Suspense } from 'react';
+import ClientPage from './client-page';
+import LoadingFallback from '../components/LoadingFallback';
+import ClientLayout from '../components/ClientLayout';
 
-import { CertificationsSection, getCertifications } from '@/app/components/certifications';
-import { View, Heading, Text } from '@aws-amplify/ui-react';
-import Container from '@/app/components/Container';
+export const metadata = {
+  title: 'Certifications',
+  description: 'Professional certifications and qualifications',
+};
 
 export default function CertificationsPage() {
-  const allCertifications = getCertifications();
-
   return (
-    <View className="flex flex-col min-h-screen">
-      <View paddingTop="xl" paddingBottom="medium">
-        <Container>
-          <View textAlign="center" marginBottom="large">
-            <Heading level={1} marginBottom="small">
-              All Certifications & Training
-            </Heading>
-            <Text fontSize="medium" color="font.secondary" maxWidth="700px" margin="0 auto">
-              A comprehensive overview of my professional development journey through 
-              certified training programs and industry-recognized credentials.
-            </Text>
-          </View>
-        </Container>
-      </View>
-      
-      <CertificationsSection 
-        certifications={allCertifications}
-        showAll={true}
-      />
-    </View>
+    <ClientLayout>
+      <Suspense fallback={<LoadingFallback />}>
+        <ClientPage />
+      </Suspense>
+    </ClientLayout>
   );
 }

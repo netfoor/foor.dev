@@ -4,6 +4,17 @@
 import { ThemeProvider, Theme } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
 import { createContext, useContext, useEffect, useState } from 'react';
+import { Amplify } from 'aws-amplify';
+import amplifyconfig from '../../../amplify_outputs.json';
+
+// Configure Amplify globally
+if (typeof window !== 'undefined') {
+  try {
+    Amplify.configure(amplifyconfig, { ssr: true });
+  } catch (error) {
+    console.error('Error configuring Amplify:', error);
+  }
+}
 
 type ThemeContextType = {
   colorMode: 'light' | 'dark';
@@ -20,7 +31,6 @@ export const useAmplifyTheme = () => {
 
 export function AmplifyWrapper({ children }: { children: React.ReactNode }) {
   const [colorMode, setColorMode] = useState<'light' | 'dark'>('light');
-
   useEffect(() => {
     // Update the debug info display
     const updateDebugInfo = () => {
@@ -29,73 +39,47 @@ export function AmplifyWrapper({ children }: { children: React.ReactNode }) {
         debugElement.textContent = `Theme: ${colorMode} | HTML classes: ${document.documentElement.className} | data-theme: ${document.documentElement.getAttribute('data-theme')}`;
       }
     };
-
-    // Debug logs for initial theme setup
-    console.log('AmplifyWrapper: Initializing theme');
     
     const saved = localStorage.getItem('theme');
-    console.log('AmplifyWrapper: Saved theme from localStorage:', saved);
-    
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    console.log('AmplifyWrapper: System prefers dark mode:', prefersDark);
     
     const mode = saved === 'dark' || (!saved && prefersDark) ? 'dark' : 'light';
-    console.log('AmplifyWrapper: Setting initial theme mode to:', mode);
     
     setColorMode(mode);
     
     // Apply theme to document and body
     document.documentElement.setAttribute('data-theme', mode);
-    document.body.setAttribute('data-amplify-color-mode', mode);
-    document.body.style.setProperty('--amplify-colors-background-primary', mode === 'dark' ? '#1a1a1a' : '#ffffff');
+    document.body.setAttribute('data-amplify-color-mode', mode);    document.body.style.setProperty('--amplify-colors-background-primary', mode === 'dark' ? '#1a1a1a' : '#ffffff');
     document.body.style.setProperty('--amplify-colors-font-primary', mode === 'dark' ? '#ffffff' : '#000000');
-    
-    console.log('AmplifyWrapper: Set data-theme attribute to:', mode);
     
     if (mode === 'dark') {
       document.documentElement.classList.add('dark');
       document.body.classList.add('amplify-dark-mode');
-      console.log('AmplifyWrapper: Added dark class to HTML element');
     } else {
       document.documentElement.classList.remove('dark');
       document.body.classList.remove('amplify-dark-mode');
-      console.log('AmplifyWrapper: Removed dark class from HTML element');
     }
-    
-    // Log current document classes for debugging
-    console.log('AmplifyWrapper: HTML element classes:', document.documentElement.className);
     
     updateDebugInfo();
   }, [colorMode]);
-
   const toggleTheme = () => {
     const newMode = colorMode === 'dark' ? 'light' : 'dark';
-    console.log('AmplifyWrapper: Toggle theme from', colorMode, 'to', newMode);
     
     setColorMode(newMode);
     localStorage.setItem('theme', newMode);
-    console.log('AmplifyWrapper: Saved new theme to localStorage:', newMode);
     
     // Apply theme to document and body
     document.documentElement.setAttribute('data-theme', newMode);
     document.body.setAttribute('data-amplify-color-mode', newMode);
     document.body.style.setProperty('--amplify-colors-background-primary', newMode === 'dark' ? '#1a1a1a' : '#ffffff');
     document.body.style.setProperty('--amplify-colors-font-primary', newMode === 'dark' ? '#ffffff' : '#000000');
-    
-    console.log('AmplifyWrapper: Set data-theme attribute to:', newMode);
-    
-    if (newMode === 'dark') {
+      if (newMode === 'dark') {
       document.documentElement.classList.add('dark');
       document.body.classList.add('amplify-dark-mode');
-      console.log('AmplifyWrapper: Added dark class to HTML element');
     } else {
       document.documentElement.classList.remove('dark');
       document.body.classList.remove('amplify-dark-mode');
-      console.log('AmplifyWrapper: Removed dark class from HTML element');
     }
-    
-    // Log current document classes for debugging
-    console.log('AmplifyWrapper: HTML element classes after toggle:', document.documentElement.className);
     
     // Update debug info
     const debugElement = document.getElementById('theme-debug');
@@ -145,8 +129,7 @@ export function AmplifyWrapper({ children }: { children: React.ReactNode }) {
       },
     ],
   };
-  
-  console.log('AmplifyWrapper: Current theme configuration:', {
+    console.log('AmplifyWrapper: Current theme configuration:', {
     colorMode,
     primaryBackground: colorMode === 'dark' ? '#1a1a1a' : '#ffffff',
     secondaryBackground: colorMode === 'dark' ? '#2a2a2a' : '#f5f5f5',

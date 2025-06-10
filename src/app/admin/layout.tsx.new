@@ -1,0 +1,78 @@
+"use client";
+import { useEffect } from 'react';
+import { signInWithRedirect, signOut } from 'aws-amplify/auth';
+import { Button, Heading, Text, View } from '@aws-amplify/ui-react';
+import { useAuth } from '../../auth/AuthContext';
+import { useRouter } from 'next/navigation';
+
+export default function AdminLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const { user, loading, userInfo } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && !user) {
+      // Redirect to login if not authenticated
+      signInWithRedirect({
+        customState: JSON.stringify({ redirectUri: '/admin' })
+      }).catch(err => {
+        console.error('Error redirecting to sign-in:', err);
+      });
+    }
+  }, [loading, user]);
+
+  const handleSignOut = async () => {
+    try {
+      await signOut({ global: true });
+      router.push('/');
+    } catch (error) {
+      console.error('Error signing out: ', error);
+    }
+  };
+
+  if (loading) {
+    return (
+      <View padding="2rem" textAlign="center">
+        <Heading level={3}>Loading...</Heading>
+      </View>
+    );
+  }
+
+  if (!user) {
+    return (
+      <View padding="2rem" textAlign="center">
+        <Heading level={3}>Redirecting to sign-in...</Heading>
+      </View>
+    );
+  }
+
+  const userDisplayName = userInfo?.name || userInfo?.email || userInfo?.username || 'User';
+
+  return (
+    <main>
+      <View
+        backgroundColor="var(--amplify-colors-background-primary)"
+        padding="1rem"
+        style={{
+          borderBottom: '1px solid var(--amplify-colors-border-primary)',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }}
+      >
+        <Heading level={4} margin="0">Admin Dashboard</Heading>
+        <View style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <Text>Welcome, {userDisplayName}</Text>
+          <Button variation="primary" onClick={handleSignOut}>Sign Out</Button>
+        </View>
+      </View>
+      
+      <View padding="1rem">
+        {children}
+      </View>
+    </main>
+  );
+}

@@ -1,8 +1,7 @@
-
 import { Suspense } from 'react';
+import { Flex, Loader } from '@aws-amplify/ui-react';
 import RecognitionsClient from './client-page';
-import LoadingFallback from '../components/LoadingFallback';
-import ClientLayout from '../components/ClientLayout';
+import Container from '../components/Container';
 
 export const metadata = {
   title: 'Recognitions & Awards',
@@ -11,10 +10,14 @@ export const metadata = {
 
 export default function RecognitionsPage() {
   return (
-    <ClientLayout>
-      <Suspense fallback={<LoadingFallback />}>
+    <Container>
+      <Suspense fallback={
+        <Flex justifyContent="center" padding="2rem">
+          <Loader size="large" />
+        </Flex>
+      }>
         <RecognitionsClient />
       </Suspense>
-    </ClientLayout>
+    </Container>
   );
 }

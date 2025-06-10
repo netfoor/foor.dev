@@ -1,13 +1,18 @@
 import { Suspense } from 'react';
-import ProjectsClient from './client-page-new';
+import EducationClient from './client-page-new';
 import LoadingFallback from '../components/LoadingFallback';
 import ClientLayout from '../components/ClientLayout';
 
-export default function ProjectsPage() {
+export const metadata = {
+  title: 'Education',
+  description: 'View my educational background and achievements',
+};
+
+export default function EducationPage() {
   return (
     <ClientLayout>
       <Suspense fallback={<LoadingFallback />}>
-        <ProjectsClient />
+        <EducationClient />
       </Suspense>
     </ClientLayout>
   );

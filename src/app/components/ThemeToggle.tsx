@@ -5,17 +5,12 @@ import { useAmplifyTheme } from './AmplifyWrapper';
 
 export function ThemeToggle() {
   const { colorMode, toggleTheme } = useAmplifyTheme();
-
-  console.log('ThemeToggle: Current colorMode:', colorMode);
   const isDark = colorMode === 'dark';
-  console.log('ThemeToggle: isDark:', isDark);
 
   return (
     <button
       onClick={() => {
-        console.log('ThemeToggle: Button clicked, current mode:', colorMode);
         toggleTheme();
-        console.log('ThemeToggle: toggleTheme function called');
       }}
       className="p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
       aria-label={isDark ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}

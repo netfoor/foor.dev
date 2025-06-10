@@ -1,15 +1,14 @@
 import { type ClientSchema, a, defineData } from '@aws-amplify/backend';
 
-
 const schema = a.schema({
   Certifications: a
     .model({
       title: a.string().required(),
-      issuer: a.string().required(),
+      issuer: a.string().required(), 
       credentialId: a.string(),
       issueDate: a.date().required(),
       expirationDate: a.date(),
-      badgeImageUrl: a.url(),
+      badgeImageUrl: a.string(),
       content: a.string(),
       skills: a.string().array(),
       categoty: a.string().required(),
@@ -22,10 +21,10 @@ const schema = a.schema({
   Projects: a
     .model({
       title: a.string().required(),
-      photoUrl: a.url(),
+      photoUrl: a.string(),
       description: a.string().required(),
       place: a.string().required(),
-      projectUrl: a.url(),
+      projectUrl: a.string(),
       skills: a.string().array(),
       gallery: a.string().array(),
       categories: a.enum(['Hackathon', 'Research', 'Professional', 'Academic', 'Personal']),
@@ -42,8 +41,8 @@ const schema = a.schema({
       issuer: a.string().required(),
       issueDate: a.date().required(),
       credentialId: a.string(),
-      issuerUrl: a.url(),
-      badgeImageUrl: a.url(),
+      issuerUrl: a.string(),
+      badgeImageUrl: a.string(),
     })
     .authorization((allow) => [
       allow.guest().to(['read']),
@@ -60,15 +59,23 @@ const schema = a.schema({
       description: a.string(),
       location: a.string(),
       recognition: a.string().array(),
-      CertificateURL: a.url(),
+      CertificateURL: a.string(),
       Photos: a.string().array(),
-    }), 
+    })
+    .authorization((allow) => [
+      allow.guest().to(['read']),
+      allow.owner()
+    ]), 
 
     Languages: a
     .model({
       language: a.string().required(),
       proficiency: a.enum(['Basic', 'Conversational', 'Fluent', 'Native']),
-    }), 
+    })
+    .authorization((allow) => [
+      allow.guest().to(['read']),
+      allow.owner()
+    ]),
 
     Experiences: a
     .model({
@@ -80,22 +87,26 @@ const schema = a.schema({
       location: a.string(),
       skills: a.string().array(),
       activities: a.string().array(),
-    }),
+    })
+    .authorization((allow) => [
+      allow.guest().to(['read']),
+      allow.owner()
+    ]),
 
     SocialPublications: a
     .model({
       title: a.string().required(),
-      source: a.enum([]),
-      platform: a.enum(['LinkedIn', 'Twitter', 'GitHub', 'Blog', 'Youtube']),
-      image: a.url(),
+      source: a.enum(['LinkedIn', 'Twitter', 'GitHub', 'Blog', 'Youtube']),
+      image: a.string(),
       description: a.string().required(),
       publicationDate: a.date().required(),
       type: a.enum(['Article', 'Blog', 'Video', 'Podcast', 'Book', 'Course', 'Conference', 'Presentation', 'Research', 'Workshop', 'Other']),
-      publicationUrl: a.url().required()
-    }), 
-
-
-
+      publicationUrl: a.string().required()
+    })
+    .authorization((allow) => [
+      allow.guest().to(['read']),
+      allow.owner()
+    ])
 });
 
 export type Schema = ClientSchema<typeof schema>;
