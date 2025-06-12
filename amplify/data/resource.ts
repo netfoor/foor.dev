@@ -1,7 +1,6 @@
 import { type ClientSchema, a, defineData } from '@aws-amplify/backend';
 
-const schema = a.schema({
-  Certifications: a
+const schema = a.schema({  Certifications: a
     .model({
       title: a.string().required(),
       issuer: a.string().required(), 
@@ -12,10 +11,12 @@ const schema = a.schema({
       content: a.string(),
       skills: a.string().array(),
       categoty: a.string().required(),
+      owner: a.string(),  // Explicitly add owner field
     })
     .authorization((allow) => [
       allow.guest().to(['read']),
-      allow.owner()
+      allow.authenticated().to(['create', 'read', 'update', 'delete']), 
+      allow.owner().to(['create', 'read', 'update', 'delete'])
     ]),
 
   Projects: a

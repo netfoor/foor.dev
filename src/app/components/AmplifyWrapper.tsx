@@ -129,11 +129,6 @@ export function AmplifyWrapper({ children }: { children: React.ReactNode }) {
       },
     ],
   };
-    console.log('AmplifyWrapper: Current theme configuration:', {
-    colorMode,
-    primaryBackground: colorMode === 'dark' ? '#1a1a1a' : '#ffffff',
-    secondaryBackground: colorMode === 'dark' ? '#2a2a2a' : '#f5f5f5',
-  });
 
   return (
     <ThemeContext.Provider value={{ colorMode, toggleTheme }}>

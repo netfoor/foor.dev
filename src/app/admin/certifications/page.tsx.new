@@ -142,8 +142,9 @@ export default function CertificationsAdmin() {
       if (selectedFile) {
         badgeImageUrl = await handleFileUpload(selectedFile);
       }
-        // Prepare certification data
-      let certificationData: any = {
+      
+      // Prepare certification data
+      let certificationData = {
         ...formData,
         badgeImageUrl
       };
@@ -154,7 +155,10 @@ export default function CertificationsAdmin() {
         console.log('Current user:', currentUser);
         
         // Add owner field to certification data
-        certificationData.owner = currentUser.userId; // Use userId as owner
+        certificationData = {
+          ...certificationData,
+          owner: currentUser.userId // Use userId as owner
+        };
       } catch (userError) {
         console.error("Error getting current user:", userError);
         // Continue without owner - but this might cause authorization issues

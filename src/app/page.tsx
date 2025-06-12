@@ -12,7 +12,8 @@ import AboutSection from '@/app/components/AboutSection';
 export default function Home() {
   const featuredCertifications = getFeaturedCertifications(3);
   const featuredProjects = getFeaturedProjects(4);
-  return (    <View className="flex flex-col min-h-screen">
+  return (    
+      <View className="flex flex-col min-h-screen">
       <Hero />
       <AboutSection />
       <SkillsSection />
