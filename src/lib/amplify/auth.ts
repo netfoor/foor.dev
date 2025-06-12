@@ -47,30 +47,21 @@ export interface SignInOptions {
  */
 export async function getCurrentUser(): Promise<CurrentUserResponse> {
   try {
-    console.log('Obteniendo usuario actual...');
-    
     // Intentar obtener el usuario actual
     const authSession = await fetchAuthSession();
-    console.log('Sesión de autenticación obtenida:', {
-      hasTokens: !!authSession.tokens
-    });
     
     if (!authSession.tokens) {
-      console.log('No se encontraron tokens en la sesión');
       throw new Error('No authenticated user');
     }
     
     try {
       const user = await amplifyGetCurrentUser();
-      console.log('Usuario obtenido:', !!user);
       
       try {
         const attributes = await fetchUserAttributes();
-        console.log('Atributos obtenidos:', Object.keys(attributes));
         
         // Verificar si el usuario es administrador
         const isAdmin = checkIsAdmin(authSession.tokens);
-        console.log('¿Es administrador?:', isAdmin);
         
         return {
           user,
@@ -80,8 +71,6 @@ export async function getCurrentUser(): Promise<CurrentUserResponse> {
           attributes
         };
       } catch (attributesError) {
-        console.error('Error obteniendo atributos:', attributesError);
-        
         // Si no podemos obtener atributos pero tenemos el usuario, seguimos considerándolo autenticado
         return {
           user,
@@ -91,8 +80,6 @@ export async function getCurrentUser(): Promise<CurrentUserResponse> {
         };
       }
     } catch (userError) {
-      console.error('Error obteniendo usuario, pero hay tokens:', userError);
-      
       // Si tenemos tokens pero no podemos obtener el usuario, consideramos que hay un problema de sesión
       return {
         user: null,
@@ -102,7 +89,6 @@ export async function getCurrentUser(): Promise<CurrentUserResponse> {
       };
     }
   } catch (error) {
-    console.log('Error obteniendo usuario actual:', error);
     return {
       user: null,
       error: error as Error,
@@ -122,14 +108,13 @@ export async function signInWithHostedUI(options?: SignInOptions): Promise<void>
     try {
       const currentSession = await fetchAuthSession();
       if (currentSession.tokens) {
-        console.log('Usuario ya está autenticado, evitando redirección innecesaria a Cognito');
         // No redirigir a Cognito si ya está autenticado
         throw new UserAlreadyAuthenticatedException();
       }
     } catch (sessionError) {
       // Ignorar errores específicos de sesión no encontrada, continuar con el flujo de login
       if (!(sessionError instanceof UserAlreadyAuthenticatedException)) {
-        console.log('Error verificando sesión antes de login:', sessionError);
+        // Continuar con el flujo de login
       } else {
         throw sessionError; // Re-lanzar error de usuario ya autenticado
       }
@@ -145,12 +130,6 @@ export async function signInWithHostedUI(options?: SignInOptions): Promise<void>
     const redirectUri = options?.redirectUri || 
       `${typeof window !== 'undefined' ? window.location.origin : ''}/auth/callback`;
     
-    console.log('Iniciando sesión con Hosted UI:', {
-      redirectUri,
-      customState,
-      currentPath
-    });
-    
     // Guardar la URL de retorno en localStorage para recuperarla después del login
     if (typeof window !== 'undefined') {
       // Si estamos en la página de login, usar el returnUrl de la URL si existe
@@ -159,13 +138,11 @@ export async function signInWithHostedUI(options?: SignInOptions): Promise<void>
         const returnUrl = urlParams.get('returnUrl');
         if (returnUrl) {
           localStorage.setItem('returnUrl', decodeURIComponent(returnUrl));
-          console.log('Guardando returnUrl desde URL:', decodeURIComponent(returnUrl));
         } else {
           localStorage.setItem('returnUrl', '/admin');
         }
       } else {
         localStorage.setItem('returnUrl', customState);
-        console.log('Guardando customState como returnUrl:', customState);
       }
     }
     
@@ -174,7 +151,6 @@ export async function signInWithHostedUI(options?: SignInOptions): Promise<void>
       provider: { custom: 'Cognito' }
     });
   } catch (error) {
-    console.error('Error al iniciar sesión con Hosted UI:', error);
     throw error;
   }
 }
@@ -187,9 +163,7 @@ export async function signInWithHostedUI(options?: SignInOptions): Promise<void>
 export async function signOut(global: boolean = false): Promise<void> {
   try {
     await amplifySignOut(global ? { global: true } : undefined);
-    console.log('Sesión cerrada correctamente');
   } catch (error) {
-    console.error('Error al cerrar sesión:', error);
     throw error;
   }
 }
@@ -208,7 +182,6 @@ export function checkIsAdmin(tokens: any): boolean {
     const parts = tokenString.split('.');
     
     if (parts.length !== 3) {
-      console.error('Token inválido: no tiene el formato JWT esperado');
       return false;
     }
     
@@ -224,13 +197,8 @@ export function checkIsAdmin(tokens: any): boolean {
       return true;
     }
     
-    // Si no hay grupos o no pertenece a ADMINS, retornar false
-    console.log('Usuario no pertenece al grupo ADMINS:', 
-      payload['cognito:groups'] || 'No tiene grupos');
-    
     return false;
   } catch (error) {
-    console.error('Error verificando permisos de administrador:', error);
     return false;
   }
 }
@@ -245,19 +213,13 @@ export async function verifyTokens(): Promise<{
   error?: Error;
 }> {
   try {
-    console.log('Verificando tokens...');
-    
     // Intentar recuperar sesión existente
     const authSession = await fetchAuthSession({
       forceRefresh: false // Primero intentar usar sesión en caché
     });
     
-    console.log('Sesión de autenticación obtenida:', !!authSession);
-    
     // Si no hay tokens o están expirados, intentar refrescar
     if (!authSession.tokens || isTokenExpired(authSession.tokens)) {
-      console.log('Tokens no válidos o expirados, intentando refrescar...');
-      
       try {
         // Intentar refrescar tokens explícitamente
         const refreshedSession = await fetchAuthSession({
@@ -265,14 +227,12 @@ export async function verifyTokens(): Promise<{
         });
         
         if (!refreshedSession.tokens) {
-          console.log('No se pudieron refrescar los tokens');
           return {
             isValid: false,
             error: new Error('No authenticated session after refresh')
           };
         }
         
-        console.log('Tokens refrescados exitosamente');
         return {
           isValid: true,
           tokens: {
@@ -281,7 +241,6 @@ export async function verifyTokens(): Promise<{
           }
         };
       } catch (refreshError) {
-        console.error('Error refrescando tokens:', refreshError);
         return {
           isValid: false,
           error: refreshError as Error
@@ -291,11 +250,6 @@ export async function verifyTokens(): Promise<{
     
     // Si hay tokens válidos
     if (authSession.tokens) {
-      console.log('Tokens encontrados y válidos:', {
-        hasIdToken: !!authSession.tokens.idToken,
-        hasAccessToken: !!authSession.tokens.accessToken,
-      });
-      
       return {
         isValid: true,
         tokens: {
@@ -310,7 +264,6 @@ export async function verifyTokens(): Promise<{
       error: new Error('No authenticated session')
     };
   } catch (error) {
-    console.error('Error verificando tokens:', error);
     return {
       isValid: false,
       error: error as Error
@@ -343,15 +296,8 @@ function isTokenExpired(tokens: any): boolean {
     
     // Si el token expira en menos de 5 minutos, considerarlo expirado
     const expiresInMs = expirationTime - currentTime;
-    const isExpired = expiresInMs < 5 * 60 * 1000;
-    
-    if (isExpired) {
-      console.log('Token expirado o próximo a expirar');
-    }
-    
-    return isExpired;
+    return expiresInMs < 5 * 60 * 1000;
   } catch (error) {
-    console.error('Error verificando expiración del token:', error);
     return true;
   }
 }

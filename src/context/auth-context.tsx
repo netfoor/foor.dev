@@ -60,14 +60,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const refreshUser = async () => {
     try {
       setIsLoading(true);
-      console.log('Refrescando información del usuario...');
       const response = await getCurrentUser();
-      
-      console.log('Respuesta de getCurrentUser:', {
-        isAuthenticated: response.isAuthenticated,
-        isAdmin: response.isAdmin,
-        hasUser: !!response.user
-      });
       
       setUser(response.user);
       setIsAuthenticated(response.isAuthenticated);
@@ -75,7 +68,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setUserAttributes(response.attributes || null);
       setError(null);
     } catch (err) {
-      console.error('Error al refrescar el usuario:', err);
+      console.error('Error al refrescar el usuario');
       // No cambiar el estado si ya estaba autenticado (podría ser un error temporal)
       if (!isAuthenticated) {
         setUser(null);
@@ -96,7 +89,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     // También verificar al obtener el foco de la ventana (al volver a la pestaña)
     const handleFocus = () => {
-      console.log('Ventana enfocada, verificando sesión de autenticación...');
       refreshUser();
     };
 
@@ -113,8 +105,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
    */
   useEffect(() => {
     const unsubscribe = createAuthListener((event, payload) => {
-      console.log(`Auth event: ${event}`, payload);
-      
       switch (event) {
         case 'signedIn':
           // Usuario inició sesión
@@ -142,12 +132,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
    */
   const login = async (redirectUri?: string) => {
     try {
-      console.log('Iniciando proceso de login...');
-      
       // Si ya está autenticado, no es necesario iniciar sesión de nuevo
       const authResult = await getCurrentUser();
       if (authResult.isAuthenticated) {
-        console.log('Usuario ya está autenticado, evitando redirección a Cognito');
         return; // La función LoginButton manejará la redirección
       }
       
@@ -161,9 +148,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
           err.name !== 'UserAlreadyAuthenticatedException' && 
           !err.message?.includes('already authenticated')) {
         setError(err as Error);
-        console.error('Error al iniciar sesión:', err);
-      } else {
-        console.log('Usuario ya autenticado, no es necesario iniciar sesión');
+        console.error('Error al iniciar sesión');
       }
       throw err; // Re-lanzar para que LoginButton pueda manejarlo
     }
