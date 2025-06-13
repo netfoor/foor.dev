@@ -1,0 +1,33 @@
+{
+  "title": "User Profile",
+  "edit_profile": "Edit Profile",
+  "save_changes": "Save Changes",
+  "personal_information": "Personal Information",
+  "account_settings": "Account Settings",
+  "security": "Security",
+  "preferences": "Preferences",
+  "language_preference": "Language Preference",
+  "timezone": "Timezone",
+  "notifications": "Notifications",
+  "email_notifications": "Email Notifications",
+  "push_notifications": "Push Notifications",
+  "profile_updated": "Profile updated successfully",
+  "update_error": "Error updating profile",
+  "fields": {
+    "first_name": "First Name",
+    "last_name": "Last Name", 
+    "email": "Email Address",
+    "phone": "Phone Number",
+    "bio": "Biography",
+    "location": "Location",
+    "website": "Website",
+    "company": "Company",
+    "job_title": "Job Title"
+  },
+  "actions": {
+    "change_password": "Change Password",
+    "delete_account": "Delete Account",
+    "export_data": "Export Data",
+    "download_data": "Download My Data"
+  }
+}

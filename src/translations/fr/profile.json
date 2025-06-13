@@ -1,0 +1,33 @@
+{
+  "title": "Profil Utilisateur",
+  "edit_profile": "Modifier le Profil",
+  "save_changes": "Enregistrer les Modifications",
+  "personal_information": "Informations Personnelles",
+  "account_settings": "Paramètres du Compte",
+  "security": "Sécurité",
+  "preferences": "Préférences",
+  "language_preference": "Préférence de Langue",
+  "timezone": "Fuseau Horaire",
+  "notifications": "Notifications",
+  "email_notifications": "Notifications Email",
+  "push_notifications": "Notifications Push",
+  "profile_updated": "Profil mis à jour avec succès",
+  "update_error": "Erreur lors de la mise à jour du profil",
+  "fields": {
+    "first_name": "Prénom",
+    "last_name": "Nom",
+    "email": "Adresse Email",
+    "phone": "Numéro de Téléphone",
+    "bio": "Biographie",
+    "location": "Localisation",
+    "website": "Site Web",
+    "company": "Entreprise",
+    "job_title": "Poste"
+  },
+  "actions": {
+    "change_password": "Changer le Mot de Passe",
+    "delete_account": "Supprimer le Compte",
+    "export_data": "Exporter les Données",
+    "download_data": "Télécharger Mes Données"
+  }
+}

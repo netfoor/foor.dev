@@ -1,0 +1,125 @@
+{
+  "title": "Welcome to Foor.dev",
+  "subtitle": "Your modern web development platform",
+  "description": "Build amazing applications with the latest technologies and best practices.",
+  "hero": {
+    "headline": "Build the Future of Web",
+    "subheadline": "Powerful tools and resources for modern developers",
+    "cta_primary": "Get Started",
+    "cta_secondary": "Learn More",
+    "watch_demo": "Watch Demo"
+  },
+  "features": {
+    "title": "Why Choose Foor.dev?",
+    "subtitle": "Everything you need to build modern applications",
+    "feature_1": {
+      "title": "Fast Development",
+      "description": "Accelerate your development process with our optimized tools and workflows."
+    },
+    "feature_2": {
+      "title": "Modern Stack",
+      "description": "Built with the latest technologies including Next.js, TypeScript, and AWS Amplify."
+    },
+    "feature_3": {
+      "title": "Scalable Architecture",
+      "description": "Design patterns and infrastructure that grow with your application."
+    },
+    "feature_4": {
+      "title": "Developer Experience",
+      "description": "Intuitive tools and comprehensive documentation for seamless development."
+    },
+    "feature_5": {
+      "title": "Security First",
+      "description": "Built-in security features and best practices to protect your applications."
+    },
+    "feature_6": {
+      "title": "Global Scale",
+      "description": "Deploy and scale your applications worldwide with confidence."
+    }
+  },
+  "stats": {
+    "title": "Trusted by Developers Worldwide",
+    "developers": "{{count}} Developers",
+    "projects": "{{count}} Projects",
+    "countries": "{{count}} Countries",
+    "uptime": "{{percentage}}% Uptime"
+  },
+  "testimonials": {
+    "title": "What Developers Say",
+    "subtitle": "Hear from the community using Foor.dev",
+    "testimonial_1": {
+      "quote": "Foor.dev has transformed how we build and deploy applications. The developer experience is unmatched.",
+      "author": "Sarah Chen",
+      "role": "Senior Frontend Developer",
+      "company": "TechCorp"
+    },
+    "testimonial_2": {
+      "quote": "The scalability and performance we get with Foor.dev is incredible. Our team can focus on building features instead of infrastructure.",
+      "author": "Miguel Rodriguez",
+      "role": "Lead Developer",
+      "company": "StartupXYZ"
+    },
+    "testimonial_3": {
+      "quote": "From development to production, Foor.dev provides everything we need. The documentation is excellent too.",
+      "author": "Emma Thompson",
+      "role": "Full Stack Developer",
+      "company": "InnovateLab"
+    }
+  },
+  "cta_section": {
+    "title": "Ready to Get Started?",
+    "subtitle": "Join thousands of developers building the future with Foor.dev",
+    "primary_button": "Start Building",
+    "secondary_button": "View Documentation",
+    "no_credit_card": "No credit card required",
+    "free_tier": "Free tier available"
+  },
+  "newsletter": {
+    "title": "Stay Updated",
+    "subtitle": "Get the latest updates, tips, and resources delivered to your inbox",
+    "placeholder": "Enter your email address",
+    "subscribe": "Subscribe",
+    "success": "Thanks for subscribing!",
+    "error": "Please enter a valid email address",
+    "privacy_notice": "We respect your privacy. Unsubscribe at any time."
+  },
+  "navigation": {
+    "home": "Home",
+    "features": "Features",
+    "pricing": "Pricing",
+    "docs": "Documentation",
+    "blog": "Blog",
+    "community": "Community",
+    "support": "Support",
+    "login": "Login",
+    "sign_up": "Sign Up"
+  },
+  "footer": {
+    "product": "Product",
+    "features": "Features",
+    "pricing": "Pricing",
+    "roadmap": "Roadmap",
+    "changelog": "Changelog",
+    "developers": "Developers",
+    "documentation": "Documentation",
+    "api_reference": "API Reference",
+    "guides": "Guides",
+    "examples": "Examples",
+    "community": "Community",
+    "discord": "Discord",
+    "github": "GitHub",
+    "twitter": "Twitter",
+    "blog": "Blog",
+    "company": "Company",
+    "about": "About Us",
+    "careers": "Careers",
+    "press": "Press",
+    "contact": "Contact",
+    "legal": "Legal",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "cookies": "Cookie Policy",
+    "copyright": "© {{year}} Foor.dev. All rights reserved.",
+    "made_with": "Made with ❤️ for developers"
+  }
+}

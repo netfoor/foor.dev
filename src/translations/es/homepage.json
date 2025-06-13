@@ -1,0 +1,125 @@
+{
+  "title": "Bienvenido a Foor.dev",
+  "subtitle": "Tu plataforma moderna de desarrollo web",
+  "description": "Construye aplicaciones increíbles con las últimas tecnologías y mejores prácticas.",
+  "hero": {
+    "headline": "Construye el Futuro de la Web",
+    "subheadline": "Herramientas poderosas y recursos para desarrolladores modernos",
+    "cta_primary": "Comenzar",
+    "cta_secondary": "Aprender Más",
+    "watch_demo": "Ver Demo"
+  },
+  "features": {
+    "title": "¿Por qué elegir Foor.dev?",
+    "subtitle": "Todo lo que necesitas para construir aplicaciones modernas",
+    "feature_1": {
+      "title": "Desarrollo Rápido",
+      "description": "Acelera tu proceso de desarrollo con nuestras herramientas y flujos de trabajo optimizados."
+    },
+    "feature_2": {
+      "title": "Stack Moderno",
+      "description": "Construido con las últimas tecnologías incluyendo Next.js, TypeScript y AWS Amplify."
+    },
+    "feature_3": {
+      "title": "Arquitectura Escalable",
+      "description": "Patrones de diseño e infraestructura que crecen con tu aplicación."
+    },
+    "feature_4": {
+      "title": "Experiencia de Desarrollador",
+      "description": "Herramientas intuitivas y documentación completa para un desarrollo sin problemas."
+    },
+    "feature_5": {
+      "title": "Seguridad Primero",
+      "description": "Características de seguridad integradas y mejores prácticas para proteger tus aplicaciones."
+    },
+    "feature_6": {
+      "title": "Escala Global",
+      "description": "Despliega y escala tus aplicaciones mundialmente con confianza."
+    }
+  },
+  "stats": {
+    "title": "Confiado por Desarrolladores en Todo el Mundo",
+    "developers": "{{count}} Desarrolladores",
+    "projects": "{{count}} Proyectos",
+    "countries": "{{count}} Países",
+    "uptime": "{{percentage}}% Tiempo Activo"
+  },
+  "testimonials": {
+    "title": "Lo que Dicen los Desarrolladores",
+    "subtitle": "Escucha de la comunidad que usa Foor.dev",
+    "testimonial_1": {
+      "quote": "Foor.dev ha transformado cómo construimos y desplegamos aplicaciones. La experiencia de desarrollador es inigualable.",
+      "author": "Sarah Chen",
+      "role": "Desarrolladora Frontend Senior",
+      "company": "TechCorp"
+    },
+    "testimonial_2": {
+      "quote": "La escalabilidad y rendimiento que obtenemos con Foor.dev es increíble. Nuestro equipo puede enfocarse en construir características en lugar de infraestructura.",
+      "author": "Miguel Rodriguez",
+      "role": "Desarrollador Líder",
+      "company": "StartupXYZ"
+    },
+    "testimonial_3": {
+      "quote": "Desde desarrollo hasta producción, Foor.dev proporciona todo lo que necesitamos. La documentación también es excelente.",
+      "author": "Emma Thompson",
+      "role": "Desarrolladora Full Stack",
+      "company": "InnovateLab"
+    }
+  },
+  "cta_section": {
+    "title": "¿Listo para Comenzar?",
+    "subtitle": "Únete a miles de desarrolladores construyendo el futuro con Foor.dev",
+    "primary_button": "Comenzar a Construir",
+    "secondary_button": "Ver Documentación",
+    "no_credit_card": "No se requiere tarjeta de crédito",
+    "free_tier": "Nivel gratuito disponible"
+  },
+  "newsletter": {
+    "title": "Mantente Actualizado",
+    "subtitle": "Recibe las últimas actualizaciones, consejos y recursos en tu bandeja de entrada",
+    "placeholder": "Ingresa tu correo electrónico",
+    "subscribe": "Suscribirse",
+    "success": "¡Gracias por suscribirte!",
+    "error": "Por favor ingresa un correo válido",
+    "privacy_notice": "Respetamos tu privacidad. Cancela la suscripción en cualquier momento."
+  },
+  "navigation": {
+    "home": "Inicio",
+    "features": "Características",
+    "pricing": "Precios",
+    "docs": "Documentación",
+    "blog": "Blog",
+    "community": "Comunidad",
+    "support": "Soporte",
+    "login": "Iniciar Sesión",
+    "sign_up": "Registrarse"
+  },
+  "footer": {
+    "product": "Producto",
+    "features": "Características",
+    "pricing": "Precios",
+    "roadmap": "Hoja de Ruta",
+    "changelog": "Registro de Cambios",
+    "developers": "Desarrolladores",
+    "documentation": "Documentación",
+    "api_reference": "Referencia de API",
+    "guides": "Guías",
+    "examples": "Ejemplos",
+    "community": "Comunidad",
+    "discord": "Discord",
+    "github": "GitHub",
+    "twitter": "Twitter",
+    "blog": "Blog",
+    "company": "Empresa",
+    "about": "Acerca de",
+    "careers": "Carreras",
+    "press": "Prensa",
+    "contact": "Contacto",
+    "legal": "Legal",
+    "privacy": "Política de Privacidad",
+    "terms": "Términos de Servicio",
+    "cookies": "Política de Cookies",
+    "copyright": "© {{year}} Foor.dev. Todos los derechos reservados.",
+    "made_with": "Hecho con ❤️ para desarrolladores"
+  }
+}

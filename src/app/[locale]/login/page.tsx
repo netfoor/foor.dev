@@ -1,19 +1,30 @@
 'use client';
 
 import { useAuth } from '@/context/auth-context';
-import { LoginButton } from '../components/auth/LoginButton';
+import { LoginButton } from '../../components/auth/LoginButton';
 import { useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useTranslation } from '@/lib/i18n/client';
+import type { SupportedLocale } from '@/lib/i18n/types';
+
+interface LoginPageProps {
+  params: {
+    locale: SupportedLocale;
+  };
+}
 
 /**
- * Página de login
+ * Página de login localizada
  */
-export default function LoginPage() {
+export default function LoginPage({ params: { locale } }: LoginPageProps) {
+  const { t } = useTranslation('auth');
   const { isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const returnUrl = searchParams.get('returnUrl') || '/admin';
-  const error = searchParams.get('error');  // Redirigir si el usuario ya está autenticado
+  const returnUrl = searchParams.get('returnUrl') || `/${locale}/admin`;
+  const error = searchParams.get('error');  
+  
+  // Redirigir si el usuario ya está autenticado
   useEffect(() => {
     // Guardar returnUrl en localStorage para recuperarlo después del login
     if (typeof window !== 'undefined' && returnUrl) {
@@ -26,24 +37,23 @@ export default function LoginPage() {
       router.push(returnUrl);
     }
   }, [isAuthenticated, isLoading, router, returnUrl]);
-  
-  return (
+    return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div>
           <h1 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Iniciar sesión
+            {t('login.title')}
           </h1>
           <p className="mt-2 text-center text-sm text-gray-600">
-            Accede a tu cuenta para gestionar tu aplicación
+            {t('login.subtitle')}
           </p>
         </div>
         
         {error && (
           <div className="p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg" role="alert">
             {error === 'session_error' 
-              ? 'Hubo un problema con tu sesión. Por favor, intenta iniciar sesión nuevamente.'
-              : 'Error al iniciar sesión. Por favor, intenta nuevamente.'}
+              ? t('errors.session_error')
+              : t('errors.login_error')}
           </div>
         )}
         

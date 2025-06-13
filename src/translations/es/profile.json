@@ -1,0 +1,33 @@
+{
+  "title": "Perfil de Usuario",
+  "edit_profile": "Editar Perfil",
+  "save_changes": "Guardar Cambios",
+  "personal_information": "Información Personal",
+  "account_settings": "Configuración de Cuenta",
+  "security": "Seguridad",
+  "preferences": "Preferencias",
+  "language_preference": "Preferencia de Idioma",
+  "timezone": "Zona Horaria",
+  "notifications": "Notificaciones",
+  "email_notifications": "Notificaciones por Email",
+  "push_notifications": "Notificaciones Push",
+  "profile_updated": "Perfil actualizado exitosamente",
+  "update_error": "Error al actualizar el perfil",
+  "fields": {
+    "first_name": "Nombre",
+    "last_name": "Apellido",
+    "email": "Correo Electrónico",
+    "phone": "Número de Teléfono",
+    "bio": "Biografía",
+    "location": "Ubicación",
+    "website": "Sitio Web",
+    "company": "Empresa",
+    "job_title": "Cargo"
+  },
+  "actions": {
+    "change_password": "Cambiar Contraseña",
+    "delete_account": "Eliminar Cuenta",
+    "export_data": "Exportar Datos",
+    "download_data": "Descargar Mis Datos"
+  }
+}

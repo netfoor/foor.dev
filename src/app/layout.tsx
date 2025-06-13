@@ -20,18 +20,20 @@ export const metadata: Metadata = {
   description: "Aplicación Next.js con autenticación usando AWS Amplify",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es">
+    <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <AmplifyClientProvider>
-          <AuthProvider>{children}</AuthProvider>
+          <AuthProvider>
+            {children}
+          </AuthProvider>
         </AmplifyClientProvider>
       </body>
     </html>
