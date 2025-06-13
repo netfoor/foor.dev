@@ -4,6 +4,7 @@ import "./globals.css";
 
 import AmplifyClientProvider from "../components/AmplifyClientProvider";
 import { AuthProvider } from "../context/auth-context";
+import ThemeProviderWrapper from "../components/theme/ThemeProviderWrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,15 +27,20 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <meta name="theme-color" content="#ffffff" />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <AmplifyClientProvider>
-          <AuthProvider>
-            {children}
-          </AuthProvider>
-        </AmplifyClientProvider>
+        <ThemeProviderWrapper>
+          <AmplifyClientProvider>
+            <AuthProvider>
+              {children}
+            </AuthProvider>
+          </AmplifyClientProvider>
+        </ThemeProviderWrapper>
       </body>
     </html>
   );

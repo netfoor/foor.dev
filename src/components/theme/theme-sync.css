@@ -1,0 +1,223 @@
+/**
+ * CSS personalizado para sincronización entre temas de Amplify UI 
+ * y variables CSS globales del proyecto
+ * Asegura consistencia visual entre componentes de Amplify y estilos personalizados
+ */
+
+/* Variables CSS base que sincronizan con el tema de Amplify */
+:root {
+  /* Variables para modo claro */
+  --background: 0 0% 100%;
+  --foreground: 224 71.4% 4.1%;
+  --card: 0 0% 100%;
+  --card-foreground: 224 71.4% 4.1%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 224 71.4% 4.1%;
+  --primary: 210 96% 45%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 210 40% 96.1%;
+  --secondary-foreground: 224 71.4% 4.1%;
+  --muted: 210 40% 96.1%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+  --accent: 210 40% 96.1%;
+  --accent-foreground: 224 71.4% 4.1%;
+  --destructive: 0 100% 50%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 214.3 31.8% 91.4%;
+  --input: 214.3 31.8% 91.4%;
+  --ring: 210 96% 45%;
+  --chart-1: 210 96% 45%;
+  --chart-2: 200 90% 45%;
+  --chart-3: 120 80% 45%;
+  --chart-4: 40 100% 50%;
+  --chart-5: 0 100% 50%;
+}
+
+/* Variables para modo oscuro */
+.dark {
+  --background: 222.2 84% 4.9%;
+  --foreground: 210 40% 98%;
+  --card: 222.2 84% 4.9%;
+  --card-foreground: 210 40% 98%;
+  --popover: 222.2 84% 4.9%;
+  --popover-foreground: 210 40% 98%;
+  --primary: 213 94% 68%;
+  --primary-foreground: 222.2 84% 4.9%;
+  --secondary: 217.2 32.6% 17.5%;
+  --secondary-foreground: 210 40% 98%;
+  --muted: 217.2 32.6% 17.5%;
+  --muted-foreground: 215 20.2% 65.1%;
+  --accent: 217.2 32.6% 17.5%;
+  --accent-foreground: 210 40% 98%;
+  --destructive: 0 83% 61%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 217.2 32.6% 17.5%;
+  --input: 217.2 32.6% 17.5%;
+  --ring: 213 94% 68%;
+  --chart-1: 213 94% 68%;
+  --chart-2: 200 90% 65%;
+  --chart-3: 120 80% 55%;
+  --chart-4: 40 100% 65%;
+  --chart-5: 0 83% 61%;
+}
+
+/* Asegurar que las variables se apliquen correctamente en elementos con data-theme */
+[data-theme="light"] {
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+/* 
+ * Sincronización específica para componentes de Amplify UI
+ * Estas reglas aseguran que los componentes de Amplify UI 
+ * usen las mismas variables que el resto de la aplicación
+ */
+
+/* Amplify UI - Botones */
+.amplify-button--primary {
+  background-color: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+}
+
+.amplify-button--primary:hover {
+  background-color: hsl(var(--primary) / 0.9);
+}
+
+/* Amplify UI - Inputs */
+.amplify-input {
+  background-color: hsl(var(--background));
+  border-color: hsl(var(--border));
+  color: hsl(var(--foreground));
+}
+
+.amplify-input:focus {
+  border-color: hsl(var(--ring));
+  box-shadow: 0 0 0 1px hsl(var(--ring));
+}
+
+/* Amplify UI - Cards */
+.amplify-card {
+  background-color: hsl(var(--card));
+  border-color: hsl(var(--border));
+  color: hsl(var(--card-foreground));
+}
+
+/* Amplify UI - Text */
+.amplify-text {
+  color: hsl(var(--foreground));
+}
+
+.amplify-text--secondary {
+  color: hsl(var(--muted-foreground));
+}
+
+/* Amplify UI - Headings */
+.amplify-heading {
+  color: hsl(var(--foreground));
+}
+
+/* Amplify UI - Alert/Notification */
+.amplify-alert--info {
+  background-color: hsl(var(--primary) / 0.1);
+  border-color: hsl(var(--primary));
+  color: hsl(var(--foreground));
+}
+
+.amplify-alert--error {
+  background-color: hsl(var(--destructive) / 0.1);
+  border-color: hsl(var(--destructive));
+  color: hsl(var(--foreground));
+}
+
+/* Amplify UI - Tabs */
+.amplify-tabs-item[data-state="active"] {
+  color: hsl(var(--primary));
+  border-bottom-color: hsl(var(--primary));
+}
+
+.amplify-tabs-item:hover {
+  color: hsl(var(--primary));
+}
+
+/* 
+ * Transiciones suaves para cambios de tema
+ * Mejora la experiencia del usuario al cambiar entre modo claro y oscuro
+ */
+* {
+  transition: 
+    background-color 0.2s ease-in-out,
+    border-color 0.2s ease-in-out,
+    color 0.2s ease-in-out,
+    box-shadow 0.2s ease-in-out;
+}
+
+/* Evitar transiciones en elementos que no deben animarse */
+.amplify-button,
+.amplify-input,
+.amplify-textarea {
+  transition: 
+    background-color 0.15s ease-in-out,
+    border-color 0.15s ease-in-out,
+    color 0.15s ease-in-out,
+    box-shadow 0.15s ease-in-out,
+    transform 0.15s ease-in-out;
+}
+
+/* 
+ * Mejoras de accesibilidad para diferentes modos
+ */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}
+
+/* Focus outline mejorado para mejor accesibilidad */
+.amplify-button:focus-visible,
+.amplify-input:focus-visible,
+.amplify-textarea:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+}
+
+/* 
+ * Compatibilidad con Tailwind CSS dark mode
+ * Asegura que las clases de Tailwind funcionen correctamente con el tema de Amplify
+ */
+.dark .amplify-card {
+  background-color: hsl(var(--card));
+}
+
+.dark .amplify-input {
+  background-color: hsl(var(--background));
+}
+
+/* 
+ * Variables personalizadas para componentes específicos del proyecto
+ * Estas variables pueden ser usadas en componentes personalizados
+ * para mantener consistencia con el tema de Amplify UI
+ */
+:root {
+  --amplify-primary-brand: hsl(var(--primary));
+  --amplify-background-primary: hsl(var(--background));
+  --amplify-foreground-primary: hsl(var(--foreground));
+  --amplify-border-primary: hsl(var(--border));
+  --amplify-muted-background: hsl(var(--muted));
+  --amplify-muted-foreground: hsl(var(--muted-foreground));
+}
+
+/* Meta theme-color tag styling para mobile browsers */
+@media (prefers-color-scheme: dark) {
+  meta[name="theme-color"] {
+    content: "#0f172a";
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  meta[name="theme-color"] {
+    content: "#ffffff";
+  }
+}

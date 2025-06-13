@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from '@/lib/i18n/client';
 import { useAuth } from '@/context/auth-context';
 import { useRouter } from 'next/navigation';
+import { ThemeSelector } from '@/components/theme/ThemeSelector';
 
 /**
  * Client Component para funcionalidad interactiva de la página principal
@@ -42,12 +43,23 @@ export default function HomePageClient() {
           </div>
         </div>
       </section>
-    );
-  }
+    );  }
 
   return (
-    <section className="py-16 px-8 bg-gray-50">
-      <div className="max-w-4xl mx-auto text-center">
+    <>
+      {/* ThemeSelector flotante solo en el cliente */}
+      {isMounted && (
+        <div className="fixed top-4 right-20 z-50">
+          <ThemeSelector 
+            variant="dropdown" 
+            size="sm"
+            className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm shadow-lg"
+          />
+        </div>
+      )}
+      
+      <section className="py-16 px-8 bg-gray-50">
+        <div className="max-w-4xl mx-auto text-center">
         <div className="bg-white rounded-lg shadow-sm p-8">
           {isAuthenticated ? (
             <div className="space-y-4">
@@ -98,10 +110,10 @@ export default function HomePageClient() {
             </h4>
             <p className="text-gray-600">
               {t('current_language')}
-            </p>
-          </div>
+            </p>          </div>
         </div>
       </div>
     </section>
+    </>
   );
 }
