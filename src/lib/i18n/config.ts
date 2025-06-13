@@ -213,7 +213,7 @@ export function buildLocalizedPath(pathname: string, locale: SupportedLocale): s
  */
 export const I18N_DEBUG = {
   enabled: process.env.NODE_ENV === 'development',
-  logMissingKeys: true,
+  logMissingKeys: false, // Desactivado temporalmente para reducir ruido
   logLocaleDetection: true,
   logTranslationLoading: true,
 };

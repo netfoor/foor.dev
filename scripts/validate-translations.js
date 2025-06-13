@@ -10,7 +10,7 @@ const path = require('path');
 
 // Configuración
 const TRANSLATIONS_DIR = path.join(__dirname, '../src/translations');
-const SUPPORTED_LOCALES = ['en', 'es', 'fr'];
+const SUPPORTED_LOCALES = ['en', 'es', 'ja'];
 const NAMESPACES = ['common', 'auth', 'homepage', 'profile', 'admin'];
 
 // Colores para consola
