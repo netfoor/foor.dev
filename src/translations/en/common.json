@@ -1,7 +1,8 @@
-{
-  "app_name": "Foor.dev",
+{  "app_name": "Foor.dev",
   "welcome": "Welcome",
+  "welcome_message": "Welcome to Foor.dev - Your development platform",
   "hello": "Hello",
+  "hello_world": "Hello World",
   "goodbye": "Goodbye",
   "thank_you": "Thank you",
   "please": "Please",
@@ -57,10 +58,9 @@
   "draft": "Draft",  "archive": "Archive",
   "restore": "Restore",
   "change_language_to": "Change language to",
-  "language_options": "Language options",
-  "switch_to_spanish": "Switch to Spanish",
+  "language_options": "Language options",  "switch_to_spanish": "Switch to Spanish",
   "switch_to_english": "Switch to English",
-  "switch_to_french": "Switch to French",
+  "switch_to_japanese": "Switch to Japanese",
   "navigation": {
     "menu": "Menu",
     "main_menu": "Main Menu",

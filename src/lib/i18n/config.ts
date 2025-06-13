@@ -5,7 +5,7 @@
 /**
  * Idiomas soportados en la aplicación
  */
-export const SUPPORTED_LOCALES = ['en', 'es', 'fr'] as const;
+export const SUPPORTED_LOCALES = ['en', 'es', 'ja'] as const;
 
 /**
  * Tipo para idiomas soportados (TypeScript)
@@ -87,8 +87,7 @@ export const LOCALE_INFO: Record<SupportedLocale, {
     dir: 'ltr',
     dateFormat: 'MM/dd/yyyy',
     numberFormat: 'en-US',
-  },
-  es: {
+  },  es: {
     name: 'Spanish',
     nativeName: 'Español',
     flag: '🇪🇸',
@@ -96,13 +95,13 @@ export const LOCALE_INFO: Record<SupportedLocale, {
     dateFormat: 'dd/MM/yyyy',
     numberFormat: 'es-ES',
   },
-  fr: {
-    name: 'French',
-    nativeName: 'Français',
-    flag: '🇫🇷',
+  ja: {
+    name: 'Japanese',
+    nativeName: '日本語',
+    flag: '��',
     dir: 'ltr',
-    dateFormat: 'dd/MM/yyyy',
-    numberFormat: 'fr-FR',
+    dateFormat: 'yyyy/MM/dd',
+    numberFormat: 'ja-JP',
   },
 };
 
