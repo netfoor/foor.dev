@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useTranslation } from '@/lib/i18n/client';
+import LanguageSelector from './LanguageSelector';
 
 interface HeroProps {
   className?: string;
@@ -31,6 +32,7 @@ export const Hero: React.FC<HeroProps> = ({ className = '' }) => {
           {t('welcome_message')}
         </p>
       </div>
+      <LanguageSelector className="mt-4" />
     </section>
   );
 };

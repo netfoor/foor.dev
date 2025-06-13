@@ -1,7 +1,7 @@
 /**
  * Componente ThemeProvider wrapper para AWS Amplify UI
  * Integra el tema personalizado con la detección de modo claro/oscuro
- * y sincroniza con las variables CSS globales del proyecto
+ * Sin componentes intermedios para evitar problemas de hidratación
  */
 
 'use client';
@@ -9,7 +9,7 @@
 import React, { useEffect, useState } from 'react';
 import { ThemeProvider as AmplifyThemeProvider } from '@aws-amplify/ui-react';
 import { getTheme, type ThemeMode } from '@/lib/theme/my-custom-app-theme';
-import { ThemeProvider, useTheme } from '@/hooks/useTheme';
+import { ThemeProvider } from '@/hooks/useTheme';
 
 // Importar estilos base de Amplify UI
 import '@aws-amplify/ui-react/styles.css';
@@ -22,51 +22,34 @@ interface ThemeProviderWrapperProps {
 }
 
 /**
- * Componente interno que aplica el tema de Amplify según el modo actual
+ * ThemeProvider wrapper simplificado que evita problemas de hidratación
+ * Renderiza con tema por defecto hasta que el sistema esté listo
  */
-const AmplifyThemeAdapter: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const ThemeProviderWrapper: React.FC<ThemeProviderWrapperProps> = ({ children }) => {
   const [mounted, setMounted] = useState(false);
-  const [currentMode, setCurrentMode] = useState<ThemeMode>('light');
-
+  
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // Usar el hook solo después de montar para evitar problemas SSR
-  let themeContext;
-  try {
-    themeContext = useTheme();
-  } catch {
-    // Si no hay contexto disponible, usar modo claro por defecto
-    themeContext = { mode: 'light' };
+  // Durante la hidratación, usar tema por defecto para evitar mismatches
+  if (!mounted) {
+    const defaultTheme = getTheme('light');
+    return (
+      <ThemeProvider>
+        <AmplifyThemeProvider theme={defaultTheme} colorMode="light">
+          {children}
+        </AmplifyThemeProvider>
+      </ThemeProvider>
+    );
   }
-  useEffect(() => {
-    if (mounted && themeContext && themeContext.mode) {
-      setCurrentMode(themeContext.mode as ThemeMode);
-    }
-  }, [mounted, themeContext]);
 
-  const currentTheme = getTheme(currentMode);
-
-  return (
-    <AmplifyThemeProvider theme={currentTheme} colorMode={currentMode}>
-      {children}
-    </AmplifyThemeProvider>
-  );
-};
-
-/**
- * ThemeProvider wrapper principal que combina:
- * - Gestión de estado del tema (claro/oscuro)
- * - ThemeProvider de Amplify UI
- * - Sincronización con variables CSS globales
- */
-const ThemeProviderWrapper: React.FC<ThemeProviderWrapperProps> = ({ children }) => {
+  // Después de montar, permitir que ThemeProvider gestione todo
   return (
     <ThemeProvider>
-      <AmplifyThemeAdapter>
+      <AmplifyThemeProvider theme={getTheme('light')} colorMode="light">
         {children}
-      </AmplifyThemeAdapter>
+      </AmplifyThemeProvider>
     </ThemeProvider>
   );
 };

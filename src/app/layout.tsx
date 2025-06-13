@@ -6,6 +6,7 @@ import AmplifyClientProvider from "../components/AmplifyClientProvider";
 import { AuthProvider } from "../context/auth-context";
 import ThemeProviderWrapper from "../components/theme/ThemeProviderWrapper";
 
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -36,9 +37,7 @@ export default async function RootLayout({
       >
         <ThemeProviderWrapper>
           <AmplifyClientProvider>
-            <AuthProvider>
-              {children}
-            </AuthProvider>
+            <AuthProvider>{children}</AuthProvider>
           </AmplifyClientProvider>
         </ThemeProviderWrapper>
       </body>

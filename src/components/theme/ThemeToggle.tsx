@@ -17,8 +17,18 @@ export const ThemeToggle: React.FC<ThemeToggleProps> = ({
   size = 'md',
   className = '',
 }) => {
-  const { mode, toggleMode } = useTheme();
   const [mounted, setMounted] = useState(false);
+  
+  // Agregar verificación para el contexto del tema
+  let mode = 'light';
+  let toggleMode = () => {};
+  try {
+    const themeContext = useTheme();
+    mode = themeContext.mode;
+    toggleMode = themeContext.toggleMode;
+  } catch {
+    console.warn('Theme context is not available in ThemeToggle. Defaulting to light mode.');
+  }
 
   // Evitar problemas de hidratación
   useEffect(() => {

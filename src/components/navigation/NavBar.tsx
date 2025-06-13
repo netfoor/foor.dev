@@ -3,9 +3,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { View, Flex, Text, Button, useTheme } from '@aws-amplify/ui-react';
+import { View, Flex, Text, Button } from '@aws-amplify/ui-react';
 import { ThemeToggle } from '@/components/theme/ThemeToggle';
-import { useAmplifyTheme } from '@/hooks/useAmplifyTheme';
+import { useTheme } from '@/hooks/useTheme';
 import { useTranslation } from '@/lib/i18n/client';
 
 // Define las rutas de navegación
@@ -18,16 +18,25 @@ const navLinks = [
   { href: '/contact', key: 'contact' }
 ];
 
-export default function NavBar() {
+function NavBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [hasScrolled, setHasScrolled] = useState(false);
   const navRef = useRef<HTMLElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
-  const { colorMode } = useAmplifyTheme();
   const { t } = useTranslation('common');
-  const { tokens } = useTheme();
   const [mounted, setMounted] = useState(false);
+
+  // Agregar verificación para el contexto del tema
+  let mode = 'light';
+  let toggleMode = () => {};
+  try {
+    const themeContext = useTheme();
+    mode = themeContext.mode;
+    toggleMode = themeContext.toggleMode;
+  } catch {
+    console.warn('Theme context is not available. Defaulting to light mode.');
+  }
 
   // Manejador de scroll para cambiar la apariencia de la barra de navegación
   const handleScroll = React.useCallback(() => {
@@ -58,8 +67,8 @@ export default function NavBar() {
   }, [pathname]);
   
   // Determinar colores basados en el modo
-  const bgColor = colorMode === 'dark' ? tokens.colors.neutral[90].toString() : tokens.colors.neutral[10].toString();
-  const textColor = colorMode === 'dark' ? tokens.colors.neutral[20].toString() : tokens.colors.neutral[80].toString();
+  const bgColor = mode === 'dark' ? 'var(--neutral-90)' : 'var(--neutral-10)';
+  const textColor = mode === 'dark' ? 'var(--neutral-20)' : 'var(--neutral-80)';
   const accentColor = '#40AABF';
   
   return (
@@ -75,8 +84,8 @@ export default function NavBar() {
         height="60px"
         style={{
           backgroundColor: hasScrolled 
-            ? (colorMode === 'dark' ? 'rgba(30, 41, 59, 0.85)' : 'rgba(255, 255, 255, 0.85)') 
-            : (colorMode === 'dark' ? 'rgba(30, 41, 59, 0.6)' : 'rgba(255, 255, 255, 0.6)'),
+            ? (mode === 'dark' ? 'rgba(30, 41, 59, 0.85)' : 'rgba(255, 255, 255, 0.85)') 
+            : (mode === 'dark' ? 'rgba(30, 41, 59, 0.6)' : 'rgba(255, 255, 255, 0.6)'),
           backdropFilter: 'blur(20px)',
           WebkitBackdropFilter: 'blur(20px)',
           boxShadow: hasScrolled ? '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' : 'none',
@@ -179,7 +188,7 @@ export default function NavBar() {
               aria-label={isMenuOpen ? "Close menu" : "Open menu"}
               display={{ base: 'flex', medium: 'none' }}
               padding="0.75rem"
-              backgroundColor={colorMode === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)'}
+              backgroundColor={mode === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)'}
               border="none"
               borderRadius="0.25rem"
               style={{
@@ -199,7 +208,7 @@ export default function NavBar() {
                   style={{
                     width: '28px',
                     height: '3px',
-                    background: colorMode === 'dark' ? '#FFFFFF' : '#333333',
+                    background: mode === 'dark' ? '#FFFFFF' : '#333333',
                     borderRadius: '2px',
                     transition: 'transform 0.3s ease',
                     transform: isMenuOpen ? 'translateY(9px) rotate(45deg)' : 'none'
@@ -209,7 +218,7 @@ export default function NavBar() {
                   style={{
                     width: '28px',
                     height: '3px',
-                    background: colorMode === 'dark' ? '#FFFFFF' : '#333333',
+                    background: mode === 'dark' ? '#FFFFFF' : '#333333',
                     borderRadius: '2px',
                     transition: 'opacity 0.3s ease',
                     opacity: isMenuOpen ? 0 : 1
@@ -219,7 +228,7 @@ export default function NavBar() {
                   style={{
                     width: '28px',
                     height: '3px',
-                    background: colorMode === 'dark' ? '#FFFFFF' : '#333333',
+                    background: mode === 'dark' ? '#FFFFFF' : '#333333',
                     borderRadius: '2px',
                     transition: 'transform 0.3s ease',
                     transform: isMenuOpen ? 'translateY(-9px) rotate(-45deg)' : 'none'
@@ -243,12 +252,12 @@ export default function NavBar() {
           bottom="0"
           overflow="auto"
           style={{
-            backgroundColor: colorMode === 'dark' 
+            backgroundColor: mode === 'dark' 
               ? 'rgba(30, 41, 59, 0.9)' 
               : 'rgba(255, 255, 255, 0.9)',
             backdropFilter: 'blur(25px)',
             WebkitBackdropFilter: 'blur(25px)',
-            boxShadow: colorMode === 'dark' 
+            boxShadow: mode === 'dark' 
               ? '-5px 0 15px rgba(0, 0, 0, 0.2)' 
               : '-5px 0 15px rgba(0, 0, 0, 0.1)',
             zIndex: 1050,
@@ -280,7 +289,7 @@ export default function NavBar() {
                   transition: 'all 0.3s',
                   marginBottom: '0.5rem',
                   backgroundColor: pathname === link.href 
-                    ? (colorMode === 'dark' ? 'rgba(64, 170, 191, 0.1)' : 'rgba(64, 170, 191, 0.1)') 
+                    ? (mode === 'dark' ? 'rgba(64, 170, 191, 0.1)' : 'rgba(64, 170, 191, 0.1)') 
                     : 'transparent'
                 }}
               >
@@ -298,7 +307,7 @@ export default function NavBar() {
             padding="2rem"
             justifyContent="center"
             style={{
-              borderTop: colorMode === 'dark' 
+              borderTop: mode === 'dark' 
                 ? '1px solid rgba(255, 255, 255, 0.1)' 
                 : '1px solid rgba(0, 0, 0, 0.1)'
             }}
@@ -361,3 +370,5 @@ export default function NavBar() {
     </>
   );
 }
+
+export default NavBar;
