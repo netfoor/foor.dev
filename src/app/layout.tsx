@@ -18,8 +18,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "App con autenticación Amplify",
-  description: "Aplicación Next.js con autenticación usando AWS Amplify",
+  title: "Foor.dev - AWS Cloud Engineer & DevOps Specialist",
+  description: "AWS Cloud Engineer specializing in serverless architecture, DevOps automation, and cloud infrastructure solutions.",
 };
 
 export default async function RootLayout({

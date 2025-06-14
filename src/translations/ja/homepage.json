@@ -1,29 +1,12 @@
 {
-  "title": "Foor.devへようこそ",
-  "subtitle": "あなたのモダンなWeb開発プラットフォーム",
-  "description": "最新技術とベストプラクティスで素晴らしいアプリを構築しましょう。",
   "hero": {
-    "headline": "ウェブの未来を築こう",
-    "subheadline": "強力なツールとリソースでモダンな開発者をサポート",
-    "cta_primary": "始める",
-    "cta_secondary": "もっと学ぶ",
-    "watch_demo": "デモを見る"
-  },
-  "features": {
-    "title": "なぜFoor.devを選ぶのか?",
-    "subtitle": "モダンアプリ構築に必要なすべて",
-    "feature_1": {
-      "title": "高速開発",
-      "description": "最適化されたワークフローとツールで開発を加速。"
-    },
-    "feature_2": {
-      "title": "モダンスタック",
-      "description": "Next.js、TypeScript、AWS Amplifyなど最新技術を採用。"
-    },
-    "feature_3": {
-      "title": "スケーラブルなアーキテクチャ",
-      "description": "アプリの成長に合わせて拡張できる設計パターン。"
-    }
-  },
-  "stats": {}
+    "name": "フォルティーノ・ロメロ・マンティーヤ",
+    "title": "クラウドエンジニア | AWSアドボケート | DevOps愛好家",
+    "description": "AWSクラウドソリューション、サーバーレスアーキテクチャ、Infrastructure as Codeに情熱を注いでいます。現代のクラウド技術とDevOpsプラクティスでビジネスのスケールアップを支援します。",
+    "social": {
+      "instagram": "Instagramでフォロー",
+      "github": "GitHubプロジェクトを見る",
+      "linkedin": "LinkedInで接続",
+      "email": "メール送信"
+    }  }
 }

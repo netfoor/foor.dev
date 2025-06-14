@@ -75,9 +75,10 @@ export const Hero: React.FC<HeroProps> = ({ className = '' }) => {
           fontWeight="bold"
           marginBottom="0.5rem"
           textAlign="center"
-          fontSize={{ base: '1.5rem', medium: '1.875rem', large: '2.25rem' }}          style={{
+          fontSize={{ base: '1.5rem', medium: '1.875rem', large: '2.25rem' }}
+          style={{
             color: mode === 'dark' ? '#E2E8F0' : '#1F2937',
-            backgroundImage: mode === 'dark' 
+            background: mode === 'dark' 
               ? 'linear-gradient(135deg, #93C5FD, #60A5FA)' 
               : 'linear-gradient(135deg, #F59E0B, #D97706)',
             WebkitBackgroundClip: 'text',

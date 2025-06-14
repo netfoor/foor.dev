@@ -2,6 +2,13 @@
   "name": "foor.dev",
   "version": "0.1.0",
   "private": true,
+  "description": "AWS Cloud Engineer portfolio - Specializing in serverless architecture, DevOps automation, and cloud infrastructure solutions",
+  "keywords": ["aws", "cloud-engineer", "serverless", "devops", "infrastructure-as-code", "next.js", "react"],
+  "author": {
+    "name": "Fortino Romero Mantilla",
+    "email": "fortino.rom@gmail.com",
+    "url": "https://foor.dev"
+  },
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",

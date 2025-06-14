@@ -28,7 +28,15 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 export const useTheme = (): ThemeContextType => {
   const context = useContext(ThemeContext);
   if (!context) {
-    throw new Error('useTheme must be used within a ThemeProvider');
+    // Retornar valores por defecto en lugar de lanzar error
+    return {
+      mode: 'light',
+      setMode: () => {},
+      toggleMode: () => {},
+      isSystemMode: false,
+      setSystemMode: () => {},
+      systemPreference: 'light'
+    };
   }
   return context;
 };
