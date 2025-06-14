@@ -4,7 +4,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { View, Flex, Text, Button } from '@aws-amplify/ui-react';
+import { Menu, X, Sun, Moon } from 'lucide-react';
 import { ThemeToggle } from '@/components/theme/ThemeToggle';
+import LanguageSelector, { LanguageIndicator } from '@/components/ui/LanguageSelector';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation } from '@/lib/i18n/client';
 
@@ -103,9 +105,15 @@ function NavBar() {
           height="100%"
           maxWidth="1200px"
           margin="0 auto"
-        >
-          {/* Logo */}
-          <Link href="/" aria-label="Go to homepage">
+        >          {/* Logo */}
+          <Link 
+            href="/" 
+            aria-label="Go to homepage"
+            style={{
+              textDecoration: 'none',
+              color: 'inherit'
+            }}
+          >
             <Flex
               direction="row"
               alignItems="center"
@@ -114,17 +122,23 @@ function NavBar() {
                 transition: 'transform 0.3s',
               }}
               className="hover:scale-105"
-            >
-              <Text
+            >              <Text
                 fontWeight="700"
                 fontSize="1.25rem"
-                style={{
-                  background: 'linear-gradient(135deg, #40AABF, #64D2E7)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                  color: 'transparent'
-                }}
+                style={
+                  mode === 'dark' 
+                    ? {
+                        color: '#93C5FD', // Mismo color que la luna y hamburguesa en modo oscuro
+                        textDecoration: 'none'
+                      }
+                    : {
+                        backgroundImage: 'linear-gradient(135deg, #F59E0B, #FBBF24)', // Colores sol para modo claro
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        backgroundClip: 'text',
+                        textDecoration: 'none'
+                      }
+                }
               >
                 foor.dev
               </Text>
@@ -168,18 +182,31 @@ function NavBar() {
               </Link>
             ))}
           </Flex>
-          
-          {/* Controles de navegación */}
+            {/* Controles de navegación */}
           <Flex
             direction="row"
             alignItems="center"
-            gap="1rem"
-          >
-            <ThemeToggle 
+            gap="0.5rem"
+          >            {/* Selector de idioma - Solo en desktop */}
+            <View display={{ base: 'none', medium: 'flex' }}>
+              <LanguageSelector 
+                mode={mode === 'dark' ? 'dark' : 'light'}
+                compact={false}
+              />
+            </View>
+              <ThemeToggle 
               size="md"
             />
-            
-            {/* Botón de menú móvil - MEJORADO */}
+
+            {/* Selector de idioma móvil - Al lado del ThemeToggle */}
+            <View display={{ base: 'flex', medium: 'none' }}>
+              <LanguageIndicator 
+                size={18} 
+                mode={mode === 'dark' ? 'dark' : 'light'}
+              />
+            </View>
+
+            {/* Botón de menú móvil - ESTILO TRANSPARENTE COMO THEME TOGGLE */}
             <View
               as="button"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -187,54 +214,36 @@ function NavBar() {
               aria-controls="mobile-menu"
               aria-label={isMenuOpen ? "Close menu" : "Open menu"}
               display={{ base: 'flex', medium: 'none' }}
-              padding="0.75rem"
-              backgroundColor={mode === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)'}
+              padding="0.5rem"
+              backgroundColor="transparent"
               border="none"
-              borderRadius="0.25rem"
+              borderRadius="0.375rem"
               style={{
                 cursor: 'pointer',
                 position: 'relative',
-                zIndex: 1100
+                zIndex: 1100,
+                transition: 'all 0.2s ease'
               }}
             >
-              <Flex
-                direction="column"
-                justifyContent="space-between"
-                alignItems="center"
-                width="28px"
-                height="22px"
-              >
-                <div
-                  style={{
-                    width: '28px',
-                    height: '3px',
-                    background: mode === 'dark' ? '#FFFFFF' : '#333333',
-                    borderRadius: '2px',
-                    transition: 'transform 0.3s ease',
-                    transform: isMenuOpen ? 'translateY(9px) rotate(45deg)' : 'none'
+              {isMenuOpen ? (
+                // Ícono de cerrar (X) con colores temáticos
+                <X 
+                  size={24} 
+                  color={mode === 'dark' ? '#93C5FD' : '#F59E0B'} 
+                  style={{ 
+                    transition: 'all 0.2s ease'
                   }}
                 />
-                <div
-                  style={{
-                    width: '28px',
-                    height: '3px',
-                    background: mode === 'dark' ? '#FFFFFF' : '#333333',
-                    borderRadius: '2px',
-                    transition: 'opacity 0.3s ease',
-                    opacity: isMenuOpen ? 0 : 1
+              ) : (
+                // Ícono de menú hamburguesa
+                <Menu 
+                  size={24} 
+                  color={mode === 'dark' ? '#93C5FD' : '#F59E0B'} 
+                  style={{ 
+                    transition: 'all 0.2s ease'
                   }}
                 />
-                <div
-                  style={{
-                    width: '28px',
-                    height: '3px',
-                    background: mode === 'dark' ? '#FFFFFF' : '#333333',
-                    borderRadius: '2px',
-                    transition: 'transform 0.3s ease',
-                    transform: isMenuOpen ? 'translateY(-9px) rotate(-45deg)' : 'none'
-                  }}
-                />
-              </Flex>
+              )}
             </View>
           </Flex>
         </Flex>
@@ -297,7 +306,18 @@ function NavBar() {
                   {t(`navigation.${link.key}`)}
                 </Text>
               </Link>
-            ))}
+            ))}          </Flex>
+          
+          {/* Selector de idioma en menú móvil */}
+          <Flex
+            direction="row"
+            justifyContent="center"
+            padding="1rem 2rem"
+          >
+            <LanguageSelector 
+              mode={mode === 'dark' ? 'dark' : 'light'}
+              compact={false}
+            />
           </Flex>
             
           {/* Redes sociales en el menú móvil */}
