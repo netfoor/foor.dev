@@ -7,18 +7,19 @@ import { useAuth } from '@/context/auth-context';
 import { LoginButton } from '../../components/auth/LoginButton';
 import { useTranslation } from '@/lib/i18n/client';
 import { useTheme } from '@/hooks/useTheme';
+import { useAuthorization } from '@/hooks/useAuthorization';
 import type { SupportedLocale } from '@/lib/i18n/types';
 
 interface LoginPageProps {
   params: Promise<{
     locale: SupportedLocale;
   }>;
-
 }
 
 function LoginContent({ locale, returnUrl }: { locale: SupportedLocale; returnUrl: string }) {
   const { t } = useTranslation('auth');
   const { isAuthenticated, isLoading } = useAuth();
+  const { hasRole } = useAuthorization();
   const { mode } = useTheme();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -33,10 +34,23 @@ function LoginContent({ locale, returnUrl }: { locale: SupportedLocale; returnUr
     }
     
     if (isAuthenticated && !isLoading) {
-      console.log('Usuario ya autenticado en login page, redirigiendo a:', returnUrl);
-      router.push(returnUrl);
+      // Check if the returnUrl is for admin page
+      if (returnUrl && returnUrl.includes('/admin')) {
+        // For admin pages, only redirect if admin role is confirmed
+        if (hasRole('admin')) {
+          console.log('Usuario autenticado con rol admin, redirigiendo a:', returnUrl);
+          router.push(returnUrl);
+        } else {
+          console.log('Usuario autenticado pero sin rol admin, redirigiendo a página de acceso denegado');
+          router.push(`/${locale}/access-denied`);
+        }
+      } else {
+        // For non-admin pages, redirect as usual
+        console.log('Usuario ya autenticado en login page, redirigiendo a:', returnUrl);
+        router.push(returnUrl);
+      }
     }
-  }, [isAuthenticated, isLoading, returnUrl, router]);
+  }, [isAuthenticated, isLoading, returnUrl, router, locale]);
 
   return (
     <Flex
@@ -221,8 +235,7 @@ function LoginContent({ locale, returnUrl }: { locale: SupportedLocale; returnUr
           </Flex>
         </View>
       </View>
-    </Flex>
-  );
+    </Flex>  );
 }
 
 /**
@@ -233,7 +246,7 @@ export default function LoginPage({ params }: LoginPageProps) {
   const searchParams = useSearchParams();
   const locale = React.use(params).locale;
   const returnUrl = searchParams.get('returnUrl') || `/${locale}/admin`;
-
+  
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <LoginContent locale={locale} returnUrl={returnUrl} />

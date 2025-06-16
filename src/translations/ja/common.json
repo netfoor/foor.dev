@@ -76,13 +76,24 @@
     "reset": "リセット",
     "search": "検索",
     "filter": "フィルター"
-  },
-  "footer": {
+  },  "footer": {
     "tagline": "AWSクラウドエンジニア | スケーラブルなソリューションを構築",
     "social": {
       "visit": "訪問"
     },
     "rights": "全著作権所有",
     "built": "最新のクラウド技術とイノベーションへの情熱で構築"
+  },
+  "errors": {
+    "generic": "エラーが発生しました",
+    "network": "ネットワークエラー",
+    "server": "サーバーエラー",
+    "not_found": "見つかりません",
+    "unauthorized": "権限がありません",
+    "forbidden": "禁止されています",
+    "timeout": "リクエストタイムアウト",
+    "try_again": "再試行してください",
+    "contact_support": "サポートに連絡してください",
+    "something_went_wrong": "問題が発生しました"
   }
 }

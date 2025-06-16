@@ -4,29 +4,20 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import { Heading, Text, Flex, View, Button } from '@aws-amplify/ui-react';
 import { useAuth } from '@/context/auth-context';
-import { useLocalizedPath } from '@/lib/i18n/client';
+import { useLocalizedPath, useTranslation } from '@/lib/i18n/client';
 import { useTheme } from '@/hooks/useTheme';
-
-interface AccessDeniedClientProps {
-  translations: {
-    title: string;
-    authenticatedMessage: string;
-    unauthenticatedMessage: string;
-    goHome: string;
-    logout: string;
-    contactSupport: string;
-  };
-}
 
 /**
  * Client Component para la página de acceso denegado
  * Diseño moderno con temas, AWS Amplify UI y responsive
  */
-export default function AccessDeniedClient({ translations }: AccessDeniedClientProps) {
+export default function AccessDeniedClient() {
   const router = useRouter();
   const { isAuthenticated, logout } = useAuth();
   const getLocalizedPath = useLocalizedPath();
   const { mode } = useTheme();
+  const { t: tAuth } = useTranslation('auth');
+  const { t: tCommon } = useTranslation('common');
   
   const handleGoHome = () => {
     const homePath = getLocalizedPath('/');
@@ -152,10 +143,9 @@ export default function AccessDeniedClient({ translations }: AccessDeniedClientP
                 : 'linear-gradient(135deg, #1E293B 0%, #475569 100%)'
             }}
           >
-            {translations.title}
+            {tAuth('access_denied.title')}
           </Heading>
-          
-          {/* Message */}
+            {/* Message */}
           <Text
             fontSize={{ base: "1rem", medium: "1.125rem" }}
             color={mode === 'dark' ? '#CBD5E1' : '#475569'}
@@ -163,11 +153,11 @@ export default function AccessDeniedClient({ translations }: AccessDeniedClientP
             marginBottom="1rem"
           >
             {isAuthenticated 
-              ? translations.authenticatedMessage
-              : translations.unauthenticatedMessage
+              ? tAuth('access_denied.authenticated_message')
+              : tAuth('access_denied.unauthenticated_message')
             }
             {' '}
-            {translations.contactSupport}.
+            {tCommon('errors.contact_support')}.
           </Text>
           
           {/* Action Buttons */}
@@ -208,9 +198,9 @@ export default function AccessDeniedClient({ translations }: AccessDeniedClientP
                   ? '0 4px 12px rgba(59, 130, 246, 0.3)'
                   : '0 4px 12px rgba(37, 99, 235, 0.2)';
               }}
-              aria-label={translations.goHome}
+              aria-label={tCommon('home')}
             >
-              {translations.goHome}
+              {tCommon('home')}
             </Button>
             
             {isAuthenticated && (
@@ -246,9 +236,9 @@ export default function AccessDeniedClient({ translations }: AccessDeniedClientP
                     : 'rgba(226, 232, 240, 0.3)';
                   target.style.transform = 'translateY(0)';
                 }}
-                aria-label={translations.logout}
+                aria-label={tAuth('logout')}
               >
-                {translations.logout}
+                {tAuth('logout')}
               </Button>
             )}
           </Flex>
