@@ -8,5 +8,35 @@
       "github": "Ver Proyectos en GitHub",      "linkedin": "Conectar en LinkedIn", 
       "email": "Enviar Email"
     }
+  },
+  "about": {
+    "whoAmI": "¿Quién",
+    "whoAmIHighlight": "soy?",
+    "description1": "Soy Fortino Romero Mantilla, un Ingeniero en la Nube y líder de comunidad tecnológica de México con una misión: usar la tecnología de AWS en la nube para el bien social. Me especializo en arquitecturas serverless, automatización DevOps y soluciones escalables en la nube que abordan problemas del mundo real.",
+    "description2": "Desde ganar desafíos nacionales de innovación hasta representar a México en Japón, mi trabajo abarca sistemas de monitoreo de inundaciones basados en la nube, clasificación inteligente de residuos y mentoría de futuros desarrolladores. Lidero el AWS User Group Puebla y organicé HackUTP para empoderar a más de 100 estudiantes a través de experiencia práctica con AWS y colaboración.",
+    "quote": "Mi visión es construir tecnología en la nube que sea ética, sostenible e inclusiva — soluciones AWS que no solo escalen, sino que eleven a las comunidades.",
+    "highlights": {
+      "title": "Logros Destacados",
+      "japan": {
+        "title": "Interno – Fellow en Tecnologías Emergentes",
+        "description": "Sistema de predicción de inundaciones basado en la nube, Japón"
+      },
+      "award": {
+        "title": "Ganador Nacional",
+        "description": "Desafío de Innovación ANUIES4MX 2024"
+      },
+      "community": {
+        "title": "Líder Comunitario",
+        "description": "Organizador AWS UG Puebla & HackUTP"
+      },
+      "speaker": {
+        "title": "Ponente Tecnológico & Mentor",
+        "description": "Compartió soluciones AWS en la nube y experiencia internacional"
+      },
+      "academic": {
+        "title": "Contribuyente Académico",
+        "description": "Revisó libros de texto y medios académicos UTP"
+      }
+    }
   }
 }

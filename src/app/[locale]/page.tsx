@@ -3,6 +3,7 @@ import { Metadata } from 'next';
 import { getTranslations } from '@/lib/i18n/server';
 import HeaderControls from '@/components/ui/HeaderControls';
 import Hero from '@/components/ui/Hero';
+import AboutSection from '@/components/ui/AboutSection';
 import type { SupportedLocale } from '@/lib/i18n/types';
 
 interface HomeProps {
@@ -189,14 +190,15 @@ export default async function Home({ params }: HomeProps) {
             }
           })
         }}
-      />
-
-      <main className="min-h-screen">
+      />      <main className="min-h-screen">
         {/* Header con controles de idioma y tema */}
         <HeaderControls />
 
         {/* Componente Hero SEO optimizado */}
         <Hero />
+
+        {/* Sección About - Información profesional y logros */}
+        <AboutSection />
       </main>
     </>
   );

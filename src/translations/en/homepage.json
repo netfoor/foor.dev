@@ -6,7 +6,38 @@
     "social": {
       "instagram": "Follow on Instagram",
       "github": "View GitHub Projects", 
-      "linkedin": "Connect on LinkedIn",      "email": "Send Email"
+      "linkedin": "Connect on LinkedIn",
+      "email": "Send Email"
+    }
+  },
+  "about": {
+    "whoAmI": "Who am",
+    "whoAmIHighlight": "I?",
+    "description1": "I'm Fortino Romero Mantilla, a Cloud Engineer and tech community leader from Mexico with a mission: to use AWS cloud technology for social good. I specialize in serverless architectures, DevOps automation, and scalable cloud solutions that tackle real-world problems.",
+    "description2": "From winning national innovation challenges to representing Mexico in Japan, my work spans cloud-based flood monitoring systems, smart waste classification, and mentoring future developers. I lead the AWS User Group Puebla and organized HackUTP to empower over 100 students through hands-on AWS experience and collaboration.",
+    "quote": "My vision is to build cloud technology that's ethical, sustainable, and inclusive — AWS solutions that don't just scale, but uplift communities.",
+    "highlights": {
+      "title": "Highlights",
+      "japan": {
+        "title": "Intern – Emerging Technologies Fellow",
+        "description": "Cloud-based flood prediction system, Japan"
+      },
+      "award": {
+        "title": "National Winner",
+        "description": "ANUIES4MX Innovation Challenge 2024"
+      },
+      "community": {
+        "title": "Community Leader",
+        "description": "AWS UG Puebla & HackUTP Organizer"
+      },
+      "speaker": {
+        "title": "Tech Speaker & Mentor",
+        "description": "Shared AWS cloud solutions and international experience"
+      },
+      "academic": {
+        "title": "Academic Contributor",
+        "description": "Reviewed UTP textbooks & academic media"
+      }
     }
   }
 }
