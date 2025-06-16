@@ -156,10 +156,17 @@
     "screen_reader_only": "Solo para lectores de pantalla",
     "open_menu": "Abrir menú",
     "close_menu": "Cerrar menú",
-    "toggle_menu": "Alternar menú",
-    "main_content": "Contenido principal",
+    "toggle_menu": "Alternar menú",    "main_content": "Contenido principal",
     "sidebar": "Barra lateral",
     "footer": "Pie de página",
     "search_results": "Resultados de búsqueda"
+  },
+  "footer": {
+    "tagline": "Ingeniero en la Nube AWS | Construyendo soluciones escalables",
+    "social": {
+      "visit": "Visitar"
+    },
+    "rights": "Todos los derechos reservados",
+    "built": "Construido con tecnologías modernas en la nube y pasión por la innovación"
   }
 }

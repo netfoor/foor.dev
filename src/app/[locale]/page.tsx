@@ -4,6 +4,7 @@ import { getTranslations } from '@/lib/i18n/server';
 import HeaderControls from '@/components/ui/HeaderControls';
 import Hero from '@/components/ui/Hero';
 import AboutSection from '@/components/ui/AboutSection';
+import Footer from '@/components/ui/Footer';
 import type { SupportedLocale } from '@/lib/i18n/types';
 
 interface HomeProps {
@@ -200,6 +201,9 @@ export default async function Home({ params }: HomeProps) {
         {/* Sección About - Información profesional y logros */}
         <AboutSection />
       </main>
+
+      {/* Footer - Pie de página con información de contacto y enlaces */}
+      <Footer />
     </>
   );
 }

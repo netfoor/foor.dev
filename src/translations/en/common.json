@@ -146,8 +146,7 @@
     "confirm_delete": "Confirm deletion",
     "confirm_action": "Confirm action",
     "confirm": "Confirm",
-    "proceed": "Proceed"
-  },
+    "proceed": "Proceed"  },
   "accessibility": {
     "screen_reader_only": "Screen reader only",
     "open_menu": "Open menu",
@@ -157,5 +156,13 @@
     "sidebar": "Sidebar",
     "footer": "Footer",
     "search_results": "Search results"
+  },
+  "footer": {
+    "tagline": "AWS Cloud Engineer | Building scalable solutions",
+    "social": {
+      "visit": "Visit"
+    },
+    "rights": "All rights reserved",
+    "built": "Built with modern cloud technologies and passion for innovation"
   }
 }
