@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Hub } from 'aws-amplify/utils';
-import { getCurrentUser } from '@/lib/amplify/auth';
+import { getCurrentUser, checkIsUserAdmin } from '@/lib/amplify/auth';
 import { LOCALE_COOKIE, DEFAULT_LOCALE, SUPPORTED_LOCALES } from '@/lib/i18n/config';
 import type { SupportedLocale } from '@/lib/i18n/types';
 
@@ -85,20 +85,20 @@ export default function AuthCallback() {
         // Limpiar localStorage
         localStorage.removeItem('returnUrl');
       }
-      
-      console.log('Estado de autenticación:', authResult.isAuthenticated);
-      console.log('¿Es admin?:', authResult.isAdmin);
+        console.log('Estado de autenticación:', !!authResult);
+      const isAdmin = authResult ? await checkIsUserAdmin(authResult) : false;
+      console.log('¿Es admin?:', isAdmin);
       console.log('Redirigiendo a:', redirectPath);
-        if (authResult.isAuthenticated) {
+      
+      if (authResult) {
         // Extraer la ruta sin locale para verificación
         const pathSegments = redirectPath.split('/').filter(Boolean);
         const localeSegment = pathSegments[0];
         const pathWithoutLocale = SUPPORTED_LOCALES.includes(localeSegment as SupportedLocale)
           ? '/' + pathSegments.slice(1).join('/')
           : redirectPath;
-        
-        // Si el usuario intenta acceder a /admin pero no es administrador, redirigir a la página de acceso denegado
-        if ((pathWithoutLocale.startsWith('/admin') || pathWithoutLocale === '/' || pathWithoutLocale === '/admin') && !authResult.isAdmin) {
+          // Si el usuario intenta acceder a /admin pero no es administrador, redirigir a la página de acceso denegado
+        if ((pathWithoutLocale.startsWith('/admin') || pathWithoutLocale === '/' || pathWithoutLocale === '/admin') && !isAdmin) {
           const accessDeniedPath = `/${currentLocale}/access-denied`;
           console.log('Usuario no es administrador, redirigiendo a:', accessDeniedPath);
           router.push(accessDeniedPath);

@@ -6,7 +6,9 @@ import {
   getCurrentUser, 
   signOut,
   signInWithHostedUI,
-  createAuthListener
+  createAuthListener,
+  checkIsUserAdmin,
+  getUserAttributes
 } from '@/lib/amplify/auth';
 
 /**
@@ -56,17 +58,27 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [error, setError] = useState<Error | null>(null);
   /**
    * Función para obtener el usuario y actualizar el estado
-   */
-  const refreshUser = async () => {
+   */  const refreshUser = async () => {
     try {
       setIsLoading(true);
-      const response = await getCurrentUser();
+      const user = await getCurrentUser();
       
-      setUser(response.user);
-      setIsAuthenticated(response.isAuthenticated);
-      setIsAdmin(response.isAdmin);
-      setUserAttributes(response.attributes || null);
-      setError(null);
+      if (user) {
+        // Extract user info
+        const isAdmin = await checkIsUserAdmin(user);
+        const attributes = await getUserAttributes(user);
+        
+        setUser(user);
+        setIsAuthenticated(true);
+        setIsAdmin(isAdmin);
+        setUserAttributes(attributes);
+        setError(null);
+      } else {
+        setUser(null);
+        setIsAuthenticated(false);
+        setIsAdmin(false);
+        setUserAttributes(null);
+      }
     } catch (err) {
       console.error('Error al refrescar el usuario');
       // No cambiar el estado si ya estaba autenticado (podría ser un error temporal)
@@ -129,18 +141,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
     };
   }, []);  /**
    * Función para iniciar sesión
-   */
-  const login = async (redirectUri?: string) => {
+   */  const login = async (redirectUri?: string) => {
     try {
       // Si ya está autenticado, no es necesario iniciar sesión de nuevo
       const authResult = await getCurrentUser();
-      if (authResult.isAuthenticated) {
+      if (authResult) {
         return; // La función LoginButton manejará la redirección
       }
       
       await signInWithHostedUI({ 
-        redirectUri,
-        customState: window.location.pathname 
+        redirectUri: redirectUri || window.location.origin
       });
     } catch (err) {
       // Solo establecer error si no es UserAlreadyAuthenticatedException

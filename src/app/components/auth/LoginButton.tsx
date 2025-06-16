@@ -28,17 +28,13 @@ export function LoginButton({
   const { mode } = useTheme();
   const router = useRouter();
   const { t } = useTranslation('auth');
-  
-  const handleLogin = async () => {
+    const handleLogin = async () => {
     try {
       // Si ya está autenticado, redirigir directamente a /admin
       if (isAuthenticated) {
-        console.log('Usuario ya está autenticado, redirigiendo directamente a /admin');
         router.push('/admin');
         return;
       }
-      
-      console.log('LoginButton: Iniciando sesión con redirectUri:', redirectUri);
       
       // Pasar el redirectUri al método login
       await login(redirectUri);
@@ -48,7 +44,6 @@ export function LoginButton({
           (error.name === 'UserAlreadyAuthenticatedException' || 
           error.message?.includes('already a signed in user') ||
           error.message?.includes('already authenticated'))) {
-        console.log('Usuario ya autenticado, redirigiendo a página principal');
         
         // Redirigir a la página principal si ya está autenticado
         router.push('/admin');

@@ -46,14 +46,10 @@ export function AuthGuard({
   }, [isAuthenticated, isLoading, hasRole, role]);
 
   // Efectuar la redirección en un useEffect separado
-  useEffect(() => {
-    if (shouldRedirect && typeof window !== 'undefined') {
+  useEffect(() => {    if (shouldRedirect && typeof window !== 'undefined') {
       const currentLocale = getCurrentLocale();
       const returnUrl = encodeURIComponent(pathname);
       const localizedRedirect = `/${currentLocale}${redirectTo}`;
-      
-      console.log(`AuthGuard: Redirecting to ${localizedRedirect}?returnUrl=${returnUrl} 
-        (isAuthenticated: ${isAuthenticated}, hasRole: ${hasRole(role)})`);
       
       router.push(`${localizedRedirect}?returnUrl=${returnUrl}`);
     }

@@ -2,6 +2,7 @@ import React from 'react';
 import { getTranslations, getCurrentLocale } from '@/lib/i18n/server';
 import { I18nProvider } from '@/components/providers/I18nProvider';
 import ProfilePageClient from './ProfilePageClient';
+import { AuthGuard } from '@/app/components/auth/AuthGuard';
 
 /**
  * Página de perfil que demuestra el uso completo del sistema de i18n
@@ -48,7 +49,9 @@ export default async function ProfilePage() {
     <I18nProvider locale={locale} namespace="profile">
       <div className="min-h-screen bg-gray-50 py-8">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <ProfilePageClient initialTranslations={initialTranslations} />
+          <AuthGuard>
+            <ProfilePageClient initialTranslations={initialTranslations} />
+          </AuthGuard>
         </div>
       </div>
     </I18nProvider>

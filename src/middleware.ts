@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyTokens } from '@/lib/amplify/auth';
+import { verifyTokensInMiddleware } from '@/lib/amplify/middleware-auth';
 import { 
   SUPPORTED_LOCALES, 
   DEFAULT_LOCALE, 
@@ -212,43 +213,39 @@ export async function middleware(request: NextRequest) {
   
   // Normalizar las rutas públicas para verificación (sin prefijo de locale)
   const normalizedPathnameForAuth = pathnameWithoutLocale;
-  
   // 3. VERIFICAR AUTENTICACIÓN PARA RUTAS PROTEGIDAS
   try {
     if (isProtectedByPrefix(normalizedPathnameForAuth, PROTECTED_ROUTES)) {
-      // Verificar la autenticación del usuario
-      const { isValid, tokens } = await verifyTokens();
+      // Use middleware-specific token verification first
+      const middlewareAuth = await verifyTokensInMiddleware(request);
+      
+      // Fall back to standard verification if middleware approach fails
+      const { isValid, tokens } = middlewareAuth.isValid ? 
+        middlewareAuth : 
+        await verifyTokens();
       
       console.log(`Middleware: Verificando acceso a ${pathname}`, { 
         isValid, 
         hasTokens: !!tokens,
         normalizedPath: normalizedPathnameForAuth
       });
-      
-      if (!isValid) {
+        if (!isValid) {
         // Construir URL de login con locale y returnUrl
         const returnUrl = encodeURIComponent(pathname);
         const loginPath = buildLocalizedPath('/login', currentLocale);
         const loginUrl = new URL(`${loginPath}?returnUrl=${returnUrl}`, request.url);
         
-        console.log(`Middleware: Redirigiendo a login, returnUrl=${returnUrl}`);
         return NextResponse.redirect(loginUrl);
       }
-      
-      // Verificar permisos de administrador para rutas de administración
-      if (isProtectedByPrefix(normalizedPathnameForAuth, ADMIN_ROUTES)) {
+        // Verificar permisos de administrador para rutas de administración
+      if (isProtectedByPrefix(normalizedPathname, ADMIN_ROUTES)) {
         const hasAdminRole = isUserAdmin(tokens);
-        
-        console.log(`Middleware: Verificando rol de admin para ${pathname}`, { 
-          hasAdminRole 
-        });
         
         if (!hasAdminRole) {
           // Redirigir a página de acceso denegado con locale
           const accessDeniedPath = buildLocalizedPath('/access-denied', currentLocale);
           const accessDeniedUrl = new URL(accessDeniedPath, request.url);
           
-          console.log(`Middleware: Usuario no es admin, redirigiendo a ${accessDeniedPath}`);
           return NextResponse.redirect(accessDeniedUrl);
         }
       }

@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { Heading, Text, Flex, View, Button, Card, TextField, TextAreaField } from '@aws-amplify/ui-react';
 import { useTranslation, useLocale, useDateFormatter, useNumberFormatter } from '@/lib/i18n/client';
-import { LanguageSelector } from '@/components/ui/LanguageSelector';
+import LanguageSelector from '@/components/ui/LanguageSelector';
 import { useAuth } from '@/context/auth-context';
 import { useTheme } from '@/hooks/useTheme';
 
@@ -31,10 +31,8 @@ export default function ProfilePageClient({ initialTranslations }: ProfilePageCl
     phone: '',
     bio: ''
   });
-
   const handleSave = () => {
-    // Simular guardado
-    console.log('Saving profile data:', formData);
+    // Guardar los datos del perfil
     setIsEditing(false);
     // En una aplicación real, aquí harías la llamada a la API
   };
@@ -95,12 +93,8 @@ export default function ProfilePageClient({ initialTranslations }: ProfilePageCl
                 {t('personal_information')}
               </Text>
             </View>
-            
-            <LanguageSelector 
-              variant="dropdown" 
-              size="md"
-              showNativeNames={true}
-              showFlags={true}
+              <LanguageSelector 
+              mode={mode as 'light' | 'dark'}
             />
           </Flex>
 

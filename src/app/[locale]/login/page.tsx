@@ -24,13 +24,11 @@ function LoginContent({ locale, returnUrl }: { locale: SupportedLocale; returnUr
   const router = useRouter();
   const searchParams = useSearchParams();
   const error = searchParams.get('error');
-
   // Redirigir si el usuario ya está autenticado
   useEffect(() => {
     // Guardar returnUrl en localStorage para recuperarlo después del login
     if (typeof window !== 'undefined' && returnUrl) {
       localStorage.setItem('returnUrl', returnUrl);
-      console.log('Login: Guardando returnUrl en localStorage:', returnUrl);
     }
     
     if (isAuthenticated && !isLoading) {
@@ -38,15 +36,12 @@ function LoginContent({ locale, returnUrl }: { locale: SupportedLocale; returnUr
       if (returnUrl && returnUrl.includes('/admin')) {
         // For admin pages, only redirect if admin role is confirmed
         if (hasRole('admin')) {
-          console.log('Usuario autenticado con rol admin, redirigiendo a:', returnUrl);
           router.push(returnUrl);
         } else {
-          console.log('Usuario autenticado pero sin rol admin, redirigiendo a página de acceso denegado');
           router.push(`/${locale}/access-denied`);
         }
       } else {
         // For non-admin pages, redirect as usual
-        console.log('Usuario ya autenticado en login page, redirigiendo a:', returnUrl);
         router.push(returnUrl);
       }
     }

@@ -2,9 +2,7 @@
  * Verificación de tokens para autenticación con Amplify
  * Implementación optimizada para Next.js que soporta tanto el cliente como el servidor
  */
-import { fetchAuthSession, signOut, signInWithRedirect, getCurrentUser as amplifyGetCurrentUser } from 'aws-amplify/auth';
-import { Hub } from 'aws-amplify/utils';
-import type { AuthUser } from 'aws-amplify/auth';
+import { fetchAuthSession, signOut } from 'aws-amplify/auth';
 
 /**
  * Verifica si hay tokens de autenticación válidos
@@ -24,13 +22,7 @@ export async function verifyTokens(): Promise<{
       // Extract token info to verify expiration
       try {
         const accessToken = authSession.tokens.accessToken;
-        const exp = accessToken.payload.exp;
-        
-        if (!exp) {
-          return { isValid: false, error: new Error('Token is missing expiration time') };
-        }
-        
-        const expirationTime = exp * 1000; // Convert to milliseconds
+        const expirationTime = accessToken.payload.exp * 1000; // Convert to milliseconds
         const now = Date.now();
         const expiresInMs = expirationTime - now;
         
@@ -114,67 +106,3 @@ export async function handleAuthError(error: any): Promise<boolean> {
   
   return false;
 }
-
-// Export signOut directly from aws-amplify/auth
-export { signOut };
-
-/**
- * Gets the current authenticated user
- * @returns User object if authenticated
- */
-export async function getCurrentUser() {
-  try {
-    return await amplifyGetCurrentUser();
-  } catch (error) {
-    return null;
-  }
-}
-
-/**
- * Signs in using the Cognito Hosted UI
- * @param options Options for sign in
- * @returns Promise that resolves when sign in completes
- */
-export async function signInWithHostedUI(options?: { redirectUri?: string }) {
-  // Convert old-style redirectUri to customState which is used in the new API
-  const signInOptions = options?.redirectUri 
-    ? { customState: options.redirectUri }
-    : {};
-  
-  return signInWithRedirect(signInOptions);
-}
-
-/**
- * Creates an auth event listener
- * @param callback Function to call when auth events occur
- * @returns Unsubscribe function
- */
-export function createAuthListener(callback: (event: string, data: any) => void) {
-  return Hub.listen('auth', (data) => {
-    const { payload } = data;
-    callback(payload.event, payload);
-  });
-}
-
-// Helper functions for auth context
-async function checkIsUserAdmin(user: AuthUser): Promise<boolean> {
-  try {
-    const session = await fetchAuthSession();
-    const groups = session.tokens?.accessToken?.payload['cognito:groups'] || [];
-    return Array.isArray(groups) && groups.includes('ADMINS');
-  } catch (error) {
-    return false;
-  }
-}
-
-async function getUserAttributes(user: AuthUser): Promise<Record<string, any> | null> {
-  try {
-    const session = await fetchAuthSession();
-    return session.tokens?.idToken?.payload || null;
-  } catch (error) {
-    return null;
-  }
-}
-
-// Export utility functions for auth context
-export { checkIsUserAdmin, getUserAttributes };
