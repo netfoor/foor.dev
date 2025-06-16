@@ -16,13 +16,25 @@ const PROTECTED_ROUTES = ['/profile', '/dashboard'];
 const ADMIN_ROUTES: string[] = [];
 
 // Rutas públicas (no requieren autenticación en middleware)
-const PUBLIC_ROUTES = ['/', '/login', '/auth/callback', '/access-denied', '/admin'];
+const PUBLIC_ROUTES = ['/', '/login', '/auth/callback', '/access-denied'];
+
+/**
+ * Función para obtener la ruta normalizada sin el locale
+ */
+function getNormalizedPath(path: string): string {
+  const pathParts = path.split('/').filter(Boolean);
+  if (pathParts.length > 0 && SUPPORTED_LOCALES.includes(pathParts[0] as SupportedLocale)) {
+    return '/' + pathParts.slice(1).join('/');
+  }
+  return path;
+}
 
 /**
  * Función para verificar si una ruta comienza con alguno de los prefijos dados
  */
 function isProtectedByPrefix(path: string, prefixes: string[]): boolean {
-  return prefixes.some(prefix => path.startsWith(prefix));
+  const normalizedPath = getNormalizedPath(path);
+  return prefixes.some(prefix => normalizedPath.startsWith(prefix));
 }
 
 /**
@@ -166,14 +178,13 @@ function isUserAdmin(tokens: any): boolean {
  */
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  
-  // Permitir acceso a recursos estáticos y API routes
-  if (
-    pathname.startsWith('/_next') || 
-    pathname.startsWith('/api/') ||
-    pathname.startsWith('/images/') ||
-    pathname.startsWith('/favicon.ico')
-  ) {
+  const normalizedPathname = getNormalizedPath(pathname);
+
+  // 1. PERMITIR RUTAS PÚBLICAS Y AUTH CALLBACK
+  if (PUBLIC_ROUTES.includes(normalizedPathname) || 
+      normalizedPathname.startsWith('/auth/') ||
+      normalizedPathname === '/admin' ||
+      normalizedPathname.startsWith('/admin/')) {
     return NextResponse.next();
   }
 
@@ -200,26 +211,18 @@ export async function middleware(request: NextRequest) {
   }
   
   // Normalizar las rutas públicas para verificación (sin prefijo de locale)
-  const normalizedPathname = pathnameWithoutLocale;
+  const normalizedPathnameForAuth = pathnameWithoutLocale;
   
-  // Permitir acceso a rutas públicas sin verificación de autenticación
-  if (PUBLIC_ROUTES.includes(normalizedPathname) || 
-      normalizedPathname.startsWith('/login') ||
-      normalizedPathname.startsWith('/auth/') ||
-      normalizedPathname.startsWith('/admin')) { // Permitir /admin y sub-rutas para AuthGuard
-    return NextResponse.next();
-  }
-
   // 3. VERIFICAR AUTENTICACIÓN PARA RUTAS PROTEGIDAS
   try {
-    if (isProtectedByPrefix(normalizedPathname, PROTECTED_ROUTES)) {
+    if (isProtectedByPrefix(normalizedPathnameForAuth, PROTECTED_ROUTES)) {
       // Verificar la autenticación del usuario
       const { isValid, tokens } = await verifyTokens();
       
       console.log(`Middleware: Verificando acceso a ${pathname}`, { 
         isValid, 
         hasTokens: !!tokens,
-        normalizedPath: normalizedPathname
+        normalizedPath: normalizedPathnameForAuth
       });
       
       if (!isValid) {
@@ -233,7 +236,7 @@ export async function middleware(request: NextRequest) {
       }
       
       // Verificar permisos de administrador para rutas de administración
-      if (isProtectedByPrefix(normalizedPathname, ADMIN_ROUTES)) {
+      if (isProtectedByPrefix(normalizedPathnameForAuth, ADMIN_ROUTES)) {
         const hasAdminRole = isUserAdmin(tokens);
         
         console.log(`Middleware: Verificando rol de admin para ${pathname}`, { 

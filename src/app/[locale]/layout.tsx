@@ -25,7 +25,9 @@ export default async function LocaleLayout({
   return (
     <I18nProvider locale={locale as SupportedLocale}>
       <NavBar />
-      {children}
+      <main className="main-content">
+        {children}
+      </main>
     </I18nProvider>
   );
 }

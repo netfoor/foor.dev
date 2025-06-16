@@ -4,6 +4,8 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/context/auth-context';
 import { useAuthorization, type UserRole } from '@/hooks/useAuthorization';
 import { useRouter, usePathname } from 'next/navigation';
+import { DEFAULT_LOCALE } from '@/lib/i18n/config';
+import { useTranslation } from '@/lib/i18n/client';
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -26,6 +28,13 @@ export function AuthGuard({
   const router = useRouter();
   const pathname = usePathname();
   const [shouldRedirect, setShouldRedirect] = useState(false);
+  const { t } = useTranslation('auth');
+
+  // Get the current locale from the pathname
+  const getCurrentLocale = () => {
+    const pathParts = pathname.split('/');
+    return pathParts[1] || DEFAULT_LOCALE;
+  };
 
   // Usar useEffect para manejar las redirecciones
   useEffect(() => {
@@ -39,12 +48,14 @@ export function AuthGuard({
   // Efectuar la redirección en un useEffect separado
   useEffect(() => {
     if (shouldRedirect && typeof window !== 'undefined') {
+      const currentLocale = getCurrentLocale();
       const returnUrl = encodeURIComponent(pathname);
+      const localizedRedirect = `/${currentLocale}${redirectTo}`;
       
-      console.log(`AuthGuard: Redirigiendo a ${redirectTo}?returnUrl=${returnUrl} 
+      console.log(`AuthGuard: Redirecting to ${localizedRedirect}?returnUrl=${returnUrl} 
         (isAuthenticated: ${isAuthenticated}, hasRole: ${hasRole(role)})`);
       
-      router.push(`${redirectTo}?returnUrl=${returnUrl}`);
+      router.push(`${localizedRedirect}?returnUrl=${returnUrl}`);
     }
   }, [shouldRedirect, pathname, redirectTo, router, isAuthenticated, hasRole, role]);
   
@@ -61,7 +72,7 @@ export function AuthGuard({
   if (shouldRedirect) {
     return (
       <div className="flex flex-col items-center justify-center h-full">
-        <p className="text-lg mb-4">Redirigiendo al login...</p>
+        <p className="text-lg mb-4">{t('redirecting_to_login')}</p>
         <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
       </div>
     );

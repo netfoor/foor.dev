@@ -24,6 +24,8 @@ export const Hero: React.FC<HeroProps> = ({ className = '' }) => {
       as="section"
       className={className}
       padding={{ base: "2rem", medium: "4rem" }}
+      
+      paddingTop={{ base: "6rem", medium: "7rem" }}
       style={{
         height: "100vh",    
         width: "100%",

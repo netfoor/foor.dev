@@ -17,11 +17,11 @@ export default function AdminLayout({
 }) {
   return (
     <AuthGuard role="admin" redirectTo="/login">
-      <div className="min-h-screen flex flex-col">
-        {/* Barra de navegación superior */}
-        <header className="bg-white shadow-md">
+      <div className="min-h-[calc(100vh-4rem)] flex flex-col"> {/* Adjust for main navbar */}
+        {/* Barra de navegación superior del admin */}
+        <header className="bg-white shadow-md sticky top-16 z-10"> {/* Sticky below main navbar */}
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between h-16 items-center">
+            <div className="flex justify-between h-14 items-center"> {/* Reduced height */}
               <div className="flex-shrink-0 flex items-center">
                 <h1 className="text-xl font-bold text-gray-900">Panel de Administración</h1>
               </div>
@@ -37,7 +37,7 @@ export default function AdminLayout({
         <div className="flex flex-1">
           {/* Barra lateral de navegación */}
           <aside className="w-64 bg-gray-800 text-white">
-            <div className="p-4">
+            <div className="p-4 sticky top-30"> {/* Sticky below both navbars */}
               <h2 className="text-lg font-semibold mb-4">Menú</h2>
               
               <nav className="space-y-1">
@@ -62,9 +62,9 @@ export default function AdminLayout({
               </nav>
             </div>
           </aside>
-          
+
           {/* Contenido principal */}
-          <main className="flex-1 bg-gray-100 p-6">
+          <main className="flex-1 p-6 bg-gray-100">
             {children}
           </main>
         </div>

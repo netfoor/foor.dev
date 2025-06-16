@@ -103,3 +103,15 @@
     }
   }
 }
+
+@layer components {
+  /* Clase para el contenido principal debajo del navbar */
+  .main-content {
+    @apply pt-[60px] min-h-screen; /* Exactamente 60px para coincidir con la altura del navbar */
+  }
+
+  /* Variante para páginas que necesitan más espacio */
+  .main-content-lg {
+    @apply pt-[80px]; /* Más espacio para casos especiales */
+  }
+}

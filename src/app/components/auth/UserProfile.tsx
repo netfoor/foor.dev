@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useAuth } from '@/context/auth-context';
+import { useTranslation } from '@/lib/i18n/client';
 import Image from 'next/image';
 
 /**
@@ -9,6 +10,7 @@ import Image from 'next/image';
  */
 export function UserProfile() {
   const { user, userAttributes, isLoading } = useAuth();
+  const { t } = useTranslation('auth');
   
   if (isLoading) {
     return (
@@ -27,7 +29,7 @@ export function UserProfile() {
   }
   
   // Extraer información del usuario
-  const name = userAttributes.name || userAttributes.givenName || 'Usuario';
+  const name = userAttributes.name || userAttributes.givenName || t('default_username');
   const email = userAttributes.email || '';
   
   return (
