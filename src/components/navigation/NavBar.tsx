@@ -8,11 +8,10 @@ import { Menu, X, Sun, Moon } from 'lucide-react';
 import { ThemeToggle } from '@/components/theme/ThemeToggle';
 import LanguageSelector, { LanguageIndicator } from '@/components/ui/LanguageSelector';
 import { useTheme } from '@/hooks/useTheme';
-import { useTranslation } from '@/lib/i18n/client';
+import { useTranslation, useLocalizedPath } from '@/lib/i18n/client';
 
 // Define las rutas de navegación
 const navLinks = [
-  { href: '/', key: 'home' },
   { href: '/about', key: 'about' },
   { href: '/projects', key: 'projects' },
   { href: '/certifications', key: 'certifications' },
@@ -24,9 +23,9 @@ function NavBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [hasScrolled, setHasScrolled] = useState(false);
   const navRef = useRef<HTMLElement>(null);
-  const menuRef = useRef<HTMLDivElement>(null);
-  const pathname = usePathname();
+  const menuRef = useRef<HTMLDivElement>(null);  const pathname = usePathname();
   const { t } = useTranslation('common');
+  const getLocalizedPath = useLocalizedPath();
   const [mounted, setMounted] = useState(false);
 
   // Agregar verificación para el contexto del tema
@@ -107,7 +106,7 @@ function NavBar() {
           margin="0 auto"
         >          {/* Logo */}
           <Link 
-            href="/" 
+            href={getLocalizedPath('/')} 
             aria-label="Go to homepage"
             style={{
               textDecoration: 'none',
@@ -150,14 +149,13 @@ function NavBar() {
             direction="row"
             gap="1.5rem"
             display={{ base: 'none', medium: 'flex' }}
-          >
-            {navLinks.map((link) => (
+          >            {navLinks.map((link) => (
               <Link 
                 key={link.key} 
-                href={link.href}
+                href={getLocalizedPath(link.href)}
                 style={{
                   position: 'relative',
-                  color: pathname === link.href ? accentColor : textColor,
+                  color: pathname === getLocalizedPath(link.href) ? accentColor : textColor,
                   textDecoration: 'none',
                   fontWeight: 500,
                   padding: '0.5rem 0',
@@ -165,7 +163,7 @@ function NavBar() {
                 }}
               >
                 <Text>
-                  {t(`navigation.${link.key}`)}
+                  {t(link.key)}
                 </Text>
                 <div
                   style={{
@@ -173,7 +171,7 @@ function NavBar() {
                     position: 'absolute',
                     bottom: '-2px',
                     left: 0,
-                    width: pathname === link.href ? '100%' : '0',
+                    width: pathname === getLocalizedPath(link.href) ? '100%' : '0',
                     height: '2px',
                     background: 'linear-gradient(135deg, #40AABF, #64D2E7)',
                     transition: 'width 0.3s'
@@ -280,30 +278,28 @@ function NavBar() {
             padding="2rem"
             gap="1.5rem"
             flex="1"
-          >
-            {navLinks.map((link) => (
+          >            {navLinks.map((link) => (
               <Link 
                 key={link.key} 
-                href={link.href}
+                href={getLocalizedPath(link.href)}
                 onClick={() => setIsMenuOpen(false)}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
                   gap: '1rem',
-                  color: pathname === link.href ? accentColor : textColor,
+                  color: pathname === getLocalizedPath(link.href) ? accentColor : textColor,
                   textDecoration: 'none',
                   fontWeight: 500,
                   padding: '0.75rem',
                   borderRadius: '0.5rem',
                   transition: 'all 0.3s',
                   marginBottom: '0.5rem',
-                  backgroundColor: pathname === link.href 
+                  backgroundColor: pathname === getLocalizedPath(link.href) 
                     ? (mode === 'dark' ? 'rgba(64, 170, 191, 0.1)' : 'rgba(64, 170, 191, 0.1)') 
                     : 'transparent'
                 }}
-              >
-                <Text fontSize="1.125rem">
-                  {t(`navigation.${link.key}`)}
+              >                <Text fontSize="1.125rem">
+                  {t(link.key)}
                 </Text>
               </Link>
             ))}          </Flex>

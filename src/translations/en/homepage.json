@@ -37,7 +37,32 @@
       "academic": {
         "title": "Academic Contributor",
         "description": "Reviewed UTP textbooks & academic media"
-      }
-    }
+      }    }
+  },
+  "projects": {
+    "title": "Featured",
+    "titleHighlight": "Projects",
+    "description": "Explore my AWS cloud solutions, serverless applications, and DevOps innovations that solve real-world problems with modern technology.",
+    "categories": {
+      "all": "All Projects",
+      "Hackathon": "Hackathons",
+      "Research": "Research",
+      "Professional": "Professional",
+      "Academic": "Academic",
+      "Personal": "Personal"
+    },    "actions": {
+      "viewProject": "View Project",
+      "viewCode": "View Code",
+      "liveDemo": "Live Demo",
+      "viewAllProjects": "View All Projects"
+    },
+    "labels": {
+      "skills": "Technologies",
+      "location": "Location",
+      "category": "Category"
+    },    "noProjects": "No projects found for this category.",
+    "loading": "Loading projects...",
+    "error": "Failed to load projects. Please try again later.",
+    "viewAll": "View All Projects"
   }
 }

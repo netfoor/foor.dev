@@ -36,7 +36,32 @@
       "academic": {
         "title": "Contribuyente Académico",
         "description": "Revisó libros de texto y medios académicos UTP"
-      }
-    }
+      }    }
+  },
+  "projects": {
+    "title": "Proyectos",
+    "titleHighlight": "Destacados",
+    "description": "Explora mis soluciones AWS en la nube, aplicaciones serverless e innovaciones DevOps que resuelven problemas del mundo real con tecnología moderna.",
+    "categories": {
+      "all": "Todos los Proyectos",
+      "Hackathon": "Hackathones",
+      "Research": "Investigación",
+      "Professional": "Profesional",
+      "Academic": "Académico",
+      "Personal": "Personal"
+    },    "actions": {
+      "viewProject": "Ver Proyecto",
+      "viewCode": "Ver Código",
+      "liveDemo": "Demo en Vivo",
+      "viewAllProjects": "Ver Todos los Proyectos"
+    },
+    "labels": {
+      "skills": "Tecnologías",
+      "location": "Ubicación",
+      "category": "Categoría"
+    },    "noProjects": "No se encontraron proyectos para esta categoría.",
+    "loading": "Cargando proyectos...",
+    "error": "Error al cargar proyectos. Por favor, intenta de nuevo.",
+    "viewAll": "Ver Todos los Proyectos"
   }
 }

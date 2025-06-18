@@ -36,7 +36,32 @@
       "academic": {
         "title": "学術貢献者",
         "description": "UTP教科書・学術メディアレビュー"
-      }
-    }
+      }    }
+  },
+  "projects": {
+    "title": "注目",
+    "titleHighlight": "プロジェクト",
+    "description": "実世界の問題を現代技術で解決するAWSクラウドソリューション、サーバーレスアプリケーション、DevOpsイノベーションをご覧ください。",
+    "categories": {
+      "all": "全プロジェクト",
+      "Hackathon": "ハッカソン",
+      "Research": "研究",
+      "Professional": "プロフェッショナル",
+      "Academic": "学術",
+      "Personal": "個人"
+    },    "actions": {
+      "viewProject": "プロジェクトを見る",
+      "viewCode": "コードを見る",
+      "liveDemo": "ライブデモ",
+      "viewAllProjects": "全プロジェクトを見る"
+    },
+    "labels": {
+      "skills": "技術",
+      "location": "場所",
+      "category": "カテゴリー"
+    },    "noProjects": "このカテゴリーのプロジェクトが見つかりません。",
+    "loading": "プロジェクトを読み込み中...",
+    "error": "プロジェクトの読み込みに失敗しました。後でもう一度お試しください。",
+    "viewAll": "すべてのプロジェクトを見る"
   }
 }
