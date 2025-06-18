@@ -191,7 +191,31 @@ npm run build
 npm run export
 ```
 
-## 📈 Performance
+## � Common Issues & Solutions
+
+### Cognito Groups Authorization Issue
+If you get "Unauthorized" errors when trying to create/edit content as an admin:
+
+**Problem:** `defaultAuthorizationMode` was set to `'identityPool'` instead of `'userPool'`
+
+**Solution:** 
+```typescript
+// amplify/data/resource.ts
+export const data = defineData({
+  schema,
+  authorizationModes: {
+    defaultAuthorizationMode: 'userPool', // Must be 'userPool' for Cognito groups
+  },
+});
+```
+
+See [COGNITO_GROUPS_AUTHORIZATION_SOLUTION.md](./docs/COGNITO_GROUPS_AUTHORIZATION_SOLUTION.md) for complete details.
+
+### Other Solutions
+- [Common Errors Guide](./docs/COMMON_ERRORS_GUIDE.md)
+- [Amplify Client SSR Solution](./docs/AMPLIFY_CLIENT_ERROR_SOLUTION.md)
+
+## �📈 Performance
 
 - **Lighthouse Score**: 90+ across all metrics
 - **Core Web Vitals**: Optimized for LCP, FID, CLS

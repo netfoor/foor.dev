@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { generateClient } from 'aws-amplify/data';
-import { getCurrentUser } from 'aws-amplify/auth';
+import { getCurrentUser, fetchAuthSession } from 'aws-amplify/auth';
 import type { Schema } from '../../../../../amplify/data/resource';
 
 const client = generateClient<Schema>();
@@ -98,40 +98,81 @@ interface CreateSampleDataProps {
 export default function CreateSampleData({ onSuccess }: CreateSampleDataProps) {
   const [isCreating, setIsCreating] = useState(false);
   const [message, setMessage] = useState('');
+  const [userInfo, setUserInfo] = useState<any>(null);
+
+  // Debug: Get current user info on component mount
+  useEffect(() => {
+    async function getUserInfo() {
+      try {
+        const user = await getCurrentUser();
+        console.log('Current user:', user);
+        setUserInfo(user);
+      } catch (error) {
+        console.error('Error getting user info:', error);
+        setMessage('❌ Error: User not authenticated');
+      }
+    }
+    getUserInfo();
+  }, []);
   const createSampleData = async () => {
     setIsCreating(true);
-    setMessage('');
-
-    try {
-      // Debug: Check current user and groups
+    setMessage('');    try {      // Debug: Check current user and groups using JWT token
+      console.log('🔍 Checking current user and permissions...');
       const currentUser = await getCurrentUser();
       console.log('Current user:', currentUser);
-      console.log('User groups:', currentUser.signInDetails?.loginId);
-
-      console.log('Starting to create sample projects...');
       
-      for (const projectData of sampleProjectsData) {
+      const authSession = await fetchAuthSession();
+      const idTokenPayload = authSession.tokens?.idToken?.payload;
+      console.log('JWT ID Token Payload:', idTokenPayload);
+        // Check for groups in the JWT token (the correct way)
+      const groups = (idTokenPayload?.['cognito:groups'] || []) as string[];
+      console.log('User groups from JWT token:', groups);
+      
+      if (!Array.isArray(groups) || !groups.includes('ADMINS')) {
+        const errorMsg = `❌ User is not in ADMINS group. Current groups: ${groups.length > 0 ? groups.join(', ') : 'none'}. Please add yourself to the ADMINS group in Cognito console and refresh your session.`;
+        console.error(errorMsg);
+        setMessage(errorMsg);
+        return;
+      }
+      
+      console.log('✅ User is in ADMINS group. Starting to create sample projects...');
+        for (const projectData of sampleProjectsData) {
         console.log(`Creating project: ${projectData.title}`);
         
-        const result = await client.models.Projects.create({
-          title: projectData.title,
-          description: projectData.description,
-          place: projectData.place,
-          projectUrl: projectData.projectUrl,
-          githubUrl: projectData.githubUrl,
-          demoUrl: projectData.demoUrl,
-          skills: projectData.skills,
-          categories: projectData.categories,
-          startDate: projectData.startDate,
-          endDate: projectData.endDate,
-          status: projectData.status,
-          featured: projectData.featured,
-          slug: projectData.slug,
-          metaDescription: projectData.metaDescription,
-          tags: projectData.tags
-        });
+        try {
+          // Debug: Log the exact mutation being sent
+          console.log('📤 Sending GraphQL mutation with data:', projectData);
+          console.log('📤 Using Amplify client configured with current auth session');
+          
+          const result = await client.models.Projects.create({
+            title: projectData.title,
+            description: projectData.description,
+            place: projectData.place,
+            projectUrl: projectData.projectUrl,
+            githubUrl: projectData.githubUrl,
+            demoUrl: projectData.demoUrl,
+            skills: projectData.skills,
+            categories: projectData.categories,
+            startDate: projectData.startDate,
+            endDate: projectData.endDate,
+            status: projectData.status,
+            featured: projectData.featured,
+            slug: projectData.slug,
+            metaDescription: projectData.metaDescription,
+            tags: projectData.tags
+          });
 
-        console.log(`Created project:`, result);
+          console.log(`✅ Created project successfully:`, result);
+          
+          if (result.errors && result.errors.length > 0) {
+            console.error(`❌ GraphQL errors for ${projectData.title}:`, result.errors);
+            throw new Error(`GraphQL errors: ${result.errors.map(e => e.message).join(', ')}`);
+          }
+          
+        } catch (projectError) {
+          console.error(`❌ Failed to create project ${projectData.title}:`, projectError);
+          // Continue with other projects even if one fails
+        }
       }
 
       setMessage(`✅ Successfully created ${sampleProjectsData.length} sample projects!`);
@@ -178,6 +219,6 @@ export default function CreateSampleData({ onSuccess }: CreateSampleDataProps) {
           {message}
         </div>
       )}
-    </div>
-  );
+    </div>  );
 }
+

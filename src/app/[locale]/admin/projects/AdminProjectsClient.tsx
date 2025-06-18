@@ -39,6 +39,9 @@ import { useTranslation, useLocalizedPath } from '@/lib/i18n/client';
 import type { SupportedLocale } from '@/lib/i18n/types';
 import CreateSampleData from './CreateSampleData';
 import CreateAllSampleData from './CreateAllSampleData';
+import RefreshUserSession from './RefreshUserSession';
+import DebugJWTTokens from './DebugJWTTokens';
+import DebugUserPermissions from './DebugUserPermissions';
 
 // Tipos para el proyecto actualizado
 type Project = Schema["Projects"]["type"];
@@ -155,9 +158,13 @@ const AdminProjectsClient: React.FC<AdminProjectsClientProps> = ({ locale }) => 
       </Flex>
     );
   }
-
-  return (
-    <View>
+  return (    <View>
+      {/* Debug Components */}
+      <RefreshUserSession />
+      <div className="mt-4">
+        <DebugJWTTokens />
+      </div>
+      
       {/* Header */}
       <Flex 
         direction={{ base: 'column', medium: 'row' }} 
@@ -279,8 +286,8 @@ const AdminProjectsClient: React.FC<AdminProjectsClientProps> = ({ locale }) => 
       >        {projects.length === 0 ? (          <View padding="3rem" textAlign="center">
             <Text fontSize="1.125rem" color={mode === 'dark' ? '#CBD5E1' : '#64748B'} marginBottom="2rem">
               No hay proyectos aún. ¡Crea tu primer proyecto!
-            </Text>
-            <Flex direction="column" gap="1rem">
+            </Text>            <Flex direction="column" gap="1rem">
+              <DebugUserPermissions />
               <CreateSampleData onSuccess={fetchProjects} />
               <CreateAllSampleData onSuccess={fetchProjects} />
             </Flex>
