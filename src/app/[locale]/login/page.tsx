@@ -22,6 +22,17 @@ function LoginContent({ locale, returnUrl }: { locale: SupportedLocale; returnUr
   const { hasRole } = useAuthorization();
   const { mode } = useTheme();
   const router = useRouter();
+  
+  // Move searchParams usage to a separate component
+  return <LoginWithSearchParams locale={locale} returnUrl={returnUrl} />;
+}
+
+function LoginWithSearchParams({ locale, returnUrl }: { locale: SupportedLocale; returnUrl: string }) {
+  const { t } = useTranslation('auth');
+  const { isAuthenticated, isLoading } = useAuth();
+  const { hasRole } = useAuthorization();
+  const { mode } = useTheme();
+  const router = useRouter();
   const searchParams = useSearchParams();
   const error = searchParams.get('error');
   // Redirigir si el usuario ya está autenticado
@@ -238,13 +249,18 @@ function LoginContent({ locale, returnUrl }: { locale: SupportedLocale; returnUr
  * Integra temas, AWS Amplify UI y responsive design
  */
 export default function LoginPage({ params }: LoginPageProps) {
-  const searchParams = useSearchParams();
   const locale = React.use(params).locale;
-  const returnUrl = searchParams.get('returnUrl') || `/${locale}/admin`;
   
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <LoginContent locale={locale} returnUrl={returnUrl} />
+      <LoginPageContent locale={locale} />
     </Suspense>
   );
+}
+
+function LoginPageContent({ locale }: { locale: SupportedLocale }) {
+  const searchParams = useSearchParams();
+  const returnUrl = searchParams.get('returnUrl') || `/${locale}/admin`;
+  
+  return <LoginContent locale={locale} returnUrl={returnUrl} />;
 }

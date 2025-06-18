@@ -5,11 +5,12 @@ import type { SupportedLocale } from '@/lib/i18n/types';
 import CreateProjectClient from './CreateProjectClient';
 
 interface PageProps {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }
 
-export function generateMetadata({ params }: PageProps): Metadata {
-  const locale = getValidLocale(params.locale);
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { locale } = await params;
+  const validLocale = getValidLocale(locale);
   
   const titles: Record<SupportedLocale, string> = {
     en: 'Create New Project - Admin | Foor.dev',
@@ -22,18 +23,19 @@ export function generateMetadata({ params }: PageProps): Metadata {
     es: 'Crear un nuevo proyecto en el panel de administración. Subir imágenes, establecer detalles y gestionar información del proyecto.',
     ja: '管理ダッシュボードで新しいプロジェクトを作成します。画像をアップロード、詳細を設定、プロジェクト情報を管理します。'
   };
-
   return {
-    title: titles[locale],
-    description: descriptions[locale],
+    title: titles[validLocale],
+    description: descriptions[validLocale],
     robots: 'noindex, nofollow', // Admin pages should not be indexed
   };
 }
 
-export default function CreateProjectPage({ params }: PageProps) {
-  if (!isValidLocale(params.locale)) {
+export default async function CreateProjectPage({ params }: PageProps) {
+  const { locale } = await params;
+  
+  if (!isValidLocale(locale)) {
     notFound();
   }
 
-  return <CreateProjectClient locale={params.locale} />;
+  return <CreateProjectClient />;
 }

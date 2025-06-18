@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { 
   View, 
   Flex, 
@@ -14,13 +14,11 @@ import {
   SwitchField,
   Badge,
   Alert,
-  Loader,
   Divider
 } from '@aws-amplify/ui-react';
 import { 
   ArrowLeft, 
   Save, 
-  Upload, 
   Image as ImageIcon,
   X,
   Plus
@@ -31,14 +29,10 @@ import { uploadData } from 'aws-amplify/storage';
 import type { Schema } from '../../../../../../amplify/data/resource';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation, useLocalizedPath } from '@/lib/i18n/client';
-import type { SupportedLocale } from '@/lib/i18n/types';
+import { FileUploadInput } from './FileUploadInput';
 
 // Generar el cliente de Amplify
 const client = generateClient<Schema>();
-
-interface CreateProjectClientProps {
-  locale: SupportedLocale;
-}
 
 interface ProjectFormData {
   title: string;
@@ -58,7 +52,7 @@ interface ProjectFormData {
   tags: string[];
 }
 
-export default function CreateProjectClient({ locale }: CreateProjectClientProps) {  
+export default function CreateProjectClient(): React.JSX.Element {  
   const themeContext = useTheme();
   const theme = themeContext?.mode ?? 'light';
   const { t } = useTranslation('admin');
@@ -80,70 +74,61 @@ export default function CreateProjectClient({ locale }: CreateProjectClientProps
     status: 'Draft',
     featured: false,
     slug: '',
-    metaDescription: '',
-    tags: []
+    metaDescription: '',    tags: []
   });
 
   // Estados para archivos
   const [mainImage, setMainImage] = useState<File | null>(null);
   const [galleryImages, setGalleryImages] = useState<File[]>([]);
-  const [mainImagePreview, setMainImagePreview] = useState<string>('');
-  const [galleryPreviews, setGalleryPreviews] = useState<string[]>([]);
-
+  const [mainImagePreview, setMainImagePreview] = useState<string>('');  const [galleryPreviews, setGalleryPreviews] = useState<string[]>([]);
   // Estados de la UI
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string>('');
   const [success, setSuccess] = useState<string>('');
-  const [skillInput, setSkillInput] = useState('');
-  const [tagInput, setTagInput] = useState('');
+  const [skillInput, setSkillInput] = useState('');  const [tagInput, setTagInput] = useState('');
 
   // Manejadores de formulario
-  const handleInputChange = (field: keyof ProjectFormData, value: any) => {
-    setFormData(prev => ({
-      ...prev,
+  const handleInputChange = (field: keyof ProjectFormData, value: string | string[] | boolean) => {
+    setFormData(prev => ({      ...prev,
       [field]: value
     }));
 
     // Auto-generar slug basado en el título
-    if (field === 'title') {
+    if (field === 'title' && typeof value === 'string') {
       const slug = value.toLowerCase()
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/(^-|-$)/g, '');
       setFormData(prev => ({
         ...prev,
-        slug
-      }));
+        slug      }));
     }
   };
-
-  // Manejadores de imagen principal
-  const handleMainImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      if (file.size > 5 * 1024 * 1024) { // 5MB límite
-        setError('La imagen principal no puede ser mayor a 5MB');
-        return;
-      }
-      setMainImage(file);
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setMainImagePreview(e.target?.result as string);
-      };
-      reader.readAsDataURL(file);
-      setError('');
+  // Manejador simplificado para imagen principal
+  const handleMainImageFile = useCallback((file: File) => {
+    if (file.size > 5 * 1024 * 1024) { // 5MB límite
+      setError('La imagen principal no puede ser mayor a 5MB');
+      return;
     }
-  };
+    
+    setMainImage(file);
+    
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const result = e.target?.result as string;
+      setMainImagePreview(result);
+    };
+    reader.onerror = () => {
+      setError('Error al cargar la imagen');
+    };
+    reader.readAsDataURL(file);
+    setError('');  }, []);
 
-  const removeMainImage = () => {
+  const removeMainImage = useCallback(() => {
     setMainImage(null);
     setMainImagePreview('');
-  };
-
-  // Manejadores de galería
-  const handleGalleryImagesSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(event.target.files || []);
-    if (files.length === 0) return;
-
+  }, []);
+  // Manejador simplificado para galería
+  const handleGalleryImageFiles = useCallback((files: File[]) => {
     // Validar tamaño y cantidad
     const validFiles = files.filter(file => {
       if (file.size > 5 * 1024 * 1024) {
@@ -170,7 +155,7 @@ export default function CreateProjectClient({ locale }: CreateProjectClientProps
     });
 
     setError('');
-  };
+  }, [galleryImages.length]);
 
   const removeGalleryImage = (index: number) => {
     setGalleryImages(prev => prev.filter((_, i) => i !== index));
@@ -317,8 +302,7 @@ export default function CreateProjectClient({ locale }: CreateProjectClientProps
         backgroundColor={isDark ? 'background.secondary' : 'background.primary'}
         maxWidth="800px"
         margin="0 auto"
-      >
-        {/* Header */}
+      >        {/* Header */}
         <Flex direction="column" gap="large">
           <Flex justifyContent="space-between" alignItems="center">
             <Flex alignItems="center" gap="medium">
@@ -435,35 +419,30 @@ export default function CreateProjectClient({ locale }: CreateProjectClientProps
               </Card>
 
               {/* Imagen Principal */}
-              <Card variation="outlined" padding="large">
-                <Heading level={4} color={isDark ? 'white' : 'black'} marginBottom="medium">
+              <Card variation="outlined" padding="large">                <Heading level={4} color={isDark ? 'white' : 'black'} marginBottom="medium">
                   Imagen Principal
                 </Heading>
-                  {!mainImagePreview ? (
-                  <label
-                    style={{
-                      display: 'block',
-                      padding: '2rem',
-                      border: `2px dashed ${isDark ? '#444' : '#ccc'}`,
-                      borderRadius: '8px',
-                      textAlign: 'center',
-                      cursor: 'pointer',
-                      backgroundColor: isDark ? '#2a2a2a' : '#f5f5f5'
-                    }}
-                  >
-                    <Flex direction="column" alignItems="center" gap="medium">
-                      <ImageIcon size={48} color={isDark ? '#888' : '#666'} />
-                      <Text color={isDark ? 'font.secondary' : 'font.primary'}>
-                        Haz clic para subir imagen principal (máx. 5MB)
-                      </Text>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleMainImageSelect}
-                        style={{ display: 'none' }}
-                      />
-                    </Flex>
-                  </label>
+
+                {!mainImagePreview ? (
+                  <FileUploadInput onFileSelect={handleMainImageFile}>
+                    <div
+                      style={{
+                        display: 'block',
+                        padding: '2rem',
+                        border: `2px dashed ${isDark ? '#444' : '#ccc'}`,
+                        borderRadius: '8px',
+                        textAlign: 'center',
+                        cursor: 'pointer',
+                        backgroundColor: isDark ? '#2a2a2a' : '#f5f5f5'
+                      }}
+                    >
+                      <Flex direction="column" alignItems="center" gap="medium">
+                        <ImageIcon size={48} color={isDark ? '#888' : '#666'} />
+                        <Text color={isDark ? 'font.secondary' : 'font.primary'}>
+                          Haz clic para subir imagen principal (máx. 5MB)
+                        </Text>
+                      </Flex>
+                    </div>                  </FileUploadInput>
                 ) : (
                   <View position="relative">
                     <img
@@ -477,6 +456,7 @@ export default function CreateProjectClient({ locale }: CreateProjectClientProps
                       }}
                     />
                     <Button
+                      type="button"
                       variation="destructive"
                       size="small"
                       position="absolute"
@@ -488,39 +468,36 @@ export default function CreateProjectClient({ locale }: CreateProjectClientProps
                     </Button>
                   </View>
                 )}
-              </Card>
-
-              {/* Galería */}
+              </Card>{/* Galería */}
               <Card variation="outlined" padding="large">
                 <Heading level={4} color={isDark ? 'white' : 'black'} marginBottom="medium">
                   Galería (máx. 10 imágenes)
                 </Heading>
-                  <label
-                  style={{
-                    display: 'block',
-                    padding: '1.5rem',
-                    border: `2px dashed ${isDark ? '#444' : '#ccc'}`,
-                    borderRadius: '8px',
-                    textAlign: 'center',
-                    cursor: 'pointer',
-                    backgroundColor: isDark ? '#2a2a2a' : '#f5f5f5',
-                    marginBottom: '1rem'
-                  }}
+
+                <FileUploadInput 
+                  onMultipleFilesSelect={handleGalleryImageFiles}
+                  multiple={true}
                 >
-                  <Flex direction="column" alignItems="center" gap="medium">
-                    <Plus size={24} color={isDark ? '#888' : '#666'} />
-                    <Text color={isDark ? 'font.secondary' : 'font.primary'}>
-                      Agregar imágenes a la galería
-                    </Text>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      multiple
-                      onChange={handleGalleryImagesSelect}
-                      style={{ display: 'none' }}
-                    />
-                  </Flex>
-                </label>
+                  <div
+                    style={{
+                      display: 'block',
+                      padding: '1.5rem',
+                      border: `2px dashed ${isDark ? '#444' : '#ccc'}`,
+                      borderRadius: '8px',
+                      textAlign: 'center',
+                      cursor: 'pointer',
+                      backgroundColor: isDark ? '#2a2a2a' : '#f5f5f5',
+                      marginBottom: '1rem'
+                    }}
+                  >
+                    <Flex direction="column" alignItems="center" gap="medium">
+                      <Plus size={24} color={isDark ? '#888' : '#666'} />
+                      <Text color={isDark ? 'font.secondary' : 'font.primary'}>
+                        Agregar imágenes a la galería
+                      </Text>
+                    </Flex>
+                  </div>
+                </FileUploadInput>
 
                 {galleryPreviews.length > 0 && (
                   <Flex wrap="wrap" gap="medium">
@@ -535,8 +512,8 @@ export default function CreateProjectClient({ locale }: CreateProjectClientProps
                             objectFit: 'cover',
                             borderRadius: '8px'
                           }}
-                        />
-                        <Button
+                        />                        <Button
+                          type="button"
                           variation="destructive"
                           size="small"
                           position="absolute"

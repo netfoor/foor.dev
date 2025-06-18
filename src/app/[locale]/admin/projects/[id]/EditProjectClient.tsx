@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   View, 
   Flex, 
@@ -91,7 +91,6 @@ export default function EditProjectClient({ locale, projectId }: EditProjectClie
     metaDescription: '',
     tags: []
   });
-
   // Estados para archivos
   const [newMainImage, setNewMainImage] = useState<File | null>(null);
   const [newGalleryImages, setNewGalleryImages] = useState<File[]>([]);
@@ -100,6 +99,10 @@ export default function EditProjectClient({ locale, projectId }: EditProjectClie
   const [currentMainImageUrl, setCurrentMainImageUrl] = useState<string>('');
   const [currentGalleryUrls, setCurrentGalleryUrls] = useState<string[]>([]);
   const [imagesToDelete, setImagesToDelete] = useState<string[]>([]);
+
+  // Referencias para inputs de archivos
+  const mainImageInputRef = useRef<HTMLInputElement>(null);
+  const galleryImagesInputRef = useRef<HTMLInputElement>(null);
 
   // Estados de la UI
   const [isLoading, setIsLoading] = useState(false);
@@ -192,9 +195,11 @@ export default function EditProjectClient({ locale, projectId }: EditProjectClie
       }));
     }
   };
-
   // Manejadores de imagen principal
   const handleMainImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+    
     const file = event.target.files?.[0];
     if (file) {
       if (file.size > 5 * 1024 * 1024) { // 5MB límite
@@ -209,6 +214,8 @@ export default function EditProjectClient({ locale, projectId }: EditProjectClie
       reader.readAsDataURL(file);
       setError('');
     }
+    // Limpiar el input para permitir seleccionar el mismo archivo otra vez
+    event.target.value = '';
   };
 
   const removeNewMainImage = () => {
@@ -222,9 +229,11 @@ export default function EditProjectClient({ locale, projectId }: EditProjectClie
     }
     setCurrentMainImageUrl('');
   };
-
   // Manejadores de galería
   const handleGalleryImagesSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+    
     const files = Array.from(event.target.files || []);
     if (files.length === 0) return;
 
@@ -255,6 +264,8 @@ export default function EditProjectClient({ locale, projectId }: EditProjectClie
     });
 
     setError('');
+    // Limpiar el input para permitir seleccionar el mismo archivo otra vez
+    event.target.value = '';
   };
 
   const removeNewGalleryImage = (index: number) => {
@@ -604,11 +615,9 @@ export default function EditProjectClient({ locale, projectId }: EditProjectClie
                       </Button>
                     </View>
                   </View>
-                )}
-
-                {/* Nueva imagen */}
+                )}                {/* Nueva imagen */}
                 {!mainImagePreview ? (
-                  <label
+                  <div
                     style={{
                       display: 'block',
                       padding: '2rem',
@@ -616,7 +625,8 @@ export default function EditProjectClient({ locale, projectId }: EditProjectClie
                       borderRadius: '8px',
                       textAlign: 'center',
                       cursor: 'pointer',
-                      backgroundColor: isDark ? '#2a2a2a' : '#f5f5f5'
+                      backgroundColor: isDark ? '#2a2a2a' : '#f5f5f5',
+                      position: 'relative'
                     }}
                   >
                     <Flex direction="column" alignItems="center" gap="medium">
@@ -624,14 +634,27 @@ export default function EditProjectClient({ locale, projectId }: EditProjectClie
                       <Text color={isDark ? 'font.secondary' : 'font.primary'}>
                         {currentMainImageUrl ? 'Cambiar imagen principal' : 'Subir imagen principal'} (máx. 5MB)
                       </Text>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleMainImageSelect}
-                        style={{ display: 'none' }}
-                      />
                     </Flex>
-                  </label>
+                    <input
+                      ref={mainImageInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={handleMainImageSelect}
+                      onClick={(e) => {
+                        console.log('Edit input clicked');
+                        e.stopPropagation();
+                      }}
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        opacity: 0,
+                        cursor: 'pointer'
+                      }}
+                    />
+                  </div>
                 ) : (
                   <View>
                     <Text fontWeight="bold" marginBottom="small">Nueva Imagen:</Text>
@@ -698,10 +721,8 @@ export default function EditProjectClient({ locale, projectId }: EditProjectClie
                       ))}
                     </Flex>
                   </View>
-                )}
-
-                {/* Agregar nuevas imágenes */}
-                <label
+                )}                {/* Agregar nuevas imágenes */}
+                <div
                   style={{
                     display: 'block',
                     padding: '1.5rem',
@@ -710,7 +731,8 @@ export default function EditProjectClient({ locale, projectId }: EditProjectClie
                     textAlign: 'center',
                     cursor: 'pointer',
                     backgroundColor: isDark ? '#2a2a2a' : '#f5f5f5',
-                    marginBottom: '1rem'
+                    marginBottom: '1rem',
+                    position: 'relative'
                   }}
                 >
                   <Flex direction="column" alignItems="center" gap="medium">
@@ -718,15 +740,28 @@ export default function EditProjectClient({ locale, projectId }: EditProjectClie
                     <Text color={isDark ? 'font.secondary' : 'font.primary'}>
                       Agregar nuevas imágenes a la galería
                     </Text>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      multiple
-                      onChange={handleGalleryImagesSelect}
-                      style={{ display: 'none' }}
-                    />
                   </Flex>
-                </label>
+                  <input
+                    ref={galleryImagesInputRef}
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handleGalleryImagesSelect}
+                    onClick={(e) => {
+                      console.log('Edit gallery input clicked');
+                      e.stopPropagation();
+                    }}
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '100%',
+                      height: '100%',
+                      opacity: 0,
+                      cursor: 'pointer'
+                    }}
+                  />
+                </div>
 
                 {/* Nuevas imágenes */}
                 {galleryPreviews.length > 0 && (

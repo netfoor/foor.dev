@@ -195,3 +195,84 @@ description: "Expert AWS Cloud Engineer specializing in serverless architecture.
 - [AWS Amplify UI Theme Documentation](https://ui.docs.amplify.aws/react/theming)
 - [Schema.org Documentation](https://schema.org/)
 - [SEO Best Practices for Tech Professionals](https://developers.google.com/search/docs/fundamentals/seo-starter-guide)
+
+---
+
+## File Input Causing Form Reset Issue
+
+### Problem
+When using file inputs inside forms with `<label>` elements, clicking on the label to select files was causing the entire form to reset unexpectedly. This was particularly problematic in admin project forms where users would lose all their entered data when trying to upload images.
+
+### Symptoms
+- User enters text in form fields (e.g., "Hola" in title field)
+- User clicks on file upload area
+- File selection dialog opens
+- User selects a file and clicks "Accept"
+- Form resets completely, losing all entered data
+- Form submission may be triggered unexpectedly
+
+### Root Cause
+The issue was caused by using `<label>` elements inside forms. In some browsers, clicking on labels can trigger form submission behavior, especially when the label is associated with an input element inside a form.
+
+### Solution
+**Replace `<label>` elements with `<div>` elements and use programmatic click handling:**
+
+```tsx
+// ❌ BEFORE (causes form reset)
+<label
+  onClick={(e) => e.stopPropagation()}
+  style={{ cursor: 'pointer' }}
+>
+  <input
+    type="file"
+    onChange={handleFileSelect}
+    style={{ display: 'none' }}
+  />
+  Click to upload
+</label>
+
+// ✅ AFTER (fixed)
+<div
+  onClick={(e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    document.getElementById('file-input')?.click();
+  }}
+  style={{ cursor: 'pointer' }}
+>
+  <input
+    id="file-input"
+    type="file"
+    onChange={handleFileSelect}
+    style={{ display: 'none' }}
+  />
+  Click to upload
+</div>
+```
+
+**Also ensure file change handlers prevent form submission:**
+```tsx
+const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+  event.preventDefault();
+  event.stopPropagation();
+  
+  const file = event.target.files?.[0];
+  if (file) {
+    // Process file...
+  }
+  
+  // Clear input to allow selecting same file again
+  event.target.value = '';
+};
+```
+
+### Files Fixed
+- `src/app/[locale]/admin/projects/new/CreateProjectClient.tsx`
+- `src/app/[locale]/admin/projects/[id]/EditProjectClient.tsx`
+
+### Prevention
+- Always use `<div>` elements instead of `<label>` for custom file upload areas
+- Use programmatic click handling with `document.getElementById()?.click()`
+- Always include `event.preventDefault()` and `event.stopPropagation()` in both click and change handlers
+- Add unique IDs to file inputs for proper targeting
+- Test file upload behavior thoroughly in forms

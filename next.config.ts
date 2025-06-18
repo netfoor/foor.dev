@@ -1,11 +1,20 @@
 import type { NextConfig } from "next";
 
-const nextConfig: NextConfig = {
-  // Output standalone para optimizar deployments
+const nextConfig: NextConfig = {  // Output standalone para optimizar deployments
   output: 'standalone',
+
+  // Configuración de ESLint menos estricta para development
+  eslint: {
+    ignoreDuringBuilds: false,
+    dirs: ['src', 'components', 'lib']
+  },
+
+  // TypeScript configuration menos estricta
+  typescript: {
+    ignoreBuildErrors: false
+  },
   
   // Optimizaciones de performance
-  swcMinify: true,
   compress: true,
   
   // Configuración experimental para optimizaciones

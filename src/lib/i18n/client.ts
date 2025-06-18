@@ -289,7 +289,7 @@ function getLocaleCode(locale: SupportedLocale): string {
   const localeMap: Record<SupportedLocale, string> = {
     en: 'en-US',
     es: 'es-ES',
-    fr: 'fr-FR'
+    ja: 'ja-JP'
   };
   
   return localeMap[locale] || 'en-US';

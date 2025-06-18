@@ -5,14 +5,15 @@ import type { SupportedLocale } from '@/lib/i18n/types';
 import EditProjectClient from './EditProjectClient';
 
 interface PageProps {
-  params: { 
+  params: Promise<{ 
     locale: string;
     id: string;
-  };
+  }>;
 }
 
-export function generateMetadata({ params }: PageProps): Metadata {
-  const locale = getValidLocale(params.locale);
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { locale } = await params;
+  const validLocale = getValidLocale(locale);
   
   const titles: Record<SupportedLocale, string> = {
     en: 'Edit Project - Admin | Foor.dev',
@@ -25,18 +26,19 @@ export function generateMetadata({ params }: PageProps): Metadata {
     es: 'Editar detalles del proyecto, actualizar imágenes y gestionar información del proyecto en el panel de administración.',
     ja: 'プロジェクトの詳細を編集、画像を更新、管理ダッシュボードでプロジェクト情報を管理します。'
   };
-
   return {
-    title: titles[locale],
-    description: descriptions[locale],
+    title: titles[validLocale],
+    description: descriptions[validLocale],
     robots: 'noindex, nofollow', // Admin pages should not be indexed
   };
 }
 
-export default function EditProjectPage({ params }: PageProps) {
-  if (!isValidLocale(params.locale)) {
+export default async function EditProjectPage({ params }: PageProps) {
+  const { locale, id } = await params;
+  
+  if (!isValidLocale(locale)) {
     notFound();
   }
 
-  return <EditProjectClient locale={params.locale} projectId={params.id} />;
+  return <EditProjectClient locale={locale} projectId={id} />;
 }
