@@ -4,5 +4,7 @@ import { data } from './data/resource';
 import { storage } from './storage/resource';
 
 export const backend = defineBackend({
-  auth
+  auth,
+  data,
+  storage,
 });

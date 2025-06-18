@@ -9,9 +9,6 @@ import type { Schema } from '../../../amplify/data/resource';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation, useLocalizedPath } from '@/lib/i18n/client';
 
-// Generar el cliente de Amplify
-const client = generateClient<Schema>();
-
 // Tipos para el proyecto
 type Project = Schema["Projects"]["type"];
 
@@ -29,11 +26,24 @@ const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({ className = '' }) =
   const { t } = useTranslation('homepage');
   const getLocalizedPath = useLocalizedPath();
 
+  // Verificar si el componente está montado para evitar hidratación mismatch
   useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    // Solo ejecutar en el cliente después de que esté montado
+    if (!mounted || typeof window === 'undefined') {
+      return;
+    }
+
     async function fetchProjects() {
       try {
         setLoading(true);
         setError(null);
+        
+        // Generar el cliente solo en el cliente
+        const client = generateClient<Schema>();
         
         const { data: projectsData, errors } = await client.models.Projects.list({
           limit: 3,
@@ -58,10 +68,8 @@ const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({ className = '' }) =
       } finally {
         setLoading(false);
       }
-    }
-
-    fetchProjects();
-  }, []);
+    }    fetchProjects();
+  }, [mounted]); // Dependencia de mounted para ejecutar solo cuando esté hidratado
 
   const getCategoryColor = (category: string | null | undefined) => {
     switch (category) {
@@ -73,6 +81,23 @@ const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({ className = '' }) =
       default: return mode === 'dark' ? '#6B7280' : '#4B5563';
     }
   };
+
+  // Si no está montado aún, mostrar estado de carga
+  if (!mounted) {
+    return (
+      <View
+        as="section"
+        padding={{ base: '3rem 1rem', medium: '4rem 2rem' }}
+        style={{
+          backgroundColor: mode === 'dark' ? '#0F172A' : '#F8FAFC',
+        }}
+      >
+        <Flex direction="column" alignItems="center" gap="2rem" maxWidth="1200px" margin="0 auto">
+          <Loader size="large" />
+        </Flex>
+      </View>
+    );
+  }
 
   if (loading) {
     return (
@@ -207,12 +232,12 @@ const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({ className = '' }) =
                 className="hover:scale-105"
               >
                 {/* Project Image */}
-                {project.photoUrl && (
+                {project.photoKey && (
                   <View
                     style={{
                       width: '100%',
                       height: '200px',
-                      backgroundImage: `url(${project.photoUrl})`,
+                      backgroundImage: `url(${project.photoKey})`,
                       backgroundSize: 'cover',
                       backgroundPosition: 'center',
                       position: 'relative',

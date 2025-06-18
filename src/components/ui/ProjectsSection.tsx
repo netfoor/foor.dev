@@ -8,9 +8,6 @@ import type { Schema } from '../../../amplify/data/resource';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation, useLocalizedPath } from '@/lib/i18n/client';
 
-// Generar el cliente de Amplify
-const client = generateClient<Schema>();
-
 // Tipos para el proyecto
 type Project = Schema["Projects"]["type"];
 
@@ -42,9 +39,17 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
 
   // Fetch projects from Amplify Data API
   const fetchProjects = async () => {
+    // Solo ejecutar en el cliente después de que esté montado
+    if (!mounted || typeof window === 'undefined') {
+      return;
+    }
+
     try {
       setLoading(true);
       setError(null);
+      
+      // Generar el cliente solo en el cliente
+      const client = generateClient<Schema>();
       
       const response = await client.models.Projects.list();
       
@@ -280,11 +285,11 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
                 }}
               >
                 {/* Project Image */}
-                {project.photoUrl && (
+                {project.photoKey && (
                   <View
                     style={{
                       height: '200px',
-                      backgroundImage: `url(${project.photoUrl})`,
+                      backgroundImage: `url(${project.photoKey})`,
                       backgroundSize: 'cover',
                       backgroundPosition: 'center',
                       borderRadius: '12px 12px 0 0',

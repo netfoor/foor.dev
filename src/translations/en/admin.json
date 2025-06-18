@@ -40,5 +40,18 @@
     "import": "Import",
     "backup": "Create Backup",
     "restore": "Restore"
-  }
+  },
+  "projects": {
+    "title": "Projects",
+    "add_project": "Add Project",
+    "edit_project": "Edit Project",
+    "delete_project": "Delete Project",
+    "create_project": "Create New Project",
+    "manage_projects": "Manage Projects",
+    "project_details": "Project Details",
+    "total_projects": "Total Projects",
+    "published_projects": "Published Projects",
+    "draft_projects": "Draft Projects"
+  },
+  "createProject": "Create New Project"
 }

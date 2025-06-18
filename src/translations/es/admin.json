@@ -1,9 +1,9 @@
 {
   "title": "Panel de Administración",
-  "dashboard": "Panel de Control",
+  "dashboard": "Tablero",
   "users": "Usuarios",
   "settings": "Configuración",
-  "analytics": "Análisis",
+  "analytics": "Analíticas",
   "reports": "Reportes",
   "user_management": {
     "title": "Gestión de Usuarios",
@@ -40,5 +40,18 @@
     "import": "Importar",
     "backup": "Crear Respaldo",
     "restore": "Restaurar"
-  }
+  },
+  "projects": {
+    "title": "Proyectos",
+    "add_project": "Agregar Proyecto",
+    "edit_project": "Editar Proyecto",
+    "delete_project": "Eliminar Proyecto",
+    "create_project": "Crear Nuevo Proyecto",
+    "manage_projects": "Gestionar Proyectos",
+    "project_details": "Detalles del Proyecto",
+    "total_projects": "Total de Proyectos",
+    "published_projects": "Proyectos Publicados",
+    "draft_projects": "Proyectos en Borrador"
+  },
+  "createProject": "Crear Nuevo Proyecto"
 }

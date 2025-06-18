@@ -1,41 +1,47 @@
 import { type ClientSchema, a, defineData } from '@aws-amplify/backend';
 
-const schema = a.schema({  Certifications: a
+const schema = a.schema({
+  Certifications: a
     .model({
       title: a.string().required(),
       issuer: a.string().required(), 
       credentialId: a.string(),
       issueDate: a.date().required(),
       expirationDate: a.date(),
-      badgeImageUrl: a.string(),
-      content: a.string(),
+      badgeImageUrl: a.string(),      content: a.string(),
       skills: a.string().array(),
       categoty: a.string().required(),
-      owner: a.string(),  // Explicitly add owner field
-    })
-    .authorization((allow) => [
+    })    .authorization((allow) => [
       allow.guest().to(['read']),
-      allow.authenticated().to(['create', 'read', 'update', 'delete']), 
-      allow.owner().to(['create', 'read', 'update', 'delete'])
+      allow.group('ADMINS').to(['create', 'read', 'update', 'delete'])
     ]),
 
   Projects: a
     .model({
       title: a.string().required(),
-      photoUrl: a.string(),
       description: a.string().required(),
       place: a.string().required(),
       projectUrl: a.string(),
+      githubUrl: a.string(),
+      demoUrl: a.string(),
       skills: a.string().array(),
-      gallery: a.string().array(),
       categories: a.enum(['Hackathon', 'Research', 'Professional', 'Academic', 'Personal']),
-    })
-    .authorization((allow) => [
+      // Storage paths para las imágenes
+      photoKey: a.string(), // Key de S3 para la imagen principal
+      galleryKeys: a.string().array(), // Array de keys de S3 para la galería
+      // Metadata adicional
+      startDate: a.date(),
+      endDate: a.date(),
+      status: a.enum(['Draft', 'Published', 'Archived']),
+      featured: a.boolean(),
+      // SEO
+      slug: a.string(),      metaDescription: a.string(),
+      tags: a.string().array(),
+    })    .authorization((allow) => [
       allow.guest().to(['read']),
-      allow.owner()
+      allow.group('ADMINS').to(['create', 'read', 'update', 'delete'])
     ]),
-
-    Recognitions: a
+  Recognitions: a
     .model({
       title: a.string().required(),
       description: a.string().required(),
@@ -47,10 +53,9 @@ const schema = a.schema({  Certifications: a
     })
     .authorization((allow) => [
       allow.guest().to(['read']),
-      allow.owner()
+      allow.group('ADMINS').to(['create', 'read', 'update', 'delete'])
     ]),
-
-    Education: a
+  Education: a
     .model({
       institution: a.string().required(),
       degree: a.string().required(),
@@ -65,20 +70,18 @@ const schema = a.schema({  Certifications: a
     })
     .authorization((allow) => [
       allow.guest().to(['read']),
-      allow.owner()
-    ]), 
-
-    Languages: a
+      allow.group('ADMINS').to(['create', 'read', 'update', 'delete'])
+    ]),
+  Languages: a
     .model({
       language: a.string().required(),
       proficiency: a.enum(['Basic', 'Conversational', 'Fluent', 'Native']),
     })
     .authorization((allow) => [
       allow.guest().to(['read']),
-      allow.owner()
+      allow.group('ADMINS').to(['create', 'read', 'update', 'delete'])
     ]),
-
-    Experiences: a
+  Experiences: a
     .model({
       company: a.string().required(),
       position: a.string().required(),
@@ -91,10 +94,9 @@ const schema = a.schema({  Certifications: a
     })
     .authorization((allow) => [
       allow.guest().to(['read']),
-      allow.owner()
+      allow.group('ADMINS').to(['create', 'read', 'update', 'delete'])
     ]),
-
-    SocialPublications: a
+  SocialPublications: a
     .model({
       title: a.string().required(),
       source: a.enum(['LinkedIn', 'Twitter', 'GitHub', 'Blog', 'Youtube']),
@@ -106,7 +108,7 @@ const schema = a.schema({  Certifications: a
     })
     .authorization((allow) => [
       allow.guest().to(['read']),
-      allow.owner()
+      allow.group('ADMINS').to(['create', 'read', 'update', 'delete'])
     ])
 });
 
