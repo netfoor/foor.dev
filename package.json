@@ -16,12 +16,17 @@
     "name": "Fortino Romero Mantilla",
     "email": "fortino.rom@gmail.com",
     "url": "https://foor.dev"
-  },
-  "scripts": {
+  },  "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "lint:fix": "next lint --fix",
+    "type-check": "tsc --noEmit",
+    "build:analyze": "ANALYZE=true npm run build",
+    "export": "next export",
+    "pre-build": "node scripts/pre-build-check.js",
+    "build:production": "npm run pre-build && npm run build"
   },
   "dependencies": {
     "@aws-amplify/adapter-nextjs": "^1.6.3",

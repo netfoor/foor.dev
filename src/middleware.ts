@@ -154,19 +154,14 @@ function isUserAdmin(tokens: any): boolean {
     const payload = JSON.parse(
       Buffer.from(parts[1], 'base64').toString()
     );
-    
-    // Verificar si el usuario pertenece al grupo ADMINS
+      // Verificar si el usuario pertenece al grupo ADMINS
     if (payload['cognito:groups'] && 
         Array.isArray(payload['cognito:groups']) && 
         payload['cognito:groups'].includes('ADMINS')) {
-      console.log('Usuario pertenece al grupo ADMINS');
       return true;
     }
     
     // Si no hay grupos o no pertenece a ADMINS, retornar false
-    console.log('Usuario no pertenece al grupo ADMINS:', 
-      payload['cognito:groups'] || 'No tiene grupos');
-    
     return false;
   } catch (error) {
     console.error('Error verificando permisos de administrador en middleware:', error);
@@ -221,15 +216,9 @@ export async function middleware(request: NextRequest) {
       
       // Fall back to standard verification if middleware approach fails
       const { isValid, tokens } = middlewareAuth.isValid ? 
-        middlewareAuth : 
-        await verifyTokens();
+        middlewareAuth :        await verifyTokens();
       
-      console.log(`Middleware: Verificando acceso a ${pathname}`, { 
-        isValid, 
-        hasTokens: !!tokens,
-        normalizedPath: normalizedPathnameForAuth
-      });
-        if (!isValid) {
+      if (!isValid) {
         // Construir URL de login con locale y returnUrl
         const returnUrl = encodeURIComponent(pathname);
         const loginPath = buildLocalizedPath('/login', currentLocale);

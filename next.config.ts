@@ -1,20 +1,27 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // Output standalone para optimizar deployments
+  output: 'standalone',
+  
+  // Optimizaciones de performance
+  swcMinify: true,
+  compress: true,
   
   // Configuración experimental para optimizaciones
   experimental: {
-    optimizePackageImports: ['lucide-react']
+    optimizePackageImports: ['lucide-react', '@aws-amplify/ui-react']
   },
 
-  // Configuración para i18n en sitemap y metadata
-  async generateBuildId() {
-    // Puedes personalizar el build ID si necesitas
-    return 'foor-dev-build-' + Date.now();
+  // Configuración de imágenes para optimización
+  images: {
+    formats: ['image/webp', 'image/avif'],
+    minimumCacheTTL: 31536000, // 1 año
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384]
   },
 
-  // Headers para SEO y performance
+  // Headers para SEO, performance y seguridad
   async headers() {
     return [
       {
@@ -32,31 +39,33 @@ const nextConfig: NextConfig = {
             key: 'X-XSS-Protection',
             value: '1; mode=block',
           },
+          {
+            key: 'Referrer-Policy',
+            value: 'strict-origin-when-cross-origin',
+          },
         ],
       },
+      {
+        source: '/images/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable'
+          }
+        ]
+      }
     ];
   },
 
-  // Redirects para manejo de rutas legacy si es necesario
+  // Redirects para SEO
   async redirects() {
     return [
-      // Ejemplo: Redirigir rutas legacy a versiones localizadas
-      // {
-      //   source: '/old-path',
-      //   destination: '/en/new-path',
-      //   permanent: true,
-      // },
-    ];
-  },
-
-  // Rewrites para manejar rutas de API si es necesario
-  async rewrites() {
-    return [
-      // Ejemplo: Reescribir API routes
-      // {
-      //   source: '/api/i18n/:path*',
-      //   destination: '/api/translations/:path*',
-      // },
+      // Redirect root to default locale
+      {
+        source: '/',
+        destination: '/en',
+        permanent: false,
+      },
     ];
   },
 };

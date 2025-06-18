@@ -39,8 +39,6 @@ import { useTranslation, useLocalizedPath } from '@/lib/i18n/client';
 import type { SupportedLocale } from '@/lib/i18n/types';
 import CreateSampleData from './CreateSampleData';
 import CreateAllSampleData from './CreateAllSampleData';
-import RefreshUserSession from './RefreshUserSession';
-import DebugJWTTokens from './DebugJWTTokens';
 import DebugUserPermissions from './DebugUserPermissions';
 
 // Tipos para el proyecto actualizado
@@ -157,16 +155,10 @@ const AdminProjectsClient: React.FC<AdminProjectsClientProps> = ({ locale }) => 
         <Text>Cargando proyectos...</Text>
       </Flex>
     );
-  }
-  return (    <View>
-      {/* Debug Components */}
-      <RefreshUserSession />
-      <div className="mt-4">
-        <DebugJWTTokens />
-      </div>
-      
+  }  return (
+    <View>
       {/* Header */}
-      <Flex 
+      <Flex
         direction={{ base: 'column', medium: 'row' }} 
         justifyContent="space-between" 
         alignItems={{ base: 'stretch', medium: 'center' }}
