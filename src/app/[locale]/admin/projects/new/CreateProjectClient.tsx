@@ -53,9 +53,7 @@ interface ProjectFormData {
 }
 
 function CreateProjectClient(): React.JSX.Element {  
-  console.log('🔄 CreateProjectClient render');
-  
-  // Restaurar hooks normales
+  // Estados para el formulario
   const themeContext = useTheme();
   const { t } = useTranslation('admin');
   const router = useRouter();
@@ -107,37 +105,27 @@ function CreateProjectClient(): React.JSX.Element {
       }));
     }
   };
-
   // Handler para imagen principal
   const handleMainImageFile = useCallback((file: File) => {
-    console.log('🔧 handleMainImageFile called with:', file.name);
-    
     if (file.size > 5 * 1024 * 1024) { // 5MB límite
-      console.log('❌ File too large:', file.size);
       setError('La imagen principal no puede ser mayor a 5MB');
       return;
     }
     
-    console.log('✅ Setting main image:', file.name);
     setMainImage(file);
     
     const reader = new FileReader();
     reader.onload = (e) => {
       const result = e.target?.result as string;
-      console.log('🖼️ Setting image preview');
       setMainImagePreview(result);
     };
     reader.onerror = () => {
-      console.log('❌ Error reading file');
       setError('Error al cargar la imagen');
     };
     reader.readAsDataURL(file);
     setError('');
-    console.log('🎯 handleMainImageFile completed');
   }, []);
-
   const removeMainImage = useCallback(() => {
-    console.log('🗑️ Removing main image');
     setMainImage(null);
     setMainImagePreview('');
   }, []);

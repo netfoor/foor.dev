@@ -18,25 +18,19 @@ export const FileUploadInput: React.FC<FileUploadInputProps> = ({
   children
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
-
   const handleChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('🎯 FileUploadInput onChange triggered');
-    
     const files = Array.from(event.target.files || []);
-    console.log('📁 Files selected:', files.length);
-      if (files.length > 0) {
+    
+    if (files.length > 0) {
       if (multiple && onMultipleFilesSelect) {
-        console.log('📎 Processing multiple files');
         onMultipleFilesSelect(files);
       } else if (!multiple && onFileSelect) {
-        console.log('📎 Processing single file:', files[0].name);
         onFileSelect(files[0]);
       }
     }
     
     // Reset input
     event.target.value = '';
-    console.log('🧹 Input reset');
   }, [onFileSelect, onMultipleFilesSelect, multiple]);
 
   return (

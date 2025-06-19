@@ -50,12 +50,10 @@ export function AuthGuardStable({
     // Solo procesar si no hemos hecho el check inicial
     if (!authResult.initialCheckDone && !isLoading) {
       const isAuthorized = isAuthenticated && hasRole(role);
-      
-      console.log('🔒 AuthGuardStable - Initial auth check:', {
+        console.log('🔒 AuthGuardStable - Initial auth check:', {
         isAuthenticated,
         hasRequiredRole: hasRole(role),
-        isAuthorized,
-        willRedirect: !isAuthorized
+        isAuthorized
       });
       
       setAuthResult({
@@ -95,8 +93,6 @@ export function AuthGuardStable({
       </div>
     );
   }
-
   // Usuario autorizado - renderizar children y NUNCA MÁS cambiar
-  console.log('✅ AuthGuardStable - Rendering authorized content');
   return <>{children}</>;
 }
