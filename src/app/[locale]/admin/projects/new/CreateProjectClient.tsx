@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, memo } from 'react';
 import { 
   View, 
   Flex, 
@@ -52,9 +52,11 @@ interface ProjectFormData {
   tags: string[];
 }
 
-export default function CreateProjectClient(): React.JSX.Element {  
+function CreateProjectClient(): React.JSX.Element {  
+  console.log('🔄 CreateProjectClient render');
+  
+  // Restaurar hooks normales
   const themeContext = useTheme();
-  const theme = themeContext?.mode ?? 'light';
   const { t } = useTranslation('admin');
   const router = useRouter();
   const getLocalizedPath = useLocalizedPath();
@@ -89,7 +91,8 @@ export default function CreateProjectClient(): React.JSX.Element {
 
   // Manejadores de formulario
   const handleInputChange = (field: keyof ProjectFormData, value: string | string[] | boolean) => {
-    setFormData(prev => ({      ...prev,
+    setFormData(prev => ({
+      ...prev,
       [field]: value
     }));
 
@@ -100,30 +103,41 @@ export default function CreateProjectClient(): React.JSX.Element {
         .replace(/(^-|-$)/g, '');
       setFormData(prev => ({
         ...prev,
-        slug      }));
+        slug
+      }));
     }
   };
-  // Manejador simplificado para imagen principal
+
+  // Handler para imagen principal
   const handleMainImageFile = useCallback((file: File) => {
+    console.log('🔧 handleMainImageFile called with:', file.name);
+    
     if (file.size > 5 * 1024 * 1024) { // 5MB límite
+      console.log('❌ File too large:', file.size);
       setError('La imagen principal no puede ser mayor a 5MB');
       return;
     }
     
+    console.log('✅ Setting main image:', file.name);
     setMainImage(file);
     
     const reader = new FileReader();
     reader.onload = (e) => {
       const result = e.target?.result as string;
+      console.log('🖼️ Setting image preview');
       setMainImagePreview(result);
     };
     reader.onerror = () => {
+      console.log('❌ Error reading file');
       setError('Error al cargar la imagen');
     };
     reader.readAsDataURL(file);
-    setError('');  }, []);
+    setError('');
+    console.log('🎯 handleMainImageFile completed');
+  }, []);
 
   const removeMainImage = useCallback(() => {
+    console.log('🗑️ Removing main image');
     setMainImage(null);
     setMainImagePreview('');
   }, []);
@@ -132,7 +146,7 @@ export default function CreateProjectClient(): React.JSX.Element {
     // Validar tamaño y cantidad
     const validFiles = files.filter(file => {
       if (file.size > 5 * 1024 * 1024) {
-        setError(`La imagen ${file.name} es muy grande (máximo 5MB)`);
+        setError(`La imagen ${file.name} es muy grande (máx. 5MB)`);
         return false;
       }
       return true;
@@ -288,7 +302,7 @@ export default function CreateProjectClient(): React.JSX.Element {
     }
   };
 
-  const isDark = theme === 'dark';
+  const isDark = false; // Temporal para testing
 
   return (
     <View 
@@ -672,9 +686,14 @@ export default function CreateProjectClient(): React.JSX.Element {
                 </Button>
               </Flex>
             </Flex>
-          </form>
-        </Flex>
+          </form>        </Flex>
       </Card>
     </View>
   );
 }
+
+// Memorizar el componente para evitar re-renders innecesarios
+const CreateProjectClientMemo = memo(CreateProjectClient);
+CreateProjectClientMemo.displayName = 'CreateProjectClient';
+
+export default CreateProjectClientMemo;

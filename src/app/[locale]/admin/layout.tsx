@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { AuthGuard } from '@/app/components/auth/AuthGuard';
+import { AuthGuardStable } from '@/app/components/auth/AuthGuardStable';
 import { LogoutButton } from '@/app/components/auth/LogoutButton';
 import { UserProfile } from '@/app/components/auth/UserProfile';
 import Link from 'next/link';
@@ -16,7 +16,7 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   return (
-    <AuthGuard role="admin" redirectTo="/login">
+    <AuthGuardStable role="admin" redirectTo="/login">
       <div className="min-h-[calc(100vh-4rem)] flex flex-col"> {/* Adjust for main navbar */}
         {/* Barra de navegación superior del admin */}
         <header className="bg-white shadow-md sticky top-16 z-10"> {/* Sticky below main navbar */}
@@ -69,6 +69,6 @@ export default function AdminLayout({
           </main>
         </div>
       </div>
-    </AuthGuard>
+    </AuthGuardStable>
   );
 }

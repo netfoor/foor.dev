@@ -3,7 +3,7 @@
 
 'use client';
 
-import React, { createContext, useReducer, useCallback, useEffect, ReactNode } from 'react';
+import React, { createContext, useReducer, useCallback, useEffect, useMemo, ReactNode } from 'react';
 import type {
   SupportedLocale,
   TranslationNamespace,
@@ -199,9 +199,8 @@ export function I18nProvider({
         } 
       });
       
-      return emptyTranslations;
-    }
-  }, [state.locale, state.translations, state.loadingNamespaces]);
+      return emptyTranslations;    }
+  }, []); // Eliminamos dependencias problemáticas
   /**
    * Función para cambiar el locale
    */
@@ -214,7 +213,7 @@ export function I18nProvider({
       
       dispatch({ type: 'SET_LOCALE', payload: newLocale });
     }
-  }, [state.locale]);
+  }, []); // Eliminamos dependencia problemática
   
   /**
    * Efecto para cargar namespace inicial si se proporciona
@@ -236,15 +235,14 @@ export function I18nProvider({
       dispatch({ type: 'SET_LOCALE', payload: locale });
     }
   }, [locale]); // Solo depende del locale prop, no del state.locale
-  
-  // Valor del contexto
-  const contextValue: I18nContextValue = {
+    // Valor del contexto - memoizado para estabilidad
+  const contextValue: I18nContextValue = useMemo(() => ({
     locale: state.locale,
     translations: state.translations,
     changeLocale,
     loadNamespace,
     isLoading: state.isLoading
-  };
+  }), [state.locale, state.translations, state.isLoading, changeLocale, loadNamespace]);
   
   return (
     <I18nContext.Provider value={contextValue}>
