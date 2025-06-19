@@ -33,6 +33,7 @@ import type { Schema } from '../../../../../../amplify/data/resource';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation, useLocalizedPath } from '@/lib/i18n/client';
 import type { SupportedLocale } from '@/lib/i18n/types';
+import S3ProjectCleanup from '@/lib/utils/s3-cleanup';
 
 // Generar el cliente de Amplify
 const client = generateClient<Schema>();
@@ -309,15 +310,12 @@ export default function EditProjectClient({ locale, projectId }: EditProjectClie
     const uploadResults = {
       photoKey: project?.photoKey || '',
       galleryKeys: [...(project?.galleryKeys || [])]
-    };
-
-    try {
-      // Eliminar archivos marcados para borrar
+    };    try {
+      // Eliminar archivos marcados para borrar usando utilidad S3
       for (const keyToDelete of imagesToDelete) {
-        try {
-          await remove({ path: keyToDelete });
-        } catch (err) {
-          console.error('Error deleting file:', keyToDelete, err);
+        const success = await S3ProjectCleanup.deleteSingleFile(keyToDelete);
+        if (!success) {
+          console.warn(`⚠️ No se pudo eliminar el archivo: ${keyToDelete}`);
         }
       }
 

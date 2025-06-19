@@ -32,11 +32,12 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { generateClient } from 'aws-amplify/data';
-import { getUrl } from 'aws-amplify/storage';
+import { getUrl, remove } from 'aws-amplify/storage';
 import type { Schema } from '../../../../../amplify/data/resource';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation, useLocalizedPath } from '@/lib/i18n/client';
 import type { SupportedLocale } from '@/lib/i18n/types';
+import S3ProjectCleanup from '@/lib/utils/s3-cleanup';
 import CreateSampleData from './CreateSampleData';
 import CreateAllSampleData from './CreateAllSampleData';
 
@@ -78,10 +79,9 @@ const AdminProjectsClient: React.FC<AdminProjectsClientProps> = ({ locale }) => 
     } finally {
       setLoading(false);
     }
-  };
-  // Eliminar proyecto
+  };  // Eliminar proyecto completo (DynamoDB + S3)
   const handleDeleteProject = async (projectId: string) => {
-    if (!confirm('¿Estás seguro de que quieres eliminar este proyecto?')) {
+    if (!confirm('¿Estás seguro de que quieres eliminar este proyecto? Esta acción eliminará permanentemente el proyecto y todas sus imágenes.')) {
       return;
     }
 
@@ -91,16 +91,37 @@ const AdminProjectsClient: React.FC<AdminProjectsClientProps> = ({ locale }) => 
       // Generar el cliente solo en el cliente
       const client = generateClient<Schema>();
       
+      // 1. PRIMERO: Obtener los datos del proyecto para acceder a las claves de S3
+      const projectResponse = await client.models.Projects.get({ id: projectId });
+      const projectData = projectResponse.data;
+      
+      if (!projectData) {
+        throw new Error('Proyecto no encontrado');
+      }
+
+      // 2. SEGUNDO: Eliminar archivos de S3 usando utilidad
+      await S3ProjectCleanup.deleteProjectFiles(
+        projectData.photoKey,
+        projectData.galleryKeys,
+        projectId
+      );
+
+      // 3. TERCERO: Eliminar el registro de DynamoDB
       await client.models.Projects.delete({
         id: projectId
       });
       
-      // Actualizar la lista local
+      console.log(`✅ Proyecto ${projectId} eliminado completamente de DynamoDB`);
+      
+      // 4. CUARTO: Actualizar la lista local
       setProjects(prev => prev.filter(p => p.id !== projectId));
+      
+      // Mensaje de éxito
+      console.log(`🎉 Proyecto eliminado exitosamente: ${projectData.title}`);
       
     } catch (err) {
       console.error('Error deleting project:', err);
-      setError('Error al eliminar proyecto');
+      setError(`Error al eliminar proyecto: ${err instanceof Error ? err.message : 'Error desconocido'}`);
     } finally {
       setDeleteLoading(null);
     }
