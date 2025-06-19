@@ -88,18 +88,14 @@ function LoginWithSearchParams({ locale, returnUrl }: { locale: SupportedLocale;
               level={1}
               fontSize={{ base: "2rem", medium: "2.5rem" }}
               fontWeight="700"
-              marginBottom="0.5rem"
-              style={{
+              marginBottom="0.5rem"              style={{
                 color: mode === 'dark' ? '#F1F5F9' : '#1E293B',
-                background: mode === 'dark'
+                backgroundImage: mode === 'dark'
                   ? 'linear-gradient(135deg, #F1F5F9 0%, #94A3B8 100%)'
                   : 'linear-gradient(135deg, #1E293B 0%, #3B82F6 100%)',
                 backgroundClip: 'text',
                 WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundImage: mode === 'dark'
-                  ? 'linear-gradient(135deg, #F1F5F9 0%, #94A3B8 100%)'
-                  : 'linear-gradient(135deg, #1E293B 0%, #3B82F6 100%)'
+                WebkitTextFillColor: 'transparent'
               }}
             >
               {t('login.title')}

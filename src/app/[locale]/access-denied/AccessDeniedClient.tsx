@@ -129,18 +129,14 @@ export default function AccessDeniedClient() {
             level={1}
             fontSize={{ base: "1.875rem", medium: "2.25rem" }}
             fontWeight="700"
-            marginBottom="0.5rem"
-            style={{
+            marginBottom="0.5rem"            style={{
               color: mode === 'dark' ? '#F1F5F9' : '#1E293B',
-              background: mode === 'dark'
+              backgroundImage: mode === 'dark'
                 ? 'linear-gradient(135deg, #F1F5F9 0%, #CBD5E1 100%)'
                 : 'linear-gradient(135deg, #1E293B 0%, #475569 100%)',
               backgroundClip: 'text',
               WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundImage: mode === 'dark'
-                ? 'linear-gradient(135deg, #F1F5F9 0%, #CBD5E1 100%)'
-                : 'linear-gradient(135deg, #1E293B 0%, #475569 100%)'
+              WebkitTextFillColor: 'transparent'
             }}
           >
             {tAuth('access_denied.title')}

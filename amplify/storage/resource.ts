@@ -4,45 +4,45 @@ import { defineStorage } from '@aws-amplify/backend';
 export const storage = defineStorage({
   name: 'foorDevStorage', // Nombre del bucket de S3
   access: (allow) => ({
-    // Contenido público - accesible por todos
+    // Contenido público - solo lectura para guests, solo ADMINS pueden escribir
     'public/*': [
       allow.guest.to(['read']),
-      allow.authenticated.to(['read', 'write', 'delete']),
+      allow.groups(['ADMINS']).to(['read', 'write', 'delete']),
     ],
     
-    // Proyectos - imágenes principales
+    // Proyectos - imágenes principales (solo ADMINS pueden modificar)
     'projects/*': [
       allow.guest.to(['read']),
-      allow.authenticated.to(['read', 'write', 'delete']),
+      allow.groups(['ADMINS']).to(['read', 'write', 'delete']),
     ],
     
     // Galería de proyectos - imágenes de la galería organizadas por proyecto
     'projects/gallery/*': [
       allow.guest.to(['read']),
-      allow.authenticated.to(['read', 'write', 'delete']),
+      allow.groups(['ADMINS']).to(['read', 'write', 'delete']),
     ],
     
     // Thumbnails y versiones optimizadas (futuro uso)
     'projects/thumbnails/*': [
       allow.guest.to(['read']),
-      allow.authenticated.to(['read', 'write', 'delete']),
+      allow.groups(['ADMINS']).to(['read', 'write', 'delete']),
     ],
     
-    // Certificaciones (mantener configuración existente)
+    // Certificaciones - solo ADMINS pueden modificar
     'certifications/*': [
       allow.guest.to(['read']),
-      allow.authenticated.to(['read', 'write', 'delete']),
+      allow.groups(['ADMINS']).to(['read', 'write', 'delete']),
     ],
     
-    // Perfiles de usuario y avatares
+    // Perfiles de usuario y avatares - solo ADMINS
     'profiles/*': [
       allow.guest.to(['read']),
-      allow.authenticated.to(['read', 'write', 'delete']),
+      allow.groups(['ADMINS']).to(['read', 'write', 'delete']),
     ],
     
-    // Contenido privado del usuario
-    'private/{entity_id}/*': [
-      allow.entity('identity').to(['read', 'write', 'delete']),
+    // Contenido privado del administrador
+    'admin/*': [
+      allow.groups(['ADMINS']).to(['read', 'write', 'delete']),
     ]
   }),
 });

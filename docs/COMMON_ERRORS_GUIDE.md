@@ -39,7 +39,10 @@ export const useTheme = (): ThemeContextType => {
 - `src/hooks/useTheme.ts`
 - `src/components/ui/Hero.tsx`
 - `src/components/theme/ThemeToggle.tsx`
-- `src/components/navigation/NavBar.tsx`
+- `src/components/navigation/NavBar.tsx` ✅ **FIXED**
+- `src/app/components/auth/LoginButton.tsx` ✅ **FIXED**
+- `src/app/[locale]/login/page.tsx` ✅ **FIXED** (had both `background` and `backgroundImage` simultaneously)
+- `src/app/[locale]/access-denied/AccessDeniedClient.tsx` ✅ **FIXED** (had both `background` and `backgroundImage` simultaneously)
 
 ---
 
@@ -54,7 +57,7 @@ Updating a style property during rerender (background) when a conflicting proper
 React warning when mixing shorthand CSS properties (`background`) with specific properties (`backgroundClip`, `WebkitBackgroundClip`).
 
 **Solution:**
-Replace the shorthand `background` property with `backgroundImage`:
+Replace the shorthand `background` property with `backgroundImage` when using `backgroundClip`:
 
 **Before:**
 ```tsx
@@ -74,9 +77,30 @@ style={{
 }}
 ```
 
+**Critical Issue - Duplicate Properties:**
+The most common cause of this error is having **both** `background` and `backgroundImage` properties in the same style object:
+
+```tsx
+// ❌ WRONG - This causes the React error
+style={{
+  background: 'linear-gradient(...)',
+  backgroundImage: 'linear-gradient(...)', // Duplicate!
+  backgroundClip: 'text'
+}}
+
+// ✅ CORRECT - Only use backgroundImage
+style={{
+  backgroundImage: 'linear-gradient(...)',
+  backgroundClip: 'text'
+}}
+```
+
+**Note:** This applies to any gradient backgrounds, not just text clipping. Always use `backgroundImage` for gradients to avoid conflicts with other background-related properties.
+
 **Files affected:**
 - `src/components/ui/Hero.tsx`
-- `src/components/navigation/NavBar.tsx` (logo styling)
+- `src/components/navigation/NavBar.tsx` (logo styling) ✅ **FIXED**
+- `src/app/components/auth/LoginButton.tsx` ✅ **FIXED**
 
 ---
 
@@ -276,3 +300,72 @@ const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
 - Always include `event.preventDefault()` and `event.stopPropagation()` in both click and change handlers
 - Add unique IDs to file inputs for proper targeting
 - Test file upload behavior thoroughly in forms
+
+---
+
+## Hydration Errors
+
+### 4. Server/Client HTML Mismatch
+
+**Error:**
+```
+Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client.
+```
+
+**Problem:**
+Components with client-side state (like theme mode, scroll position, or mounted state) can cause differences between server-rendered HTML and client-side rendering, leading to hydration mismatches.
+
+**Solution:**
+Use a server-safe rendering approach that shows minimal content until client hydration:
+
+```tsx
+// ❌ BEFORE (causes hydration mismatch)
+const { mode } = useTheme();
+
+return (
+  <View style={{
+    backgroundColor: hasScrolled 
+      ? (mode === 'dark' ? 'rgba(30, 41, 59, 0.85)' : 'rgba(255, 255, 255, 0.85)') 
+      : (mode === 'dark' ? 'rgba(30, 41, 59, 0.6)' : 'rgba(255, 255, 255, 0.6)')
+  }}>
+    {/* Complex theme-dependent content */}
+  </View>
+);
+
+// ✅ AFTER (prevents hydration mismatch)
+const [mounted, setMounted] = useState(false);
+const { mode } = useTheme();
+
+useEffect(() => {
+  setMounted(true);
+}, []);
+
+// Show simple version on server, full version after hydration
+if (!mounted) {
+  return (
+    <View style={{
+      backgroundColor: 'rgba(255, 255, 255, 0.6)', // Static styling
+      // ... other consistent styles
+    }}>
+      {/* Minimal server-safe content */}
+    </View>
+  );
+}
+
+// Full interactive version after client hydration
+const safeHasScrolled = mounted ? hasScrolled : false;
+const safeMode = mounted ? mode : 'light';
+
+return (
+  <View style={{
+    backgroundColor: safeHasScrolled 
+      ? (safeMode === 'dark' ? 'rgba(30, 41, 59, 0.85)' : 'rgba(255, 255, 255, 0.85)') 
+      : (safeMode === 'dark' ? 'rgba(30, 41, 59, 0.6)' : 'rgba(255, 255, 255, 0.6)')
+  }}>
+    {/* Full interactive content */}
+  </View>
+);
+```
+
+**Files affected:**
+- `src/components/navigation/NavBar.tsx` ✅ **FIXED**

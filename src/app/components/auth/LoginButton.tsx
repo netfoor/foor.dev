@@ -58,10 +58,9 @@ export function LoginButton({
       isLoading={isLoading}
       loadingText={t('loading_state')}
       size="large"
-      className={className}
-      style={{
+      className={className}      style={{
         width: fullWidth ? '100%' : 'auto',
-        background: mode === 'dark'
+        backgroundImage: mode === 'dark'
           ? 'linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)'
           : 'linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%)',
         border: 'none',

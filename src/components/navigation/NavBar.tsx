@@ -61,20 +61,59 @@ function NavBar() {
       window.removeEventListener('scroll', handleScroll);
     };
   }, [handleScroll]);
-
   // Cerrar menú cuando cambia la ruta
   useEffect(() => {
     setIsMenuOpen(false);
   }, [pathname]);
-  
+    // Use safe defaults for server-side rendering to prevent hydration mismatch
+  const safeHasScrolled = mounted ? hasScrolled : false;
+  const safeMode = mounted ? mode : 'light';
+
+  // Return a minimal nav on server-side to prevent hydration issues
+  if (!mounted) {
+    return (
+      <View
+        as="nav"
+        position="fixed"
+        width="100%"
+        top="0"
+        left="0"
+        right="0"
+        height="60px"
+        style={{
+          backgroundColor: 'rgba(255, 255, 255, 0.6)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          transition: 'background-color 0.3s, box-shadow 0.3s',
+          zIndex: 1000
+        }}
+        role="navigation"
+        aria-label="Main navigation"
+      >
+        <Flex
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+          padding="0 2rem"
+          height="100%"
+          maxWidth="1200px"
+          margin="0 auto"
+        >
+          <Text fontWeight="700" fontSize="1.25rem" color="#F59E0B">
+            foor.dev
+          </Text>
+        </Flex>
+      </View>
+    );
+  }
+
   // Determinar colores basados en el modo
-  const bgColor = mode === 'dark' ? 'var(--neutral-90)' : 'var(--neutral-10)';
-  const textColor = mode === 'dark' ? 'var(--neutral-20)' : 'var(--neutral-80)';
+  const bgColor = safeMode === 'dark' ? 'var(--neutral-90)' : 'var(--neutral-10)';
+  const textColor = safeMode === 'dark' ? 'var(--neutral-20)' : 'var(--neutral-80)';
   const accentColor = '#40AABF';
   
   return (
-    <>
-      <View
+    <>      <View
         as="nav"
         ref={navRef}
         position="fixed"
@@ -84,12 +123,12 @@ function NavBar() {
         right="0"
         height="60px"
         style={{
-          backgroundColor: hasScrolled 
-            ? (mode === 'dark' ? 'rgba(30, 41, 59, 0.85)' : 'rgba(255, 255, 255, 0.85)') 
-            : (mode === 'dark' ? 'rgba(30, 41, 59, 0.6)' : 'rgba(255, 255, 255, 0.6)'),
+          backgroundColor: safeHasScrolled 
+            ? (safeMode === 'dark' ? 'rgba(30, 41, 59, 0.85)' : 'rgba(255, 255, 255, 0.85)') 
+            : (safeMode === 'dark' ? 'rgba(30, 41, 59, 0.6)' : 'rgba(255, 255, 255, 0.6)'),
           backdropFilter: 'blur(20px)',
           WebkitBackdropFilter: 'blur(20px)',
-          boxShadow: hasScrolled ? '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' : 'none',
+          boxShadow: safeHasScrolled ? '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' : 'none',
           transition: 'background-color 0.3s, box-shadow 0.3s',
           zIndex: 1000
         }}
@@ -123,9 +162,8 @@ function NavBar() {
               className="hover:scale-105"
             >              <Text
                 fontWeight="700"
-                fontSize="1.25rem"
-                style={
-                  mode === 'dark' 
+                fontSize="1.25rem"                style={
+                  safeMode === 'dark' 
                     ? {
                         color: '#93C5FD', // Mismo color que la luna y hamburguesa en modo oscuro
                         textDecoration: 'none'
@@ -165,15 +203,14 @@ function NavBar() {
                 <Text>
                   {t(link.key)}
                 </Text>
-                <div
-                  style={{
+                <div                  style={{
                     content: '""',
                     position: 'absolute',
                     bottom: '-2px',
                     left: 0,
                     width: pathname === getLocalizedPath(link.href) ? '100%' : '0',
                     height: '2px',
-                    background: 'linear-gradient(135deg, #40AABF, #64D2E7)',
+                    backgroundImage: 'linear-gradient(135deg, #40AABF, #64D2E7)',
                     transition: 'width 0.3s'
                   }}
                 />
@@ -188,19 +225,17 @@ function NavBar() {
           >            {/* Selector de idioma - Solo en desktop */}
             <View display={{ base: 'none', medium: 'flex' }}>
               <LanguageSelector 
-                mode={mode === 'dark' ? 'dark' : 'light'}
+                mode={safeMode === 'dark' ? 'dark' : 'light'}
                 compact={false}
               />
             </View>
               <ThemeToggle 
               size="md"
-            />
-
-            {/* Selector de idioma móvil - Al lado del ThemeToggle */}
+            />            {/* Selector de idioma móvil - Al lado del ThemeToggle */}
             <View display={{ base: 'flex', medium: 'none' }}>
               <LanguageIndicator 
                 size={18} 
-                mode={mode === 'dark' ? 'dark' : 'light'}
+                mode={safeMode === 'dark' ? 'dark' : 'light'}
               />
             </View>
 
@@ -222,12 +257,11 @@ function NavBar() {
                 zIndex: 1100,
                 transition: 'all 0.2s ease'
               }}
-            >
-              {isMenuOpen ? (
+            >              {isMenuOpen ? (
                 // Ícono de cerrar (X) con colores temáticos
                 <X 
                   size={24} 
-                  color={mode === 'dark' ? '#93C5FD' : '#F59E0B'} 
+                  color={safeMode === 'dark' ? '#93C5FD' : '#F59E0B'} 
                   style={{ 
                     transition: 'all 0.2s ease'
                   }}
@@ -236,7 +270,7 @@ function NavBar() {
                 // Ícono de menú hamburguesa
                 <Menu 
                   size={24} 
-                  color={mode === 'dark' ? '#93C5FD' : '#F59E0B'} 
+                  color={safeMode === 'dark' ? '#93C5FD' : '#F59E0B'} 
                   style={{ 
                     transition: 'all 0.2s ease'
                   }}
@@ -257,14 +291,13 @@ function NavBar() {
           left="0"
           right="0"
           bottom="0"
-          overflow="auto"
-          style={{
-            backgroundColor: mode === 'dark' 
+          overflow="auto"          style={{
+            backgroundColor: safeMode === 'dark' 
               ? 'rgba(30, 41, 59, 0.9)' 
               : 'rgba(255, 255, 255, 0.9)',
             backdropFilter: 'blur(25px)',
             WebkitBackdropFilter: 'blur(25px)',
-            boxShadow: mode === 'dark' 
+            boxShadow: safeMode === 'dark' 
               ? '-5px 0 15px rgba(0, 0, 0, 0.2)' 
               : '-5px 0 15px rgba(0, 0, 0, 0.1)',
             zIndex: 1050,
@@ -293,9 +326,8 @@ function NavBar() {
                   padding: '0.75rem',
                   borderRadius: '0.5rem',
                   transition: 'all 0.3s',
-                  marginBottom: '0.5rem',
-                  backgroundColor: pathname === getLocalizedPath(link.href) 
-                    ? (mode === 'dark' ? 'rgba(64, 170, 191, 0.1)' : 'rgba(64, 170, 191, 0.1)') 
+                  marginBottom: '0.5rem',                  backgroundColor: pathname === getLocalizedPath(link.href) 
+                    ? (safeMode === 'dark' ? 'rgba(64, 170, 191, 0.1)' : 'rgba(64, 170, 191, 0.1)') 
                     : 'transparent'
                 }}
               >                <Text fontSize="1.125rem">
@@ -309,9 +341,8 @@ function NavBar() {
             direction="row"
             justifyContent="center"
             padding="1rem 2rem"
-          >
-            <LanguageSelector 
-              mode={mode === 'dark' ? 'dark' : 'light'}
+          >            <LanguageSelector 
+              mode={safeMode === 'dark' ? 'dark' : 'light'}
               compact={false}
             />
           </Flex>
@@ -321,9 +352,8 @@ function NavBar() {
             direction="row"
             gap="2rem"
             padding="2rem"
-            justifyContent="center"
-            style={{
-              borderTop: mode === 'dark' 
+            justifyContent="center"            style={{
+              borderTop: safeMode === 'dark' 
                 ? '1px solid rgba(255, 255, 255, 0.1)' 
                 : '1px solid rgba(0, 0, 0, 0.1)'
             }}
