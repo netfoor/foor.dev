@@ -192,11 +192,10 @@ export default function AdminDashboard() {
   }
 
   return (
-    <View style={{ width: '100%' }}>
-      {/* Header de Bienvenida */}
+    <View style={{ width: '100%' }}>      {/* Header de Bienvenida */}
       <View style={{ marginBottom: '2rem' }}>
         <Text
-          fontSize="2.5rem"
+          fontSize={{ base: '1.875rem', medium: '2.5rem' }}
           fontWeight="700"
           style={{
             color: mode === 'dark' ? '#F1F5F9' : '#1E293B',
@@ -206,7 +205,7 @@ export default function AdminDashboard() {
           Bienvenido, {name} 👋
         </Text>
         <Text
-          fontSize="1.125rem"
+          fontSize={{ base: '1rem', medium: '1.125rem' }}
           style={{
             color: mode === 'dark' ? '#94A3B8' : '#64748B'
           }}
@@ -248,9 +247,9 @@ export default function AdminDashboard() {
         >
           Resumen General
         </Text>
-        
-        <Flex 
-          direction={{ base: 'column', medium: 'row' }} 
+          <Flex 
+          direction={{ base: 'column', small: 'row' }} 
+          wrap="wrap"
           gap="1rem"
         >
           {highlightMetrics.map((metric, index) => {
@@ -258,8 +257,10 @@ export default function AdminDashboard() {
             return (
               <Card
                 key={index}
+                className="dashboard-card"
                 style={{
-                  flex: 1,
+                  flex: '1',
+                  minWidth: '250px',
                   backgroundColor: mode === 'dark' ? 'rgba(51, 65, 85, 0.8)' : 'rgba(255, 255, 255, 0.9)',
                   border: mode === 'dark' ? '1px solid rgba(148, 163, 184, 0.1)' : '1px solid rgba(203, 213, 225, 0.2)',
                   borderRadius: '12px',
@@ -294,9 +295,8 @@ export default function AdminDashboard() {
                       {metric.change}
                     </Text>
                   </Flex>
-                  
-                  <Text
-                    fontSize="2rem"
+                    <Text
+                    fontSize={{ base: '1.5rem', medium: '2rem' }}
                     fontWeight="700"
                     style={{
                       color: mode === 'dark' ? '#F1F5F9' : '#1E293B',
@@ -333,12 +333,7 @@ export default function AdminDashboard() {
         >
           Gestión de Contenido
         </Text>
-        
-        <Flex 
-          direction={{ base: 'column', medium: 'row' }} 
-          wrap="wrap"
-          gap="1rem"
-        >
+          <div className="dashboard-grid">
           {dashboardSections.map((section, index) => {
             const Icon = section.icon;
             return (
@@ -346,9 +341,7 @@ export default function AdminDashboard() {
                 key={index}
                 href={section.href}
                 style={{
-                  textDecoration: 'none',
-                  flex: '1 1 calc(33.333% - 1rem)',
-                  minWidth: '300px'
+                  textDecoration: 'none'
                 }}
               >
                 <Card
@@ -417,13 +410,12 @@ export default function AdminDashboard() {
                       }}
                     >
                       {section.description}
-                    </Text>
-                  </View>
+                    </Text>                  </View>
                 </Card>
               </Link>
             );
           })}
-        </Flex>
+        </div>
       </View>
 
       {/* Acciones Rápidas */}

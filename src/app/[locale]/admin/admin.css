@@ -1,0 +1,188 @@
+/* Admin Panel Responsive Styles */
+
+/* Base responsive utilities */
+.hidden {
+  display: none !important;
+}
+
+.sm\:inline {
+  display: none !important;
+}
+
+.sm\:hidden {
+  display: inline !important;
+}
+
+.md\:w-auto {
+  width: 100% !important;
+}
+
+/* Media Queries para Responsive Design */
+@media (min-width: 640px) {
+  .sm\:inline {
+    display: inline !important;
+  }
+  
+  .sm\:hidden {
+    display: none !important;
+  }
+  
+  .sm\:block {
+    display: block !important;
+  }
+}
+
+@media (max-width: 639px) {
+  .sm\:block {
+    display: none !important;
+  }
+}
+
+@media (min-width: 768px) {
+  .md\:hidden {
+    display: none !important;
+  }
+  
+  .md\:block {
+    display: block !important;
+  }
+  
+  .md\:transform-none {
+    transform: none !important;
+  }
+  
+  .md\:relative {
+    position: relative !important;
+  }
+  
+  .md\:translate-x-0 {
+    transform: translateX(0) !important;
+  }
+  
+  .md\:w-auto {
+    width: auto !important;
+  }
+  
+  /* Sidebar styles for desktop */
+  .admin-sidebar {
+    position: fixed !important;
+    top: 8rem !important;
+    transform: translateX(0) !important;
+    transition: none !important;
+  }
+  
+  /* Main content styles for desktop */
+  .admin-main-content {
+    margin-left: 280px !important;
+    padding: 2rem !important;
+    padding-top: 3rem !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .md\:hidden {
+    display: block !important;
+  }
+  
+  .md\:block {
+    display: none !important;
+  }
+  
+  /* Mobile styles */
+  .admin-main-content {
+    margin-left: 0 !important;
+    padding: 1rem !important;
+    padding-top: 2rem !important;
+  }
+}
+
+/* Smooth transitions for mobile sidebar */
+.sidebar-transition {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Prevent body scroll when mobile menu is open */
+.mobile-menu-open {
+  overflow: hidden;
+}
+
+/* Custom scrollbar for sidebar */
+.admin-sidebar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.admin-sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.admin-sidebar::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.3);
+  border-radius: 2px;
+}
+
+.admin-sidebar::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.5);
+}
+
+/* Touch-friendly tap targets */
+.admin-nav-link {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+
+/* Responsive text scaling */
+@media (max-width: 480px) {
+  .admin-title {
+    font-size: 1.125rem !important;
+  }
+  
+  .admin-subtitle {
+    font-size: 0.875rem !important;
+  }
+}
+
+/* Mobile-first dashboard cards */
+.dashboard-card {
+  min-height: 120px;
+}
+
+@media (max-width: 768px) {
+  .dashboard-card {
+    min-height: 100px;
+  }
+}
+
+/* Responsive grid for dashboard */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Improve touch targets for mobile */
+.mobile-touch-target {
+  min-height: 48px;
+  min-width: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Ensure proper viewport handling */
+@viewport {
+  width: device-width;
+  initial-scale: 1;
+}

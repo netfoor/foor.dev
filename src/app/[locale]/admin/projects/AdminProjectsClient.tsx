@@ -176,8 +176,7 @@ const AdminProjectsClient: React.FC<AdminProjectsClientProps> = ({ locale }) => 
       </Flex>
     );
   }  return (
-    <View>
-      {/* Header */}
+    <View>      {/* Header */}
       <Flex
         direction={{ base: 'column', medium: 'row' }} 
         justifyContent="space-between" 
@@ -187,7 +186,7 @@ const AdminProjectsClient: React.FC<AdminProjectsClientProps> = ({ locale }) => 
       >
         <View>
           <Text
-            fontSize="2rem"
+            fontSize={{ base: '1.5rem', medium: '2rem' }}
             fontWeight="700"
             style={{
               color: mode === 'dark' ? '#F1F5F9' : '#1E293B',
@@ -196,7 +195,7 @@ const AdminProjectsClient: React.FC<AdminProjectsClientProps> = ({ locale }) => 
             Gestión de Proyectos
           </Text>
           <Text
-            fontSize="1rem"
+            fontSize={{ base: '0.875rem', medium: '1rem' }}
             style={{
               color: mode === 'dark' ? '#CBD5E1' : '#64748B',
             }}
@@ -214,10 +213,14 @@ const AdminProjectsClient: React.FC<AdminProjectsClientProps> = ({ locale }) => 
               display: 'flex',
               alignItems: 'center',
               gap: '0.5rem',
+              width: '100%',
+              justifyContent: 'center'
             }}
+            className="md:w-auto"
           >
             <Plus size={20} />
-            Nuevo Proyecto
+            <Text className="hidden sm:inline">Nuevo Proyecto</Text>
+            <Text className="sm:hidden">Nuevo</Text>
           </Button>
         </Link>
       </Flex>
