@@ -3,24 +3,63 @@
 import React from 'react';
 import { useAuth } from '@/context/auth-context';
 import { useTranslation } from '@/lib/i18n/client';
+import { useTheme } from '@/hooks/useTheme';
+import { View, Flex, Text } from '@aws-amplify/ui-react';
+import { User } from 'lucide-react';
 import Image from 'next/image';
 
 /**
  * Componente para mostrar la información del usuario autenticado
+ * Versión modernizada para el admin panel
  */
 export function UserProfile() {
   const { user, userAttributes, isLoading } = useAuth();
   const { t } = useTranslation('auth');
+  const { mode } = useTheme();
   
   if (isLoading) {
     return (
-      <div className="rounded-lg p-4 flex items-center space-x-3 bg-gray-50 animate-pulse">
-        <div className="h-10 w-10 rounded-full bg-gray-300"></div>
-        <div className="flex flex-col space-y-1">
-          <div className="h-4 w-24 bg-gray-300 rounded"></div>
-          <div className="h-3 w-32 bg-gray-200 rounded"></div>
-        </div>
-      </div>
+      <View
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.75rem',
+          padding: '0.5rem 1rem',
+          borderRadius: '12px',
+          backgroundColor: mode === 'dark' ? 'rgba(51, 65, 85, 0.8)' : 'rgba(255, 255, 255, 0.9)',
+          border: mode === 'dark' ? '1px solid rgba(148, 163, 184, 0.1)' : '1px solid rgba(203, 213, 225, 0.2)',
+        }}
+      >
+        <View
+          style={{
+            width: '36px',
+            height: '36px',
+            borderRadius: '50%',
+            backgroundColor: mode === 'dark' ? 'rgba(75, 85, 99, 0.6)' : 'rgba(229, 231, 235, 0.6)',
+            animation: 'pulse 2s infinite'
+          }}
+        />
+        <View style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+          <View
+            style={{
+              width: '80px',
+              height: '14px',
+              borderRadius: '4px',
+              backgroundColor: mode === 'dark' ? 'rgba(75, 85, 99, 0.6)' : 'rgba(229, 231, 235, 0.6)',
+              animation: 'pulse 2s infinite'
+            }}
+          />
+          <View
+            style={{
+              width: '120px',
+              height: '12px',
+              borderRadius: '4px',
+              backgroundColor: mode === 'dark' ? 'rgba(75, 85, 99, 0.4)' : 'rgba(229, 231, 235, 0.4)',
+              animation: 'pulse 2s infinite'
+            }}
+          />
+        </View>
+      </View>
     );
   }
   
@@ -33,25 +72,69 @@ export function UserProfile() {
   const email = userAttributes.email || '';
   
   return (
-    <div className="rounded-lg p-4 flex items-center space-x-3 bg-gray-50">
-      <div className="relative h-10 w-10 rounded-full overflow-hidden bg-gray-200">
+    <View
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '0.75rem',
+        padding: '0.5rem 1rem',
+        borderRadius: '12px',
+        backgroundColor: mode === 'dark' ? 'rgba(51, 65, 85, 0.8)' : 'rgba(255, 255, 255, 0.9)',
+        border: mode === 'dark' ? '1px solid rgba(148, 163, 184, 0.1)' : '1px solid rgba(203, 213, 225, 0.2)',
+        backdropFilter: 'blur(10px)',
+        transition: 'all 0.2s ease'
+      }}
+    >
+      <View
+        style={{
+          position: 'relative',
+          width: '36px',
+          height: '36px',
+          borderRadius: '50%',
+          overflow: 'hidden',
+          backgroundColor: mode === 'dark' ? 'rgba(75, 85, 99, 0.8)' : 'rgba(229, 231, 235, 0.8)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+      >
         {userAttributes.picture ? (
           <Image
             src={userAttributes.picture}
             alt={name}
             fill
-            className="object-cover"
+            style={{ objectFit: 'cover' }}
           />
         ) : (
-          <div className="h-full w-full flex items-center justify-center text-gray-500">
-            {name.charAt(0).toUpperCase()}
-          </div>
+          <User 
+            size={20} 
+            style={{ 
+              color: mode === 'dark' ? '#94A3B8' : '#6B7280' 
+            }} 
+          />
         )}
-      </div>
-      <div className="flex flex-col">
-        <span className="font-medium text-gray-900">{name}</span>
-        <span className="text-sm text-gray-500">{email}</span>
-      </div>
-    </div>
+      </View>
+      <View style={{ display: 'flex', flexDirection: 'column' }}>
+        <Text
+          fontSize="0.875rem"
+          fontWeight="600"
+          style={{
+            color: mode === 'dark' ? '#F1F5F9' : '#1E293B',
+            lineHeight: '1.2'
+          }}
+        >
+          {name}
+        </Text>
+        <Text
+          fontSize="0.75rem"
+          style={{
+            color: mode === 'dark' ? '#94A3B8' : '#64748B',
+            lineHeight: '1.2'
+          }}
+        >
+          {email}
+        </Text>
+      </View>
+    </View>
   );
 }

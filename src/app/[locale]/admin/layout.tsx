@@ -111,13 +111,12 @@ export default function AdminLayout({
                 Panel Admin
               </Text>
             </Flex>
-            
-            {/* User Controls */}
+              {/* User Controls */}
             <Flex direction="row" alignItems="center" gap={{ base: '0.5rem', medium: '1rem' }}>
-              <View style={{ display: 'none' }} className="sm:block">
+              <View className="hidden sm:block">
                 <UserProfile />
               </View>
-              <LogoutButton />
+              <LogoutButton compact={true} variant="outline" />
             </Flex>
           </Flex>        </View>
 

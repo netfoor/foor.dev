@@ -3,23 +3,29 @@
 import React from 'react';
 import { useAuth } from '@/context/auth-context';
 import { useTranslation } from '@/lib/i18n/client';
+import { useTheme } from '@/hooks/useTheme';
+import { Button } from '@aws-amplify/ui-react';
+import { LogOut, Loader2 } from 'lucide-react';
 
 interface LogoutButtonProps {
   className?: string;
   variant?: 'primary' | 'secondary' | 'outline';
   fullWidth?: boolean;
+  compact?: boolean;
 }
 
 /**
- * Botón para cerrar sesión
+ * Botón para cerrar sesión - Versión modernizada para admin panel
  */
 export function LogoutButton({
   className = '',
   variant = 'secondary',
   fullWidth = false,
+  compact = false,
 }: LogoutButtonProps) {
   const { logout, isLoading } = useAuth();
   const { t } = useTranslation('auth');
+  const { mode } = useTheme();
   
   const handleLogout = async () => {
     try {
@@ -28,43 +34,80 @@ export function LogoutButton({
       console.error('Error cerrando sesión:', error);
     }
   };
-  
-  // Estilo base del botón
-  let buttonStyle = 'px-4 py-2 rounded-md transition-colors font-medium flex items-center justify-center';
-  
-  // Añadir estilos según la variante
-  if (variant === 'primary') {
-    buttonStyle += ' bg-blue-600 text-white hover:bg-blue-700';
-  } else if (variant === 'secondary') {
-    buttonStyle += ' bg-gray-200 text-gray-800 hover:bg-gray-300';
-  } else if (variant === 'outline') {
-    buttonStyle += ' border border-gray-300 text-gray-800 hover:bg-gray-100';
-  }
-  
-  // Añadir ancho completo si se especifica
-  if (fullWidth) {
-    buttonStyle += ' w-full';
-  }
-  
-  // Combinar con la clase personalizada
-  buttonStyle = `${buttonStyle} ${className}`;
-  
+
+  const getButtonStyles = () => {
+    const baseStyles = {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: compact ? '0.375rem' : '0.5rem',
+      padding: compact ? '0.5rem 0.875rem' : '0.625rem 1rem',
+      borderRadius: '10px',
+      fontSize: compact ? '0.875rem' : '0.875rem',
+      fontWeight: '600',
+      transition: 'all 0.2s ease',
+      cursor: 'pointer',
+      border: 'none',
+      width: fullWidth ? '100%' : 'auto',
+      whiteSpace: 'nowrap' as const,
+    };
+
+    switch (variant) {
+      case 'primary':
+        return {
+          ...baseStyles,
+          backgroundColor: mode === 'dark' ? '#EF4444' : '#DC2626',
+          color: '#FFFFFF',
+        };
+      case 'outline':
+        return {
+          ...baseStyles,
+          backgroundColor: 'transparent',
+          color: mode === 'dark' ? '#EF4444' : '#DC2626',
+          border: `1px solid ${mode === 'dark' ? '#EF4444' : '#DC2626'}`,
+        };
+      default: // secondary
+        return {
+          ...baseStyles,
+          backgroundColor: mode === 'dark' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(220, 38, 38, 0.1)',
+          color: mode === 'dark' ? '#EF4444' : '#DC2626',
+          border: `1px solid ${mode === 'dark' ? 'rgba(239, 68, 68, 0.3)' : 'rgba(220, 38, 38, 0.3)'}`,
+        };
+    }
+  };
+
   return (
     <button
-      className={buttonStyle}
+      style={getButtonStyles()}
       onClick={handleLogout}
       disabled={isLoading}
+      className={`hover:scale-105 active:scale-95 ${className}`}
+      onMouseEnter={(e) => {
+        const target = e.target as HTMLElement;
+        if (variant === 'primary') {
+          target.style.backgroundColor = mode === 'dark' ? '#DC2626' : '#B91C1C';
+        } else if (variant === 'outline') {
+          target.style.backgroundColor = mode === 'dark' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(220, 38, 38, 0.1)';
+        } else {
+          target.style.backgroundColor = mode === 'dark' ? 'rgba(239, 68, 68, 0.2)' : 'rgba(220, 38, 38, 0.2)';
+        }
+      }}
+      onMouseLeave={(e) => {
+        const target = e.target as HTMLElement;
+        const styles = getButtonStyles();
+        target.style.backgroundColor = styles.backgroundColor;
+      }}
     >
       {isLoading ? (
         <>
-          <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-          </svg>
-          {t('loading_state')}
+          <Loader2 size={compact ? 16 : 18} className="animate-spin" />
+          {!compact && t('loading_state')}
         </>
       ) : (
-        t('logout')
+        <>
+          <LogOut size={compact ? 16 : 18} />
+          {!compact && t('logout')}
+        </>
       )}
     </button>
   );
