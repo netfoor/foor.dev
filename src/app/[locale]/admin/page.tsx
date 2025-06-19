@@ -189,10 +189,9 @@ export default function AdminDashboard() {
         </Text>
       </View>
     );
-  }
-
-  return (
-    <View style={{ width: '100%' }}>      {/* Header de Bienvenida */}
+  }  return (
+    <View style={{ width: '100%' }}>
+      {/* Header de Bienvenida */}
       <View style={{ marginBottom: '2rem' }}>
         <Text
           fontSize={{ base: '1.875rem', medium: '2.5rem' }}
@@ -233,9 +232,7 @@ export default function AdminDashboard() {
             </Text>
           </View>
         )}
-      </View>
-
-      {/* Métricas Destacadas */}
+      </View>      {/* Métricas Destacadas */}
       <View style={{ marginBottom: '2rem' }}>
         <Text
           fontSize="1.25rem"
@@ -247,26 +244,40 @@ export default function AdminDashboard() {
         >
           Resumen General
         </Text>
-          <Flex 
-          direction={{ base: 'column', small: 'row' }} 
-          wrap="wrap"
-          gap="1rem"
+        <View 
+          className="metrics-gallery"
+          style={{
+            overflowX: 'auto',
+            overflowY: 'hidden',
+            paddingBottom: '8px',
+            scrollbarWidth: 'thin',
+            scrollbarColor: 'rgba(148, 163, 184, 0.3) transparent'
+          }}
         >
-          {highlightMetrics.map((metric, index) => {
-            const Icon = metric.icon;
-            return (
-              <Card
-                key={index}
-                className="dashboard-card"
-                style={{
-                  flex: '1',
-                  minWidth: '250px',
-                  backgroundColor: mode === 'dark' ? 'rgba(51, 65, 85, 0.8)' : 'rgba(255, 255, 255, 0.9)',
-                  border: mode === 'dark' ? '1px solid rgba(148, 163, 184, 0.1)' : '1px solid rgba(203, 213, 225, 0.2)',
-                  borderRadius: '12px',
-                  backdropFilter: 'blur(10px)'
-                }}
-              >
+          <Flex 
+            direction="row"
+            gap="1rem"
+            style={{
+              minWidth: 'fit-content',
+              paddingRight: '1rem'
+            }}
+          >
+            {highlightMetrics.map((metric, index) => {
+              const Icon = metric.icon;
+              return (
+                <Card
+                  key={index}
+                  className="dashboard-card"
+                  style={{
+                    minWidth: '280px',
+                    maxWidth: '300px',
+                    flexShrink: 0,
+                    backgroundColor: mode === 'dark' ? 'rgba(51, 65, 85, 0.8)' : 'rgba(255, 255, 255, 0.9)',
+                    border: mode === 'dark' ? '1px solid rgba(148, 163, 184, 0.1)' : '1px solid rgba(203, 213, 225, 0.2)',
+                    borderRadius: '12px',
+                    backdropFilter: 'blur(10px)'
+                  }}
+                >
                 <View padding="1.5rem">
                   <Flex direction="row" justifyContent="space-between" alignItems="center" marginBottom="1rem">
                     <View
@@ -303,8 +314,7 @@ export default function AdminDashboard() {
                       marginBottom: '0.25rem'
                     }}
                   >
-                    {metric.value}
-                  </Text>
+                    {metric.value}                  </Text>
                   
                   <Text
                     fontSize="0.875rem"
@@ -318,7 +328,8 @@ export default function AdminDashboard() {
               </Card>
             );
           })}
-        </Flex>
+          </Flex>
+        </View>
       </View>
 
       {/* Secciones de Gestión */}
@@ -332,8 +343,15 @@ export default function AdminDashboard() {
           }}
         >
           Gestión de Contenido
-        </Text>
-          <div className="dashboard-grid">
+        </Text>          <div 
+            className="content-management-grid"
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+              gap: '1.5rem',
+              width: '100%'
+            }}
+          >
           {dashboardSections.map((section, index) => {
             const Icon = section.icon;
             return (
@@ -343,8 +361,7 @@ export default function AdminDashboard() {
                 style={{
                   textDecoration: 'none'
                 }}
-              >
-                <Card
+              >                <Card
                   style={{
                     height: '100%',
                     backgroundColor: mode === 'dark' ? 'rgba(51, 65, 85, 0.8)' : 'rgba(255, 255, 255, 0.9)',
@@ -379,9 +396,7 @@ export default function AdminDashboard() {
                           transition: 'transform 0.2s ease'
                         }} 
                       />
-                    </Flex>
-                    
-                    <Text
+                    </Flex>                    <Text
                       fontSize="1.5rem"
                       fontWeight="700"
                       style={{
@@ -426,20 +441,20 @@ export default function AdminDashboard() {
           style={{
             color: mode === 'dark' ? '#F1F5F9' : '#1E293B',
             marginBottom: '1rem'
-          }}
-        >
+          }}        >
           Acciones Rápidas
         </Text>
         
-        <Flex 
-          direction={{ base: 'column', medium: 'row' }} 
-          gap="1rem"
-        >
-          <Link
+        <View className="quick-actions-container">          <Flex 
+            direction={{ base: 'column', medium: 'row' }} 
+            gap="1.5rem"
+            style={{ width: '100%' }}
+          >          <Link
             href="/admin/projects/new"
             style={{
               textDecoration: 'none',
-              flex: 1
+              flex: '1 1 280px',
+              minWidth: '280px'
             }}
           >
             <Card
@@ -472,14 +487,13 @@ export default function AdminDashboard() {
                 </Flex>
               </View>
             </Card>
-          </Link>
-          
-          <Link
+          </Link>          <Link
             href="/"
             target="_blank"
             style={{
               textDecoration: 'none',
-              flex: 1
+              flex: '1 1 280px',
+              minWidth: '280px'
             }}
           >
             <Card
@@ -511,9 +525,9 @@ export default function AdminDashboard() {
                   </View>
                 </Flex>
               </View>
-            </Card>
-          </Link>
+            </Card>          </Link>
         </Flex>
+        </View>
       </View>
     </View>
   );

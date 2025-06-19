@@ -62,8 +62,7 @@
   .md\:w-auto {
     width: auto !important;
   }
-  
-  /* Sidebar styles for desktop */
+    /* Sidebar styles for desktop */
   .admin-sidebar {
     position: fixed !important;
     top: 8rem !important;
@@ -71,11 +70,14 @@
     transition: none !important;
   }
   
-  /* Main content styles for desktop */
+  /* Main content styles for desktop - ancho calculado correctamente */
   .admin-main-content {
     margin-left: 280px !important;
+    width: calc(100vw - 280px) !important;
+    max-width: calc(100vw - 280px) !important;
     padding: 2rem !important;
     padding-top: 3rem !important;
+    box-sizing: border-box !important;
   }
 }
 
@@ -87,12 +89,14 @@
   .md\:block {
     display: none !important;
   }
-  
-  /* Mobile styles */
+    /* Mobile styles - ancho completo en móvil */
   .admin-main-content {
     margin-left: 0 !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
     padding: 1rem !important;
     padding-top: 2rem !important;
+    box-sizing: border-box !important;
   }
 }
 
@@ -153,6 +157,31 @@
   }
 }
 
+/* Galería deslizante para métricas */
+.metrics-gallery {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(148, 163, 184, 0.3) transparent;
+}
+
+.metrics-gallery::-webkit-scrollbar {
+  height: 6px;
+}
+
+.metrics-gallery::-webkit-scrollbar-track {
+  background: rgba(148, 163, 184, 0.1);
+  border-radius: 3px;
+}
+
+.metrics-gallery::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.4);
+  border-radius: 3px;
+}
+
+.metrics-gallery::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.6);
+}
+
 /* Responsive grid for dashboard */
 .dashboard-grid {
   display: grid;
@@ -160,9 +189,74 @@
   gap: 1rem;
 }
 
+/* Content grid - más compacto */
+.content-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+/* Grid responsivo basado en container real, no viewport */
+.content-management-grid {
+  transition: grid-template-columns 0.3s ease;
+}
+
+/* Container queries basadas en el ancho real disponible */
+@media (min-width: 768px) {
+  .content-management-grid {
+    /* Desktop: 280px sidebar + 64px padding = 344px menos del viewport
+       Ancho disponible ≈ viewport - 344px
+       Con minmax(260px), en viewport 1200px: (1200-344)/260 ≈ 3.29 → 3 columnas
+       Con minmax(280px), en viewport 1400px: (1400-344)/280 ≈ 3.77 → 3 columnas */
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)) !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .content-management-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1100px) {
+  .content-management-grid {
+    /* Para pantallas medianas, máximo 2 columnas */
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
+  }
+}
+
+/* Flexbox natural para acciones rápidas */
+@media (max-width: 768px) {
+  .quick-actions-container .amplify-flex {
+    flex-direction: column !important;
+  }
+  
+  .quick-actions-container a {
+    flex: none !important;
+  }
+}
+
+/* Responsive design natural para botón crear proyecto */
+@media (min-width: 768px) {
+  .md\:w-auto {
+    width: auto !important;
+    max-width: none !important;
+  }
+}
+
 @media (min-width: 640px) {
   .dashboard-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .content-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 768px) {
+  .content-grid {
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 
@@ -170,6 +264,141 @@
   .dashboard-grid {
     grid-template-columns: repeat(3, 1fr);
   }
+  
+  .content-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Prevenir overflow horizontal */
+.admin-main-content {
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Contenedores flexibles para evitar overflow */
+.admin-main-content > * {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Grid responsivo más agresivo */
+.content-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.875rem;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+@media (min-width: 480px) {
+  .content-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 768px) {
+  .content-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1200px) {
+  .content-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Asegurar que las tarjetas no causen overflow */
+.hover\:scale-105:hover {
+  transform: scale(1.02);
+}
+
+/* Flex containers para acciones rápidas */
+.quick-actions-container {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Tabla responsiva */
+.table-container {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table-container::-webkit-scrollbar {
+  height: 6px;
+}
+
+.table-container::-webkit-scrollbar-track {
+  background: rgba(148, 163, 184, 0.1);
+  border-radius: 3px;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.4);
+  border-radius: 3px;
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.6);
+}
+
+/* Asegurar que la tabla se adapte */
+.table-container table {
+  width: 100%;
+  min-width: 500px;
+  table-layout: auto;
+}
+
+/* Responsive table cells */
+@media (max-width: 768px) {
+  .table-container table {
+    min-width: 400px;
+  }
+}
+
+/* Estilos para tabla responsive */
+.responsive-table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 8px;
+}
+
+.responsive-table-wrapper::-webkit-scrollbar {
+  height: 8px;
+}
+
+.responsive-table-wrapper::-webkit-scrollbar-track {
+  background: rgba(148, 163, 184, 0.1);
+  border-radius: 4px;
+}
+
+.responsive-table-wrapper::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.4);
+  border-radius: 4px;
+}
+
+.responsive-table-wrapper::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.6);
+}
+
+/* Prevenir que los enlaces y botones causen overflow */
+.admin-action-button {
+  min-width: 0;
+  white-space: nowrap;
+}
+
+/* Asegurar que el contenido principal no tenga width mayor al viewport */
+.admin-dashboard-content {
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 /* Improve touch targets for mobile */

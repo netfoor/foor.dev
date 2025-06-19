@@ -176,15 +176,15 @@ const AdminProjectsClient: React.FC<AdminProjectsClientProps> = ({ locale }) => 
       </Flex>
     );
   }  return (
-    <View>      {/* Header */}
-      <Flex
+    <View>      {/* Header */}      <Flex
         direction={{ base: 'column', medium: 'row' }} 
         justifyContent="space-between" 
-        alignItems={{ base: 'stretch', medium: 'center' }}
+        alignItems={{ base: 'stretch', medium: 'flex-start' }}
         gap="1rem"
         marginBottom="2rem"
+        style={{ width: '100%' }}
       >
-        <View>
+        <View style={{ flex: '1 1 auto', minWidth: 0 }}>
           <Text
             fontSize={{ base: '1.5rem', medium: '2rem' }}
             fontWeight="700"
@@ -202,27 +202,27 @@ const AdminProjectsClient: React.FC<AdminProjectsClientProps> = ({ locale }) => 
           >
             Administra tu portafolio de proyectos
           </Text>
+        </View>        <View style={{ flexShrink: 0, width: '100%', maxWidth: '200px' }} className="md:w-auto">
+          <Link href={getLocalizedPath('/admin/projects/new')} style={{ textDecoration: 'none' }}>
+            <Button
+              variation="primary"
+              size="large"
+              style={{
+                backgroundColor: mode === 'dark' ? '#3B82F6' : '#2563EB',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                justifyContent: 'center',
+                width: '100%',
+                whiteSpace: 'nowrap'
+              }}
+            >
+              <Plus size={20} />
+              <Text className="hidden sm:inline">Nuevo Proyecto</Text>
+              <Text className="sm:hidden">Nuevo</Text>
+            </Button>
+          </Link>
         </View>
-        
-        <Link href={getLocalizedPath('/admin/projects/new')} style={{ textDecoration: 'none' }}>
-          <Button
-            variation="primary"
-            size="large"
-            style={{
-              backgroundColor: mode === 'dark' ? '#3B82F6' : '#2563EB',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              width: '100%',
-              justifyContent: 'center'
-            }}
-            className="md:w-auto"
-          >
-            <Plus size={20} />
-            <Text className="hidden sm:inline">Nuevo Proyecto</Text>
-            <Text className="sm:hidden">Nuevo</Text>
-          </Button>
-        </Link>
       </Flex>
 
       {/* Error Alert */}
@@ -230,40 +230,45 @@ const AdminProjectsClient: React.FC<AdminProjectsClientProps> = ({ locale }) => 
         <Alert variation="error" marginBottom="1rem">
           {error}
         </Alert>
-      )}
-
-      {/* Estadísticas */}
+      )}      {/* Estadísticas Compactas */}
       <Flex 
         direction={{ base: 'column', medium: 'row' }} 
-        gap="1rem" 
+        gap="1.5rem" 
         marginBottom="2rem"
+        style={{
+          width: '100%',
+          maxWidth: '100%'
+        }}
       >
         <Card
           style={{
             flex: 1,
+            minWidth: '160px',
+            maxWidth: '100%',
             backgroundColor: mode === 'dark' ? 'rgba(51, 65, 85, 0.8)' : 'rgba(255, 255, 255, 0.9)',
             border: mode === 'dark' ? '1px solid rgba(148, 163, 184, 0.1)' : '1px solid rgba(203, 213, 225, 0.2)',
+            boxSizing: 'border-box'
           }}
-        >
-          <View padding="1.5rem">
-            <Text fontSize="2rem" fontWeight="700" color="#22C55E">
+        >          <View padding="1rem">
+            <Text fontSize="1.25rem" fontWeight="700" color="#22C55E">
               {projects.filter(p => p.status === 'Published').length}
             </Text>
             <Text fontSize="0.875rem" color={mode === 'dark' ? '#CBD5E1' : '#64748B'}>
               Proyectos Publicados
             </Text>
           </View>
-        </Card>
-        
-        <Card
+        </Card>        <Card
           style={{
             flex: 1,
+            minWidth: '160px',
+            maxWidth: '100%',
             backgroundColor: mode === 'dark' ? 'rgba(51, 65, 85, 0.8)' : 'rgba(255, 255, 255, 0.9)',
             border: mode === 'dark' ? '1px solid rgba(148, 163, 184, 0.1)' : '1px solid rgba(203, 213, 225, 0.2)',
+            boxSizing: 'border-box'
           }}
         >
-          <View padding="1.5rem">
-            <Text fontSize="2rem" fontWeight="700" color="#F59E0B">
+          <View padding="1rem">
+            <Text fontSize="1.25rem" fontWeight="700" color="#F59E0B">
               {projects.filter(p => p.status === 'Draft').length}
             </Text>
             <Text fontSize="0.875rem" color={mode === 'dark' ? '#CBD5E1' : '#64748B'}>
@@ -275,12 +280,15 @@ const AdminProjectsClient: React.FC<AdminProjectsClientProps> = ({ locale }) => 
         <Card
           style={{
             flex: 1,
+            minWidth: '160px',
+            maxWidth: '100%',
             backgroundColor: mode === 'dark' ? 'rgba(51, 65, 85, 0.8)' : 'rgba(255, 255, 255, 0.9)',
             border: mode === 'dark' ? '1px solid rgba(148, 163, 184, 0.1)' : '1px solid rgba(203, 213, 225, 0.2)',
+            boxSizing: 'border-box'
           }}
         >
-          <View padding="1.5rem">
-            <Text fontSize="2rem" fontWeight="700" color="#3B82F6">
+          <View padding="1rem">
+            <Text fontSize="1.25rem" fontWeight="700" color="#3B82F6">
               {projects.length}
             </Text>
             <Text fontSize="0.875rem" color={mode === 'dark' ? '#CBD5E1' : '#64748B'}>
@@ -302,13 +310,19 @@ const AdminProjectsClient: React.FC<AdminProjectsClientProps> = ({ locale }) => 
             <Text fontSize="1.125rem" color={mode === 'dark' ? '#CBD5E1' : '#64748B'} marginBottom="2rem">
               No hay proyectos aún. ¡Crea tu primer proyecto!
             </Text>
-          </View>
-        ) : (
-          <Table
+          </View>        ) : (          <View 
+            className="table-container"
             style={{
-              backgroundColor: 'transparent',
+              overflowX: 'auto',
+              width: '100%'
             }}
           >
+            <Table
+              style={{
+                backgroundColor: 'transparent',
+                width: '100%'
+              }}
+            >
             <TableHead>
               <TableRow>
                 <TableCell style={{ fontWeight: '600', color: mode === 'dark' ? '#F1F5F9' : '#1E293B' }}>
@@ -456,9 +470,9 @@ const AdminProjectsClient: React.FC<AdminProjectsClientProps> = ({ locale }) => 
                     </Flex>
                   </TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
+              ))}            </TableBody>
           </Table>
+          </View>
         )}
       </Card>
     </View>

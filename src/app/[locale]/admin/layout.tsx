@@ -247,16 +247,13 @@ export default function AdminLayout({
               })}
             </Flex>
           </View>
-        </View>
-
-        {/* Main Content Container */}
+        </View>        {/* Main Content Container */}
         <View
           className="admin-main-content"
           style={{
             padding: '1rem',
             paddingTop: '2rem', // Espacio desde arriba para evitar superposición
             minHeight: 'calc(100vh - 8rem)',
-            width: '100%',
             transition: 'margin-left 0.3s ease-in-out'
           }}
         >
