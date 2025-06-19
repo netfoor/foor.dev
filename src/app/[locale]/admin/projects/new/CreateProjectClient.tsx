@@ -194,26 +194,23 @@ function CreateProjectClient(): React.JSX.Element {
       galleryKeys: [] as string[]
     };
 
-    try {
-      // Subir imagen principal
+    try {      // Subir imagen principal
       if (mainImage) {
         const photoKey = `projects/${Date.now()}-${mainImage.name}`;
         await uploadData({
-          key: photoKey,
+          path: photoKey,
           data: mainImage,
           options: {
             contentType: mainImage.type
           }
         }).result;
         uploadResults.photoKey = photoKey;
-      }
-
-      // Subir galería
+      }      // Subir galería
       if (galleryImages.length > 0) {
         const galleryPromises = galleryImages.map(async (file, index) => {
           const galleryKey = `projects/gallery/${Date.now()}-${index}-${file.name}`;
           await uploadData({
-            key: galleryKey,
+            path: galleryKey,
             data: file,
             options: {
               contentType: file.type

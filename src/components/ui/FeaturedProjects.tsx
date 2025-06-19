@@ -2,9 +2,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { View, Flex, Text, Card, Button, Badge, Loader, Alert } from '@aws-amplify/ui-react';
-import { ExternalLink, MapPin, Code, ArrowRight } from 'lucide-react';
+import { ExternalLink, MapPin, Code, ArrowRight, Image as ImageIcon } from 'lucide-react';
 import Link from 'next/link';
 import { generateClient } from 'aws-amplify/data';
+import { getUrl } from 'aws-amplify/storage';
 import type { Schema } from '../../../amplify/data/resource';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation, useLocalizedPath } from '@/lib/i18n/client';
@@ -18,13 +19,28 @@ interface FeaturedProjectsProps {
 
 const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({ className = '' }) => {
   const [projects, setProjects] = useState<Project[]>([]);
+  const [projectImages, setProjectImages] = useState<{ [key: string]: string }>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
-
   const { mode } = useTheme();
   const { t } = useTranslation('homepage');
   const getLocalizedPath = useLocalizedPath();
+  // Función para obtener URL de imagen desde S3
+  const getImageUrl = async (photoKey: string | null | undefined): Promise<string | null> => {
+    if (!photoKey) return null;
+    
+    try {
+      // Normalizar el path - remover 'public/' si existe (para compatibilidad con Gen 1)
+      const normalizedPath = photoKey.startsWith('public/') ? photoKey.slice(7) : photoKey;
+      
+      const url = await getUrl({ path: normalizedPath });
+      return url.url.toString();
+    } catch (err) {
+      console.error('Error getting image URL for key:', photoKey, err);
+      return null;
+    }
+  };
 
   // Verificar si el componente está montado para evitar hidratación mismatch
   useEffect(() => {
@@ -54,14 +70,26 @@ const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({ className = '' }) =
           console.error('Error fetching projects:', errors);
           setError('Failed to load projects');
           return;
-        }
-
-        // Sort by createdAt descending to get most recent first
+        }        // Sort by createdAt descending to get most recent first
         const sortedProjects = (projectsData || [])
           .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
           .slice(0, 3);
 
         setProjects(sortedProjects);
+
+        // Cargar URLs de las imágenes para cada proyecto
+        const imageUrls: { [key: string]: string } = {};
+        
+        for (const project of sortedProjects) {
+          if (project.photoKey) {
+            const imageUrl = await getImageUrl(project.photoKey);
+            if (imageUrl) {
+              imageUrls[project.id] = imageUrl;
+            }
+          }
+        }
+        
+        setProjectImages(imageUrls);
       } catch (err) {
         console.error('Error fetching projects:', err);
         setError('Failed to load projects');
@@ -230,19 +258,99 @@ const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({ className = '' }) =
                   overflow: 'hidden',
                 }}
                 className="hover:scale-105"
-              >
-                {/* Project Image */}
-                {project.photoKey && (
+              >                {/* Project Image */}
+                {project.photoKey && projectImages[project.id] && (
                   <View
                     style={{
                       width: '100%',
                       height: '200px',
-                      backgroundImage: `url(${project.photoKey})`,
+                      backgroundImage: `url(${projectImages[project.id]})`,
                       backgroundSize: 'cover',
                       backgroundPosition: 'center',
                       position: 'relative',
                     }}
                   >
+                    <View
+                      style={{
+                        position: 'absolute',
+                        top: '12px',
+                        right: '12px',
+                      }}
+                    >
+                      {project.categories && (
+                        <Badge
+                          size="small"
+                          style={{
+                            backgroundColor: getCategoryColor(project.categories),
+                            color: 'white',
+                            fontWeight: '600',
+                            borderRadius: '8px',
+                            padding: '4px 8px',
+                          }}
+                        >
+                          {t(`projects.categories.${project.categories}`)}
+                        </Badge>
+                      )}
+                    </View>
+                  </View>
+                )}
+
+                {/* Fallback cuando no hay imagen o está cargando */}
+                {project.photoKey && !projectImages[project.id] && (
+                  <View
+                    style={{
+                      width: '100%',
+                      height: '200px',
+                      backgroundColor: mode === 'dark' ? '#374151' : '#F3F4F6',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      position: 'relative',
+                    }}
+                  >
+                    <Loader size="large" />
+                    <View
+                      style={{
+                        position: 'absolute',
+                        top: '12px',
+                        right: '12px',
+                      }}
+                    >
+                      {project.categories && (
+                        <Badge
+                          size="small"
+                          style={{
+                            backgroundColor: getCategoryColor(project.categories),
+                            color: 'white',
+                            fontWeight: '600',
+                            borderRadius: '8px',
+                            padding: '4px 8px',
+                          }}
+                        >
+                          {t(`projects.categories.${project.categories}`)}
+                        </Badge>
+                      )}
+                    </View>
+                  </View>
+                )}
+
+                {/* Fallback cuando no hay photoKey */}
+                {!project.photoKey && (
+                  <View
+                    style={{
+                      width: '100%',
+                      height: '200px',
+                      backgroundColor: mode === 'dark' ? '#374151' : '#F3F4F6',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      position: 'relative',
+                    }}
+                  >
+                    <ImageIcon 
+                      size={48} 
+                      color={mode === 'dark' ? '#9CA3AF' : '#6B7280'} 
+                    />
                     <View
                       style={{
                         position: 'absolute',

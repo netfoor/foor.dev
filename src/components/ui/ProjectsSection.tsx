@@ -2,8 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { View, Flex, Text, Card, Button, Badge, Loader, Alert } from '@aws-amplify/ui-react';
-import { ExternalLink, Github, MapPin, Calendar, Code, Layers, ArrowRight } from 'lucide-react';
+import { ExternalLink, Github, MapPin, Calendar, Code, Layers, ArrowRight, Image as ImageIcon } from 'lucide-react';
 import { generateClient } from 'aws-amplify/data';
+import { getUrl } from 'aws-amplify/storage';
 import type { Schema } from '../../../amplify/data/resource';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation, useLocalizedPath } from '@/lib/i18n/client';
@@ -21,16 +22,30 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
   className = '', 
   showAll = false, 
   maxItems = 6 
-}) => {
-  const [projects, setProjects] = useState<Project[]>([]);
+}) => {  const [projects, setProjects] = useState<Project[]>([]);
+  const [projectImages, setProjectImages] = useState<{ [key: string]: string }>({});
   const [filteredProjects, setFilteredProjects] = useState<Project[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [mounted, setMounted] = useState(false);
-  const { mode } = useTheme();
+  const [mounted, setMounted] = useState(false);  const { mode } = useTheme();
   const { t } = useTranslation('homepage');
   const getLocalizedPath = useLocalizedPath();
+  // Función para obtener URL de imagen desde S3
+  const getImageUrl = async (photoKey: string | null | undefined): Promise<string | null> => {
+    if (!photoKey) return null;
+    
+    try {
+      // Normalizar el path - remover 'public/' si existe (para compatibilidad con Gen 1)
+      const normalizedPath = photoKey.startsWith('public/') ? photoKey.slice(7) : photoKey;
+      
+      const url = await getUrl({ path: normalizedPath });
+      return url.url.toString();
+    } catch (err) {
+      console.error('Error getting image URL for key:', photoKey, err);
+      return null;
+    }
+  };
 
   // Evitar problemas de hidratación
   useEffect(() => {
@@ -52,10 +67,23 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
       const client = generateClient<Schema>();
       
       const response = await client.models.Projects.list();
-      
-      if (response.data) {
+        if (response.data) {
         setProjects(response.data);
         setFilteredProjects(response.data);
+        
+        // Cargar URLs de las imágenes para cada proyecto
+        const imageUrls: { [key: string]: string } = {};
+        
+        for (const project of response.data) {
+          if (project.photoKey) {
+            const imageUrl = await getImageUrl(project.photoKey);
+            if (imageUrl) {
+              imageUrls[project.id] = imageUrl;
+            }
+          }
+        }
+        
+        setProjectImages(imageUrls);
       }
     } catch (err) {
       console.error('Error fetching projects:', err);
@@ -283,18 +311,52 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
                   maxWidth: '400px',
                   overflow: 'hidden',
                 }}
-              >
-                {/* Project Image */}
-                {project.photoKey && (
+              >                {/* Project Image */}
+                {project.photoKey && projectImages[project.id] && (
                   <View
                     style={{
                       height: '200px',
-                      backgroundImage: `url(${project.photoKey})`,
+                      backgroundImage: `url(${projectImages[project.id]})`,
                       backgroundSize: 'cover',
                       backgroundPosition: 'center',
                       borderRadius: '12px 12px 0 0',
                     }}
                   />
+                )}
+
+                {/* Fallback cuando no hay imagen o está cargando */}
+                {project.photoKey && !projectImages[project.id] && (
+                  <View
+                    style={{
+                      height: '200px',
+                      backgroundColor: mode === 'dark' ? '#374151' : '#F3F4F6',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderRadius: '12px 12px 0 0',
+                    }}
+                  >
+                    <Loader size="large" />
+                  </View>
+                )}
+
+                {/* Fallback cuando no hay photoKey */}
+                {!project.photoKey && (
+                  <View
+                    style={{
+                      height: '200px',
+                      backgroundColor: mode === 'dark' ? '#374151' : '#F3F4F6',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderRadius: '12px 12px 0 0',
+                    }}
+                  >
+                    <ImageIcon 
+                      size={48} 
+                      color={mode === 'dark' ? '#9CA3AF' : '#6B7280'} 
+                    />
+                  </View>
                 )}
 
                 <View padding="1.5rem">

@@ -105,14 +105,16 @@ const AdminProjectsClient: React.FC<AdminProjectsClientProps> = ({ locale }) => 
       setDeleteLoading(null);
     }
   };
-
   // Obtener URL de imagen desde Storage
   const getImageUrl = async (key: string | null | undefined) => {
     if (!key) return null;
     
     try {
+      // Normalizar el path - remover 'public/' si existe (para compatibilidad con Gen 1)
+      const normalizedPath = key.startsWith('public/') ? key.slice(7) : key;
+      
       const url = await getUrl({
-        path: `projects/${key}`,
+        path: normalizedPath,
       });
       return url.url.toString();
     } catch (err) {
