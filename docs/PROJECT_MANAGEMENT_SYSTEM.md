@@ -67,11 +67,7 @@ Sistema completo de gestión de proyectos con interfaz administrativa, integrado
 
 #### Componentes de Soporte
 
-##### CreateSampleDataButton
-- Crea proyectos de ejemplo para testing
-- 5 proyectos con diferentes categorías
-- Integración con Amplify Data API
-- Feedback visual de progreso
+Los componentes de soporte incluyen utilidades de limpieza y gestión de archivos S3.
 
 ### 🔄 Integración AWS Amplify
 
@@ -165,13 +161,15 @@ await remove({ path: key });
 src/app/[locale]/admin/projects/
 ├── page.tsx                     # Lista de proyectos
 ├── AdminProjectsClient.tsx      # Componente principal
-├── CreateSampleDataButton.tsx   # Datos de prueba
 ├── new/
 │   ├── page.tsx                 # Página crear proyecto
 │   └── CreateProjectClient.tsx  # Formulario de creación
 └── [id]/
     ├── page.tsx                 # Página editar proyecto
     └── EditProjectClient.tsx    # Formulario de edición
+
+src/lib/utils/
+└── s3-cleanup.ts                # Utilidad de limpieza S3
 
 amplify/
 ├── data/
@@ -206,18 +204,13 @@ src/translations/
 
 ### 🧪 Testing
 
-#### Datos de Prueba
-- Ejecutar `CreateSampleDataButton` para generar proyectos
-- 5 proyectos con diferentes categorías y estados
-- URLs y skills realistas
-
 #### Flujo de Testing
 1. Acceder a `/es/admin/projects`
-2. Crear datos de ejemplo
+2. Crear nuevo proyecto manualmente
 3. Probar creación de nuevo proyecto
 4. Probar edición de proyecto existente
 5. Probar upload de imágenes
-6. Verificar eliminación
+6. Verificar eliminación completa (DynamoDB + S3)
 
 ## Tecnologías Utilizadas
 

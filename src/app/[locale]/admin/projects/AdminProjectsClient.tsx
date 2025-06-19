@@ -38,8 +38,6 @@ import { useTheme } from '@/hooks/useTheme';
 import { useTranslation, useLocalizedPath } from '@/lib/i18n/client';
 import type { SupportedLocale } from '@/lib/i18n/types';
 import S3ProjectCleanup from '@/lib/utils/s3-cleanup';
-import CreateSampleData from './CreateSampleData';
-import CreateAllSampleData from './CreateAllSampleData';
 
 // Tipos para el proyecto actualizado
 type Project = Schema["Projects"]["type"];
@@ -300,11 +298,7 @@ const AdminProjectsClient: React.FC<AdminProjectsClientProps> = ({ locale }) => 
       >        {projects.length === 0 ? (          <View padding="3rem" textAlign="center">
             <Text fontSize="1.125rem" color={mode === 'dark' ? '#CBD5E1' : '#64748B'} marginBottom="2rem">
               No hay proyectos aún. ¡Crea tu primer proyecto!
-            </Text>            <Flex direction="column" gap="1rem">
-              
-              <CreateSampleData onSuccess={fetchProjects} />
-              <CreateAllSampleData onSuccess={fetchProjects} />
-            </Flex>
+            </Text>
           </View>
         ) : (
           <Table

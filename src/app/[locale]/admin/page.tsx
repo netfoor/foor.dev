@@ -1,103 +1,528 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/context/auth-context';
+import { useTheme } from '@/hooks/useTheme';
+import { View, Flex, Text, Card, Loader } from '@aws-amplify/ui-react';
+import Link from 'next/link';
+import { 
+  FolderOpen, 
+  Award, 
+  GraduationCap, 
+  Briefcase, 
+  Languages, 
+  FileText, 
+  Users,
+  TrendingUp,
+  Eye,
+  Activity,
+  Plus,
+  ArrowRight,
+  BarChart3,
+  Calendar,
+  Globe
+} from 'lucide-react';
+import { generateClient } from 'aws-amplify/data';
+import type { Schema } from '../../../../amplify/data/resource';
 
 /**
- * Dashboard de administración
+ * Dashboard de administración moderno y cohesivo
+ * Muestra estadísticas y accesos rápidos a todas las secciones
  */
 export default function AdminDashboard() {
   const { userAttributes, isAdmin } = useAuth();
-  
+  const { mode } = useTheme();
+  const [stats, setStats] = useState({
+    projects: 0,
+    certifications: 0,
+    education: 0,
+    experiences: 0,
+    languages: 0,
+    recognitions: 0,
+    publications: 0,
+    loading: true
+  });
+
   const name = userAttributes?.givenName || userAttributes?.name || 'Administrador';
-  
+
+  // Obtener estadísticas de cada modelo
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const client = generateClient<Schema>();
+        
+        const [
+          projectsResponse,
+          certificationsResponse,
+          educationResponse,
+          experiencesResponse,
+          languagesResponse,
+          recognitionsResponse,
+          publicationsResponse
+        ] = await Promise.all([
+          client.models.Projects.list({ authMode: 'userPool' }),
+          client.models.Certifications.list({ authMode: 'userPool' }),
+          client.models.Education.list({ authMode: 'userPool' }),
+          client.models.Experiences.list({ authMode: 'userPool' }),
+          client.models.Languages.list({ authMode: 'userPool' }),
+          client.models.Recognitions.list({ authMode: 'userPool' }),
+          client.models.SocialPublications.list({ authMode: 'userPool' })
+        ]);
+
+        setStats({
+          projects: projectsResponse.data?.length || 0,
+          certifications: certificationsResponse.data?.length || 0,
+          education: educationResponse.data?.length || 0,
+          experiences: experiencesResponse.data?.length || 0,
+          languages: languagesResponse.data?.length || 0,
+          recognitions: recognitionsResponse.data?.length || 0,
+          publications: publicationsResponse.data?.length || 0,
+          loading: false
+        });
+      } catch (error) {
+        console.error('Error fetching stats:', error);
+        setStats(prev => ({ ...prev, loading: false }));
+      }
+    };
+
+    fetchStats();
+  }, []);
+
+  // Configuración de las secciones del dashboard
+  const dashboardSections = [
+    {
+      title: 'Proyectos',
+      count: stats.projects,
+      icon: FolderOpen,
+      href: '/admin/projects',
+      color: '#3B82F6',
+      description: 'Gestiona tu portafolio de proyectos'
+    },
+    {
+      title: 'Certificaciones',
+      count: stats.certifications,
+      icon: Award,
+      href: '/admin/certifications',
+      color: '#F59E0B',
+      description: 'Administra tus certificaciones'
+    },
+    {
+      title: 'Educación',
+      count: stats.education,
+      icon: GraduationCap,
+      href: '/admin/education',
+      color: '#10B981',
+      description: 'Gestiona tu formación académica'
+    },
+    {
+      title: 'Experiencias',
+      count: stats.experiences,
+      icon: Briefcase,
+      href: '/admin/experiences',
+      color: '#8B5CF6',
+      description: 'Administra tu experiencia laboral'
+    },
+    {
+      title: 'Idiomas',
+      count: stats.languages,
+      icon: Languages,
+      href: '/admin/languages',
+      color: '#06B6D4',
+      description: 'Gestiona tus competencias linguísticas'
+    },
+    {
+      title: 'Reconocimientos',
+      count: stats.recognitions,
+      icon: Award,
+      href: '/admin/recognitions',
+      color: '#EF4444',
+      description: 'Administra tus reconocimientos'
+    },
+    {
+      title: 'Publicaciones',
+      count: stats.publications,
+      icon: FileText,
+      href: '/admin/publications',
+      color: '#84CC16',
+      description: 'Gestiona tus publicaciones'
+    }
+  ];
+
+  // Métricas destacadas
+  const highlightMetrics = [
+    {
+      label: 'Total de Contenidos',
+      value: stats.projects + stats.certifications + stats.education + stats.experiences + stats.languages + stats.recognitions + stats.publications,
+      icon: Activity,
+      color: '#3B82F6',
+      change: '+12%'
+    },
+    {
+      label: 'Proyectos Activos',
+      value: stats.projects,
+      icon: TrendingUp,
+      color: '#10B981',
+      change: '+8%'
+    },
+    {
+      label: 'Certificaciones',
+      value: stats.certifications,
+      icon: Award,
+      color: '#F59E0B',
+      change: '+15%'
+    },
+    {
+      label: 'Años de Experiencia',
+      value: '5+',
+      icon: Briefcase,
+      color: '#8B5CF6',
+      change: 'Activo'
+    }
+  ];
+
+  if (stats.loading) {
+    return (
+      <View style={{ padding: '2rem', textAlign: 'center' }}>
+        <Loader size="large" />
+        <Text style={{ marginTop: '1rem', color: mode === 'dark' ? '#CBD5E1' : '#64748B' }}>
+          Cargando dashboard...
+        </Text>
+      </View>
+    );
+  }
+
   return (
-    <div className="space-y-6">
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <h1 className="text-2xl font-bold mb-4">Bienvenido, {name}</h1>
-        <p className="text-gray-600">
-          Has iniciado sesión correctamente en el panel de administración.
-        </p>
+    <View style={{ width: '100%' }}>
+      {/* Header de Bienvenida */}
+      <View style={{ marginBottom: '2rem' }}>
+        <Text
+          fontSize="2.5rem"
+          fontWeight="700"
+          style={{
+            color: mode === 'dark' ? '#F1F5F9' : '#1E293B',
+            marginBottom: '0.5rem'
+          }}
+        >
+          Bienvenido, {name} 👋
+        </Text>
+        <Text
+          fontSize="1.125rem"
+          style={{
+            color: mode === 'dark' ? '#94A3B8' : '#64748B'
+          }}
+        >
+          Gestiona todo el contenido de tu portafolio desde aquí
+        </Text>
         
         {isAdmin && (
-          <div className="mt-4 p-3 bg-green-100 text-green-800 rounded-md">
-            Tienes privilegios de administrador.
-          </div>
+          <View
+            style={{
+              marginTop: '1rem',
+              padding: '0.75rem 1rem',
+              backgroundColor: mode === 'dark' ? 'rgba(34, 197, 94, 0.1)' : 'rgba(34, 197, 94, 0.1)',
+              border: `1px solid ${mode === 'dark' ? 'rgba(34, 197, 94, 0.3)' : 'rgba(34, 197, 94, 0.3)'}`,
+              borderRadius: '8px',
+              display: 'inline-block'
+            }}
+          >
+            <Text
+              fontSize="0.875rem"
+              fontWeight="600"
+              style={{ color: '#10B981' }}
+            >
+              ✓ Privilegios de administrador activos
+            </Text>
+          </View>
         )}
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Tarjeta de estadísticas: Usuarios */}
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-medium">Usuarios totales</h3>
-            <span className="text-blue-500">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-              </svg>
-            </span>
-          </div>
-          <div className="text-2xl font-bold">123</div>
-          <div className="text-sm text-gray-500 mt-2">+5% desde el mes pasado</div>
-        </div>
+      </View>
+
+      {/* Métricas Destacadas */}
+      <View style={{ marginBottom: '2rem' }}>
+        <Text
+          fontSize="1.25rem"
+          fontWeight="600"
+          style={{
+            color: mode === 'dark' ? '#F1F5F9' : '#1E293B',
+            marginBottom: '1rem'
+          }}
+        >
+          Resumen General
+        </Text>
         
-        {/* Tarjeta de estadísticas: Visitas */}
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-medium">Visitas esta semana</h3>
-            <span className="text-green-500">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
-              </svg>
-            </span>
-          </div>
-          <div className="text-2xl font-bold">584</div>
-          <div className="text-sm text-gray-500 mt-2">+12% desde la semana pasada</div>
-        </div>
+        <Flex 
+          direction={{ base: 'column', medium: 'row' }} 
+          gap="1rem"
+        >
+          {highlightMetrics.map((metric, index) => {
+            const Icon = metric.icon;
+            return (
+              <Card
+                key={index}
+                style={{
+                  flex: 1,
+                  backgroundColor: mode === 'dark' ? 'rgba(51, 65, 85, 0.8)' : 'rgba(255, 255, 255, 0.9)',
+                  border: mode === 'dark' ? '1px solid rgba(148, 163, 184, 0.1)' : '1px solid rgba(203, 213, 225, 0.2)',
+                  borderRadius: '12px',
+                  backdropFilter: 'blur(10px)'
+                }}
+              >
+                <View padding="1.5rem">
+                  <Flex direction="row" justifyContent="space-between" alignItems="center" marginBottom="1rem">
+                    <View
+                      style={{
+                        width: '48px',
+                        height: '48px',
+                        backgroundColor: `${metric.color}20`,
+                        borderRadius: '12px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}
+                    >
+                      <Icon size={24} style={{ color: metric.color }} />
+                    </View>
+                    <Text
+                      fontSize="0.875rem"
+                      fontWeight="600"
+                      style={{
+                        color: '#10B981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        padding: '0.25rem 0.5rem',
+                        borderRadius: '6px'
+                      }}
+                    >
+                      {metric.change}
+                    </Text>
+                  </Flex>
+                  
+                  <Text
+                    fontSize="2rem"
+                    fontWeight="700"
+                    style={{
+                      color: mode === 'dark' ? '#F1F5F9' : '#1E293B',
+                      marginBottom: '0.25rem'
+                    }}
+                  >
+                    {metric.value}
+                  </Text>
+                  
+                  <Text
+                    fontSize="0.875rem"
+                    style={{
+                      color: mode === 'dark' ? '#94A3B8' : '#64748B'
+                    }}
+                  >
+                    {metric.label}
+                  </Text>
+                </View>
+              </Card>
+            );
+          })}
+        </Flex>
+      </View>
+
+      {/* Secciones de Gestión */}
+      <View>
+        <Text
+          fontSize="1.25rem"
+          fontWeight="600"
+          style={{
+            color: mode === 'dark' ? '#F1F5F9' : '#1E293B',
+            marginBottom: '1rem'
+          }}
+        >
+          Gestión de Contenido
+        </Text>
         
-        {/* Tarjeta de estadísticas: Contenido */}
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-medium">Contenido publicado</h3>
-            <span className="text-purple-500">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-              </svg>
-            </span>
-          </div>
-          <div className="text-2xl font-bold">42</div>
-          <div className="text-sm text-gray-500 mt-2">+3 desde la semana pasada</div>
-        </div>
-      </div>
-      
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <h2 className="text-xl font-semibold mb-4">Información del Sistema</h2>
+        <Flex 
+          direction={{ base: 'column', medium: 'row' }} 
+          wrap="wrap"
+          gap="1rem"
+        >
+          {dashboardSections.map((section, index) => {
+            const Icon = section.icon;
+            return (
+              <Link
+                key={index}
+                href={section.href}
+                style={{
+                  textDecoration: 'none',
+                  flex: '1 1 calc(33.333% - 1rem)',
+                  minWidth: '300px'
+                }}
+              >
+                <Card
+                  style={{
+                    height: '100%',
+                    backgroundColor: mode === 'dark' ? 'rgba(51, 65, 85, 0.8)' : 'rgba(255, 255, 255, 0.9)',
+                    border: mode === 'dark' ? '1px solid rgba(148, 163, 184, 0.1)' : '1px solid rgba(203, 213, 225, 0.2)',
+                    borderRadius: '12px',
+                    backdropFilter: 'blur(10px)',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease'
+                  }}
+                  className="hover:scale-105"
+                >
+                  <View padding="1.5rem">
+                    <Flex direction="row" justifyContent="space-between" alignItems="flex-start" marginBottom="1rem">
+                      <View
+                        style={{
+                          width: '56px',
+                          height: '56px',
+                          backgroundColor: `${section.color}20`,
+                          borderRadius: '12px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center'
+                        }}
+                      >
+                        <Icon size={28} style={{ color: section.color }} />
+                      </View>
+                      
+                      <ArrowRight 
+                        size={20} 
+                        style={{ 
+                          color: mode === 'dark' ? '#94A3B8' : '#64748B',
+                          transition: 'transform 0.2s ease'
+                        }} 
+                      />
+                    </Flex>
+                    
+                    <Text
+                      fontSize="1.5rem"
+                      fontWeight="700"
+                      style={{
+                        color: mode === 'dark' ? '#F1F5F9' : '#1E293B',
+                        marginBottom: '0.25rem'
+                      }}
+                    >
+                      {section.title}
+                    </Text>
+                    
+                    <Text
+                      fontSize="2rem"
+                      fontWeight="700"
+                      style={{
+                        color: section.color,
+                        marginBottom: '0.5rem'
+                      }}
+                    >
+                      {section.count}
+                    </Text>
+                    
+                    <Text
+                      fontSize="0.875rem"
+                      style={{
+                        color: mode === 'dark' ? '#94A3B8' : '#64748B'
+                      }}
+                    >
+                      {section.description}
+                    </Text>
+                  </View>
+                </Card>
+              </Link>
+            );
+          })}
+        </Flex>
+      </View>
+
+      {/* Acciones Rápidas */}
+      <View style={{ marginTop: '2rem' }}>
+        <Text
+          fontSize="1.25rem"
+          fontWeight="600"
+          style={{
+            color: mode === 'dark' ? '#F1F5F9' : '#1E293B',
+            marginBottom: '1rem'
+          }}
+        >
+          Acciones Rápidas
+        </Text>
         
-        <table className="w-full">
-          <tbody>
-            <tr className="border-b">
-              <td className="py-2 font-medium">Estado</td>
-              <td className="py-2 text-right">
-                <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">
-                  Activo
-                </span>
-              </td>
-            </tr>
-            <tr className="border-b">
-              <td className="py-2 font-medium">Última actualización</td>
-              <td className="py-2 text-right">{new Date().toLocaleString()}</td>
-            </tr>
-            <tr className="border-b">
-              <td className="py-2 font-medium">Versión</td>
-              <td className="py-2 text-right">1.0.0</td>
-            </tr>
-            <tr>
-              <td className="py-2 font-medium">Proveedor de autenticación</td>
-              <td className="py-2 text-right">AWS Cognito</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+        <Flex 
+          direction={{ base: 'column', medium: 'row' }} 
+          gap="1rem"
+        >
+          <Link
+            href="/admin/projects/new"
+            style={{
+              textDecoration: 'none',
+              flex: 1
+            }}
+          >
+            <Card
+              style={{
+                backgroundColor: mode === 'dark' ? 'rgba(59, 130, 246, 0.1)' : 'rgba(59, 130, 246, 0.1)',
+                border: `1px solid ${mode === 'dark' ? 'rgba(59, 130, 246, 0.3)' : 'rgba(59, 130, 246, 0.3)'}`,
+                borderRadius: '12px',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease'
+              }}
+            >
+              <View padding="1.5rem">
+                <Flex direction="row" alignItems="center" gap="1rem">
+                  <Plus size={24} style={{ color: '#3B82F6' }} />
+                  <View>
+                    <Text
+                      fontSize="1.125rem"
+                      fontWeight="600"
+                      style={{ color: '#3B82F6' }}
+                    >
+                      Crear Nuevo Proyecto
+                    </Text>
+                    <Text
+                      fontSize="0.875rem"
+                      style={{ color: mode === 'dark' ? '#94A3B8' : '#64748B' }}
+                    >
+                      Añade un nuevo proyecto a tu portafolio
+                    </Text>
+                  </View>
+                </Flex>
+              </View>
+            </Card>
+          </Link>
+          
+          <Link
+            href="/"
+            target="_blank"
+            style={{
+              textDecoration: 'none',
+              flex: 1
+            }}
+          >
+            <Card
+              style={{
+                backgroundColor: mode === 'dark' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(16, 185, 129, 0.1)',
+                border: `1px solid ${mode === 'dark' ? 'rgba(16, 185, 129, 0.3)' : 'rgba(16, 185, 129, 0.3)'}`,
+                borderRadius: '12px',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease'
+              }}
+            >
+              <View padding="1.5rem">
+                <Flex direction="row" alignItems="center" gap="1rem">
+                  <Globe size={24} style={{ color: '#10B981' }} />
+                  <View>
+                    <Text
+                      fontSize="1.125rem"
+                      fontWeight="600"
+                      style={{ color: '#10B981' }}
+                    >
+                      Ver Sitio Web
+                    </Text>
+                    <Text
+                      fontSize="0.875rem"
+                      style={{ color: mode === 'dark' ? '#94A3B8' : '#64748B' }}
+                    >
+                      Revisa cómo se ve tu portafolio
+                    </Text>
+                  </View>
+                </Flex>
+              </View>
+            </Card>
+          </Link>
+        </Flex>
+      </View>
+    </View>
   );
 }

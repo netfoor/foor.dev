@@ -64,11 +64,6 @@ const FeaturedProjects = () => {
 - ✅ Agregado: Generación del cliente en `fetchProjects()` y `handleDeleteProject()`
 - ✅ Mantenido: Estados de carga y error existentes
 
-### 4. **CreateSampleDataButton.tsx**
-**Cambios aplicados**:
-- ❌ Removido: `const client = generateClient<Schema>();` al nivel del módulo
-- ✅ Agregado: Generación del cliente dentro de `createSampleProjects()`
-
 ## Patrón de Solución Aplicado
 
 ```tsx
@@ -134,7 +129,6 @@ export default function Component() {
 - ✅ `FeaturedProjects` - Sin errores de cliente
 - ✅ `ProjectsSection` - Sin errores de cliente  
 - ✅ `AdminProjectsClient` - Sin errores de cliente
-- ✅ `CreateSampleDataButton` - Sin errores de cliente
 - ✅ `CreateProjectClient` - Sin errores (ya estaba correcto)
 - ✅ `EditProjectClient` - Sin errores (ya estaba correcto)
 
