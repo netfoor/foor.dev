@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Flex, Text, Card, Button, Badge, Loader, Alert } from '@aws-amplify/ui-react';
 import { ExternalLink, MapPin, Code, ArrowRight, Image as ImageIcon } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { generateClient } from 'aws-amplify/data';
 import { getUrl } from 'aws-amplify/storage';
 import type { Schema } from '../../../amplify/data/resource';
@@ -27,6 +28,19 @@ const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({ className = '' }) =
   const { t } = useTranslation('homepage');
   const { isAuthenticated } = useAuth();
   const getLocalizedPath = useLocalizedPath();
+  const router = useRouter();
+
+  // Function to handle card click navigation
+  const handleCardClick = (project: Project, event: React.MouseEvent) => {
+    // Prevent navigation if clicking on buttons or links
+    const target = event.target as HTMLElement;
+    if (target.closest('button') || target.closest('a')) {
+      return;
+    }
+    
+    const projectPath = getLocalizedPath(`/projects/${project.slug || project.id}`);
+    router.push(projectPath);
+  };
   // Función para obtener URL de imagen desde S3
   const getImageUrl = async (photoKey: string | null | undefined): Promise<string | null> => {
     if (!photoKey) return null;
@@ -232,11 +246,11 @@ const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({ className = '' }) =
             width="100%"
             wrap="wrap"
             justifyContent="center"
-          >
-            {projects.map((project) => (
+          >            {projects.map((project) => (
               <Card
                 key={project.id}
                 variation="elevated"
+                onClick={(event) => handleCardClick(project, event)}
                 style={{
                   flex: '1',
                   minWidth: '320px',
@@ -255,9 +269,22 @@ const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({ className = '' }) =
                     : '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
                   transition: 'all 0.3s ease',
                   overflow: 'hidden',
+                  cursor: 'pointer',
                 }}
                 className="hover:scale-105"
-              >                {/* Project Image */}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'scale(1.02) translateY(-4px)';
+                  e.currentTarget.style.boxShadow = mode === 'dark'
+                    ? '0 25px 35px -5px rgba(0, 0, 0, 0.4), 0 15px 15px -5px rgba(0, 0, 0, 0.3)'
+                    : '0 25px 35px -5px rgba(0, 0, 0, 0.15), 0 15px 15px -5px rgba(0, 0, 0, 0.08)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'scale(1) translateY(0)';
+                  e.currentTarget.style.boxShadow = mode === 'dark'
+                    ? '0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2)'
+                    : '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)';
+                }}
+              >{/* Project Image */}
                 {project.photoKey && projectImages[project.id] && (
                   <View
                     style={{
@@ -477,14 +504,14 @@ const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({ className = '' }) =
                   )}
 
                   {/* Actions */}
-                  <Flex gap="0.75rem" marginTop="0.5rem">
-                    {project.projectUrl && (
+                  <Flex gap="0.75rem" marginTop="0.5rem">                    {project.projectUrl && (
                       <Button
                         as="a"
                         href={project.projectUrl}
                         target="_blank"
                         rel="noopener noreferrer"
                         size="small"
+                        onClick={(e) => e.stopPropagation()}
                         style={{
                           backgroundColor: mode === 'dark' ? '#3B82F6' : '#2563EB',
                           color: 'white',

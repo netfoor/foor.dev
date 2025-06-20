@@ -5,6 +5,7 @@ import { View, Flex, Text, Card, Button, Badge, Loader, Alert } from '@aws-ampli
 import { ExternalLink, Github, MapPin, Calendar, Code, Layers, ArrowRight, Image as ImageIcon } from 'lucide-react';
 import { generateClient } from 'aws-amplify/data';
 import { getUrl } from 'aws-amplify/storage';
+import { useRouter } from 'next/navigation';
 import type { Schema } from '../../../amplify/data/resource';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation, useLocalizedPath } from '@/lib/i18n/client';
@@ -31,8 +32,20 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);  const { mode } = useTheme();
   const { t } = useTranslation('homepage');
-  const { isAuthenticated } = useAuth();
-  const getLocalizedPath = useLocalizedPath();
+  const { isAuthenticated } = useAuth();  const getLocalizedPath = useLocalizedPath();
+  const router = useRouter();
+
+  // Function to handle card click navigation
+  const handleCardClick = (project: Project, event: React.MouseEvent) => {
+    // Prevent navigation if clicking on buttons or links
+    const target = event.target as HTMLElement;
+    if (target.closest('button') || target.closest('a')) {
+      return;
+    }
+    
+    const projectPath = getLocalizedPath(`/projects/${project.slug || project.id}`);
+    router.push(projectPath);
+  };
   // Función para obtener URL de imagen desde S3
   const getImageUrl = async (photoKey: string | null | undefined): Promise<string | null> => {
     if (!photoKey) return null;
@@ -306,13 +319,28 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
           >            {filteredProjects.map((project) => (
               <Card
                 key={project.id}
+                onClick={(event) => handleCardClick(project, event)}
                 style={{
                   ...cardStyles,
                   width: '100%',
                   maxWidth: '400px',
                   overflow: 'hidden',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
                 }}
-              >                {/* Project Image */}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-4px)';
+                  e.currentTarget.style.boxShadow = mode === 'dark' 
+                    ? '0 20px 40px rgba(0, 0, 0, 0.3)' 
+                    : '0 20px 40px rgba(0, 0, 0, 0.1)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = mode === 'dark' 
+                    ? '0 10px 30px rgba(0, 0, 0, 0.2)' 
+                    : '0 10px 30px rgba(0, 0, 0, 0.05)';
+                }}
+              >{/* Project Image */}
                 {project.photoKey && projectImages[project.id] && (
                   <View
                     style={{
@@ -455,6 +483,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
                       href={getLocalizedPath(`/projects/${project.slug || project.id}`)}
                       size="small"
                       variation="primary"
+                      onClick={(e) => e.stopPropagation()}
                       style={{
                         borderRadius: '8px',
                         fontWeight: '500',
@@ -475,6 +504,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
                         target="_blank"
                         rel="noopener noreferrer"
                         size="small"
+                        onClick={(e) => e.stopPropagation()}
                         style={{
                           borderRadius: '8px',
                           fontWeight: '500',
@@ -498,6 +528,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
                         target="_blank"
                         rel="noopener noreferrer"
                         size="small"
+                        onClick={(e) => e.stopPropagation()}
                         style={{
                           borderRadius: '8px',
                           fontWeight: '500',
