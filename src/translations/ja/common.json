@@ -100,12 +100,23 @@
   "scroll_to_top": {
     "button": "トップに戻る",
     "tooltip": "トップに戻る"  
-  },
-  "admin_privileges_active": "管理者権限がアクティブ",
+  },  "admin_privileges_active": "管理者権限がアクティブ",
   "loading_dashboard": "ダッシュボードを読み込み中...",
   "general_overview": "全般的な概要",
   "total_content": "総コンテンツ数",
   "active_projects": "アクティブなプロジェクト",
   "years_experience": "経験年数",
-  "active": "アクティブ"
+  "active": "アクティブ",
+  "project_details": {
+    "description": "説明",
+    "technologies_used": "使用技術",
+    "tags": "タグ",
+    "gallery": "ギャラリー",
+    "view_project": "プロジェクトを見る",
+    "view_code": "コードを見る",
+    "view_demo": "デモを見る",
+    "back_to_projects": "プロジェクトに戻る",
+    "project_not_found": "プロジェクトが見つかりません",
+    "error_loading": "プロジェクトの読み込みエラー"
+  }
 }

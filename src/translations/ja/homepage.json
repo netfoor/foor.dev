@@ -50,6 +50,7 @@
       "Academic": "学術",
       "Personal": "個人"
     },    "actions": {
+      "viewDetails": "詳細を見る",
       "viewProject": "プロジェクトを見る",
       "viewCode": "コードを見る",
       "liveDemo": "ライブデモ",

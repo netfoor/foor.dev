@@ -447,10 +447,27 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
                         </Flex>
                       </View>
                     )}
-                  </Flex>
-
-                  {/* Action Buttons */}
+                  </Flex>                  {/* Action Buttons */}
                   <Flex gap="0.75rem" wrap="wrap">
+                    {/* Botón para ver detalles del proyecto */}
+                    <Button
+                      as="a"
+                      href={getLocalizedPath(`/projects/${project.slug || project.id}`)}
+                      size="small"
+                      variation="primary"
+                      style={{
+                        borderRadius: '8px',
+                        fontWeight: '500',
+                        backgroundColor: mode === 'dark' ? '#3B82F6' : '#2563EB',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                      }}
+                    >
+                      <ArrowRight size={16} />
+                      {t('projects.actions.viewDetails')}
+                    </Button>
+
                     {project.projectUrl && (
                       <Button
                         as="a"
@@ -458,11 +475,12 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
                         target="_blank"
                         rel="noopener noreferrer"
                         size="small"
-                        variation="primary"
                         style={{
                           borderRadius: '8px',
                           fontWeight: '500',
-                          backgroundColor: mode === 'dark' ? '#3B82F6' : '#2563EB',
+                          backgroundColor: 'transparent',
+                          border: mode === 'dark' ? '1px solid #475569' : '1px solid #CBD5E1',
+                          color: mode === 'dark' ? '#CBD5E1' : '#64748B',
                           display: 'flex',
                           alignItems: 'center',
                           gap: '0.5rem',
@@ -470,6 +488,29 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
                       >
                         <ExternalLink size={16} />
                         {t('projects.actions.viewProject')}
+                      </Button>
+                    )}
+
+                    {project.githubUrl && (
+                      <Button
+                        as="a"
+                        href={project.githubUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        size="small"
+                        style={{
+                          borderRadius: '8px',
+                          fontWeight: '500',
+                          backgroundColor: 'transparent',
+                          border: mode === 'dark' ? '1px solid #475569' : '1px solid #CBD5E1',
+                          color: mode === 'dark' ? '#CBD5E1' : '#64748B',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.5rem',
+                        }}
+                      >
+                        <Github size={16} />
+                        {t('projects.actions.viewCode')}
                       </Button>
                     )}
                   </Flex>

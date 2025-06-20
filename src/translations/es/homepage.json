@@ -50,6 +50,7 @@
       "Academic": "Académico",
       "Personal": "Personal"
     },    "actions": {
+      "viewDetails": "Ver Detalles",
       "viewProject": "Ver Proyecto",
       "viewCode": "Ver Código",
       "liveDemo": "Demo en Vivo",
