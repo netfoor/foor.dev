@@ -316,33 +316,32 @@ const AdminProjectsClient: React.FC<AdminProjectsClientProps> = ({ locale }) => 
               overflowX: 'auto',
               width: '100%'
             }}
-          >
-            <Table
+          >            <Table
               style={{
                 backgroundColor: 'transparent',
                 width: '100%'
               }}
             >
-            <TableHead>
-              <TableRow>
-                <TableCell style={{ fontWeight: '600', color: mode === 'dark' ? '#F1F5F9' : '#1E293B' }}>
-                  Proyecto
-                </TableCell>
-                <TableCell style={{ fontWeight: '600', color: mode === 'dark' ? '#F1F5F9' : '#1E293B' }}>
-                  Estado
-                </TableCell>
-                <TableCell style={{ fontWeight: '600', color: mode === 'dark' ? '#F1F5F9' : '#1E293B' }}>
-                  Categoría
-                </TableCell>
-                <TableCell style={{ fontWeight: '600', color: mode === 'dark' ? '#F1F5F9' : '#1E293B' }}>
-                  Fecha
-                </TableCell>
-                <TableCell style={{ fontWeight: '600', color: mode === 'dark' ? '#F1F5F9' : '#1E293B' }}>
-                  Acciones
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
+              <TableHead>
+                <TableRow>
+                  <TableCell style={{ fontWeight: '600', color: mode === 'dark' ? '#F1F5F9' : '#1E293B' }}>
+                    Proyecto
+                  </TableCell>
+                  <TableCell style={{ fontWeight: '600', color: mode === 'dark' ? '#F1F5F9' : '#1E293B' }}>
+                    Estado
+                  </TableCell>
+                  <TableCell style={{ fontWeight: '600', color: mode === 'dark' ? '#F1F5F9' : '#1E293B' }}>
+                    Categoría
+                  </TableCell>
+                  <TableCell style={{ fontWeight: '600', color: mode === 'dark' ? '#F1F5F9' : '#1E293B' }}>
+                    Fecha
+                  </TableCell>
+                  <TableCell style={{ fontWeight: '600', color: mode === 'dark' ? '#F1F5F9' : '#1E293B' }}>
+                    Acciones
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
               {projects.map((project) => (
                 <TableRow key={project.id}>
                   <TableCell>
@@ -469,9 +468,9 @@ const AdminProjectsClient: React.FC<AdminProjectsClientProps> = ({ locale }) => 
                       </Button>
                     </Flex>
                   </TableCell>
-                </TableRow>
-              ))}            </TableBody>
-          </Table>
+                </TableRow>              ))}
+            </TableBody>
+            </Table>
           </View>
         )}
       </Card>

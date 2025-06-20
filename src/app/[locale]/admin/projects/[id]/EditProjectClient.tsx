@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback, memo } from 'react';
 import { 
   View, 
   Flex, 
@@ -17,6 +17,7 @@ import {
   Loader,
   Divider
 } from '@aws-amplify/ui-react';
+import '../../admin.css';
 import { 
   ArrowLeft, 
   Save, 
@@ -34,6 +35,177 @@ import { useTheme } from '@/hooks/useTheme';
 import { useTranslation, useLocalizedPath } from '@/lib/i18n/client';
 import type { SupportedLocale } from '@/lib/i18n/types';
 import S3ProjectCleanup from '@/lib/utils/s3-cleanup';
+import { FileUploadInput } from '../new/FileUploadInput';
+
+// Estilos personalizados para mejorar el contraste en tema oscuro
+const editProjectStyles = `
+  .edit-project-form .amplify-field {
+    margin-bottom: 1rem;
+  }
+  
+  .edit-project-form .amplify-field > label {
+    color: var(--form-label-color) !important;
+    font-weight: 600 !important;
+    margin-bottom: 0.5rem !important;
+    display: block !important;
+    font-size: 0.95rem !important;
+  }
+  
+  .edit-project-form .amplify-input,
+  .edit-project-form .amplify-textarea,
+  .edit-project-form .amplify-select select {
+    background-color: var(--form-input-bg) !important;
+    border: 1px solid var(--form-input-border) !important;
+    color: var(--form-input-text) !important;
+    border-radius: 6px !important;
+    padding: 0.75rem !important;
+    font-size: 0.9rem !important;
+  }
+  
+  .edit-project-form .amplify-input::placeholder,
+  .edit-project-form .amplify-textarea::placeholder {
+    color: var(--form-placeholder-color) !important;
+    opacity: 0.8 !important;
+    font-weight: 400 !important;
+  }
+  
+  .edit-project-form .amplify-input:focus,
+  .edit-project-form .amplify-textarea:focus,
+  .edit-project-form .amplify-select select:focus {
+    border-color: var(--form-focus-border) !important;
+    box-shadow: 0 0 0 2px var(--form-focus-shadow) !important;
+    outline: none !important;
+  }
+  
+  .edit-project-form .amplify-field-group__control .amplify-field__description {
+    color: var(--form-description-color) !important;
+    font-size: 0.8rem !important;
+    margin-top: 0.25rem !important;
+    font-weight: 500 !important;
+  }
+  
+  .edit-project-form .amplify-switchfield label {
+    color: var(--form-label-color) !important;
+    font-weight: 600 !important;
+  }
+
+  .edit-project-form .amplify-select select {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'><path fill='%23666' d='M2 0L0 2h4zm0 5L0 3h4z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 0.65rem;
+    padding-right: 2.5rem !important;
+  }
+
+  .edit-project-form .input-with-button-container {
+    display: flex;
+    gap: 0.75rem;
+    align-items: end;
+    margin-bottom: 1rem;
+  }
+
+  .edit-project-form .input-wrapper {
+    flex: 1;
+  }
+
+  .edit-project-form .add-button {
+    flex-shrink: 0;
+    min-width: 120px;
+  }
+  .edit-project-form .badges-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+  }
+  /* Image remove button styles - small button positioned in corner */
+  .edit-project-form .image-remove-button {
+    position: absolute !important;
+    background-color: rgba(239, 68, 68, 0.9) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 6px !important;
+    padding: 0.5rem !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    max-width: 32px !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+    transition: all 0.2s ease !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    top: 8px !important;
+    right: 8px !important;
+    z-index: 10 !important;
+  }
+
+  .edit-project-form .image-remove-button:hover {
+    background-color: rgba(239, 68, 68, 1) !important;
+    transform: scale(1.1) !important;
+  }
+
+  .edit-project-form .gallery-image-remove {
+    width: 28px !important;
+    height: 28px !important;
+    min-width: 28px !important;
+    max-width: 28px !important;
+    padding: 0.25rem !important;
+    font-size: 12px !important;
+    border-radius: 4px !important;
+    top: 4px !important;
+    right: 4px !important;
+  }
+  /* Responsive design improvements */
+  @media (max-width: 768px) {
+    .edit-project-form .input-with-button-container {
+      flex-direction: column !important;
+      align-items: stretch !important;
+      gap: 0.5rem !important;
+    }
+    
+    .edit-project-form .add-button {
+      width: 100% !important;
+      min-width: auto !important;
+    }
+    
+    .edit-project-form .amplify-flex {
+      flex-direction: column !important;
+    }
+    
+    .edit-project-form .amplify-button {
+      width: 100% !important;
+      margin-top: 0.5rem !important;
+    }    /* Mobile image remove buttons - smaller size, but still positioned in corner */
+    .edit-project-form .image-remove-button {
+      width: 28px !important;
+      height: 28px !important;
+      min-width: 28px !important;
+      max-width: 28px !important;
+      padding: 0.25rem !important;
+      font-size: 12px !important;
+      border-radius: 4px !important;
+      top: 4px !important;
+      right: 4px !important;
+    }
+
+    .edit-project-form .gallery-image-remove {
+      width: 24px !important;
+      height: 24px !important;
+      min-width: 24px !important;
+      max-width: 24px !important;
+      padding: 0.2rem !important;
+      font-size: 10px !important;
+      border-radius: 3px !important;
+      top: 2px !important;
+      right: 2px !important;
+    }
+  }
+`;
 
 // Generar el cliente de Amplify
 const client = generateClient<Schema>();
@@ -64,7 +236,7 @@ interface ProjectFormData {
   tags: string[];
 }
 
-export default function EditProjectClient({ locale, projectId }: EditProjectClientProps) {
+function EditProjectClient({ locale, projectId }: EditProjectClientProps): React.JSX.Element {
   const { mode } = useTheme();
   const { t } = useTranslation('admin');
   const router = useRouter();
@@ -179,14 +351,14 @@ export default function EditProjectClient({ locale, projectId }: EditProjectClie
   };
 
   // Manejadores de formulario
-  const handleInputChange = (field: keyof ProjectFormData, value: any) => {
+  const handleInputChange = (field: keyof ProjectFormData, value: string | string[] | boolean) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
     }));
 
     // Auto-generar slug basado en el título
-    if (field === 'title') {
+    if (field === 'title' && typeof value === 'string') {
       const slug = value.toLowerCase()
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/(^-|-$)/g, '');
@@ -196,6 +368,7 @@ export default function EditProjectClient({ locale, projectId }: EditProjectClie
       }));
     }
   };
+
   // Manejadores de imagen principal
   const handleMainImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
@@ -429,156 +602,247 @@ export default function EditProjectClient({ locale, projectId }: EditProjectClie
   useEffect(() => {
     loadProject();
   }, [projectId]);
-
   const isDark = mode === 'dark';
+  
+  // Definir variables CSS para el tema con mejor contraste
+  const cssVariables = {
+    '--form-label-color': isDark ? '#F8FAFC' : '#0F172A',
+    '--form-input-bg': isDark ? '#1E293B' : '#FFFFFF',
+    '--form-input-border': isDark ? '#64748B' : '#D1D5DB',
+    '--form-input-text': isDark ? '#F8FAFC' : '#111827',
+    '--form-placeholder-color': isDark ? '#94A3B8' : '#6B7280',
+    '--form-focus-border': isDark ? '#3B82F6' : '#2563EB',
+    '--form-focus-shadow': isDark ? 'rgba(59, 130, 246, 0.35)' : 'rgba(37, 99, 235, 0.25)',
+    '--form-description-color': isDark ? '#D1D5DB' : '#6B7280'
+  } as React.CSSProperties;
 
   if (initialLoading) {
     return (
-      <Flex direction="column" alignItems="center" gap="1rem" padding="2rem">
+      <View 
+        style={{
+          padding: '1.5rem',
+          backgroundColor: isDark ? '#0F172A' : '#F8FAFC',
+          minHeight: '100vh',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '1rem'
+        }}
+      >
         <Loader size="large" />
-        <Text>Cargando proyecto...</Text>
-      </Flex>
+        <Text style={{ color: isDark ? '#CBD5E1' : '#64748B' }}>
+          Cargando proyecto...
+        </Text>
+      </View>
     );
   }
 
   if (!project) {
     return (
-      <View padding="xl">
-        <Alert variation="error">
-          No se pudo encontrar el proyecto
-        </Alert>
+      <View 
+        style={{
+          padding: '1.5rem',
+          backgroundColor: isDark ? '#0F172A' : '#F8FAFC',
+          minHeight: '100vh'
+        }}
+      >
+        <Card
+          style={{
+            padding: '2rem',
+            backgroundColor: isDark ? 'rgba(51, 65, 85, 0.9)' : 'rgba(255, 255, 255, 0.9)',
+            border: isDark ? '1px solid rgba(148, 163, 184, 0.1)' : '1px solid rgba(203, 213, 225, 0.2)',
+            borderRadius: '12px',
+            maxWidth: '800px',
+            margin: '0 auto'
+          }}
+        >
+          <Alert 
+            variation="error"
+            style={{
+              backgroundColor: isDark ? 'rgba(239, 68, 68, 0.1)' : 'rgba(254, 242, 242, 1)',
+              color: isDark ? '#FCA5A5' : '#B91C1C'
+            }}
+          >
+            No se pudo encontrar el proyecto
+          </Alert>
+        </Card>
       </View>
     );
   }
 
   return (
-    <View 
-      padding="xl" 
-      backgroundColor={isDark ? 'background.primary' : 'background.secondary'}
-      minHeight="100vh"
-    >
-      <Card
-        variation="elevated"
-        padding="xl"
-        backgroundColor={isDark ? 'background.secondary' : 'background.primary'}
-        maxWidth="800px"
-        margin="0 auto"
+    <>
+      <style dangerouslySetInnerHTML={{ __html: editProjectStyles }} />
+      <View 
+        style={{
+          padding: '1.5rem',
+          backgroundColor: isDark ? '#0F172A' : '#F8FAFC',
+          minHeight: '100vh',
+          ...cssVariables
+        }}
+        className="edit-project-form"
       >
-        {/* Header */}
-        <Flex direction="column" gap="large">
-          <Flex justifyContent="space-between" alignItems="center">
-            <Flex alignItems="center" gap="medium">
-              <Button
-                variation="link"
-                onClick={() => router.push(getLocalizedPath('/admin/projects'))}
-                color={isDark ? 'white' : 'black'}
-              >
-                <ArrowLeft size={20} />
-              </Button>
-              <Heading level={2} color={isDark ? 'white' : 'black'}>
-                Editar Proyecto: {project.title}
-              </Heading>
+        <Card
+          style={{
+            padding: '2rem',
+            backgroundColor: isDark ? 'rgba(51, 65, 85, 0.9)' : 'rgba(255, 255, 255, 0.9)',
+            border: isDark ? '1px solid rgba(148, 163, 184, 0.1)' : '1px solid rgba(203, 213, 225, 0.2)',
+            borderRadius: '12px',
+            backdropFilter: 'blur(10px)',
+            maxWidth: '800px',
+            margin: '0 auto'
+          }}
+        >          {/* Header */}
+          <Flex direction="column" gap="large">
+            <Flex justifyContent="space-between" alignItems="center">
+              <Flex alignItems="center" gap="medium">
+                <Button
+                  style={{
+                    backgroundColor: 'transparent',
+                    border: 'none',
+                    color: isDark ? '#CBD5E1' : '#64748B',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem'
+                  }}
+                  onClick={() => router.push(getLocalizedPath('/admin/projects'))}
+                >
+                  <ArrowLeft size={20} />
+                </Button>
+                <Heading 
+                  level={2} 
+                  style={{
+                    color: isDark ? '#F1F5F9' : '#1E293B',
+                    margin: 0
+                  }}
+                >
+                  Editar: {project.title}
+                </Heading>
+              </Flex>
             </Flex>
-          </Flex>
 
-          {error && (
-            <Alert variation="error" hasIcon={true}>
-              {error}
-            </Alert>
-          )}
+            {error && (
+              <Alert variation="error" hasIcon={true}>
+                {error}
+              </Alert>
+            )}
 
-          {success && (
-            <Alert variation="success" hasIcon={true}>
-              {success}
-            </Alert>
-          )}
+            {success && (
+              <Alert variation="success" hasIcon={true}>
+                {success}
+              </Alert>
+            )}
 
-          {/* Formulario */}
-          <form onSubmit={handleSubmit}>
-            <Flex direction="column" gap="large">
-              
-              {/* Información básica */}
-              <Card variation="outlined" padding="large">
-                <Heading level={4} color={isDark ? 'white' : 'black'} marginBottom="medium">
-                  {t('projects.basic_info')}
-                </Heading>
-                
-                <Flex direction="column" gap="medium">
-                  <TextField
-                    label={t('projects.title_label') + ' *'}
-                    value={formData.title}
-                    onChange={(e) => handleInputChange('title', e.target.value)}
-                    required
-                    placeholder={t('projects.title_placeholder')}
-                  />
+            {/* Formulario */}
+            <form onSubmit={handleSubmit} className="edit-project-form">
+              <Flex direction="column" gap="large">                {/* Información básica */}
+                <Card 
+                  style={{
+                    padding: '1.5rem',
+                    backgroundColor: isDark ? 'rgba(30, 41, 59, 0.5)' : 'rgba(248, 250, 252, 0.8)',
+                    border: isDark ? '1px solid rgba(148, 163, 184, 0.1)' : '1px solid rgba(203, 213, 225, 0.2)',
+                    borderRadius: '8px'
+                  }}
+                >
+                  <Heading 
+                    level={4} 
+                    style={{
+                      color: isDark ? '#F1F5F9' : '#1E293B',
+                      marginBottom: '1rem'
+                    }}
+                  >
+                    Información Básica
+                  </Heading>
+                  
+                  <Flex direction="column" gap="medium">
+                    <TextField
+                      label="Título *"
+                      value={formData.title}
+                      onChange={(e) => handleInputChange('title', e.target.value)}
+                      required
+                      placeholder="Ej: Sistema de Gestión de Proyectos"
+                    />
 
-                  <TextField
-                    label={t('projects.slug_label')}
-                    value={formData.slug}
-                    onChange={(e) => handleInputChange('slug', e.target.value)}
-                    placeholder={t('projects.slug_placeholder')}
-                    descriptiveText={t('projects.slug_description')}
-                  />
+                    <TextField
+                      label="Slug"
+                      value={formData.slug}
+                      onChange={(e) => handleInputChange('slug', e.target.value)}
+                      placeholder="Se genera automáticamente del título"
+                      descriptiveText="URL amigable para el proyecto"
+                    />
 
-                  <TextAreaField
-                    label={t('projects.description_label') + ' *'}
-                    value={formData.description}
-                    onChange={(e) => handleInputChange('description', e.target.value)}
-                    required
-                    rows={4}
-                    placeholder={t('projects.description_placeholder')}
-                  />
+                    <TextAreaField
+                      label="Descripción *"
+                      value={formData.description}
+                      onChange={(e) => handleInputChange('description', e.target.value)}
+                      required
+                      rows={4}
+                      placeholder="Descripción detallada del proyecto..."
+                    />
 
-                  <TextAreaField
-                    label={t('projects.meta_description_label')}
-                    value={formData.metaDescription}
-                    onChange={(e) => handleInputChange('metaDescription', e.target.value)}
-                    rows={2}
-                    maxLength={160}
-                    placeholder={t('projects.meta_description_placeholder')}
-                  />
+                    <TextAreaField
+                      label="Meta Descripción (SEO)"
+                      value={formData.metaDescription}
+                      onChange={(e) => handleInputChange('metaDescription', e.target.value)}
+                      rows={2}
+                      maxLength={160}
+                      placeholder="Descripción breve para motores de búsqueda (máx. 160 caracteres)"
+                    />
 
-                  <TextField
-                    label={t('projects.place_label')}
-                    value={formData.place}
-                    onChange={(e) => handleInputChange('place', e.target.value)}
-                    placeholder={t('projects.place_placeholder')}
-                  />
-                </Flex>
-              </Card>
+                    <TextField
+                      label="Lugar"
+                      value={formData.place}
+                      onChange={(e) => handleInputChange('place', e.target.value)}
+                      placeholder="Ej: Universidad, Empresa, Remoto"
+                    />
+                  </Flex>
+                </Card>                {/* URLs y Enlaces */}
+                <Card 
+                  style={{
+                    padding: '1.5rem',
+                    backgroundColor: isDark ? 'rgba(30, 41, 59, 0.5)' : 'rgba(248, 250, 252, 0.8)',
+                    border: isDark ? '1px solid rgba(148, 163, 184, 0.1)' : '1px solid rgba(203, 213, 225, 0.2)',
+                    borderRadius: '8px'
+                  }}
+                >
+                  <Heading 
+                    level={4} 
+                    style={{
+                      color: isDark ? '#F1F5F9' : '#1E293B',
+                      marginBottom: '1rem'
+                    }}
+                  >
+                    Enlaces
+                  </Heading>
+                  
+                  <Flex direction="column" gap="medium">
+                    <TextField
+                      label="URL del Proyecto"
+                      value={formData.projectUrl}
+                      onChange={(e) => handleInputChange('projectUrl', e.target.value)}
+                      placeholder="https://ejemplo.com"
+                      type="url"
+                    />
 
-              {/* URLs y Enlaces */}
-              <Card variation="outlined" padding="large">
-                <Heading level={4} color={isDark ? 'white' : 'black'} marginBottom="medium">
-                  {t('projects.links')}
-                </Heading>
-                
-                <Flex direction="column" gap="medium">
-                  <TextField
-                    label={t('projects.project_url_label')}
-                    value={formData.projectUrl}
-                    onChange={(e) => handleInputChange('projectUrl', e.target.value)}
-                    placeholder={t('projects.project_url_placeholder')}
-                    type="url"
-                  />
+                    <TextField
+                      label="URL de GitHub"
+                      value={formData.githubUrl}
+                      onChange={(e) => handleInputChange('githubUrl', e.target.value)}
+                      placeholder="https://github.com/usuario/proyecto"
+                      type="url"
+                    />
 
-                  <TextField
-                    label={t('projects.github_url_label')}
-                    value={formData.githubUrl}
-                    onChange={(e) => handleInputChange('githubUrl', e.target.value)}
-                    placeholder={t('projects.github_url_placeholder')}
-                    type="url"
-                  />
-
-                  <TextField
-                    label={t('projects.demo_url_label')}
-                    value={formData.demoUrl}
-                    onChange={(e) => handleInputChange('demoUrl', e.target.value)}
-                    placeholder={t('projects.demo_url_placeholder')}
-                    type="url"
-                  />
-                </Flex>
-              </Card>
+                    <TextField
+                      label="URL de Demo"
+                      value={formData.demoUrl}
+                      onChange={(e) => handleInputChange('demoUrl', e.target.value)}
+                      placeholder="https://demo.ejemplo.com"
+                      type="url"
+                    />
+                  </Flex>
+                </Card>
 
               {/* Imagen Principal */}
               <Card variation="outlined" padding="large">
@@ -600,13 +864,14 @@ export default function EditProjectClient({ locale, projectId }: EditProjectClie
                           objectFit: 'cover',
                           borderRadius: '8px'
                         }}
-                      />
-                      <Button
-                        variation="destructive"
-                        size="small"
-                        position="absolute"
-                        top="8px"
-                        right="8px"
+                      />                      <Button
+                        type="button"
+                        className="image-remove-button"
+                        style={{
+                          position: 'absolute',
+                          top: '8px',
+                          right: '8px'
+                        }}
                         onClick={removeCurrentMainImage}
                       >
                         <X size={16} />
@@ -666,13 +931,14 @@ export default function EditProjectClient({ locale, projectId }: EditProjectClie
                           objectFit: 'cover',
                           borderRadius: '8px'
                         }}
-                      />
-                      <Button
-                        variation="destructive"
-                        size="small"
-                        position="absolute"
-                        top="8px"
-                        right="8px"
+                      />                      <Button
+                        type="button"
+                        className="image-remove-button"
+                        style={{
+                          position: 'absolute',
+                          top: '8px',
+                          right: '8px'
+                        }}
                         onClick={removeNewMainImage}
                       >
                         <X size={16} />
@@ -704,13 +970,14 @@ export default function EditProjectClient({ locale, projectId }: EditProjectClie
                               objectFit: 'cover',
                               borderRadius: '8px'
                             }}
-                          />
-                          <Button
-                            variation="destructive"
-                            size="small"
-                            position="absolute"
-                            top="4px"
-                            right="4px"
+                          />                          <Button
+                            type="button"
+                            className="image-remove-button gallery-image-remove"
+                            style={{
+                              position: 'absolute',
+                              top: '4px',
+                              right: '4px'
+                            }}
                             onClick={() => removeCurrentGalleryImage(index)}
                           >
                             <X size={12} />
@@ -777,13 +1044,14 @@ export default function EditProjectClient({ locale, projectId }: EditProjectClie
                               objectFit: 'cover',
                               borderRadius: '8px'
                             }}
-                          />
-                          <Button
-                            variation="destructive"
-                            size="small"
-                            position="absolute"
-                            top="4px"
-                            right="4px"
+                          />                          <Button
+                            type="button"
+                            className="image-remove-button gallery-image-remove"
+                            style={{
+                              position: 'absolute',
+                              top: '4px',
+                              right: '4px'
+                            }}
                             onClick={() => removeNewGalleryImage(index)}
                           >
                             <X size={12} />
@@ -793,29 +1061,54 @@ export default function EditProjectClient({ locale, projectId }: EditProjectClie
                     </Flex>
                   </View>
                 )}
-              </Card>
-
-              {/* Skills */}
-              <Card variation="outlined" padding="large">
-                <Heading level={4} color={isDark ? 'white' : 'black'} marginBottom="medium">
-                  {t('projects.skills')}
+              </Card>              {/* Skills */}
+              <Card 
+                style={{
+                  padding: '1.5rem',
+                  backgroundColor: isDark ? 'rgba(30, 41, 59, 0.5)' : 'rgba(248, 250, 252, 0.8)',
+                  border: isDark ? '1px solid rgba(148, 163, 184, 0.1)' : '1px solid rgba(203, 213, 225, 0.2)',
+                  borderRadius: '8px'
+                }}
+              >
+                <Heading 
+                  level={4} 
+                  style={{
+                    color: isDark ? '#F1F5F9' : '#1E293B',
+                    marginBottom: '1rem'
+                  }}
+                >
+                  Habilidades/Tecnologías
                 </Heading>
                 
-                <Flex gap="small" marginBottom="medium">
-                  <TextField
-                    label={t('projects.add_skill')}
-                    value={skillInput}
-                    onChange={(e) => setSkillInput(e.target.value)}
-                    placeholder={t('projects.skill_placeholder')}
-                    onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addSkill())}
-                    flex="1"
-                  />
-                  <Button type="button" onClick={addSkill}>
-                    {t('projects.add_skill')}
+                <div className="input-with-button-container">
+                  <div className="input-wrapper">
+                    <TextField
+                      label="Habilidad"
+                      value={skillInput}
+                      onChange={(e) => setSkillInput(e.target.value)}
+                      placeholder="Ej: React, Node.js, AWS"
+                      onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addSkill())}
+                      style={{ width: '100%' }}
+                    />
+                  </div>
+                  <Button 
+                    type="button" 
+                    onClick={addSkill}
+                    className="add-button"
+                    style={{
+                      backgroundColor: isDark ? '#3B82F6' : '#2563EB',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '6px',
+                      padding: '0.75rem 1rem',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Agregar
                   </Button>
-                </Flex>
+                </div>
 
-                <Flex wrap="wrap" gap="small">
+                <div className="badges-container">
                   {formData.skills.map((skill) => (
                     <Badge
                       key={skill}
@@ -826,30 +1119,57 @@ export default function EditProjectClient({ locale, projectId }: EditProjectClie
                       {skill} ×
                     </Badge>
                   ))}
-                </Flex>
+                </div>
               </Card>
 
               {/* Tags */}
-              <Card variation="outlined" padding="large">
-                <Heading level={4} color={isDark ? 'white' : 'black'} marginBottom="medium">
+              <Card 
+                style={{
+                  padding: '1.5rem',
+                  backgroundColor: isDark ? 'rgba(30, 41, 59, 0.5)' : 'rgba(248, 250, 252, 0.8)',
+                  border: isDark ? '1px solid rgba(148, 163, 184, 0.1)' : '1px solid rgba(203, 213, 225, 0.2)',
+                  borderRadius: '8px'
+                }}
+              >
+                <Heading 
+                  level={4} 
+                  style={{
+                    color: isDark ? '#F1F5F9' : '#1E293B',
+                    marginBottom: '1rem'
+                  }}
+                >
                   Tags (SEO)
                 </Heading>
                 
-                <Flex gap="small" marginBottom="medium">
-                  <TextField
-                    label={t('projects.add_tag')}
-                    value={tagInput}
-                    onChange={(e) => setTagInput(e.target.value)}
-                    placeholder={t('projects.tag_placeholder')}
-                    onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
-                    flex="1"
-                  />
-                  <Button type="button" onClick={addTag}>
-                    {t('projects.add_tag')}
+                <div className="input-with-button-container">
+                  <div className="input-wrapper">
+                    <TextField
+                      label="Tag"
+                      value={tagInput}
+                      onChange={(e) => setTagInput(e.target.value)}
+                      placeholder="Ej: web, mobile, cloud"
+                      onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
+                      style={{ width: '100%' }}
+                    />
+                  </div>
+                  <Button 
+                    type="button" 
+                    onClick={addTag}
+                    className="add-button"
+                    style={{
+                      backgroundColor: isDark ? '#10B981' : '#059669',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '6px',
+                      padding: '0.75rem 1rem',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Agregar
                   </Button>
-                </Flex>
+                </div>
 
-                <Flex wrap="wrap" gap="small">
+                <div className="badges-container">
                   {formData.tags.map((tag) => (
                     <Badge
                       key={tag}
@@ -860,89 +1180,134 @@ export default function EditProjectClient({ locale, projectId }: EditProjectClie
                       {tag} ×
                     </Badge>
                   ))}
-                </Flex>
-              </Card>
-
-              {/* Configuración */}
-              <Card variation="outlined" padding="large">
-                <Heading level={4} color={isDark ? 'white' : 'black'} marginBottom="medium">
-                  {t('projects.metadata')}
+                </div>
+              </Card>              {/* Configuración */}
+              <Card 
+                style={{
+                  padding: '1.5rem',
+                  backgroundColor: isDark ? 'rgba(30, 41, 59, 0.5)' : 'rgba(248, 250, 252, 0.8)',
+                  border: isDark ? '1px solid rgba(148, 163, 184, 0.1)' : '1px solid rgba(203, 213, 225, 0.2)',
+                  borderRadius: '8px'
+                }}
+              >
+                <Heading 
+                  level={4} 
+                  style={{
+                    color: isDark ? '#F1F5F9' : '#1E293B',
+                    marginBottom: '1rem'
+                  }}
+                >
+                  Configuración
                 </Heading>
                 
                 <Flex direction="column" gap="medium">
                   <SelectField
-                    label={t('projects.category_label')}
+                    label="Categoría"
                     value={formData.categories}
                     onChange={(e) => handleInputChange('categories', e.target.value)}
                   >
-                    <option value="Personal">{t('projects.category_personal')}</option>
-                    <option value="Professional">{t('projects.category_professional')}</option>
-                    <option value="Academic">{t('projects.category_academic')}</option>
-                    <option value="Research">{t('projects.category_research')}</option>
-                    <option value="Hackathon">{t('projects.category_hackathon')}</option>
+                    <option value="Personal">Personal</option>
+                    <option value="Professional">Profesional</option>
+                    <option value="Academic">Académico</option>
+                    <option value="Research">Investigación</option>
+                    <option value="Hackathon">Hackathon</option>
                   </SelectField>
 
                   <SelectField
-                    label={t('projects.status_label')}
+                    label="Estado"
                     value={formData.status}
                     onChange={(e) => handleInputChange('status', e.target.value)}
                   >
-                    <option value="Draft">{t('projects.status_draft')}</option>
-                    <option value="Published">{t('projects.status_published')}</option>
-                    <option value="Archived">{t('projects.status_archived')}</option>
-                  </SelectField>
-
-                  <Flex gap="large">
+                    <option value="Draft">Borrador</option>
+                    <option value="Published">Publicado</option>
+                    <option value="Archived">Archivado</option>
+                  </SelectField>                  <Flex 
+                    direction={{ base: 'column', medium: 'row' }} 
+                    gap="large"
+                  >
                     <TextField
-                      label={t('projects.start_date_label')}
+                      label="Fecha de Inicio"
                       type="date"
                       value={formData.startDate}
                       onChange={(e) => handleInputChange('startDate', e.target.value)}
+                      style={{ flex: 1 }}
                     />
 
                     <TextField
-                      label={t('projects.end_date_label')}
+                      label="Fecha de Fin"
                       type="date"
                       value={formData.endDate}
                       onChange={(e) => handleInputChange('endDate', e.target.value)}
+                      style={{ flex: 1 }}
                     />
                   </Flex>
 
                   <SwitchField
-                    label={t('projects.featured_label')}
+                    label="Proyecto Destacado"
                     isChecked={formData.featured}
                     onChange={(e) => handleInputChange('featured', e.target.checked)}
                   />
                 </Flex>
               </Card>
 
-              <Divider />
-
-              {/* Botones de acción */}
-              <Flex justifyContent="space-between" gap="medium">
+              <Divider />{/* Botones de acción */}
+              <Flex 
+                direction={{ base: 'column', medium: 'row' }}
+                justifyContent="space-between" 
+                gap="medium"
+              >
                 <Button
-                  variation="link"
                   onClick={() => router.push(getLocalizedPath('/admin/projects'))}
-                  isDisabled={isLoading}
+                  disabled={isLoading}
+                  style={{
+                    backgroundColor: 'transparent',
+                    color: isDark ? '#CBD5E1' : '#64748B',
+                    border: isDark ? '1px solid #475569' : '1px solid #CBD5E1',
+                    borderRadius: '6px',
+                    padding: '0.75rem 1.5rem',
+                    cursor: 'pointer',
+                    fontSize: '0.9rem',
+                    fontWeight: '500'
+                  }}
                 >
-                  {t('projects.back_to_projects')}
+                  Cancelar
                 </Button>
 
                 <Button
                   type="submit"
-                  variation="primary"
-                  isDisabled={isLoading || !formData.title.trim() || !formData.description.trim()}
-                  isLoading={isLoading}
-                  loadingText={t('projects.saving')}
+                  disabled={isLoading || !formData.title.trim() || !formData.description.trim()}
+                  style={{
+                    backgroundColor: isDark ? '#3B82F6' : '#2563EB',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '6px',
+                    padding: '0.75rem 1.5rem',
+                    cursor: isLoading ? 'not-allowed' : 'pointer',
+                    opacity: (isLoading || !formData.title.trim() || !formData.description.trim()) ? 0.6 : 1,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.5rem',
+                    fontSize: '0.9rem',
+                    fontWeight: '600',
+                    minWidth: '160px'
+                  }}
                 >
                   <Save size={16} />
-                  {t('projects.save_changes')}
+                  {isLoading ? 'Guardando...' : 'Guardar Cambios'}
                 </Button>
               </Flex>
-            </Flex>
-          </form>
-        </Flex>
-      </Card>
-    </View>
+              </Flex>
+            </form>
+          </Flex>
+        </Card>
+      </View>
+    </>
   );
 }
+
+// Memorizar el componente para evitar re-renders innecesarios
+const EditProjectClientMemo = memo(EditProjectClient);
+EditProjectClientMemo.displayName = 'EditProjectClient';
+
+export default EditProjectClientMemo;

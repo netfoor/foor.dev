@@ -90,8 +90,49 @@ const createProjectStyles = `
     background-repeat: no-repeat;
     background-position: right 0.75rem center;
     background-size: 0.65rem;
-    padding-right: 2.5rem !important;
+    padding-right: 2.5rem !important;  }
+  /* Image remove button styles - small button positioned in corner */
+  .create-project-form .image-remove-button {
+    position: absolute !important;
+    background-color: rgba(239, 68, 68, 0.9) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 6px !important;
+    padding: 0.5rem !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    max-width: 32px !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+    transition: all 0.2s ease !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    top: 8px !important;
+    right: 8px !important;
+    z-index: 10 !important;
   }
+
+  .create-project-form .image-remove-button:hover {
+    background-color: rgba(239, 68, 68, 1) !important;
+    transform: scale(1.1) !important;
+  }
+
+  .create-project-form .gallery-image-remove {
+    width: 28px !important;
+    height: 28px !important;
+    min-width: 28px !important;
+    max-width: 28px !important;
+    padding: 0.25rem !important;
+    font-size: 12px !important;
+    border-radius: 4px !important;
+    top: 4px !important;
+    right: 4px !important;
+  }
+
   /* Responsive design improvements */
   @media (max-width: 768px) {
     .create-project-form .skill-tag-flex {
@@ -104,14 +145,36 @@ const createProjectStyles = `
       margin-top: 0.5rem !important;
       min-width: auto !important;
     }
-    
-    .create-project-form .amplify-flex {
+      .create-project-form .amplify-flex {
       flex-direction: column !important;
     }
     
     .create-project-form .amplify-button {
       width: 100% !important;
       margin-top: 0.5rem !important;
+    }    /* Mobile image remove buttons - smaller size, but still positioned in corner */
+    .create-project-form .image-remove-button {
+      width: 28px !important;
+      height: 28px !important;
+      min-width: 28px !important;
+      max-width: 28px !important;
+      padding: 0.25rem !important;
+      font-size: 12px !important;
+      border-radius: 4px !important;
+      top: 4px !important;
+      right: 4px !important;
+    }
+
+    .create-project-form .gallery-image-remove {
+      width: 24px !important;
+      height: 24px !important;
+      min-width: 24px !important;
+      max-width: 24px !important;
+      padding: 0.2rem !important;
+      font-size: 10px !important;
+      border-radius: 3px !important;
+      top: 2px !important;
+      right: 2px !important;
     }
   }
 `;
@@ -608,16 +671,11 @@ function CreateProjectClient(): React.JSX.Element {
                       }}
                     />                    <Button
                       type="button"
+                      className="image-remove-button"
                       style={{
                         position: 'absolute',
                         top: '8px',
-                        right: '8px',
-                        backgroundColor: 'rgba(239, 68, 68, 0.9)',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '6px',
-                        padding: '0.5rem',
-                        cursor: 'pointer'
+                        right: '8px'
                       }}
                       onClick={removeMainImage}
                     >
@@ -688,16 +746,11 @@ function CreateProjectClient(): React.JSX.Element {
                           }}
                         />                        <Button
                           type="button"
+                          className="image-remove-button gallery-image-remove"
                           style={{
                             position: 'absolute',
                             top: '4px',
-                            right: '4px',
-                            backgroundColor: 'rgba(239, 68, 68, 0.9)',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '4px',
-                            padding: '0.25rem',
-                            cursor: 'pointer'
+                            right: '4px'
                           }}
                           onClick={() => removeGalleryImage(index)}
                         >
