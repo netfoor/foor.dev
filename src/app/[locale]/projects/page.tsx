@@ -126,6 +126,7 @@ export default async function ProjectsPage({ params }: ProjectsPageProps) {
 
       <main className="min-h-screen">
         {/* Header con controles de idioma y tema */}
+       
         <HeaderControls />        {/* Sección Projects completa */}
         <ProjectsSection showAll={true} />
       </main>

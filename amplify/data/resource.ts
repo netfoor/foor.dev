@@ -8,7 +8,8 @@ const schema = a.schema({
       credentialId: a.string(),
       issueDate: a.date().required(),
       expirationDate: a.date(),
-      badgeImageUrl: a.string(),      content: a.string(),
+      photoKey: a.string(), // Key de S3 para la imagen principal     
+      content: a.string(),
       skills: a.string().array(),
       categoty: a.string().required(),
     })    .authorization((allow) => [
@@ -35,9 +36,10 @@ const schema = a.schema({
       status: a.enum(['Draft', 'Published', 'Archived']),
       featured: a.boolean(),
       // SEO
-      slug: a.string(),      metaDescription: a.string(),
+      slug: a.string(),      
+      metaDescription: a.string(),
       tags: a.string().array(),
-    })    .authorization((allow) => [
+    }).authorization((allow) => [
       allow.guest().to(['read']),
       allow.group('ADMINS').to(['create', 'read', 'update', 'delete'])
     ]),
@@ -49,7 +51,7 @@ const schema = a.schema({
       issueDate: a.date().required(),
       credentialId: a.string(),
       issuerUrl: a.string(),
-      badgeImageUrl: a.string(),
+      photoKey: a.string(), // Key de S3 para la imagen principal
     })
     .authorization((allow) => [
       allow.guest().to(['read']),
@@ -66,6 +68,7 @@ const schema = a.schema({
       location: a.string(),
       recognition: a.string().array(),
       CertificateURL: a.string(),
+      photoKey: a.string(), // Key de S3 para la imagen principal
       Photos: a.string().array(),
     })
     .authorization((allow) => [
@@ -91,6 +94,7 @@ const schema = a.schema({
       location: a.string(),
       skills: a.string().array(),
       activities: a.string().array(),
+      photoKey: a.string(), // Key de S3 para la imagen principal
     })
     .authorization((allow) => [
       allow.guest().to(['read']),
@@ -100,7 +104,7 @@ const schema = a.schema({
     .model({
       title: a.string().required(),
       source: a.enum(['LinkedIn', 'Twitter', 'GitHub', 'Blog', 'Youtube']),
-      image: a.string(),
+      photoKey: a.string(), // Key de S3 para la imagen principal
       description: a.string().required(),
       publicationDate: a.date().required(),
       type: a.enum(['Article', 'Blog', 'Video', 'Podcast', 'Book', 'Course', 'Conference', 'Presentation', 'Research', 'Workshop', 'Other']),

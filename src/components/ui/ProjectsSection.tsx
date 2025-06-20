@@ -8,6 +8,7 @@ import { getUrl } from 'aws-amplify/storage';
 import type { Schema } from '../../../amplify/data/resource';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation, useLocalizedPath } from '@/lib/i18n/client';
+import { useAuth } from '@/context/auth-context';
 
 // Tipos para el proyecto
 type Project = Schema["Projects"]["type"];
@@ -30,6 +31,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);  const { mode } = useTheme();
   const { t } = useTranslation('homepage');
+  const { isAuthenticated } = useAuth();
   const getLocalizedPath = useLocalizedPath();
   // Función para obtener URL de imagen desde S3
   const getImageUrl = async (photoKey: string | null | undefined): Promise<string | null> => {
@@ -62,11 +64,11 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
     try {
       setLoading(true);
       setError(null);
-      
-      // Generar el cliente solo en el cliente
+        // Generar el cliente solo en el cliente
       const client = generateClient<Schema>();
-      
-      const response = await client.models.Projects.list();
+        const response = await client.models.Projects.list({
+        authMode: isAuthenticated ? 'userPool' : 'identityPool' // Usar authMode dinámico basado en autenticación
+      });
         if (response.data) {
         setProjects(response.data);
         setFilteredProjects(response.data);
@@ -92,13 +94,12 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
       setLoading(false);
     }
   };
-
   // Cargar proyectos al montar el componente
   useEffect(() => {
     if (mounted) {
       fetchProjects();
     }
-  }, [mounted]);
+  }, [mounted, isAuthenticated]); // Agregar isAuthenticated como dependencia
   // Filtrar proyectos por categoría
   useEffect(() => {
     let filtered = projects;

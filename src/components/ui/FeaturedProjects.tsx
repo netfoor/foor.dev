@@ -9,6 +9,7 @@ import { getUrl } from 'aws-amplify/storage';
 import type { Schema } from '../../../amplify/data/resource';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation, useLocalizedPath } from '@/lib/i18n/client';
+import { useAuth } from '@/context/auth-context';
 
 // Tipos para el proyecto
 type Project = Schema["Projects"]["type"];
@@ -22,9 +23,9 @@ const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({ className = '' }) =
   const [projectImages, setProjectImages] = useState<{ [key: string]: string }>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [mounted, setMounted] = useState(false);
-  const { mode } = useTheme();
+  const [mounted, setMounted] = useState(false);  const { mode } = useTheme();
   const { t } = useTranslation('homepage');
+  const { isAuthenticated } = useAuth();
   const getLocalizedPath = useLocalizedPath();
   // Función para obtener URL de imagen desde S3
   const getImageUrl = async (photoKey: string | null | undefined): Promise<string | null> => {
@@ -57,13 +58,11 @@ const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({ className = '' }) =
       try {
         setLoading(true);
         setError(null);
-        
-        // Generar el cliente solo en el cliente
+          // Generar el cliente solo en el cliente
         const client = generateClient<Schema>();
-        
-        const { data: projectsData, errors } = await client.models.Projects.list({
+          const { data: projectsData, errors } = await client.models.Projects.list({
           limit: 3,
-          // Sort by creation date to get most recent
+          authMode: isAuthenticated ? 'userPool' : 'identityPool', 
         });
 
         if (errors) {
@@ -97,7 +96,7 @@ const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({ className = '' }) =
         setLoading(false);
       }
     }    fetchProjects();
-  }, [mounted]); // Dependencia de mounted para ejecutar solo cuando esté hidratado
+  }, [mounted, isAuthenticated]); // Agregar isAuthenticated como dependencia
 
   const getCategoryColor = (category: string | null | undefined) => {
     switch (category) {
