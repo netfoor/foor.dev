@@ -173,5 +173,12 @@
   "scroll_to_top": {
     "button": "Volver al inicio",
     "tooltip": "Volver al inicio"
-  }
+  },
+  "admin_privileges_active": "Privilegios de administrador activos",
+  "loading_dashboard": "Cargando dashboard...",
+  "general_overview": "Resumen General",
+  "total_content": "Total de Contenido",
+  "active_projects": "Proyectos Activos", 
+  "years_experience": "Años de Experiencia",
+  "active": "Activo"
 }

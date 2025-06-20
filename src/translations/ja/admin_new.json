@@ -114,16 +114,7 @@
     "status_draft": "下書き",
     "status_published": "公開済み",
     "status_archived": "アーカイブ済み",
-    "required": "必須",
-    "no_projects_yet": "まだプロジェクトがありません。最初のプロジェクトを作成しましょう！",
-    "error_loading_project": "プロジェクトを読み込めませんでした",
-    "change_main_image": "メイン画像を変更",
-    "project_not_found": "プロジェクトが見つかりません",
-    "error_deleting_project": "プロジェクトの削除中にエラーが発生しました",
-    "unknown_error": "不明なエラー",
-    "creating": "作成中...",
-    "error_creating_project": "プロジェクトの作成中にエラーが発生しました",
-    "content_management": "コンテンツ管理"
+    "required": "必須"
   },
   "sections": {
     "projects": "プロジェクト",

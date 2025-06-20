@@ -366,7 +366,7 @@ function CreateProjectClient(): React.JSX.Element {
       }, 2000);
 
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al crear el proyecto');
+      setError(err instanceof Error ? err.message : t('projects.error_creating_project'));
     } finally {
       setIsLoading(false);
     }
@@ -428,7 +428,7 @@ function CreateProjectClient(): React.JSX.Element {
                   margin: 0
                 }}
               >
-                Crear Nuevo Proyecto
+                {t('projects.create_project')}
               </Heading>
             </Flex>
           </Flex>
@@ -943,7 +943,7 @@ function CreateProjectClient(): React.JSX.Element {
                   }}
                 >
                   <Save size={16} />
-                  {isLoading ? 'Creando...' : 'Crear Proyecto'}
+                  {isLoading ? t('projects.creating') : t('projects.create_project')}
                 </Button>
               </Flex>
             </Flex>

@@ -5,6 +5,7 @@ import { AuthGuardStable } from '@/app/components/auth/AuthGuardStable';
 import { LogoutButton } from '@/app/components/auth/LogoutButton';
 import { UserProfile } from '@/app/components/auth/UserProfile';
 import { useTheme } from '@/hooks/useTheme';
+import { useTranslation, useLocalizedPath } from '@/lib/i18n/client';
 import { View, Flex, Text, Button } from '@aws-amplify/ui-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -33,20 +34,22 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const { mode } = useTheme();
+  const { t } = useTranslation('admin');
+  const getLocalizedPath = useLocalizedPath();
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const menuItems = [
-    { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
-    { href: '/admin/projects', label: 'Proyectos', icon: FolderOpen },
-    { href: '/admin/certifications', label: 'Certificaciones', icon: Award },
-    { href: '/admin/education', label: 'Educación', icon: GraduationCap },
-    { href: '/admin/experiences', label: 'Experiencias', icon: Briefcase },
-    { href: '/admin/languages', label: 'Idiomas', icon: Languages },
-    { href: '/admin/recognitions', label: 'Reconocimientos', icon: Award },
-    { href: '/admin/publications', label: 'Publicaciones', icon: FileText },
-    { href: '/admin/users', label: 'Usuarios', icon: Users },
-    { href: '/admin/settings', label: 'Configuración', icon: Settings },
+    { href: '/admin', label: t('dashboard'), icon: LayoutDashboard },
+    { href: '/admin/projects', label: t('sections.projects'), icon: FolderOpen },
+    { href: '/admin/certifications', label: t('sections.certifications'), icon: Award },
+    { href: '/admin/education', label: t('sections.education'), icon: GraduationCap },
+    { href: '/admin/experiences', label: t('sections.experiences'), icon: Briefcase },
+    { href: '/admin/languages', label: t('sections.languages'), icon: Languages },
+    { href: '/admin/recognitions', label: t('sections.recognitions'), icon: Award },
+    { href: '/admin/publications', label: t('sections.publications'), icon: FileText },
+    { href: '/admin/users', label: t('users'), icon: Users },
+    { href: '/admin/settings', label: t('settings'), icon: Settings },
   ];
 
   const isActive = (href: string) => {
@@ -107,7 +110,7 @@ export default function AdminLayout({
                   color: mode === 'dark' ? '#F1F5F9' : '#1E293B'
                 }}
               >
-                Panel Admin
+                {t('title')}
               </Text>
             </Flex>
               {/* User Controls */}
@@ -168,7 +171,7 @@ export default function AdminLayout({
                   color: mode === 'dark' ? '#F1F5F9' : '#1E293B'
                 }}
               >
-                Panel Admin
+                {t('title')}
               </Text>
               <Button
                 style={{
@@ -202,7 +205,7 @@ export default function AdminLayout({
                 marginBottom: '1rem'
               }}
             >
-              Gestión de Contenido
+              {t('content_management')}
             </Text>
             
             <Flex direction="column" gap="0.25rem">
@@ -213,7 +216,7 @@ export default function AdminLayout({
                 return (
                   <Link
                     key={item.href}
-                    href={item.href}
+                    href={getLocalizedPath(item.href)}
                     onClick={() => setSidebarOpen(false)} // Cerrar sidebar en móvil
                     className="admin-nav-link"
                     style={{

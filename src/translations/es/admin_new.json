@@ -114,16 +114,7 @@
     "status_draft": "Borrador",
     "status_published": "Publicado",
     "status_archived": "Archivado",
-    "required": "Requerido",
-    "no_projects_yet": "No hay proyectos aún. ¡Crea tu primer proyecto!",
-    "error_loading_project": "No se pudo cargar el proyecto",
-    "change_main_image": "Cambiar imagen principal",
-    "project_not_found": "Proyecto no encontrado",
-    "error_deleting_project": "Error al eliminar proyecto",
-    "unknown_error": "Error desconocido",
-    "creating": "Creando...",
-    "error_creating_project": "Error al crear el proyecto",
-    "content_management": "Gestión de Contenido"
+    "required": "Requerido"
   },
   "sections": {
     "projects": "Proyectos",

@@ -73,13 +73,13 @@ const AdminProjectsClient: React.FC<AdminProjectsClientProps> = ({ locale }) => 
       }
     } catch (err) {
       console.error('Error fetching projects:', err);
-      setError('Error al cargar proyectos');
+      setError(t('projects.error_loading_projects'));
     } finally {
       setLoading(false);
     }
   };  // Eliminar proyecto completo (DynamoDB + S3)
   const handleDeleteProject = async (projectId: string) => {
-    if (!confirm('¿Estás seguro de que quieres eliminar este proyecto? Esta acción eliminará permanentemente el proyecto y todas sus imágenes.')) {
+    if (!confirm(t('projects.confirm_delete'))) {
       return;
     }
 
@@ -94,7 +94,7 @@ const AdminProjectsClient: React.FC<AdminProjectsClientProps> = ({ locale }) => 
       const projectData = projectResponse.data;
       
       if (!projectData) {
-        throw new Error('Proyecto no encontrado');
+        throw new Error(t('projects.project_not_found'));
       }
 
       // 2. SEGUNDO: Eliminar archivos de S3 usando utilidad
@@ -119,7 +119,7 @@ const AdminProjectsClient: React.FC<AdminProjectsClientProps> = ({ locale }) => 
       
     } catch (err) {
       console.error('Error deleting project:', err);
-      setError(`Error al eliminar proyecto: ${err instanceof Error ? err.message : 'Error desconocido'}`);
+      setError(`${t('projects.error_deleting_project')}: ${err instanceof Error ? err.message : t('projects.unknown_error')}`);
     } finally {
       setDeleteLoading(null);
     }
@@ -192,7 +192,7 @@ const AdminProjectsClient: React.FC<AdminProjectsClientProps> = ({ locale }) => 
               color: mode === 'dark' ? '#F1F5F9' : '#1E293B',
             }}
           >
-            Gestión de Proyectos
+            {t('projects.manage_projects')}
           </Text>
           <Text
             fontSize={{ base: '0.875rem', medium: '1rem' }}
@@ -200,7 +200,7 @@ const AdminProjectsClient: React.FC<AdminProjectsClientProps> = ({ locale }) => 
               color: mode === 'dark' ? '#CBD5E1' : '#64748B',
             }}
           >
-            Administra tu portafolio de proyectos
+            {t('sections.manage_portfolio')}
           </Text>
         </View>        <View style={{ flexShrink: 0, width: '100%', maxWidth: '200px' }} className="md:w-auto">
           <Link href={getLocalizedPath('/admin/projects/new')} style={{ textDecoration: 'none' }}>
@@ -218,8 +218,8 @@ const AdminProjectsClient: React.FC<AdminProjectsClientProps> = ({ locale }) => 
               }}
             >
               <Plus size={20} />
-              <Text className="hidden sm:inline">Nuevo Proyecto</Text>
-              <Text className="sm:hidden">Nuevo</Text>
+              <Text className="hidden sm:inline">{t('projects.new_project')}</Text>
+              <Text className="sm:hidden">{t('projects.new_project')}</Text>
             </Button>
           </Link>
         </View>
@@ -254,7 +254,7 @@ const AdminProjectsClient: React.FC<AdminProjectsClientProps> = ({ locale }) => 
               {projects.filter(p => p.status === 'Published').length}
             </Text>
             <Text fontSize="0.875rem" color={mode === 'dark' ? '#CBD5E1' : '#64748B'}>
-              Proyectos Publicados
+              {t('projects.published_count')}
             </Text>
           </View>
         </Card>        <Card
@@ -272,7 +272,7 @@ const AdminProjectsClient: React.FC<AdminProjectsClientProps> = ({ locale }) => 
               {projects.filter(p => p.status === 'Draft').length}
             </Text>
             <Text fontSize="0.875rem" color={mode === 'dark' ? '#CBD5E1' : '#64748B'}>
-              Borradores
+              {t('projects.drafts_count')}
             </Text>
           </View>
         </Card>
@@ -292,7 +292,7 @@ const AdminProjectsClient: React.FC<AdminProjectsClientProps> = ({ locale }) => 
               {projects.length}
             </Text>
             <Text fontSize="0.875rem" color={mode === 'dark' ? '#CBD5E1' : '#64748B'}>
-              Total Proyectos
+              {t('projects.total_count')}
             </Text>
           </View>
         </Card>
@@ -308,7 +308,7 @@ const AdminProjectsClient: React.FC<AdminProjectsClientProps> = ({ locale }) => 
         }}
       >        {projects.length === 0 ? (          <View padding="3rem" textAlign="center">
             <Text fontSize="1.125rem" color={mode === 'dark' ? '#CBD5E1' : '#64748B'} marginBottom="2rem">
-              No hay proyectos aún. ¡Crea tu primer proyecto!
+              {t('projects.no_projects_yet')}
             </Text>
           </View>        ) : (          <View 
             className="table-container"

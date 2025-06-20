@@ -119,7 +119,7 @@ export default function EditProjectClient({ locale, projectId }: EditProjectClie
       const response = await client.models.Projects.get({ id: projectId });
       
       if (response.errors || !response.data) {
-        setError('No se pudo cargar el proyecto');
+        setError(t('projects.error_loading_project'));
         return;
       }
 
@@ -172,7 +172,7 @@ export default function EditProjectClient({ locale, projectId }: EditProjectClie
 
     } catch (err) {
       console.error('Error loading project:', err);
-      setError('Error al cargar el proyecto');
+      setError(t('projects.error_loading_project'));
     } finally {
       setInitialLoading(false);
     }
@@ -204,7 +204,7 @@ export default function EditProjectClient({ locale, projectId }: EditProjectClie
     const file = event.target.files?.[0];
     if (file) {
       if (file.size > 5 * 1024 * 1024) { // 5MB límite
-        setError('La imagen principal no puede ser mayor a 5MB');
+        setError(t('projects.image_size_error'));
         return;
       }
       setNewMainImage(file);
@@ -241,7 +241,7 @@ export default function EditProjectClient({ locale, projectId }: EditProjectClie
     // Validar tamaño y cantidad
     const validFiles = files.filter(file => {
       if (file.size > 5 * 1024 * 1024) {
-        setError(`La imagen ${file.name} es muy grande (máximo 5MB)`);
+        setError(t('projects.image_too_large', { name: file.name }));
         return false;
       }
       return true;
@@ -249,7 +249,7 @@ export default function EditProjectClient({ locale, projectId }: EditProjectClie
 
     const totalImages = currentGalleryUrls.length + newGalleryImages.length + validFiles.length;
     if (totalImages > 10) {
-      setError('Máximo 10 imágenes en la galería');
+      setError(t('projects.max_gallery_images'));
       return;
     }
 
@@ -500,49 +500,49 @@ export default function EditProjectClient({ locale, projectId }: EditProjectClie
               {/* Información básica */}
               <Card variation="outlined" padding="large">
                 <Heading level={4} color={isDark ? 'white' : 'black'} marginBottom="medium">
-                  Información Básica
+                  {t('projects.basic_info')}
                 </Heading>
                 
                 <Flex direction="column" gap="medium">
                   <TextField
-                    label="Título *"
+                    label={t('projects.title_label') + ' *'}
                     value={formData.title}
                     onChange={(e) => handleInputChange('title', e.target.value)}
                     required
-                    placeholder="Ej: Sistema de Gestión de Proyectos"
+                    placeholder={t('projects.title_placeholder')}
                   />
 
                   <TextField
-                    label="Slug"
+                    label={t('projects.slug_label')}
                     value={formData.slug}
                     onChange={(e) => handleInputChange('slug', e.target.value)}
-                    placeholder="Se genera automáticamente del título"
-                    descriptiveText="URL amigable para el proyecto"
+                    placeholder={t('projects.slug_placeholder')}
+                    descriptiveText={t('projects.slug_description')}
                   />
 
                   <TextAreaField
-                    label="Descripción *"
+                    label={t('projects.description_label') + ' *'}
                     value={formData.description}
                     onChange={(e) => handleInputChange('description', e.target.value)}
                     required
                     rows={4}
-                    placeholder="Descripción detallada del proyecto..."
+                    placeholder={t('projects.description_placeholder')}
                   />
 
                   <TextAreaField
-                    label="Meta Descripción (SEO)"
+                    label={t('projects.meta_description_label')}
                     value={formData.metaDescription}
                     onChange={(e) => handleInputChange('metaDescription', e.target.value)}
                     rows={2}
                     maxLength={160}
-                    placeholder="Descripción breve para motores de búsqueda (máx. 160 caracteres)"
+                    placeholder={t('projects.meta_description_placeholder')}
                   />
 
                   <TextField
-                    label="Lugar"
+                    label={t('projects.place_label')}
                     value={formData.place}
                     onChange={(e) => handleInputChange('place', e.target.value)}
-                    placeholder="Ej: Universidad, Empresa, Remoto"
+                    placeholder={t('projects.place_placeholder')}
                   />
                 </Flex>
               </Card>
@@ -550,31 +550,31 @@ export default function EditProjectClient({ locale, projectId }: EditProjectClie
               {/* URLs y Enlaces */}
               <Card variation="outlined" padding="large">
                 <Heading level={4} color={isDark ? 'white' : 'black'} marginBottom="medium">
-                  Enlaces
+                  {t('projects.links')}
                 </Heading>
                 
                 <Flex direction="column" gap="medium">
                   <TextField
-                    label="URL del Proyecto"
+                    label={t('projects.project_url_label')}
                     value={formData.projectUrl}
                     onChange={(e) => handleInputChange('projectUrl', e.target.value)}
-                    placeholder="https://ejemplo.com"
+                    placeholder={t('projects.project_url_placeholder')}
                     type="url"
                   />
 
                   <TextField
-                    label="URL de GitHub"
+                    label={t('projects.github_url_label')}
                     value={formData.githubUrl}
                     onChange={(e) => handleInputChange('githubUrl', e.target.value)}
-                    placeholder="https://github.com/usuario/proyecto"
+                    placeholder={t('projects.github_url_placeholder')}
                     type="url"
                   />
 
                   <TextField
-                    label="URL de Demo"
+                    label={t('projects.demo_url_label')}
                     value={formData.demoUrl}
                     onChange={(e) => handleInputChange('demoUrl', e.target.value)}
-                    placeholder="https://demo.ejemplo.com"
+                    placeholder={t('projects.demo_url_placeholder')}
                     type="url"
                   />
                 </Flex>
@@ -583,13 +583,13 @@ export default function EditProjectClient({ locale, projectId }: EditProjectClie
               {/* Imagen Principal */}
               <Card variation="outlined" padding="large">
                 <Heading level={4} color={isDark ? 'white' : 'black'} marginBottom="medium">
-                  Imagen Principal
+                  {t('projects.main_image')}
                 </Heading>
                 
                 {/* Imagen actual */}
                 {currentMainImageUrl && (
                   <View marginBottom="medium">
-                    <Text fontWeight="bold" marginBottom="small">Imagen Actual:</Text>
+                    <Text fontWeight="bold" marginBottom="small">{t('projects.current_image')}</Text>
                     <View position="relative" display="inline-block">
                       <img
                         src={currentMainImageUrl}
@@ -630,7 +630,7 @@ export default function EditProjectClient({ locale, projectId }: EditProjectClie
                     <Flex direction="column" alignItems="center" gap="medium">
                       <ImageIcon size={48} color={isDark ? '#888' : '#666'} />
                       <Text color={isDark ? 'font.secondary' : 'font.primary'}>
-                        {currentMainImageUrl ? 'Cambiar imagen principal' : 'Subir imagen principal'} (máx. 5MB)
+                        {currentMainImageUrl ? t('projects.change_main_image') : t('projects.add_new_image')} (máx. 5MB)
                       </Text>
                     </Flex>
                     <input
@@ -685,13 +685,13 @@ export default function EditProjectClient({ locale, projectId }: EditProjectClie
               {/* Galería */}
               <Card variation="outlined" padding="large">
                 <Heading level={4} color={isDark ? 'white' : 'black'} marginBottom="medium">
-                  Galería (máx. 10 imágenes total)
+                  {t('projects.gallery')} (máx. 10 imágenes total)
                 </Heading>
                 
                 {/* Imágenes actuales */}
                 {currentGalleryUrls.length > 0 && (
                   <View marginBottom="medium">
-                    <Text fontWeight="bold" marginBottom="small">Imágenes Actuales:</Text>
+                    <Text fontWeight="bold" marginBottom="small">{t('projects.current_images')}</Text>
                     <Flex wrap="wrap" gap="medium">
                       {currentGalleryUrls.map((url, index) => (
                         <View key={index} position="relative" width="150px">
@@ -736,7 +736,7 @@ export default function EditProjectClient({ locale, projectId }: EditProjectClie
                   <Flex direction="column" alignItems="center" gap="medium">
                     <Plus size={24} color={isDark ? '#888' : '#666'} />
                     <Text color={isDark ? 'font.secondary' : 'font.primary'}>
-                      Agregar nuevas imágenes a la galería
+                      {t('projects.add_gallery_images')}
                     </Text>
                   </Flex>
                   <input
@@ -764,7 +764,7 @@ export default function EditProjectClient({ locale, projectId }: EditProjectClie
                 {/* Nuevas imágenes */}
                 {galleryPreviews.length > 0 && (
                   <View>
-                    <Text fontWeight="bold" marginBottom="small">Nuevas Imágenes:</Text>
+                    <Text fontWeight="bold" marginBottom="small">{t('projects.new_images')}</Text>
                     <Flex wrap="wrap" gap="medium">
                       {galleryPreviews.map((preview, index) => (
                         <View key={index} position="relative" width="150px">
@@ -798,20 +798,20 @@ export default function EditProjectClient({ locale, projectId }: EditProjectClie
               {/* Skills */}
               <Card variation="outlined" padding="large">
                 <Heading level={4} color={isDark ? 'white' : 'black'} marginBottom="medium">
-                  Habilidades/Tecnologías
+                  {t('projects.skills')}
                 </Heading>
                 
                 <Flex gap="small" marginBottom="medium">
                   <TextField
-                    label="Habilidad"
+                    label={t('projects.add_skill')}
                     value={skillInput}
                     onChange={(e) => setSkillInput(e.target.value)}
-                    placeholder="Ej: React, Node.js, AWS"
+                    placeholder={t('projects.skill_placeholder')}
                     onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addSkill())}
                     flex="1"
                   />
                   <Button type="button" onClick={addSkill}>
-                    Agregar
+                    {t('projects.add_skill')}
                   </Button>
                 </Flex>
 
@@ -837,15 +837,15 @@ export default function EditProjectClient({ locale, projectId }: EditProjectClie
                 
                 <Flex gap="small" marginBottom="medium">
                   <TextField
-                    label="Tag"
+                    label={t('projects.add_tag')}
                     value={tagInput}
                     onChange={(e) => setTagInput(e.target.value)}
-                    placeholder="Ej: web, mobile, cloud"
+                    placeholder={t('projects.tag_placeholder')}
                     onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
                     flex="1"
                   />
                   <Button type="button" onClick={addTag}>
-                    Agregar
+                    {t('projects.add_tag')}
                   </Button>
                 </Flex>
 
@@ -866,42 +866,42 @@ export default function EditProjectClient({ locale, projectId }: EditProjectClie
               {/* Configuración */}
               <Card variation="outlined" padding="large">
                 <Heading level={4} color={isDark ? 'white' : 'black'} marginBottom="medium">
-                  Configuración
+                  {t('projects.metadata')}
                 </Heading>
                 
                 <Flex direction="column" gap="medium">
                   <SelectField
-                    label="Categoría"
+                    label={t('projects.category_label')}
                     value={formData.categories}
                     onChange={(e) => handleInputChange('categories', e.target.value)}
                   >
-                    <option value="Personal">Personal</option>
-                    <option value="Professional">Profesional</option>
-                    <option value="Academic">Académico</option>
-                    <option value="Research">Investigación</option>
-                    <option value="Hackathon">Hackathon</option>
+                    <option value="Personal">{t('projects.category_personal')}</option>
+                    <option value="Professional">{t('projects.category_professional')}</option>
+                    <option value="Academic">{t('projects.category_academic')}</option>
+                    <option value="Research">{t('projects.category_research')}</option>
+                    <option value="Hackathon">{t('projects.category_hackathon')}</option>
                   </SelectField>
 
                   <SelectField
-                    label="Estado"
+                    label={t('projects.status_label')}
                     value={formData.status}
                     onChange={(e) => handleInputChange('status', e.target.value)}
                   >
-                    <option value="Draft">Borrador</option>
-                    <option value="Published">Publicado</option>
-                    <option value="Archived">Archivado</option>
+                    <option value="Draft">{t('projects.status_draft')}</option>
+                    <option value="Published">{t('projects.status_published')}</option>
+                    <option value="Archived">{t('projects.status_archived')}</option>
                   </SelectField>
 
                   <Flex gap="large">
                     <TextField
-                      label="Fecha de Inicio"
+                      label={t('projects.start_date_label')}
                       type="date"
                       value={formData.startDate}
                       onChange={(e) => handleInputChange('startDate', e.target.value)}
                     />
 
                     <TextField
-                      label="Fecha de Fin"
+                      label={t('projects.end_date_label')}
                       type="date"
                       value={formData.endDate}
                       onChange={(e) => handleInputChange('endDate', e.target.value)}
@@ -909,7 +909,7 @@ export default function EditProjectClient({ locale, projectId }: EditProjectClie
                   </Flex>
 
                   <SwitchField
-                    label="Proyecto Destacado"
+                    label={t('projects.featured_label')}
                     isChecked={formData.featured}
                     onChange={(e) => handleInputChange('featured', e.target.checked)}
                   />
@@ -925,7 +925,7 @@ export default function EditProjectClient({ locale, projectId }: EditProjectClie
                   onClick={() => router.push(getLocalizedPath('/admin/projects'))}
                   isDisabled={isLoading}
                 >
-                  Cancelar
+                  {t('projects.back_to_projects')}
                 </Button>
 
                 <Button
@@ -933,10 +933,10 @@ export default function EditProjectClient({ locale, projectId }: EditProjectClie
                   variation="primary"
                   isDisabled={isLoading || !formData.title.trim() || !formData.description.trim()}
                   isLoading={isLoading}
-                  loadingText="Actualizando..."
+                  loadingText={t('projects.saving')}
                 >
                   <Save size={16} />
-                  Actualizar Proyecto
+                  {t('projects.save_changes')}
                 </Button>
               </Flex>
             </Flex>

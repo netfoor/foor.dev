@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/context/auth-context';
 import { useTheme } from '@/hooks/useTheme';
+import { useTranslation } from '@/lib/i18n/client';
 import { View, Flex, Text, Card, Loader } from '@aws-amplify/ui-react';
 import Link from 'next/link';
 import { 
@@ -32,6 +33,8 @@ import type { Schema } from '../../../../amplify/data/resource';
 export default function AdminDashboard() {
   const { userAttributes, isAdmin } = useAuth();
   const { mode } = useTheme();
+  const { t: tAdmin } = useTranslation('admin');
+  const { t: tCommon } = useTranslation('common');
   const [stats, setStats] = useState({
     projects: 0,
     certifications: 0,
@@ -43,7 +46,7 @@ export default function AdminDashboard() {
     loading: true
   });
 
-  const name = userAttributes?.givenName || userAttributes?.name || 'Administrador';
+  const name = userAttributes?.givenName || userAttributes?.name || tAdmin('administrator');
 
   // Obtener estadísticas de cada modelo
   useEffect(() => {
@@ -91,92 +94,92 @@ export default function AdminDashboard() {
   // Configuración de las secciones del dashboard
   const dashboardSections = [
     {
-      title: 'Proyectos',
+      title: tAdmin('sections.projects'),
       count: stats.projects,
       icon: FolderOpen,
       href: '/admin/projects',
       color: '#3B82F6',
-      description: 'Gestiona tu portafolio de proyectos'
+      description: tAdmin('sections.manage_portfolio')
     },
     {
-      title: 'Certificaciones',
+      title: tAdmin('sections.certifications'),
       count: stats.certifications,
       icon: Award,
       href: '/admin/certifications',
       color: '#F59E0B',
-      description: 'Administra tus certificaciones'
+      description: tAdmin('sections.manage_certifications')
     },
     {
-      title: 'Educación',
+      title: tAdmin('sections.education'),
       count: stats.education,
       icon: GraduationCap,
       href: '/admin/education',
       color: '#10B981',
-      description: 'Gestiona tu formación académica'
+      description: tAdmin('sections.manage_education')
     },
     {
-      title: 'Experiencias',
+      title: tAdmin('sections.experiences'),
       count: stats.experiences,
       icon: Briefcase,
       href: '/admin/experiences',
       color: '#8B5CF6',
-      description: 'Administra tu experiencia laboral'
+      description: tAdmin('sections.manage_experiences')
     },
     {
-      title: 'Idiomas',
+      title: tAdmin('sections.languages'),
       count: stats.languages,
       icon: Languages,
       href: '/admin/languages',
       color: '#06B6D4',
-      description: 'Gestiona tus competencias linguísticas'
+      description: tAdmin('sections.manage_languages')
     },
     {
-      title: 'Reconocimientos',
+      title: tAdmin('sections.recognitions'),
       count: stats.recognitions,
       icon: Award,
       href: '/admin/recognitions',
       color: '#EF4444',
-      description: 'Administra tus reconocimientos'
+      description: tAdmin('sections.manage_recognitions')
     },
     {
-      title: 'Publicaciones',
+      title: tAdmin('sections.publications'),
       count: stats.publications,
       icon: FileText,
       href: '/admin/publications',
       color: '#84CC16',
-      description: 'Gestiona tus publicaciones'
+      description: tAdmin('sections.manage_publications')
     }
   ];
 
   // Métricas destacadas
   const highlightMetrics = [
     {
-      label: 'Total de Contenidos',
+      label: tCommon('total_content'),
       value: stats.projects + stats.certifications + stats.education + stats.experiences + stats.languages + stats.recognitions + stats.publications,
       icon: Activity,
       color: '#3B82F6',
       change: '+12%'
     },
     {
-      label: 'Proyectos Activos',
+      label: tCommon('active_projects'),
       value: stats.projects,
       icon: TrendingUp,
       color: '#10B981',
       change: '+8%'
     },
     {
-      label: 'Certificaciones',
+      label: tAdmin('sections.certifications'),
       value: stats.certifications,
       icon: Award,
       color: '#F59E0B',
       change: '+15%'
     },
     {
-      label: 'Años de Experiencia',
+      label: tCommon('years_experience'),
       value: '5+',
       icon: Briefcase,
       color: '#8B5CF6',
-      change: 'Activo'
+      change: tCommon('active')
     }
   ];
 
@@ -185,7 +188,7 @@ export default function AdminDashboard() {
       <View style={{ padding: '2rem', textAlign: 'center' }}>
         <Loader size="large" />
         <Text style={{ marginTop: '1rem', color: mode === 'dark' ? '#CBD5E1' : '#64748B' }}>
-          Cargando dashboard...
+          {tCommon('loading_dashboard')}
         </Text>
       </View>
     );
@@ -201,7 +204,7 @@ export default function AdminDashboard() {
             marginBottom: '0.5rem'
           }}
         >
-          Bienvenido, {name} 👋
+          {tAdmin('welcome')}, {name} 👋
         </Text>
         <Text
           fontSize={{ base: '1rem', medium: '1.125rem' }}
@@ -209,7 +212,7 @@ export default function AdminDashboard() {
             color: mode === 'dark' ? '#94A3B8' : '#64748B'
           }}
         >
-          Gestiona todo el contenido de tu portafolio desde aquí
+          {tAdmin('manage_portfolio')}
         </Text>
         
         {isAdmin && (
@@ -228,7 +231,7 @@ export default function AdminDashboard() {
               fontWeight="600"
               style={{ color: '#10B981' }}
             >
-              ✓ Privilegios de administrador activos
+              ✓ {tCommon('admin_privileges_active')}
             </Text>
           </View>
         )}
@@ -242,7 +245,7 @@ export default function AdminDashboard() {
             marginBottom: '1rem'
           }}
         >
-          Resumen General
+          {tCommon('general_overview')}
         </Text>
         <View 
           className="metrics-gallery"
