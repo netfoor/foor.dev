@@ -16,6 +16,7 @@ import {
   Alert,
   Divider
 } from '@aws-amplify/ui-react';
+import '../../admin.css';
 import { 
   ArrowLeft, 
   Save, 
@@ -30,6 +31,90 @@ import type { Schema } from '../../../../../../amplify/data/resource';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation, useLocalizedPath } from '@/lib/i18n/client';
 import { FileUploadInput } from './FileUploadInput';
+
+// Estilos personalizados para mejorar el contraste en tema oscuro
+const createProjectStyles = `
+  .create-project-form .amplify-field {
+    margin-bottom: 1rem;
+  }
+  
+  .create-project-form .amplify-field > label {
+    color: var(--form-label-color) !important;
+    font-weight: 600 !important;
+    margin-bottom: 0.5rem !important;
+    display: block !important;
+    font-size: 0.95rem !important;
+  }
+  
+  .create-project-form .amplify-input,
+  .create-project-form .amplify-textarea,
+  .create-project-form .amplify-select select {
+    background-color: var(--form-input-bg) !important;
+    border: 1px solid var(--form-input-border) !important;
+    color: var(--form-input-text) !important;
+    border-radius: 6px !important;
+    padding: 0.75rem !important;
+    font-size: 0.9rem !important;
+  }
+  
+  .create-project-form .amplify-input::placeholder,
+  .create-project-form .amplify-textarea::placeholder {
+    color: var(--form-placeholder-color) !important;
+    opacity: 0.8 !important;
+    font-weight: 400 !important;
+  }
+  
+  .create-project-form .amplify-input:focus,
+  .create-project-form .amplify-textarea:focus,
+  .create-project-form .amplify-select select:focus {
+    border-color: var(--form-focus-border) !important;
+    box-shadow: 0 0 0 2px var(--form-focus-shadow) !important;
+    outline: none !important;
+  }
+  
+  .create-project-form .amplify-field-group__control .amplify-field__description {
+    color: var(--form-description-color) !important;
+    font-size: 0.8rem !important;
+    margin-top: 0.25rem !important;
+    font-weight: 500 !important;
+  }
+  
+  .create-project-form .amplify-switchfield label {
+    color: var(--form-label-color) !important;
+    font-weight: 600 !important;
+  }
+
+  .create-project-form .amplify-select select {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'><path fill='%23666' d='M2 0L0 2h4zm0 5L0 3h4z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 0.65rem;
+    padding-right: 2.5rem !important;
+  }
+  /* Responsive design improvements */
+  @media (max-width: 768px) {
+    .create-project-form .skill-tag-flex {
+      flex-direction: column !important;
+      align-items: stretch !important;
+    }
+    
+    .create-project-form .skill-tag-button {
+      width: 100% !important;
+      margin-top: 0.5rem !important;
+      min-width: auto !important;
+    }
+    
+    .create-project-form .amplify-flex {
+      flex-direction: column !important;
+    }
+    
+    .create-project-form .amplify-button {
+      width: 100% !important;
+      margin-top: 0.5rem !important;
+    }
+  }
+`;
 
 // Generar el cliente de Amplify
 const client = generateClient<Schema>();
@@ -54,7 +139,7 @@ interface ProjectFormData {
 
 function CreateProjectClient(): React.JSX.Element {  
   // Estados para el formulario
-  const themeContext = useTheme();
+  const { mode } = useTheme();
   const { t } = useTranslation('admin');
   const router = useRouter();
   const getLocalizedPath = useLocalizedPath();
@@ -285,35 +370,65 @@ function CreateProjectClient(): React.JSX.Element {
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const isDark = false; // Temporal para testing
+  };  const isDark = mode === 'dark';
+  // Definir variables CSS para el tema con mejor contraste
+  const cssVariables = {
+    '--form-label-color': isDark ? '#F8FAFC' : '#0F172A',
+    '--form-input-bg': isDark ? '#1E293B' : '#FFFFFF',
+    '--form-input-border': isDark ? '#64748B' : '#D1D5DB',
+    '--form-input-text': isDark ? '#F8FAFC' : '#111827',
+    '--form-placeholder-color': isDark ? '#94A3B8' : '#6B7280',
+    '--form-focus-border': isDark ? '#3B82F6' : '#2563EB',
+    '--form-focus-shadow': isDark ? 'rgba(59, 130, 246, 0.35)' : 'rgba(37, 99, 235, 0.25)',
+    '--form-description-color': isDark ? '#D1D5DB' : '#6B7280'
+  } as React.CSSProperties;
 
   return (
-    <View 
-      padding="xl" 
-      backgroundColor={isDark ? 'background.primary' : 'background.secondary'}
-      minHeight="100vh"
-    >
-      <Card
-        variation="elevated"
-        padding="xl"
-        backgroundColor={isDark ? 'background.secondary' : 'background.primary'}
-        maxWidth="800px"
-        margin="0 auto"
-      >        {/* Header */}
+    <>
+      <style dangerouslySetInnerHTML={{ __html: createProjectStyles }} />
+      <View 
+        style={{
+          padding: '1.5rem',
+          backgroundColor: isDark ? '#0F172A' : '#F8FAFC',
+          minHeight: '100vh',
+          ...cssVariables
+        }}
+        className="create-project-form"
+      ><Card
+        style={{
+          padding: '2rem',
+          backgroundColor: isDark ? 'rgba(51, 65, 85, 0.9)' : 'rgba(255, 255, 255, 0.9)',
+          border: isDark ? '1px solid rgba(148, 163, 184, 0.1)' : '1px solid rgba(203, 213, 225, 0.2)',
+          borderRadius: '12px',
+          backdropFilter: 'blur(10px)',
+          maxWidth: '800px',
+          margin: '0 auto'
+        }}
+      >{/* Header */}
         <Flex direction="column" gap="large">
           <Flex justifyContent="space-between" alignItems="center">
-            <Flex alignItems="center" gap="medium">
-              <Button
-                variation="link"
+            <Flex alignItems="center" gap="medium">              <Button
+                style={{
+                  backgroundColor: 'transparent',
+                  border: 'none',
+                  color: isDark ? '#CBD5E1' : '#64748B',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem'
+                }}
                 onClick={() => router.push(getLocalizedPath('/admin/projects'))}
-                color={isDark ? 'white' : 'black'}
               >
                 <ArrowLeft size={20} />
               </Button>
-              <Heading level={2} color={isDark ? 'white' : 'black'}>
-                {t('admin.createProject')}
+              <Heading 
+                level={2} 
+                style={{
+                  color: isDark ? '#F1F5F9' : '#1E293B',
+                  margin: 0
+                }}
+              >
+                Crear Nuevo Proyecto
               </Heading>
             </Flex>
           </Flex>
@@ -331,12 +446,24 @@ function CreateProjectClient(): React.JSX.Element {
           )}
 
           {/* Formulario */}
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} className="create-project-form">
             <Flex direction="column" gap="large">
-              
-              {/* Información básica */}
-              <Card variation="outlined" padding="large">
-                <Heading level={4} color={isDark ? 'white' : 'black'} marginBottom="medium">
+                {/* Información básica */}
+              <Card 
+                style={{
+                  padding: '1.5rem',
+                  backgroundColor: isDark ? 'rgba(30, 41, 59, 0.5)' : 'rgba(248, 250, 252, 0.8)',
+                  border: isDark ? '1px solid rgba(148, 163, 184, 0.1)' : '1px solid rgba(203, 213, 225, 0.2)',
+                  borderRadius: '8px'
+                }}
+              >
+                <Heading 
+                  level={4} 
+                  style={{
+                    color: isDark ? '#F1F5F9' : '#1E293B',
+                    marginBottom: '1rem'
+                  }}
+                >
                   Información Básica
                 </Heading>
                 
@@ -382,11 +509,22 @@ function CreateProjectClient(): React.JSX.Element {
                     placeholder="Ej: Universidad, Empresa, Remoto"
                   />
                 </Flex>
-              </Card>
-
-              {/* URLs y Enlaces */}
-              <Card variation="outlined" padding="large">
-                <Heading level={4} color={isDark ? 'white' : 'black'} marginBottom="medium">
+              </Card>              {/* URLs y Enlaces */}
+              <Card 
+                style={{
+                  padding: '1.5rem',
+                  backgroundColor: isDark ? 'rgba(30, 41, 59, 0.5)' : 'rgba(248, 250, 252, 0.8)',
+                  border: isDark ? '1px solid rgba(148, 163, 184, 0.1)' : '1px solid rgba(203, 213, 225, 0.2)',
+                  borderRadius: '8px'
+                }}
+              >
+                <Heading 
+                  level={4} 
+                  style={{
+                    color: isDark ? '#F1F5F9' : '#1E293B',
+                    marginBottom: '1rem'
+                  }}
+                >
                   Enlaces
                 </Heading>
                 
@@ -415,33 +553,48 @@ function CreateProjectClient(): React.JSX.Element {
                     type="url"
                   />
                 </Flex>
-              </Card>
-
-              {/* Imagen Principal */}
-              <Card variation="outlined" padding="large">                <Heading level={4} color={isDark ? 'white' : 'black'} marginBottom="medium">
+              </Card>              {/* Imagen Principal */}
+              <Card 
+                style={{
+                  padding: '1.5rem',
+                  backgroundColor: isDark ? 'rgba(30, 41, 59, 0.5)' : 'rgba(248, 250, 252, 0.8)',
+                  border: isDark ? '1px solid rgba(148, 163, 184, 0.1)' : '1px solid rgba(203, 213, 225, 0.2)',
+                  borderRadius: '8px'
+                }}
+              >
+                <Heading 
+                  level={4} 
+                  style={{
+                    color: isDark ? '#F1F5F9' : '#1E293B',
+                    marginBottom: '1rem'
+                  }}                >
                   Imagen Principal
                 </Heading>
 
                 {!mainImagePreview ? (
-                  <FileUploadInput onFileSelect={handleMainImageFile}>
-                    <div
-                      style={{
-                        display: 'block',
-                        padding: '2rem',
-                        border: `2px dashed ${isDark ? '#444' : '#ccc'}`,
-                        borderRadius: '8px',
-                        textAlign: 'center',
-                        cursor: 'pointer',
-                        backgroundColor: isDark ? '#2a2a2a' : '#f5f5f5'
-                      }}
-                    >
-                      <Flex direction="column" alignItems="center" gap="medium">
-                        <ImageIcon size={48} color={isDark ? '#888' : '#666'} />
-                        <Text color={isDark ? 'font.secondary' : 'font.primary'}>
-                          Haz clic para subir imagen principal (máx. 5MB)
-                        </Text>
-                      </Flex>
-                    </div>                  </FileUploadInput>
+                  <FileUploadInput onFileSelect={handleMainImageFile}>                      <div
+                        style={{
+                          display: 'block',
+                          padding: '2rem',
+                          border: `2px dashed ${isDark ? '#475569' : '#CBD5E1'}`,
+                          borderRadius: '8px',
+                          textAlign: 'center',
+                          cursor: 'pointer',
+                          backgroundColor: isDark ? 'rgba(51, 65, 85, 0.3)' : 'rgba(248, 250, 252, 0.8)',
+                          transition: 'all 0.2s ease'
+                        }}
+                      >
+                        <Flex direction="column" alignItems="center" gap="medium">
+                          <ImageIcon size={48} color={isDark ? '#94A3B8' : '#64748B'} />
+                          <Text 
+                            style={{
+                              color: isDark ? '#CBD5E1' : '#64748B'
+                            }}
+                          >
+                            Haz clic para subir imagen principal (máx. 5MB)
+                          </Text>
+                        </Flex>
+                      </div></FileUploadInput>
                 ) : (
                   <View position="relative">
                     <img
@@ -453,46 +606,68 @@ function CreateProjectClient(): React.JSX.Element {
                         objectFit: 'cover',
                         borderRadius: '8px'
                       }}
-                    />
-                    <Button
+                    />                    <Button
                       type="button"
-                      variation="destructive"
-                      size="small"
-                      position="absolute"
-                      top="8px"
-                      right="8px"
+                      style={{
+                        position: 'absolute',
+                        top: '8px',
+                        right: '8px',
+                        backgroundColor: 'rgba(239, 68, 68, 0.9)',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '6px',
+                        padding: '0.5rem',
+                        cursor: 'pointer'
+                      }}
                       onClick={removeMainImage}
                     >
                       <X size={16} />
                     </Button>
                   </View>
                 )}
-              </Card>{/* Galería */}
-              <Card variation="outlined" padding="large">
-                <Heading level={4} color={isDark ? 'white' : 'black'} marginBottom="medium">
+              </Card>              {/* Galería */}
+              <Card 
+                style={{
+                  padding: '1.5rem',
+                  backgroundColor: isDark ? 'rgba(30, 41, 59, 0.5)' : 'rgba(248, 250, 252, 0.8)',
+                  border: isDark ? '1px solid rgba(148, 163, 184, 0.1)' : '1px solid rgba(203, 213, 225, 0.2)',
+                  borderRadius: '8px'
+                }}
+              >
+                <Heading 
+                  level={4} 
+                  style={{
+                    color: isDark ? '#F1F5F9' : '#1E293B',
+                    marginBottom: '1rem'
+                  }}
+                >
                   Galería (máx. 10 imágenes)
                 </Heading>
 
                 <FileUploadInput 
                   onMultipleFilesSelect={handleGalleryImageFiles}
                   multiple={true}
-                >
-                  <div
+                >                  <div
                     style={{
                       display: 'block',
-                      padding: '1.5rem',
-                      border: `2px dashed ${isDark ? '#444' : '#ccc'}`,
+                      padding: '2rem',
+                      border: `2px dashed ${isDark ? '#475569' : '#CBD5E1'}`,
                       borderRadius: '8px',
                       textAlign: 'center',
                       cursor: 'pointer',
-                      backgroundColor: isDark ? '#2a2a2a' : '#f5f5f5',
+                      backgroundColor: isDark ? 'rgba(51, 65, 85, 0.3)' : 'rgba(248, 250, 252, 0.8)',
+                      transition: 'all 0.2s ease',
                       marginBottom: '1rem'
                     }}
                   >
                     <Flex direction="column" alignItems="center" gap="medium">
-                      <Plus size={24} color={isDark ? '#888' : '#666'} />
-                      <Text color={isDark ? 'font.secondary' : 'font.primary'}>
-                        Agregar imágenes a la galería
+                      <ImageIcon size={48} color={isDark ? '#94A3B8' : '#64748B'} />
+                      <Text 
+                        style={{
+                          color: isDark ? '#CBD5E1' : '#64748B'
+                        }}
+                      >
+                        Haz clic para subir imágenes de galería (máx. 10 imágenes, 5MB cada una)
                       </Text>
                     </Flex>
                   </div>
@@ -513,11 +688,17 @@ function CreateProjectClient(): React.JSX.Element {
                           }}
                         />                        <Button
                           type="button"
-                          variation="destructive"
-                          size="small"
-                          position="absolute"
-                          top="4px"
-                          right="4px"
+                          style={{
+                            position: 'absolute',
+                            top: '4px',
+                            right: '4px',
+                            backgroundColor: 'rgba(239, 68, 68, 0.9)',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '4px',
+                            padding: '0.25rem',
+                            cursor: 'pointer'
+                          }}
                           onClick={() => removeGalleryImage(index)}
                         >
                           <X size={12} />
@@ -526,28 +707,59 @@ function CreateProjectClient(): React.JSX.Element {
                     ))}
                   </Flex>
                 )}
-              </Card>
-
-              {/* Skills */}
-              <Card variation="outlined" padding="large">
-                <Heading level={4} color={isDark ? 'white' : 'black'} marginBottom="medium">
+              </Card>                {/* Skills */}
+              <Card 
+                style={{
+                  padding: '1.5rem',
+                  backgroundColor: isDark ? 'rgba(30, 41, 59, 0.5)' : 'rgba(248, 250, 252, 0.8)',
+                  border: isDark ? '1px solid rgba(148, 163, 184, 0.1)' : '1px solid rgba(203, 213, 225, 0.2)',
+                  borderRadius: '8px'
+                }}
+              >
+                <Heading 
+                  level={4} 
+                  style={{
+                    color: isDark ? '#F1F5F9' : '#1E293B',
+                    marginBottom: '1rem'
+                  }}
+                >
                   Habilidades/Tecnologías
                 </Heading>
-                  <Flex gap="small" marginBottom="medium">
-                  <TextField
-                    label="Habilidad"
-                    value={skillInput}
-                    onChange={(e) => setSkillInput(e.target.value)}
-                    placeholder="Ej: React, Node.js, AWS"
-                    onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addSkill())}
-                    flex="1"
-                  />
-                  <Button type="button" onClick={addSkill}>
+                
+                <div className="input-with-button-container">
+                  <div className="input-wrapper">
+                    <TextField
+                      label="Habilidad"
+                      value={skillInput}
+                      onChange={(e) => setSkillInput(e.target.value)}
+                      placeholder="Ej: React, Node.js, AWS"
+                      onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addSkill())}
+                      style={{ width: '100%' }}
+                    />
+                    
+                    
+
+                  </div>
+
+                  
+                  <Button 
+                    type="button" 
+                    onClick={addSkill}
+                    className="add-button"
+                    style={{
+                      backgroundColor: isDark ? '#3B82F6' : '#2563EB',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '6px',
+                      padding: '0.75rem 1rem',
+                      cursor: 'pointer'
+                    }}
+                  >
                     Agregar
                   </Button>
-                </Flex>
+                </div>
 
-                <Flex wrap="wrap" gap="small">
+                <div className="badges-container">
                   {formData.skills.map((skill) => (
                     <Badge
                       key={skill}
@@ -558,29 +770,55 @@ function CreateProjectClient(): React.JSX.Element {
                       {skill} ×
                     </Badge>
                   ))}
-                </Flex>
-              </Card>
-
-              {/* Tags */}
-              <Card variation="outlined" padding="large">
-                <Heading level={4} color={isDark ? 'white' : 'black'} marginBottom="medium">
+                </div>
+              </Card>                {/* Tags */}
+              <Card 
+                style={{
+                  padding: '1.5rem',
+                  backgroundColor: isDark ? 'rgba(30, 41, 59, 0.5)' : 'rgba(248, 250, 252, 0.8)',
+                  border: isDark ? '1px solid rgba(148, 163, 184, 0.1)' : '1px solid rgba(203, 213, 225, 0.2)',
+                  borderRadius: '8px'
+                }}
+              >
+                <Heading 
+                  level={4} 
+                  style={{
+                    color: isDark ? '#F1F5F9' : '#1E293B',
+                    marginBottom: '1rem'
+                  }}
+                >
                   Tags (SEO)
                 </Heading>
-                  <Flex gap="small" marginBottom="medium">
-                  <TextField
-                    label="Tag"
-                    value={tagInput}
-                    onChange={(e) => setTagInput(e.target.value)}
-                    placeholder="Ej: web, mobile, cloud"
-                    onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
-                    flex="1"
-                  />
-                  <Button type="button" onClick={addTag}>
+                
+                <div className="input-with-button-container">
+                  <div className="input-wrapper">
+                    <TextField
+                      label="Tag"
+                      value={tagInput}
+                      onChange={(e) => setTagInput(e.target.value)}
+                      placeholder="Ej: web, mobile, cloud"
+                      onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
+                      style={{ width: '100%' }}
+                    />
+                  </div>
+                  <Button 
+                    type="button" 
+                    onClick={addTag}
+                    className="add-button"
+                    style={{
+                      backgroundColor: isDark ? '#10B981' : '#059669',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '6px',
+                      padding: '0.75rem 1rem',
+                      cursor: 'pointer'
+                    }}
+                  >
                     Agregar
                   </Button>
-                </Flex>
+                </div>
 
-                <Flex wrap="wrap" gap="small">
+                <div className="badges-container">
                   {formData.tags.map((tag) => (
                     <Badge
                       key={tag}
@@ -591,12 +829,23 @@ function CreateProjectClient(): React.JSX.Element {
                       {tag} ×
                     </Badge>
                   ))}
-                </Flex>
-              </Card>
-
-              {/* Configuración */}
-              <Card variation="outlined" padding="large">
-                <Heading level={4} color={isDark ? 'white' : 'black'} marginBottom="medium">
+                </div>
+              </Card>{/* Configuración */}
+              <Card 
+                style={{
+                  padding: '1.5rem',
+                  backgroundColor: isDark ? 'rgba(30, 41, 59, 0.5)' : 'rgba(248, 250, 252, 0.8)',
+                  border: isDark ? '1px solid rgba(148, 163, 184, 0.1)' : '1px solid rgba(203, 213, 225, 0.2)',
+                  borderRadius: '8px'
+                }}
+              >
+                <Heading 
+                  level={4} 
+                  style={{
+                    color: isDark ? '#F1F5F9' : '#1E293B',
+                    marginBottom: '1rem'
+                  }}
+                >
                   Configuración
                 </Heading>
                 
@@ -621,14 +870,16 @@ function CreateProjectClient(): React.JSX.Element {
                     <option value="Draft">Borrador</option>
                     <option value="Published">Publicado</option>
                     <option value="Archived">Archivado</option>
-                  </SelectField>
-
-                  <Flex gap="large">
+                  </SelectField>                  <Flex 
+                    direction={{ base: 'column', medium: 'row' }} 
+                    gap="large"
+                  >
                     <TextField
                       label="Fecha de Inicio"
                       type="date"
                       value={formData.startDate}
                       onChange={(e) => handleInputChange('startDate', e.target.value)}
+                      style={{ flex: 1 }}
                     />
 
                     <TextField
@@ -636,6 +887,7 @@ function CreateProjectClient(): React.JSX.Element {
                       type="date"
                       value={formData.endDate}
                       onChange={(e) => handleInputChange('endDate', e.target.value)}
+                      style={{ flex: 1 }}
                     />
                   </Flex>
 
@@ -647,33 +899,58 @@ function CreateProjectClient(): React.JSX.Element {
                 </Flex>
               </Card>
 
-              <Divider />
-
-              {/* Botones de acción */}
-              <Flex justifyContent="space-between" gap="medium">
+              <Divider />              {/* Botones de acción */}
+              <Flex 
+                direction={{ base: 'column', medium: 'row' }}
+                justifyContent="space-between" 
+                gap="medium"
+              >
                 <Button
-                  variation="link"
                   onClick={() => router.push(getLocalizedPath('/admin/projects'))}
-                  isDisabled={isLoading}
+                  disabled={isLoading}
+                  style={{
+                    backgroundColor: 'transparent',
+                    color: isDark ? '#CBD5E1' : '#64748B',
+                    border: isDark ? '1px solid #475569' : '1px solid #CBD5E1',
+                    borderRadius: '6px',
+                    padding: '0.75rem 1.5rem',
+                    cursor: 'pointer',
+                    fontSize: '0.9rem',
+                    fontWeight: '500'
+                  }}
                 >
                   Cancelar
                 </Button>
 
                 <Button
                   type="submit"
-                  variation="primary"
-                  isDisabled={isLoading || !formData.title.trim() || !formData.description.trim()}
-                  isLoading={isLoading}
-                  loadingText="Creando..."
+                  disabled={isLoading || !formData.title.trim() || !formData.description.trim()}
+                  style={{
+                    backgroundColor: isDark ? '#3B82F6' : '#2563EB',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '6px',
+                    padding: '0.75rem 1.5rem',
+                    cursor: isLoading ? 'not-allowed' : 'pointer',
+                    opacity: (isLoading || !formData.title.trim() || !formData.description.trim()) ? 0.6 : 1,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.5rem',
+                    fontSize: '0.9rem',
+                    fontWeight: '600',
+                    minWidth: '160px'
+                  }}
                 >
                   <Save size={16} />
-                  Crear Proyecto
+                  {isLoading ? 'Creando...' : 'Crear Proyecto'}
                 </Button>
               </Flex>
             </Flex>
           </form>        </Flex>
       </Card>
     </View>
+    </>
   );
 }
 
