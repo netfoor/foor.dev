@@ -1,5 +1,22 @@
 /* Admin Panel Responsive Styles */
 
+/* Contenedor principal del admin - respeta la arquitectura de la app */
+.admin-main-content {
+  /* En desktop, dejar espacio para sidebar cuando esté visible */
+  margin-left: 0;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Asegurar que el contenido del admin no cause overflow */
+.admin-container {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
 /* Base responsive utilities */
 .hidden {
   display: none !important;
@@ -89,13 +106,13 @@
   .md\:block {
     display: none !important;
   }
-    /* Mobile styles - ancho completo en móvil */
+  
+  /* Mobile styles - ancho completo en móvil */
   .admin-main-content {
     margin-left: 0 !important;
-    width: 100vw !important;
-    max-width: 100vw !important;
+    width: 100% !important;
+    max-width: 100% !important;
     padding: 1rem !important;
-    padding-top: 2rem !important;
     box-sizing: border-box !important;
   }
 }

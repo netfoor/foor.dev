@@ -114,4 +114,35 @@
   .main-content-lg {
     @apply pt-[80px]; /* Más espacio para casos especiales */
   }
+    /* Estilos para el scroll to top button */
+  .scroll-to-top-button {
+    /* Asegurar que el botón siempre esté por encima del contenido */
+    z-index: 9999 !important;
+    position: fixed !important;
+    pointer-events: auto !important;
+    
+    /* Smooth transitions */
+    transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+    
+    /* Safe area para dispositivos con notch */
+    @supports (bottom: env(safe-area-inset-bottom)) {
+      bottom: calc(24px + env(safe-area-inset-bottom)) !important;
+    }
+    
+    @supports (right: env(safe-area-inset-right)) {
+      right: calc(24px + env(safe-area-inset-right)) !important;
+    }
+  }
+  
+  /* Mejoras de accesibilidad para el botón */
+  @media (prefers-reduced-motion: reduce) {
+    .scroll-to-top-button {
+      transition: none !important;
+    }
+    
+    .scroll-to-top-button * {
+      transition: none !important;
+      animation: none !important;
+    }
+  }
 }

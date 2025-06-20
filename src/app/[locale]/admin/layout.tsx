@@ -54,33 +54,32 @@ export default function AdminLayout({
       return pathname === href;
     }
     return pathname?.startsWith(href);
-  };
-  return (
+  };  return (
     <AuthGuardStable role="admin" redirectTo="/login">
       <View
+        className="main-content"
         style={{
-          minHeight: 'calc(100vh - 4rem)',
           background: mode === 'dark' 
             ? 'linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #334155 100%)'
             : 'linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 50%, #E2E8F0 100%)'
         }}
-      >
-        {/* Mobile Header */}
+      >        {/* Admin Header - posicionado sticky dentro del contenido */}
         <View
           style={{
             backgroundColor: mode === 'dark' ? 'rgba(51, 65, 85, 0.95)' : 'rgba(255, 255, 255, 0.95)',
             borderBottom: mode === 'dark' ? '1px solid rgba(148, 163, 184, 0.1)' : '1px solid rgba(203, 213, 225, 0.2)',
             backdropFilter: 'blur(10px)',
             position: 'sticky',
-            top: '4rem',
-            zIndex: 20
+            top: '0', // Sticky dentro del contenido
+            zIndex: 20,
+            margin: '-20px -1rem 0 -1rem', // Compensar padding del contenedor
+            padding: '60px 1rem 0 1rem' // Mantener el espacio interno y lateral
           }}
-        >
-          <Flex
+        >          <Flex
             direction="row"
             justifyContent="space-between"
             alignItems="center"
-            padding={{ base: '1rem', medium: '1rem 2rem' }}
+            padding={{ base: '1rem', medium: '1rem 1rem' }} // Reducido el padding lateral ya que se maneja en el contenedor
             maxWidth="100%"
           >
             {/* Mobile Menu Button + Title */}
@@ -118,14 +117,12 @@ export default function AdminLayout({
               </View>
               <LogoutButton compact={true} variant="outline" />
             </Flex>
-          </Flex>        </View>
-
-        {/* Mobile Overlay */}
+          </Flex>        </View>        {/* Mobile Overlay */}
         {sidebarOpen && (
           <View
             style={{
               position: 'fixed',
-              top: 0,
+              top: '60px', // Empezar después del NavBar principal
               left: 0,
               right: 0,
               bottom: 0,
@@ -135,24 +132,23 @@ export default function AdminLayout({
             onClick={() => setSidebarOpen(false)}
             className="md:hidden"
           />
-        )}
-
-        {/* Sidebar Navigation */}
+        )}        {/* Sidebar Navigation */}
         <View
           className="admin-sidebar sidebar-transition"
           style={{
             position: 'fixed',
-            top: sidebarOpen ? '0' : '8rem', // Start below header when closed
+            top: '60px', // Empezar después del NavBar principal
             left: '0',
             width: '280px',
-            height: sidebarOpen ? '100vh' : 'calc(100vh - 8rem)',
+            height: 'calc(100vh - 60px)', // Altura disponible después del NavBar
             backgroundColor: mode === 'dark' ? 'rgba(30, 41, 59, 0.98)' : 'rgba(255, 255, 255, 0.98)',
             borderRight: mode === 'dark' ? '1px solid rgba(148, 163, 184, 0.1)' : '1px solid rgba(203, 213, 225, 0.2)',
             backdropFilter: 'blur(20px)',
             transform: sidebarOpen ? 'translateX(0)' : 'translateX(-100%)',
             transition: 'transform 0.3s ease-in-out',
             zIndex: 30,
-            overflowY: 'auto'
+            overflowY: 'auto',
+            marginTop: '18px',
           }}
         >
           {/* Mobile Header in Sidebar */}
@@ -248,11 +244,11 @@ export default function AdminLayout({
           </View>
         </View>        {/* Main Content Container */}
         <View
-          className="admin-main-content"
+          className="admin-main-content admin-container"
           style={{
             padding: '1rem',
-            paddingTop: '2rem', // Espacio desde arriba para evitar superposición
-            minHeight: 'calc(100vh - 8rem)',
+            paddingTop: '1rem', // Reducido ya que el header maneja su propio spacing
+            minHeight: 'calc(100vh - 60px)', // Altura mínima después del NavBar principal
             transition: 'margin-left 0.3s ease-in-out'
           }}
         >

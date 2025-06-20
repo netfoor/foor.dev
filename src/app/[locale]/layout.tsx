@@ -4,6 +4,7 @@ import { SUPPORTED_LOCALES } from "@/lib/i18n/config";
 import type { SupportedLocale } from "@/lib/i18n/types";
 import { I18nProvider } from "@/components/providers/I18nProvider";
 import NavBar from "@/components/navigation/NavBar";
+import ScrollToTop from "@/components/ui/ScrollToTopFixed";
 
 interface LocaleLayoutProps {
   children: React.ReactNode;
@@ -21,13 +22,13 @@ export default async function LocaleLayout({
   // Verificar que el locale es válido
   if (!SUPPORTED_LOCALES.includes(locale as SupportedLocale)) {
     notFound();
-  }
-  return (
+  }  return (
     <I18nProvider locale={locale as SupportedLocale}>
       <NavBar />
       <main className="main-content">
         {children}
       </main>
+      <ScrollToTop />
     </I18nProvider>
   );
 }

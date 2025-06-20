@@ -4,7 +4,6 @@ import React from 'react';
 import { useAuth } from '@/context/auth-context';
 import { useTranslation } from '@/lib/i18n/client';
 import { useTheme } from '@/hooks/useTheme';
-import { Button } from '@aws-amplify/ui-react';
 import { LogOut, Loader2 } from 'lucide-react';
 
 interface LogoutButtonProps {
@@ -64,7 +63,7 @@ export function LogoutButton({
           ...baseStyles,
           backgroundColor: 'transparent',
           color: mode === 'dark' ? '#EF4444' : '#DC2626',
-          border: `1px solid ${mode === 'dark' ? '#EF4444' : '#DC2626'}`,
+          border: `2px solid ${mode === 'dark' ? '#EF4444' : '#DC2626'}`,
         };
       default: // secondary
         return {

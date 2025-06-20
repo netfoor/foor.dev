@@ -160,13 +160,16 @@
     "sidebar": "Sidebar",
     "footer": "Footer",
     "search_results": "Search results"
-  },
-  "footer": {
+  },  "footer": {
     "tagline": "AWS Cloud Engineer | Building scalable solutions",
     "social": {
       "visit": "Visit"
     },
     "rights": "All rights reserved",
     "built": "Built with modern cloud technologies and passion for innovation"
+  },
+  "scroll_to_top": {
+    "button": "Back to top",
+    "tooltip": "Back to top"
   }
 }
