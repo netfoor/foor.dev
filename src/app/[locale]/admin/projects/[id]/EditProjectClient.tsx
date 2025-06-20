@@ -536,7 +536,7 @@ function EditProjectClient({ locale, projectId }: EditProjectClientProps): React
       return uploadResults;
     } catch (error) {
       console.error('Error uploading files:', error);
-      throw new Error('Error al subir las imágenes');
+      throw new Error(t('projects.error_uploading_images'));
     }
   };
 
@@ -547,13 +547,12 @@ function EditProjectClient({ locale, projectId }: EditProjectClientProps): React
     setError('');
     setSuccess('');
 
-    try {
-      // Validaciones básicas
+    try {      // Validaciones básicas
       if (!formData.title.trim()) {
-        throw new Error('El título es requerido');
+        throw new Error(t('projects.error_title_required'));
       }
       if (!formData.description.trim()) {
-        throw new Error('La descripción es requerida');
+        throw new Error(t('projects.error_description_required'));
       }
 
       // Subir archivos
@@ -585,7 +584,7 @@ function EditProjectClient({ locale, projectId }: EditProjectClientProps): React
         throw new Error(result.errors[0].message);
       }
 
-      setSuccess('¡Proyecto actualizado exitosamente!');
+      setSuccess(t('projects.success_project_updated'));
       
       // Redirigir a la lista de proyectos después de 2 segundos
       setTimeout(() => {
@@ -593,7 +592,7 @@ function EditProjectClient({ locale, projectId }: EditProjectClientProps): React
       }, 2000);
 
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al actualizar el proyecto');
+      setError(err instanceof Error ? err.message : t('projects.error_loading_project'));
     } finally {
       setIsLoading(false);
     }
@@ -630,9 +629,8 @@ function EditProjectClient({ locale, projectId }: EditProjectClientProps): React
           gap: '1rem'
         }}
       >
-        <Loader size="large" />
-        <Text style={{ color: isDark ? '#CBD5E1' : '#64748B' }}>
-          Cargando proyecto...
+        <Loader size="large" />        <Text style={{ color: isDark ? '#CBD5E1' : '#64748B' }}>
+          {t('projects.loading_project')}
         </Text>
       </View>
     );
@@ -664,7 +662,7 @@ function EditProjectClient({ locale, projectId }: EditProjectClientProps): React
               color: isDark ? '#FCA5A5' : '#B91C1C'
             }}
           >
-            No se pudo encontrar el proyecto
+            {t('projects.project_not_found')}
           </Alert>
         </Card>
       </View>
@@ -718,7 +716,7 @@ function EditProjectClient({ locale, projectId }: EditProjectClientProps): React
                     margin: 0
                   }}
                 >
-                  Editar: {project.title}
+                  {t('projects.edit_project_title', { title: project.title })}
                 </Heading>
               </Flex>
             </Flex>
@@ -753,49 +751,48 @@ function EditProjectClient({ locale, projectId }: EditProjectClientProps): React
                       marginBottom: '1rem'
                     }}
                   >
-                    Información Básica
+                    {t('projects.basic_info')}
                   </Heading>
                   
-                  <Flex direction="column" gap="medium">
-                    <TextField
-                      label="Título *"
+                  <Flex direction="column" gap="medium">                    <TextField
+                      label={`${t('projects.title_label')} *`}
                       value={formData.title}
                       onChange={(e) => handleInputChange('title', e.target.value)}
                       required
-                      placeholder="Ej: Sistema de Gestión de Proyectos"
+                      placeholder={t('projects.title_placeholder')}
                     />
 
                     <TextField
-                      label="Slug"
+                      label={t('projects.slug_label')}
                       value={formData.slug}
                       onChange={(e) => handleInputChange('slug', e.target.value)}
-                      placeholder="Se genera automáticamente del título"
-                      descriptiveText="URL amigable para el proyecto"
+                      placeholder={t('projects.slug_placeholder')}
+                      descriptiveText={t('projects.slug_description')}
                     />
 
                     <TextAreaField
-                      label="Descripción *"
+                      label={`${t('projects.description_label')} *`}
                       value={formData.description}
                       onChange={(e) => handleInputChange('description', e.target.value)}
                       required
                       rows={4}
-                      placeholder="Descripción detallada del proyecto..."
+                      placeholder={t('projects.description_placeholder')}
                     />
 
                     <TextAreaField
-                      label="Meta Descripción (SEO)"
+                      label={t('projects.meta_description_label')}
                       value={formData.metaDescription}
                       onChange={(e) => handleInputChange('metaDescription', e.target.value)}
                       rows={2}
                       maxLength={160}
-                      placeholder="Descripción breve para motores de búsqueda (máx. 160 caracteres)"
+                      placeholder={t('projects.meta_description_placeholder')}
                     />
 
                     <TextField
-                      label="Lugar"
+                      label={t('projects.place_label')}
                       value={formData.place}
                       onChange={(e) => handleInputChange('place', e.target.value)}
-                      placeholder="Ej: Universidad, Empresa, Remoto"
+                      placeholder={t('projects.place_placeholder')}
                     />
                   </Flex>
                 </Card>                {/* URLs y Enlaces */}
@@ -814,31 +811,30 @@ function EditProjectClient({ locale, projectId }: EditProjectClientProps): React
                       marginBottom: '1rem'
                     }}
                   >
-                    Enlaces
+                    {t('projects.links')}
                   </Heading>
                   
-                  <Flex direction="column" gap="medium">
-                    <TextField
-                      label="URL del Proyecto"
+                  <Flex direction="column" gap="medium">                    <TextField
+                      label={t('projects.project_url_label')}
                       value={formData.projectUrl}
                       onChange={(e) => handleInputChange('projectUrl', e.target.value)}
-                      placeholder="https://ejemplo.com"
+                      placeholder={t('projects.project_url_placeholder')}
                       type="url"
                     />
 
                     <TextField
-                      label="URL de GitHub"
+                      label={t('projects.github_url_label')}
                       value={formData.githubUrl}
                       onChange={(e) => handleInputChange('githubUrl', e.target.value)}
-                      placeholder="https://github.com/usuario/proyecto"
+                      placeholder={t('projects.github_url_placeholder')}
                       type="url"
                     />
 
                     <TextField
-                      label="URL de Demo"
+                      label={t('projects.demo_url_label')}
                       value={formData.demoUrl}
                       onChange={(e) => handleInputChange('demoUrl', e.target.value)}
-                      placeholder="https://demo.ejemplo.com"
+                      placeholder={t('projects.demo_url_placeholder')}
                       type="url"
                     />
                   </Flex>
@@ -895,7 +891,7 @@ function EditProjectClient({ locale, projectId }: EditProjectClientProps): React
                     <Flex direction="column" alignItems="center" gap="medium">
                       <ImageIcon size={48} color={isDark ? '#888' : '#666'} />
                       <Text color={isDark ? 'font.secondary' : 'font.primary'}>
-                        {currentMainImageUrl ? t('projects.change_main_image') : t('projects.add_new_image')} (máx. 5MB)
+                      {currentMainImageUrl ? t('projects.change_main_image') : t('projects.add_new_image')} {t('projects.max_5mb')}
                       </Text>
                     </Flex>
                     <input
@@ -918,9 +914,8 @@ function EditProjectClient({ locale, projectId }: EditProjectClientProps): React
                       }}
                     />
                   </div>
-                ) : (
-                  <View>
-                    <Text fontWeight="bold" marginBottom="small">Nueva Imagen:</Text>
+                ) : (                  <View>
+                    <Text fontWeight="bold" marginBottom="small">{t('projects.new_images')}:</Text>
                     <View position="relative" display="inline-block">
                       <img
                         src={mainImagePreview}
@@ -951,7 +946,7 @@ function EditProjectClient({ locale, projectId }: EditProjectClientProps): React
               {/* Galería */}
               <Card variation="outlined" padding="large">
                 <Heading level={4} color={isDark ? 'white' : 'black'} marginBottom="medium">
-                  {t('projects.gallery')} (máx. 10 imágenes total)
+                  {t('projects.gallery')} {t('projects.max_10_images_total')}
                 </Heading>
                 
                 {/* Imágenes actuales */}
@@ -1076,24 +1071,21 @@ function EditProjectClient({ locale, projectId }: EditProjectClientProps): React
                     color: isDark ? '#F1F5F9' : '#1E293B',
                     marginBottom: '1rem'
                   }}
-                >
-                  Habilidades/Tecnologías
+                >                    {t('projects.skills_technologies')}
                 </Heading>
                 
                 <div className="input-with-button-container">
-                  <div className="input-wrapper">
-                    <TextField
-                      label="Habilidad"
+                  <div className="input-wrapper">                    <TextField
+                      label={t('projects.skill_label')}
                       value={skillInput}
                       onChange={(e) => setSkillInput(e.target.value)}
-                      placeholder="Ej: React, Node.js, AWS"
+                      placeholder={t('projects.skill_placeholder')}
                       onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addSkill())}
                       style={{ width: '100%' }}
                     />
                   </div>
                   <Button 
-                    type="button" 
-                    onClick={addSkill}
+                    type="button"                    onClick={addSkill}
                     className="add-button"
                     style={{
                       backgroundColor: isDark ? '#3B82F6' : '#2563EB',
@@ -1104,7 +1096,7 @@ function EditProjectClient({ locale, projectId }: EditProjectClientProps): React
                       cursor: 'pointer'
                     }}
                   >
-                    Agregar
+                    {t('projects.add_skill')}
                   </Button>
                 </div>
 
@@ -1138,16 +1130,15 @@ function EditProjectClient({ locale, projectId }: EditProjectClientProps): React
                     marginBottom: '1rem'
                   }}
                 >
-                  Tags (SEO)
+                  {t('projects.tags_seo')}
                 </Heading>
                 
                 <div className="input-with-button-container">
-                  <div className="input-wrapper">
-                    <TextField
-                      label="Tag"
+                  <div className="input-wrapper">                    <TextField
+                      label={t('projects.tag_label')}
                       value={tagInput}
                       onChange={(e) => setTagInput(e.target.value)}
-                      placeholder="Ej: web, mobile, cloud"
+                      placeholder={t('projects.tag_placeholder')}
                       onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
                       style={{ width: '100%' }}
                     />
@@ -1197,36 +1188,34 @@ function EditProjectClient({ locale, projectId }: EditProjectClientProps): React
                     marginBottom: '1rem'
                   }}
                 >
-                  Configuración
+                  {t('projects.configuration')}
                 </Heading>
                 
-                <Flex direction="column" gap="medium">
-                  <SelectField
-                    label="Categoría"
+                <Flex direction="column" gap="medium">                  <SelectField
+                    label={t('projects.category_label')}
                     value={formData.categories}
                     onChange={(e) => handleInputChange('categories', e.target.value)}
                   >
-                    <option value="Personal">Personal</option>
-                    <option value="Professional">Profesional</option>
-                    <option value="Academic">Académico</option>
-                    <option value="Research">Investigación</option>
-                    <option value="Hackathon">Hackathon</option>
+                    <option value="Personal">{t('projects.category_personal')}</option>
+                    <option value="Professional">{t('projects.category_professional')}</option>
+                    <option value="Academic">{t('projects.category_academic')}</option>
+                    <option value="Research">{t('projects.category_research')}</option>
+                    <option value="Hackathon">{t('projects.category_hackathon')}</option>
                   </SelectField>
 
                   <SelectField
-                    label="Estado"
+                    label={t('projects.status_label')}
                     value={formData.status}
                     onChange={(e) => handleInputChange('status', e.target.value)}
                   >
-                    <option value="Draft">Borrador</option>
-                    <option value="Published">Publicado</option>
-                    <option value="Archived">Archivado</option>
-                  </SelectField>                  <Flex 
+                    <option value="Draft">{t('projects.status_draft')}</option>
+                    <option value="Published">{t('projects.status_published')}</option>
+                    <option value="Archived">{t('projects.status_archived')}</option>
+                  </SelectField><Flex 
                     direction={{ base: 'column', medium: 'row' }} 
                     gap="large"
-                  >
-                    <TextField
-                      label="Fecha de Inicio"
+                  >                    <TextField
+                      label={t('projects.start_date_label')}
                       type="date"
                       value={formData.startDate}
                       onChange={(e) => handleInputChange('startDate', e.target.value)}
@@ -1234,16 +1223,14 @@ function EditProjectClient({ locale, projectId }: EditProjectClientProps): React
                     />
 
                     <TextField
-                      label="Fecha de Fin"
+                      label={t('projects.end_date_label')}
                       type="date"
                       value={formData.endDate}
                       onChange={(e) => handleInputChange('endDate', e.target.value)}
                       style={{ flex: 1 }}
                     />
-                  </Flex>
-
-                  <SwitchField
-                    label="Proyecto Destacado"
+                  </Flex>                  <SwitchField
+                    label={t('projects.featured_label')}
                     isChecked={formData.featured}
                     onChange={(e) => handleInputChange('featured', e.target.checked)}
                   />
@@ -1268,9 +1255,8 @@ function EditProjectClient({ locale, projectId }: EditProjectClientProps): React
                     cursor: 'pointer',
                     fontSize: '0.9rem',
                     fontWeight: '500'
-                  }}
-                >
-                  Cancelar
+                  }}                >
+                  {t('projects.cancel')}
                 </Button>
 
                 <Button
@@ -1294,7 +1280,7 @@ function EditProjectClient({ locale, projectId }: EditProjectClientProps): React
                   }}
                 >
                   <Save size={16} />
-                  {isLoading ? 'Guardando...' : 'Guardar Cambios'}
+                  {isLoading ? t('projects.saving') : t('projects.save_changes')}
                 </Button>
               </Flex>
               </Flex>
