@@ -26,9 +26,9 @@ const FeaturedCertifications: React.FC<FeaturedCertificationsProps> = ({ classNa
   const [mounted, setMounted] = useState(false);
   const { mode } = useTheme();
   const { t } = useTranslation('homepage');
-  const { isAuthenticated } = useAuth();
   const getLocalizedPath = useLocalizedPath();
   const router = useRouter();
+  const { isAuthenticated } = useAuth();
 
   const handleCardClick = (certification: Certification, event: React.MouseEvent) => {
     const target = event.target as HTMLElement;
@@ -69,7 +69,7 @@ const FeaturedCertifications: React.FC<FeaturedCertificationsProps> = ({ classNa
         const client = generateClient<Schema>();
         const { data: certificationsData, errors } = await client.models.Certifications.list({
           limit: 3,
-          authMode: isAuthenticated ? 'userPool' : 'identityPool', 
+          authMode: isAuthenticated ? 'userPool' : 'identityPool',
         });
 
         if (errors) {
@@ -103,7 +103,7 @@ const FeaturedCertifications: React.FC<FeaturedCertificationsProps> = ({ classNa
       }
     }
     fetchCertifications();
-  }, [mounted, isAuthenticated]);
+  }, [mounted]);
 
   const getCategoryColor = (category: string | null | undefined) => {
     switch (category) {

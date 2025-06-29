@@ -1,3 +1,20 @@
+/**
+ * ⚠️  DEVELOPMENT SCRIPT ONLY - DO NOT USE IN PRODUCTION ⚠️
+ * 
+ * This script creates sample certification data for development and testing purposes.
+ * It should NEVER be executed in a production environment.
+ * 
+ * Usage: npm run tsx scripts/create-sample-certifications.ts
+ * 
+ * To prevent accidental execution:
+ * - This script is not included in package.json scripts
+ * - It requires manual execution
+ * - It should be removed or disabled before production deployment
+ */
+
+// Uncomment the following line to prevent accidental execution
+// throw new Error('This is a development script and should not be executed in production');
+
 import { Amplify } from 'aws-amplify';
 import { generateClient } from 'aws-amplify/data';
 import type { Schema } from '../amplify/data/resource';

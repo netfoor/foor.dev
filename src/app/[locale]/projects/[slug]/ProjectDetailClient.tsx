@@ -36,6 +36,7 @@ import { useTranslation, useLocalizedPath } from '@/lib/i18n/client';
 import type { SupportedLocale } from '@/lib/i18n/types';
 import HeaderControls from '@/components/ui/HeaderControls';
 import Footer from '@/components/ui/Footer';
+import { useAuth } from '@/context/auth-context';
 
 // Tipos para el proyecto
 type Project = Schema["Projects"]["type"];
@@ -265,6 +266,7 @@ function ProjectDetailClient({ locale, slug }: ProjectDetailClientProps): React.
   const { t } = useTranslation('common');
   const router = useRouter();
   const getLocalizedPath = useLocalizedPath();
+  const { isAuthenticated } = useAuth();
 
   // Estados
   const [project, setProject] = useState<Project | null>(null);
@@ -298,14 +300,13 @@ function ProjectDetailClient({ locale, slug }: ProjectDetailClientProps): React.
         const client = generateClient<Schema>();
         const response = await client.models.Projects.list({
           filter: { slug: { eq: slug } },
-          authMode: 'identityPool'
+          authMode: isAuthenticated ? 'userPool' : 'identityPool'
         });
 
         const foundProject = response.data?.[0];
         
         if (!foundProject) {
           setError('Project not found');
-          router.push(getLocalizedPath('/projects'));
           return;
         }
 
@@ -317,7 +318,7 @@ function ProjectDetailClient({ locale, slug }: ProjectDetailClientProps): React.
     };
 
     fetchProject();
-  }, [slug, router, getLocalizedPath]);
+  }, [slug, isAuthenticated]);
 
   // Cargar imágenes del proyecto
   useEffect(() => {

@@ -1,5 +1,19 @@
-// Script para crear datos de prueba de proyectos
-// Este archivo puede ejecutarse una vez para llenar la base de datos con proyectos de ejemplo
+/**
+ * ⚠️  DEVELOPMENT SCRIPT ONLY - DO NOT USE IN PRODUCTION ⚠️
+ * 
+ * This script creates sample project data for development and testing purposes.
+ * It should NEVER be executed in a production environment.
+ * 
+ * Usage: npm run tsx scripts/create-sample-projects.ts
+ * 
+ * To prevent accidental execution:
+ * - This script is not included in package.json scripts
+ * - It requires manual execution
+ * - It should be removed or disabled before production deployment
+ */
+
+// Uncomment the following line to prevent accidental execution
+// throw new Error('This is a development script and should not be executed in production');
 
 import { generateClient } from 'aws-amplify/data';
 import type { Schema } from '../amplify/data/resource';

@@ -26,9 +26,9 @@ const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({ className = '' }) =
   const [error, setError] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);  const { mode } = useTheme();
   const { t } = useTranslation('homepage');
-  const { isAuthenticated } = useAuth();
   const getLocalizedPath = useLocalizedPath();
   const router = useRouter();
+  const { isAuthenticated } = useAuth();
 
   // Function to handle card click navigation
   const handleCardClick = (project: Project, event: React.MouseEvent) => {
@@ -76,7 +76,7 @@ const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({ className = '' }) =
         const client = generateClient<Schema>();
           const { data: projectsData, errors } = await client.models.Projects.list({
           limit: 3,
-          authMode: isAuthenticated ? 'userPool' : 'identityPool', 
+          authMode: isAuthenticated ? 'userPool' : 'identityPool',
         });
 
         if (errors) {
@@ -110,7 +110,7 @@ const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({ className = '' }) =
         setLoading(false);
       }
     }    fetchProjects();
-  }, [mounted, isAuthenticated]); // Agregar isAuthenticated como dependencia
+  }, [mounted]); // Solo mounted como dependencia
 
   const getCategoryColor = (category: string | null | undefined) => {
     switch (category) {
