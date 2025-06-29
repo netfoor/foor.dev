@@ -1,0 +1,28 @@
+{
+  "title": "My Certifications",
+  "description": "A collection of my professional certifications, demonstrating my commitment to continuous learning and expertise in various domains.",
+  "error": "Failed to load certifications. Please try again later.",
+  "noResults": "No certifications found matching your criteria.",
+  "search": {
+    "label": "Search certifications",
+    "placeholder": "Search by title, issuer, or skill..."
+  },
+  "filter": {
+    "label": "Filter by category",
+    "all": "All Categories"
+  },
+  "categories": {
+    "Technology": "Technology",
+    "Business": "Business",
+    "Arts": "Arts",
+    "Health": "Health",
+    "Languages": "Languages"
+  },
+  "labels": {
+    "issuedBy": "Issued by {{issuer}}",
+    "skills": "Skills"
+  },
+  "actions": {
+    "viewCredential": "View Credential"
+  }
+}

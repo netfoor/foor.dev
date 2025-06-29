@@ -49,7 +49,8 @@
       "Professional": "Profesional",
       "Academic": "Académico",
       "Personal": "Personal"
-    },    "actions": {
+    },
+    "actions": {
       "viewDetails": "Ver Detalles",
       "viewProject": "Ver Proyecto",
       "viewCode": "Ver Código",
@@ -60,9 +61,41 @@
       "skills": "Tecnologías",
       "location": "Ubicación",
       "category": "Categoría"
-    },    "noProjects": "No se encontraron proyectos para esta categoría.",
+    },
+    "noProjects": "No se encontraron proyectos para esta categoría.",
     "loading": "Cargando proyectos...",
     "error": "Error al cargar proyectos. Por favor, intenta de nuevo.",
     "viewAll": "Ver Todos los Proyectos"
+  },
+  "certifications": {
+    "title": "Certificaciones",
+    "titleHighlight": "Profesionales",
+    "description": "Explora mis certificaciones AWS y credenciales profesionales de líderes de la industria, validando experiencia en computación en la nube y tecnologías modernas.",
+    "searchPlaceholder": "Buscar certificaciones...",
+    "filterByCategory": "Filtrar por Emisor",
+    "allCategories": "Todos los Emisores",
+    "viewCredential": "Ver Credencial",
+    "viewDetails": "Ver Detalles",
+    "viewAll": "Ver Todas las Certificaciones",
+    "noCertifications": "No hay certificaciones disponibles.",
+    "noResults": "No se encontraron certificaciones que coincidan con sus criterios.",
+    "loading": "Cargando certificaciones...",
+    "error": "Error al cargar certificaciones. Por favor, intenta de nuevo.",
+    "labels": {
+      "issuer": "Emitido por",
+      "issueDate": "Emitido",
+      "expirationDate": "Expira",
+      "skills": "Habilidades Validadas"
+    },
+    "categories": {
+      "Technology": "Tecnología",
+      "Business": "Negocios",
+      "Arts": "Artes",
+      "Health": "Salud",
+      "Languages": "Idiomas"
+    },
+    "actions": {
+      "viewCredential": "Ver Credencial"
+    }
   }
 }

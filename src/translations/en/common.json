@@ -189,5 +189,27 @@
     "back_to_projects": "Back to Projects",
     "project_not_found": "Project Not Found",
     "error_loading": "Error loading project"
+  },
+  "certification_details": {
+    "issued_by": "Issued by",
+    "issued_on": "Issued on",
+    "expires_on": "Expires on",
+    "credential_id": "Credential ID",
+    "skills_covered": "Skills Covered",
+    "view_credential": "View Credential",
+    "back_to_certifications": "Back to Certifications",
+    "certification_not_found": "Certification Not Found",
+    "error_loading": "Error loading certification",
+    "categories": {
+      "Technology": "Technology",
+      "Business": "Business",
+      "Arts": "Arts",
+      "Health": "Health",
+      "Languages": "Languages"
+    },
+    "status": {
+      "active": "Active",
+      "expired": "Expired"
+    }
   }
 }

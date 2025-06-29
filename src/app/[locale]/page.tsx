@@ -5,6 +5,7 @@ import HeaderControls from '@/components/ui/HeaderControls';
 import Hero from '@/components/ui/Hero';
 import AboutSection from '@/components/ui/AboutSection';
 import FeaturedProjects from '@/components/ui/FeaturedProjects';
+import FeaturedCertifications from '@/components/ui/FeaturedCertifications';
 import Footer from '@/components/ui/Footer';
 import type { SupportedLocale } from '@/lib/i18n/types';
 
@@ -202,6 +203,9 @@ export default async function Home({ params }: HomeProps) {
 
         {/* Sección Projects - Proyectos destacados con Amplify Data API */}
         <FeaturedProjects />
+
+        {/* Sección Certifications - Certificaciones destacadas */}
+        <FeaturedCertifications />
       </main>
 
       {/* Footer - Pie de página con información de contacto y enlaces */}

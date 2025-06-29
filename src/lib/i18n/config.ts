@@ -39,6 +39,7 @@ export const TRANSLATION_NAMESPACES = [
   'profile',    // Perfil de usuario
   'admin',      // Panel de administración
   'errors',     // Mensajes de error específicos
+  'certifications', // Sección de certificaciones
 ] as const;
 
 export type TranslationNamespace = typeof TRANSLATION_NAMESPACES[number];

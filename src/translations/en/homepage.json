@@ -50,7 +50,8 @@
       "Professional": "Professional",
       "Academic": "Academic",
       "Personal": "Personal"
-    },    "actions": {
+    },
+    "actions": {
       "viewDetails": "View Details",
       "viewProject": "View Project",
       "viewCode": "View Code",
@@ -61,9 +62,41 @@
       "skills": "Technologies",
       "location": "Location",
       "category": "Category"
-    },    "noProjects": "No projects found for this category.",
+    },
+    "noProjects": "No projects found for this category.",
     "loading": "Loading projects...",
     "error": "Failed to load projects. Please try again later.",
     "viewAll": "View All Projects"
+  },
+  "certifications": {
+    "title": "Professional",
+    "titleHighlight": "Certifications",
+    "description": "Explore my AWS certifications and professional credentials from industry leaders, validating expertise in cloud computing and modern technologies.",
+    "searchPlaceholder": "Search certifications...",
+    "filterByCategory": "Filter by Issuer",
+    "allCategories": "All Issuers",
+    "viewCredential": "View Credential",
+    "viewDetails": "View Details",
+    "viewAll": "View All Certifications",
+    "noCertifications": "No certifications available.",
+    "noResults": "No certifications found matching your criteria.",
+    "loading": "Loading certifications...",
+    "error": "Failed to load certifications. Please try again later.",
+    "labels": {
+      "issuer": "Issued by",
+      "issueDate": "Issued",
+      "expirationDate": "Expires",
+      "skills": "Skills Validated"
+    },
+    "categories": {
+      "Technology": "Technology",
+      "Business": "Business",
+      "Arts": "Arts",
+      "Health": "Health",
+      "Languages": "Languages"
+    },
+    "actions": {
+      "viewCredential": "View Credential"
+    }
   }
 }

@@ -190,5 +190,28 @@
     "view_demo": "Ver Demo",
     "back_to_projects": "Volver a Proyectos",
     "project_not_found": "Proyecto No Encontrado",
-    "error_loading": "Error al cargar el proyecto"  }
+    "error_loading": "Error al cargar el proyecto"
+  },
+  "certification_details": {
+    "issued_by": "Emitida por",
+    "issued_on": "Emitida el",
+    "expires_on": "Expira el",
+    "credential_id": "ID de Credencial",
+    "skills_covered": "Habilidades Cubiertas",
+    "view_credential": "Ver Credencial",
+    "back_to_certifications": "Volver a Certificaciones",
+    "certification_not_found": "Certificación No Encontrada",
+    "error_loading": "Error al cargar la certificación",
+    "categories": {
+      "Technology": "Tecnología",
+      "Business": "Negocios",
+      "Arts": "Artes",
+      "Health": "Salud",
+      "Languages": "Idiomas"
+    },
+    "status": {
+      "active": "Activa",
+      "expired": "Expirada"
+    }
+  }
 }

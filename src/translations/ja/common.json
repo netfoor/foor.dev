@@ -118,5 +118,27 @@
     "back_to_projects": "プロジェクトに戻る",
     "project_not_found": "プロジェクトが見つかりません",
     "error_loading": "プロジェクトの読み込みエラー"
+  },
+  "certification_details": {
+    "issued_by": "発行者",
+    "issued_on": "発行日",
+    "expires_on": "有効期限",
+    "credential_id": "認定ID",
+    "skills_covered": "対象スキル",
+    "view_credential": "認定書を見る",
+    "back_to_certifications": "認定に戻る",
+    "certification_not_found": "認定が見つかりません",
+    "error_loading": "認定の読み込みエラー",
+    "categories": {
+      "Technology": "テクノロジー",
+      "Business": "ビジネス",
+      "Arts": "アート",
+      "Health": "健康",
+      "Languages": "言語"
+    },
+    "status": {
+      "active": "アクティブ",
+      "expired": "期限切れ"
+    }
   }
 }

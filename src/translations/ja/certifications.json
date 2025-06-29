@@ -1,0 +1,28 @@
+{
+  "title": "私の認定資格",
+  "description": "私の専門的な認定資格のコレクション。継続的な学習とさまざまな分野での専門知識へのコミットメントを示しています。",
+  "error": "認定資格の読み込みに失敗しました。後でもう一度お試しください。",
+  "noResults": "基準に一致する認定資格は見つかりませんでした。",
+  "search": {
+    "label": "認定資格を検索",
+    "placeholder": "タイトル、発行者、またはスキルで検索..."
+  },
+  "filter": {
+    "label": "カテゴリでフィルタリング",
+    "all": "すべてのカテゴリ"
+  },
+  "categories": {
+    "Technology": "テクノロジー",
+    "Business": "ビジネス",
+    "Arts": "アート",
+    "Health": "健康",
+    "Languages": "言語"
+  },
+  "labels": {
+    "issuedBy": "発行者 {{issuer}}",
+    "skills": "スキル"
+  },
+  "actions": {
+    "viewCredential": "資格情報を表示"
+  }
+}

@@ -4,15 +4,18 @@ const schema = a.schema({
   Certifications: a
     .model({
       title: a.string().required(),
-      issuer: a.string().required(), 
+      issuer: a.string().required(),
       credentialId: a.string(),
+      credentialUrl: a.string(),
       issueDate: a.date().required(),
       expirationDate: a.date(),
-      photoKey: a.string(), // Key de S3 para la imagen principal     
+      photoKey: a.string(), // Key de S3 para la imagen principal
       content: a.string(),
       skills: a.string().array(),
-      categoty: a.string().required(),
-    })    .authorization((allow) => [
+      category: a.enum(['Technology', 'Business', 'Arts', 'Health', 'Languages']),
+      slug: a.string(),
+    })
+    .authorization((allow) => [
       allow.guest().to(['read']),
       allow.group('ADMINS').to(['create', 'read', 'update', 'delete'])
     ]),

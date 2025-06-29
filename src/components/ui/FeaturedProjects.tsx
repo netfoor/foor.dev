@@ -197,7 +197,7 @@ const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({ className = '' }) =
   return (
     <View
       as="section"
-      padding={{ base: '3rem 1rem', medium: '4rem 2rem' }}
+      padding={{ base: '6rem 1rem', medium: '7rem 2rem' }}
       style={{
         backgroundColor: mode === 'dark' ? '#0F172A' : '#F8FAFC',
       }}

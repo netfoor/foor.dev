@@ -1,0 +1,28 @@
+{
+  "title": "Mis Certificaciones",
+  "description": "Una colección de mis certificaciones profesionales, que demuestran mi compromiso con el aprendizaje continuo y mi experiencia en diversos dominios.",
+  "error": "No se pudieron cargar las certificaciones. Por favor, inténtalo de nuevo más tarde.",
+  "noResults": "No se encontraron certificaciones que coincidan con tus criterios.",
+  "search": {
+    "label": "Buscar certificaciones",
+    "placeholder": "Buscar por título, emisor o habilidad..."
+  },
+  "filter": {
+    "label": "Filtrar por categoría",
+    "all": "Todas las categorías"
+  },
+  "categories": {
+    "Technology": "Tecnología",
+    "Business": "Negocios",
+    "Arts": "Artes",
+    "Health": "Salud",
+    "Languages": "Idiomas"
+  },
+  "labels": {
+    "issuedBy": "Emitido por {{issuer}}",
+    "skills": "Habilidades"
+  },
+  "actions": {
+    "viewCredential": "Ver Credencial"
+  }
+}

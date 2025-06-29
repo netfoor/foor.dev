@@ -49,7 +49,8 @@
       "Professional": "プロフェッショナル",
       "Academic": "学術",
       "Personal": "個人"
-    },    "actions": {
+    },
+    "actions": {
       "viewDetails": "詳細を見る",
       "viewProject": "プロジェクトを見る",
       "viewCode": "コードを見る",
@@ -60,9 +61,41 @@
       "skills": "技術",
       "location": "場所",
       "category": "カテゴリー"
-    },    "noProjects": "このカテゴリーのプロジェクトが見つかりません。",
+    },
+    "noProjects": "このカテゴリーのプロジェクトが見つかりません。",
     "loading": "プロジェクトを読み込み中...",
     "error": "プロジェクトの読み込みに失敗しました。後でもう一度お試しください。",
     "viewAll": "すべてのプロジェクトを見る"
+  },
+  "certifications": {
+    "title": "プロフェッショナル",
+    "titleHighlight": "認定",
+    "description": "業界リーダーからのAWS認定とプロフェッショナル資格をご覧ください。クラウドコンピューティングと現代技術の専門知識を証明します。",
+    "searchPlaceholder": "認定を検索...",
+    "filterByCategory": "発行者でフィルター",
+    "allCategories": "すべての発行者",
+    "viewCredential": "資格を見る",
+    "viewDetails": "詳細を見る",
+    "viewAll": "すべての認定を見る",
+    "noCertifications": "利用可能な認定がありません。",
+    "noResults": "条件に一致する認定が見つかりません。",
+    "loading": "認定を読み込み中...",
+    "error": "認定の読み込みに失敗しました。後でもう一度お試しください。",
+    "labels": {
+      "issuer": "発行者",
+      "issueDate": "発行日",
+      "expirationDate": "有効期限",
+      "skills": "検証されたスキル"
+    },
+    "categories": {
+      "Technology": "テクノロジー",
+      "Business": "ビジネス",
+      "Arts": "アート",
+      "Health": "健康",
+      "Languages": "言語"
+    },
+    "actions": {
+      "viewCredential": "認定書を見る"
+    }
   }
 }
