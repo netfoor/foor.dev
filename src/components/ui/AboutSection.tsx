@@ -1,255 +1,286 @@
 'use client';
 
-import React from 'react';
-import { Heading, Text, Flex, View, Card } from '@aws-amplify/ui-react';
-import { useTranslation } from '@/lib/i18n/client';
+import React, { useState, useEffect } from 'react';
+import { View, Flex, Text, Heading, Loader, Alert } from '@aws-amplify/ui-react';
+import { generateClient } from 'aws-amplify/data';
+import type { Schema } from '../../../amplify/data/resource';
 import { useTheme } from '@/hooks/useTheme';
+import { useTranslation } from '@/lib/i18n/client';
+import { useAuth } from '@/context/auth-context';
+import type { SupportedLocale } from '@/lib/i18n/types';
+import ProfileSection from './ProfileSection';
+import MissionVisionSection from './MissionVisionSection';
+import ExperienceTimeline from './ExperienceTimeline';
+import PhilosophySection from './PhilosophySection';
+import ConnectSection from './ConnectSection';
+
+// Tipos para los datos
+type Profile = Schema["Profile"]["type"];
+type Experience = Schema["Experiences"]["type"];
 
 interface AboutSectionProps {
+  locale: SupportedLocale;
   className?: string;
 }
 
-/**
- * Componente AboutSection - Sección sobre el perfil profesional
- * Enfocado en: AWS Cloud Engineer, experiencia internacional, liderazgo comunitario
- * SEO optimizado con headings estructurados y contenido relevante
- */
-export const AboutSection: React.FC<AboutSectionProps> = ({ className = '' }) => {
-  const { t } = useTranslation('homepage');
+// Estilos personalizados
+const aboutStyles = `
+  .about-container {
+    background: linear-gradient(135deg, 
+      rgba(59, 130, 246, 0.1) 0%, 
+      rgba(139, 92, 246, 0.05) 25%, 
+      rgba(236, 72, 153, 0.05) 50%, 
+      rgba(245, 101, 101, 0.05) 75%, 
+      rgba(251, 191, 36, 0.1) 100%);
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .about-container.dark-mode {
+    background: linear-gradient(135deg, 
+      rgba(15, 23, 42, 1) 0%, 
+      rgba(30, 41, 59, 0.98) 25%, 
+      rgba(51, 65, 85, 0.95) 50%, 
+      rgba(71, 85, 105, 0.98) 75%, 
+      rgba(100, 116, 139, 1) 100%);
+  }
+
+  .about-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    background: radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(236, 72, 153, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .about-content {
+    position: relative;
+    z-index: 1;
+    padding-bottom: 120px;
+  }
+
+  .section-spacing {
+    margin-bottom: 4rem;
+  }
+
+  @media (max-width: 768px) {
+    .section-spacing {
+      margin-bottom: 3rem;
+    }
+    
+    .about-content {
+      padding-bottom: 80px;
+    }
+  }
+`;
+
+const AboutSection: React.FC<AboutSectionProps> = ({ locale, className = '' }) => {
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [experiences, setExperiences] = useState<Experience[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
+
   const { mode } = useTheme();
+  const { t } = useTranslation('homepage');
+  const { isAuthenticated } = useAuth();
+
+  // Client initialization
+  const client = generateClient<Schema>();
+
+  // Effect para marcar como montado
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Función para obtener datos del perfil
+  const fetchProfile = async () => {
+    try {
+      const authMode = isAuthenticated ? 'userPool' : 'identityPool';
+      const { data: profiles } = await client.models.Profile.list({
+        authMode,
+        filter: {
+          isActive: {
+            eq: true
+          }
+        }
+      });
+
+      if (profiles && profiles.length > 0) {
+        setProfile(profiles[0]);
+      }
+    } catch (err) {
+      console.error('Error fetching profile:', err);
+      setError('Failed to load profile data');
+    }
+  };
+
+  // Función para obtener experiencias
+  const fetchExperiences = async () => {
+    try {
+      const authMode = isAuthenticated ? 'userPool' : 'identityPool';
+      const { data: experienceData } = await client.models.Experiences.list({
+        authMode
+      });
+
+      if (experienceData) {
+        // Ordenar por fecha de inicio (más reciente primero)
+        const sortedExperiences = [...experienceData].sort((a, b) => {
+          if (!a.startDate || !b.startDate) return 0;
+          return new Date(b.startDate).getTime() - new Date(a.startDate).getTime();
+        });
+        setExperiences(sortedExperiences);
+      }
+    } catch (err) {
+      console.error('Error fetching experiences:', err);
+      setError('Failed to load experience data');
+    }
+  };
+
+  // Effect para cargar datos
+  useEffect(() => {
+    const loadData = async () => {
+      if (!mounted) return;
+      
+      setLoading(true);
+      setError(null);
+
+      try {
+        await Promise.all([
+          fetchProfile(),
+          fetchExperiences()
+        ]);
+      } catch (err) {
+        console.error('Error loading about data:', err);
+        setError('Failed to load about data');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
+  }, [mounted, isAuthenticated]);
+
+  // Mostrar loader mientras carga
+  if (!mounted || loading) {
+    return (
+      <View className={`about-container ${mode === 'dark' ? 'dark-mode' : ''} ${className}`}>
+        <style>{aboutStyles}</style>
+        <Flex 
+          direction="column" 
+          alignItems="center" 
+          justifyContent="center"
+          className="about-content"
+          minHeight="50vh"
+        >
+          <Loader size="large" />
+          <Text 
+            fontSize="1.125rem" 
+            color="var(--amplify-colors-font-tertiary)"
+            marginTop="1rem"
+          >
+            Loading about information...
+          </Text>
+        </Flex>
+      </View>
+    );
+  }
+
+  // Mostrar error si hay alguno
+  if (error) {
+    return (
+      <View className={`about-container ${mode === 'dark' ? 'dark-mode' : ''} ${className}`}>
+        <style>{aboutStyles}</style>
+        <Flex 
+          direction="column" 
+          alignItems="center" 
+          justifyContent="center"
+          className="about-content"
+          minHeight="50vh"
+          padding="2rem"
+        >
+          <Alert
+            variation="error"
+            isDismissible={false}
+            hasIcon={true}
+            heading="Error loading about information"
+          >
+            {error}
+          </Alert>
+        </Flex>
+      </View>
+    );
+  }
 
   return (
-    <View 
-      as="section"
-      id="about"
-      className={className}
-      padding={{ base: "3rem 1rem", medium: "4rem 2rem" }}
-      style={{
-        background: mode === 'dark' 
-          ? 'linear-gradient(180deg, #0F172A 0%, #1E293B 100%)'
-          : 'linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%)',
-        position: 'relative'
-      }}
-    >
-      {/* Background decorative elements */}
-      <View
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          opacity: mode === 'dark' ? 0.1 : 0.05,
-          background: `
-            radial-gradient(circle at 20% 80%, #3B82F6 0%, transparent 50%),
-            radial-gradient(circle at 80% 20%, #06B6D4 0%, transparent 50%)
-          `,
-          zIndex: 0
-        }}
-      />
-
-      <View 
-        maxWidth="1200px" 
-        margin="0 auto"
-        style={{ position: 'relative', zIndex: 1 }}
-      >
+    <View className={`about-container ${mode === 'dark' ? 'dark-mode' : ''} ${className}`}>
+      <style>{aboutStyles}</style>
+      <View className="about-content">
         <Flex
-          direction={{ base: 'column', large: 'row' }}
-          gap={{ base: '2rem', large: '3rem' }}
-          alignItems="flex-start"
+          direction="column"
+          alignItems="center"
+          justifyContent="flex-start"
+          padding={{ base: '2rem', medium: '4rem' }}
+          maxWidth="1200px"
+          margin="0 auto"
         >
-          {/* Left column - Main content */}
-          <View flex={{ large: '7' }}>            <Heading
-              level={2}
-              fontSize={{ base: "1.75rem", medium: "2.25rem" }}
+          {/* Header */}
+            <Flex
+            direction="column"
+            alignItems="center"
+            textAlign="center"
+            marginBottom="4rem"
+            >
+            <Heading
+              level={1}
+              fontSize={{ base: '2.5rem', medium: '3.5rem' }}
               fontWeight="700"
-              marginBottom="1.5rem"
+              color={mode === 'dark' ? '#FBBF24' : 'var(--amplify-colors-font-primary)'}
+              marginBottom="1rem"
               style={{
-                backgroundImage: mode === 'dark'
-                  ? 'linear-gradient(135deg, #F1F5F9 0%, #94A3B8 100%)'
-                  : 'linear-gradient(135deg, #1E293B 0%, #3B82F6 100%)',
-                backgroundClip: 'text',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                color: 'transparent'
+              textShadow: mode === 'dark'
+                ? '0 2px 16px rgba(251,191,36,0.15), 0 1px 0 #000'
+                : undefined
               }}
             >
-              {t('about.whoAmI')} <Text as="span" color="primary.80">{t('about.whoAmIHighlight')}</Text>
+              {t('about.title')}
             </Heading>
-
-            <Flex direction="column" gap="1.5rem" marginBottom="2rem">
-              <Text
-                color={mode === 'dark' ? '#CBD5E1' : '#475569'}
-                lineHeight="1.7"
-                fontSize={{ base: "1rem", medium: "1.125rem" }}
-              >
-                {t('about.description1')}
-              </Text>
-              <Text
-                color={mode === 'dark' ? '#CBD5E1' : '#475569'}
-                lineHeight="1.7"
-                fontSize={{ base: "1rem", medium: "1.125rem" }}
-              >
-                {t('about.description2')}
-              </Text>
+            <Text
+              fontSize={{ base: '1.125rem', medium: '1.25rem' }}
+              color={mode === 'dark' ? '#FFFF' : 'var(--amplify-colors-font-secondary)'}
+              maxWidth="600px"
+              style={{
+              textShadow: mode === 'dark'
+                ? '0 1px 8px rgba(244,114,182,0.10)'
+                : undefined
+              }}
+            >
+              {t('about.subtitle')}
+            </Text>
             </Flex>
 
-            {/* Quote section */}
-            <View
-              padding="1.5rem"
-              marginBlock="2rem"
-              style={{
-                borderLeft: `4px solid ${mode === 'dark' ? '#3B82F6' : '#2563EB'}`,
-                background: mode === 'dark' 
-                  ? 'rgba(30, 41, 59, 0.5)' 
-                  : 'rgba(248, 250, 252, 0.8)',
-                borderRadius: '0 8px 8px 0',
-                backdropFilter: 'blur(10px)'
-              }}
-            >
-              <Text
-                color={mode === 'dark' ? '#E2E8F0' : '#334155'}
-                fontStyle="italic"
-                fontSize={{ base: "1rem", medium: "1.125rem" }}
-                lineHeight="1.6"
-              >
-                "{t('about.quote')}"
-              </Text>
-            </View>
-          </View>
+          {/* Profile Section */}
+          <ProfileSection className="section-spacing" />
 
-          {/* Right column - Highlights */}
-          <View flex={{ large: '5' }}>
-            <Card
-              padding="2rem"
-              borderRadius="16px"
-              style={{
-                background: mode === 'dark' 
-                  ? 'rgba(30, 41, 59, 0.6)' 
-                  : 'rgba(255, 255, 255, 0.9)',
-                backdropFilter: 'blur(10px)',
-                border: mode === 'dark' 
-                  ? '1px solid rgba(71, 85, 105, 0.3)' 
-                  : '1px solid rgba(226, 232, 240, 0.5)',
-                boxShadow: mode === 'dark'
-                  ? '0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2)'
-                  : '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
-              }}
-            >
-              <Heading
-                level={3}
-                fontSize={{ base: "1.25rem", medium: "1.5rem" }}
-                fontWeight="600"
-                color={mode === 'dark' ? '#F1F5F9' : '#1E293B'}
-                marginBottom="1.5rem"
-              >
-                {t('about.highlights.title')}
-              </Heading>
-              
-              <Flex direction="column" gap="1.25rem">                {/* Japan Highlight */}
-                <Flex alignItems="flex-start" gap="1rem">
-                  <View style={{ flexShrink: 0, fontSize: "1.5rem" }}>🇯🇵</View>
-                  <View>
-                    <Text
-                      color={mode === 'dark' ? '#F1F5F9' : '#1E293B'}
-                      fontWeight="600"
-                      fontSize={{ base: "0.95rem", medium: "1rem" }}
-                      marginBottom="0.25rem"
-                    >
-                      {t('about.highlights.japan.title')}
-                    </Text>
-                    <Text 
-                      color={mode === 'dark' ? '#94A3B8' : '#64748B'}
-                      fontSize={{ base: "0.875rem", medium: "0.95rem" }}
-                      lineHeight="1.5"
-                    >
-                      {t('about.highlights.japan.description')}
-                    </Text>
-                  </View>
-                </Flex>                {/* Award Highlight */}
-                <Flex alignItems="flex-start" gap="1rem">
-                  <View style={{ flexShrink: 0, fontSize: "1.5rem" }}>🏆</View>
-                  <View>
-                    <Text
-                      color={mode === 'dark' ? '#F1F5F9' : '#1E293B'}
-                      fontWeight="600"
-                      fontSize={{ base: "0.95rem", medium: "1rem" }}
-                      marginBottom="0.25rem"
-                    >
-                      {t('about.highlights.award.title')}
-                    </Text>
-                    <Text 
-                      color={mode === 'dark' ? '#94A3B8' : '#64748B'}
-                      fontSize={{ base: "0.875rem", medium: "0.95rem" }}
-                      lineHeight="1.5"
-                    >
-                      {t('about.highlights.award.description')}
-                    </Text>
-                  </View>
-                </Flex>                {/* Community Highlight */}
-                <Flex alignItems="flex-start" gap="1rem">
-                  <View style={{ flexShrink: 0, fontSize: "1.5rem" }}>🌍</View>
-                  <View>
-                    <Text
-                      color={mode === 'dark' ? '#F1F5F9' : '#1E293B'}
-                      fontWeight="600"
-                      fontSize={{ base: "0.95rem", medium: "1rem" }}
-                      marginBottom="0.25rem"
-                    >
-                      {t('about.highlights.community.title')}
-                    </Text>
-                    <Text 
-                      color={mode === 'dark' ? '#94A3B8' : '#64748B'}
-                      fontSize={{ base: "0.875rem", medium: "0.95rem" }}
-                      lineHeight="1.5"
-                    >
-                      {t('about.highlights.community.description')}
-                    </Text>
-                  </View>
-                </Flex>                {/* Speaker Highlight */}
-                <Flex alignItems="flex-start" gap="1rem">
-                  <View style={{ flexShrink: 0, fontSize: "1.5rem" }}>💬</View>
-                  <View>
-                    <Text
-                      color={mode === 'dark' ? '#F1F5F9' : '#1E293B'}
-                      fontWeight="600"
-                      fontSize={{ base: "0.95rem", medium: "1rem" }}
-                      marginBottom="0.25rem"
-                    >
-                      {t('about.highlights.speaker.title')}
-                    </Text>
-                    <Text 
-                      color={mode === 'dark' ? '#94A3B8' : '#64748B'}
-                      fontSize={{ base: "0.875rem", medium: "0.95rem" }}
-                      lineHeight="1.5"
-                    >
-                      {t('about.highlights.speaker.description')}
-                    </Text>
-                  </View>
-                </Flex>                {/* Academic Highlight */}
-                <Flex alignItems="flex-start" gap="1rem">
-                  <View style={{ flexShrink: 0, fontSize: "1.5rem" }}>📖</View>
-                  <View>
-                    <Text
-                      color={mode === 'dark' ? '#F1F5F9' : '#1E293B'}
-                      fontWeight="600"
-                      fontSize={{ base: "0.95rem", medium: "1rem" }}
-                      marginBottom="0.25rem"
-                    >
-                      {t('about.highlights.academic.title')}
-                    </Text>
-                    <Text 
-                      color={mode === 'dark' ? '#94A3B8' : '#64748B'}
-                      fontSize={{ base: "0.875rem", medium: "0.95rem" }}
-                      lineHeight="1.5"
-                    >
-                      {t('about.highlights.academic.description')}
-                    </Text>
-                  </View>
-                </Flex>
-              </Flex>
-            </Card>
-          </View>
+          {/* Mission and Vision Section */}
+          <MissionVisionSection className="section-spacing" />
+
+          {/* Experience Timeline */}
+          <ExperienceTimeline className="section-spacing" />
+
+          {/* Philosophy Section */}
+          <PhilosophySection className="section-spacing" />
+
+          {/* Connect Section */}
+          <ConnectSection className="section-spacing" />
+          
         </Flex>
       </View>
     </View>

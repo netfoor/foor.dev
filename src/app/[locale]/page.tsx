@@ -3,7 +3,7 @@ import { Metadata } from 'next';
 import { getTranslations } from '@/lib/i18n/server';
 import HeaderControls from '@/components/ui/HeaderControls';
 import Hero from '@/components/ui/Hero';
-import AboutSection from '@/components/ui/AboutSection';
+import AboutHomeSection from '@/components/ui/AboutHomeSection';
 import FeaturedProjects from '@/components/ui/FeaturedProjects';
 import FeaturedCertifications from '@/components/ui/FeaturedCertifications';
 import Footer from '@/components/ui/Footer';
@@ -199,7 +199,7 @@ export default async function Home({ params }: HomeProps) {
 
         {/* Componente Hero SEO optimizado */}
         <Hero />        {/* Sección About - Información profesional y logros */}
-        <AboutSection />
+        <AboutHomeSection />
 
         {/* Sección Projects - Proyectos destacados con Amplify Data API */}
         <FeaturedProjects />

@@ -9,7 +9,7 @@ const schema = a.schema({
       credentialUrl: a.string(),
       issueDate: a.date().required(),
       expirationDate: a.date(),
-      photoKey: a.string(), // Key de S3 para la imagen principal
+      photoKey: a.string(), 
       content: a.string(),
       skills: a.string().array(),
       category: a.enum(['Technology', 'Business', 'Arts', 'Health', 'Languages']),
@@ -31,8 +31,8 @@ const schema = a.schema({
       skills: a.string().array(),
       categories: a.enum(['Hackathon', 'Research', 'Professional', 'Academic', 'Personal']),
       // Storage paths para las imágenes
-      photoKey: a.string(), // Key de S3 para la imagen principal
-      galleryKeys: a.string().array(), // Array de keys de S3 para la galería
+      photoKey: a.string(), 
+      galleryKeys: a.string().array(), 
       // Metadata adicional
       startDate: a.date(),
       endDate: a.date(),
@@ -54,7 +54,7 @@ const schema = a.schema({
       issueDate: a.date().required(),
       credentialId: a.string(),
       issuerUrl: a.string(),
-      photoKey: a.string(), // Key de S3 para la imagen principal
+      photoKey: a.string(), 
     })
     .authorization((allow) => [
       allow.guest().to(['read']),
@@ -71,7 +71,7 @@ const schema = a.schema({
       location: a.string(),
       recognition: a.string().array(),
       CertificateURL: a.string(),
-      photoKey: a.string(), // Key de S3 para la imagen principal
+      photoKey: a.string(), 
       Photos: a.string().array(),
     })
     .authorization((allow) => [
@@ -97,7 +97,7 @@ const schema = a.schema({
       location: a.string(),
       skills: a.string().array(),
       activities: a.string().array(),
-      photoKey: a.string(), // Key de S3 para la imagen principal
+      photoKey: a.string(), 
     })
     .authorization((allow) => [
       allow.guest().to(['read']),
@@ -107,11 +107,33 @@ const schema = a.schema({
     .model({
       title: a.string().required(),
       source: a.enum(['LinkedIn', 'Twitter', 'GitHub', 'Blog', 'Youtube']),
-      photoKey: a.string(), // Key de S3 para la imagen principal
+      photoKey: a.string(), 
       description: a.string().required(),
       publicationDate: a.date().required(),
       type: a.enum(['Article', 'Blog', 'Video', 'Podcast', 'Book', 'Course', 'Conference', 'Presentation', 'Research', 'Workshop', 'Other']),
       publicationUrl: a.string().required()
+    })
+    .authorization((allow) => [
+      allow.guest().to(['read']),
+      allow.group('ADMINS').to(['create', 'read', 'update', 'delete'])
+    ]),
+
+  Profile: a
+    .model({
+      name: a.string().required(),
+      currentPosition: a.string().required(),
+      description: a.string().required(),
+      profilePhotoKey: a.string(), // Key de S3 para la foto de perfil
+      flags: a.string().array(), // ["Cloud Engineer", "AWS Advocate", "DevOps Enthusiast"]
+      mission: a.string(),
+      vision: a.string(),
+      philosophy: a.string(),
+      isActive: a.boolean(), // Solo uno activo a la vez
+      // Enlaces de redes sociales
+      linkedinUrl: a.string(),
+      githubUrl: a.string(),
+      twitterUrl: a.string(),
+      emailContact: a.string(),
     })
     .authorization((allow) => [
       allow.guest().to(['read']),

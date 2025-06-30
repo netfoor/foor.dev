@@ -10,11 +10,62 @@
     }
   },
   "about": {
+    "title": "Acerca de Mí",
+    "subtitle": "Conoce a la persona detrás del código",
+    "loading": "Cargando información personal...",
+    "error": "Error al cargar información personal",
     "whoAmI": "¿Quién",
     "whoAmIHighlight": "soy?",
     "description1": "Soy Fortino Romero Mantilla, un Ingeniero en la Nube y líder de comunidad tecnológica de México con una misión: usar la tecnología de AWS en la nube para el bien social. Me especializo en arquitecturas serverless, automatización DevOps y soluciones escalables en la nube que abordan problemas del mundo real.",
     "description2": "Desde ganar desafíos nacionales de innovación hasta representar a México en Japón, mi trabajo abarca sistemas de monitoreo de inundaciones basados en la nube, clasificación inteligente de residuos y mentoría de futuros desarrolladores. Lidero el AWS User Group Puebla y organicé HackUTP para empoderar a más de 100 estudiantes a través de experiencia práctica con AWS y colaboración.",
     "quote": "Mi visión es construir tecnología en la nube que sea ética, sostenible e inclusiva — soluciones AWS que no solo escalen, sino que eleven a las comunidades.",
+    "profile": {
+      "title": "Perfil"
+    },
+    "journey": {
+      "title": "Mi Trayectoria y Visión",
+      "mission": {
+        "title": "Misión",
+        "icon": "🎯",
+        "description": "Mi viaje comenzó con curiosidad pero se ha construido a través de la acción. Desde representar a México en Japón como ganador de ANUIES4MX hasta fundar el primer AWS User Group en Puebla, busco constantemente oportunidades para aprender, liderar y compartir conocimiento con otros."
+      },
+      "vision": {
+        "title": "Visión",
+        "icon": "🚀",
+        "description": "Creo profundamente en el liderazgo con propósito. Más allá de los lenguajes de programación y herramientas, lo que me impulsa es conectar con las personas, trabajar en equipos y diseñar soluciones que generen un impacto social real. Mi objetivo es crear comunidades tecnológicas sostenibles y soluciones escalables."
+      }
+    },
+    "experience": {
+      "title": "Trayectoria Profesional",
+      "timeline": "Línea de Tiempo de Experiencia",
+      "present": "Presente",
+      "loading": "Cargando experiencia...",
+      "error": "Error al cargar datos de experiencia",
+      "noExperience": "No hay datos de experiencia disponibles",
+      "labels": {
+        "company": "Empresa",
+        "position": "Posición",
+        "location": "Ubicación",
+        "duration": "Duración",
+        "skills": "Habilidades",
+        "activities": "Actividades Clave"
+      }
+    },
+    "philosophy": {
+      "title": "Filosofía",
+      "description": "Estoy convencido de que el liderazgo significativo es el siguiente paso en este viaje. No solo porque comparto los valores de desarrollo ético, compromiso social y apertura, sino porque quiero seguir preparándome para liderar iniciativas que mejoren la vida de otros. Aspiro a crear comunidades tecnológicas sostenibles, construir soluciones escalables con impacto social y colaborar con otros jóvenes líderes para diseñar el futuro que queremos.",
+      "author": "— Fortino Romero Mantilla"
+    },
+    "connect": {
+      "title": "Conectemos y Colaboremos",
+      "subtitle": "¿Listo para construir algo increíble juntos?",
+      "actions": {
+        "linkedin": "Conectar en LinkedIn",
+        "github": "Seguir en GitHub",
+        "twitter": "Seguir en Twitter",
+        "email": "Enviar Email"
+      }
+    },
     "highlights": {
       "title": "Logros Destacados",
       "japan": {
@@ -36,7 +87,8 @@
       "academic": {
         "title": "Contribuyente Académico",
         "description": "Revisó libros de texto y medios académicos UTP"
-      }    }
+      }
+    }
   },
   "projects": {
     "title": "Proyectos",

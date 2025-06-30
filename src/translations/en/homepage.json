@@ -11,11 +11,62 @@
     }
   },
   "about": {
+    "title": "About Me",
+    "subtitle": "Get to know the person behind the code",
+    "loading": "Loading about information...",
+    "error": "Error loading about information",
     "whoAmI": "Who am",
     "whoAmIHighlight": "I?",
     "description1": "I'm Fortino Romero Mantilla, a Cloud Engineer and tech community leader from Mexico with a mission: to use AWS cloud technology for social good. I specialize in serverless architectures, DevOps automation, and scalable cloud solutions that tackle real-world problems.",
     "description2": "From winning national innovation challenges to representing Mexico in Japan, my work spans cloud-based flood monitoring systems, smart waste classification, and mentoring future developers. I lead the AWS User Group Puebla and organized HackUTP to empower over 100 students through hands-on AWS experience and collaboration.",
     "quote": "My vision is to build cloud technology that's ethical, sustainable, and inclusive — AWS solutions that don't just scale, but uplift communities.",
+    "profile": {
+      "title": "Profile"
+    },
+    "journey": {
+      "title": "My Journey & Vision",
+      "mission": {
+        "title": "Mission",
+        "icon": "🎯",
+        "description": "My journey began with curiosity but has been built through action. From representing Mexico in Japan as the ANUIES4MX winner to founding the first AWS User Group in Puebla, I constantly seek opportunities to learn, lead, and share knowledge with others."
+      },
+      "vision": {
+        "title": "Vision",
+        "icon": "🚀",
+        "description": "I believe deeply in purposeful leadership. Beyond programming languages and tools, what drives me is connecting with people, working in teams, and designing solutions that generate real social impact. My goal is to create sustainable tech communities and scalable solutions."
+      }
+    },
+    "experience": {
+      "title": "Professional Journey",
+      "timeline": "Experience Timeline",
+      "present": "Present",
+      "loading": "Loading experience...",
+      "error": "Failed to load experience data",
+      "noExperience": "No experience data available",
+      "labels": {
+        "company": "Company",
+        "position": "Position",
+        "location": "Location",
+        "duration": "Duration",
+        "skills": "Skills",
+        "activities": "Key Activities"
+      }
+    },
+    "philosophy": {
+      "title": "Philosophy",
+      "description": "I am convinced that meaningful leadership is the next step in this journey. Not only because I share the values of ethical development, social commitment, and openness, but because I want to continue preparing myself to lead initiatives that improve the lives of others. I aspire to create sustainable technology communities, build scalable solutions with social impact, and collaborate with other young leaders to design the future we want.",
+      "author": "— Fortino Romero Mantilla"
+    },
+    "connect": {
+      "title": "Let's Connect and Collaborate",
+      "subtitle": "Ready to build something amazing together?",
+      "actions": {
+        "linkedin": "Connect on LinkedIn",
+        "github": "Follow on GitHub",
+        "twitter": "Follow on Twitter",
+        "email": "Send Email"
+      }
+    },
     "highlights": {
       "title": "Highlights",
       "japan": {
@@ -37,7 +88,8 @@
       "academic": {
         "title": "Academic Contributor",
         "description": "Reviewed UTP textbooks & academic media"
-      }    }
+      }
+    }
   },
   "projects": {
     "title": "Featured",
