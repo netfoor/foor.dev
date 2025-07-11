@@ -48,7 +48,7 @@ export default function AdminLayout({
     { href: '/admin/languages', label: t('sections.languages'), icon: Languages },
     { href: '/admin/recognitions', label: t('sections.recognitions'), icon: Award },
     { href: '/admin/publications', label: t('sections.publications'), icon: FileText },
-    { href: '/admin/users', label: t('users'), icon: Users },
+    { href: '/admin/about/profile', label: t('users'), icon: Users },
     { href: '/admin/settings', label: t('settings'), icon: Settings },
   ];
 

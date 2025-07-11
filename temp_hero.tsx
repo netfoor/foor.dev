@@ -60,7 +60,7 @@ export const Hero: React.FC<HeroProps> = ({ className = '' }) => {
           }}
         >
           <Image
-            src="/images/profile.jpeg"
+            src="/images/profile.jpg"
             alt={t('hero.name')}
             className="object-cover"
             fill

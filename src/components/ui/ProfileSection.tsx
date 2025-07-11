@@ -239,8 +239,13 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ className = '' }) => {
     if (!photoKey) return null;
     
     try {
+      // Normalize path - remove 'public/' prefix if present
+      const normalizedPath = photoKey.startsWith('public/') 
+        ? photoKey.slice(7) 
+        : photoKey;
+      
       const result = await getUrl({
-        key: photoKey,
+        path: normalizedPath,
       });
       return result.url.toString();
     } catch (error) {

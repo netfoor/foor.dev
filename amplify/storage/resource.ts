@@ -40,6 +40,18 @@ export const storage = defineStorage({
       allow.groups(['ADMINS']).to(['read', 'write', 'delete']),
     ],
     
+    // Sección About - Perfiles (nueva estructura)
+    'about/profiles/*': [
+      allow.guest.to(['read']),
+      allow.groups(['ADMINS']).to(['read', 'write', 'delete']),
+    ],
+    
+    // Sección About - Experiencias
+    'about/experiences/*': [
+      allow.guest.to(['read']),
+      allow.groups(['ADMINS']).to(['read', 'write', 'delete']),
+    ],
+    
     // Contenido privado del administrador
     'admin/*': [
       allow.groups(['ADMINS']).to(['read', 'write', 'delete']),

@@ -118,10 +118,18 @@ export default function AdminDashboard() {
       description: tAdmin('sections.manage_education')
     },
     {
+      title: tAdmin('about.profile.title'),
+      count: 1, // Profile is always 1
+      icon: Users,
+      href: '/admin/about/profile',
+      color: '#EC4899',
+      description: tAdmin('sections.manage_profile')
+    },
+    {
       title: tAdmin('sections.experiences'),
       count: stats.experiences,
       icon: Briefcase,
-      href: '/admin/experiences',
+      href: '/admin/about/experiences',
       color: '#8B5CF6',
       description: tAdmin('sections.manage_experiences')
     },
