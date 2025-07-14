@@ -138,6 +138,29 @@ const schema = a.schema({
     .authorization((allow) => [
       allow.guest().to(['read']),
       allow.group('ADMINS').to(['create', 'read', 'update', 'delete'])
+    ]),
+
+  Skills: a
+    .model({
+      name: a.string().required(),
+      category: a.enum(['CLOUD_PLATFORMS', 'PROGRAMMING_LANGUAGES', 'FRAMEWORKS_LIBRARIES', 'DEVOPS_TOOLS', 'DATABASES', 'ARCHITECTURE_DESIGN', 'SOFT_SKILLS']),
+      type: a.enum(['Technical', 'Soft']),
+      proficiency: a.enum(['Beginner', 'Intermediate', 'Advanced', 'Expert']),
+      yearsOfExperience: a.integer(),
+      description: a.string(),
+      certifications: a.string().array(), // Related certifications
+      projects: a.string().array(), // Related project IDs
+      iconKey: a.string(), // S3 key for skill icon/logo
+      priority: a.integer(), // For ordering
+      isActive: a.boolean(), // Show/hide skill
+      lastUsed: a.date(), // When this skill was last used
+      // Soft skill specific fields
+      examples: a.string().array(), // Examples of how this skill was applied
+      achievements: a.string().array(), // Achievements related to this skill
+    })
+    .authorization((allow) => [
+      allow.guest().to(['read']),
+      allow.group('ADMINS').to(['create', 'read', 'update', 'delete'])
     ])
 });
 

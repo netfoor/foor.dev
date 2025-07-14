@@ -48,6 +48,7 @@
   "refresh": "Refresh",
   "copy": "Copy",
   "paste": "Paste",
+  "admin_access_required": "Admin access required for this operation",
   "cut": "Cut",
   "select_all": "Select All",
   "download": "Download",

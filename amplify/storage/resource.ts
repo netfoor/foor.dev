@@ -34,6 +34,12 @@ export const storage = defineStorage({
       allow.groups(['ADMINS']).to(['read', 'write', 'delete']),
     ],
     
+    // Skills - iconos e imágenes (solo ADMINS pueden modificar)
+    'skills/*': [
+      allow.guest.to(['read']),
+      allow.groups(['ADMINS']).to(['read', 'write', 'delete']),
+    ],
+    
     // Perfiles de usuario y avatares - solo ADMINS
     'profiles/*': [
       allow.guest.to(['read']),

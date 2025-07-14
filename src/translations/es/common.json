@@ -48,6 +48,7 @@
   "refresh": "Actualizar",
   "copy": "Copiar",
   "paste": "Pegar",
+  "admin_access_required": "Se requiere acceso de administrador para esta operación",
   "cut": "Cortar",
   "select_all": "Seleccionar Todo",
   "download": "Descargar",

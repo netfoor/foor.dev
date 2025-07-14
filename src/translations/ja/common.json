@@ -48,6 +48,7 @@
     "main_menu": "メインメニュー",
     "breadcrumb": "パンくずリスト",
     "skip_to_content": "コンテンツにスキップ",
+  "admin_access_required": "この操作には管理者権限が必要です",
     "go_to_homepage": "ホームページに移動",
     "home": "ホーム",
     "about": "私たちについて",
