@@ -11,7 +11,8 @@
     }
   },
   "about": {
-    "title": "About Me",
+    "title": "About",
+    "titleHighlight": "Me",
     "subtitle": "Get to know the person behind the code",
     "loading": "Loading about information...",
     "error": "Error loading about information",
@@ -24,7 +25,8 @@
       "title": "Profile"
     },
     "journey": {
-      "title": "My Journey & Vision",
+      "title": "My Journey &",
+      "titleHighlight": "Vision",
       "mission": {
         "title": "Mission",
         "icon": "🎯",
@@ -37,7 +39,8 @@
       }
     },
     "experience": {
-      "title": "Professional Journey",
+      "title": "Professional",
+      "titleHighlight": "Journey",
       "timeline": "Experience Timeline",
       "present": "Present",
       "loading": "Loading experience...",
@@ -53,12 +56,14 @@
       }
     },
     "philosophy": {
-      "title": "Philosophy",
+      "title": "My",
+      "titleHighlight": "Philosophy",
       "description": "I am convinced that meaningful leadership is the next step in this journey. Not only because I share the values of ethical development, social commitment, and openness, but because I want to continue preparing myself to lead initiatives that improve the lives of others. I aspire to create sustainable technology communities, build scalable solutions with social impact, and collaborate with other young leaders to design the future we want.",
       "author": "— Fortino Romero Mantilla"
     },
     "connect": {
-      "title": "Let's Connect and Collaborate",
+      "title": "Let's Connect and",
+      "titleHighlight": "Collaborate",
       "subtitle": "Ready to build something amazing together?",
       "actions": {
         "linkedin": "Connect on LinkedIn",
@@ -150,5 +155,48 @@
     "actions": {
       "viewCredential": "View Credential"
     }
+  },
+  "skills": {
+    "title": "Technical",
+    "titleHighlight": "Skills",
+    "description": "Explore my technical expertise and professional competencies in cloud technologies, programming languages, and software development.",
+    "soft_title": "Soft",
+    "soft_titleHighlight": "Skills",
+    "soft_description": "Discover how I apply interpersonal and leadership abilities to collaborate effectively, solve problems creatively, and deliver results in diverse team environments.",
+    "all_categories": "All Categories",
+    "all_types": "All Types",
+    "technical": "Technical Skills",
+    "soft": "Soft Skills",
+    "filter": "Filter",
+    "categories": {
+      "cloud_platforms": "Cloud Platforms",
+      "programming_languages": "Programming Languages",
+      "frameworks_libraries": "Frameworks & Libraries",
+      "devops_tools": "DevOps & Tools",
+      "databases": "Databases",
+      "architecture_design": "Architecture & Design",
+      "soft_skills": "Soft Skills"
+    },
+    "proficiency": {
+      "beginner": "Beginner",
+      "intermediate": "Intermediate",
+      "advanced": "Advanced",
+      "expert": "Expert"
+    },
+    "year": "year",
+    "years": "years",
+    "show_more": "Show more",
+    "show_less": "Show less",
+    "certifications": "Certifications",
+    "projects": "Projects",
+    "examples": "Examples",
+    "achievements": "Achievements",
+    "view_all_skills": "View All Skills",
+    "no_skills_found": "No skills found matching your criteria.",
+    "loading": "Loading skills...",
+    "core_title": "Core",
+    "core_titleHighlight": "Skills",
+    "core_description": "The technologies I specialize in and use most frequently in my projects.",
+    "no_core_skills_found": "No core skills found. Add some in the admin panel."
   }
 }

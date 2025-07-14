@@ -193,24 +193,41 @@ const CertificationsSection: React.FC<CertificationsSectionProps> = ({
         {/* Header Section */}
         <Flex direction="column" alignItems="center" gap="medium" paddingTop="xl">
           <Text
-            fontSize={{ base: '2.5rem', medium: '3rem' }}
+            as="h2"
+            fontSize={{ base: '2rem', medium: '2.5rem' }}
             fontWeight="700"
-            color={mode === 'dark' ? 'white' : 'black'}
             textAlign="center"
+            lineHeight="1.1"
             style={{
-              background: 'linear-gradient(135deg, #007EB9, #9333EA)',
+              backgroundImage: mode === 'dark'
+                ? 'linear-gradient(135deg, #93C5FD, #60A5FA)'
+                : 'linear-gradient(135deg, #F59E0B, #FBBF24)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text',
+              marginBottom: '0.5rem',
             }}
           >
-            {t('certifications.title')}
+            {t('certifications.title')}{' '}
+            <span style={{ 
+              backgroundImage: mode === 'dark'
+                ? 'linear-gradient(135deg, #FBBF24, #F59E0B)'
+                : 'linear-gradient(135deg, #2563EB, #3B82F6)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+            }}>
+              {t('certifications.titleHighlight')}
+            </span>
           </Text>
           <Text
-            fontSize="large"
-            color={mode === 'dark' ? 'gray.300' : 'gray.600'}
+            fontSize={{ base: '1rem', medium: '1.125rem' }}
             textAlign="center"
             maxWidth="600px"
+            style={{
+              color: mode === 'dark' ? '#CBD5E1' : '#64748B',
+              lineHeight: 1.6,
+            }}
           >
             {t('certifications.description')}
           </Text>

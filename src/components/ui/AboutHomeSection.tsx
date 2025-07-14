@@ -60,23 +60,33 @@ export const AboutHomeSection: React.FC<AboutHomeSectionProps> = ({ className = 
         >
           {/* Left column - Main content */}
           <View flex={{ large: '7' }}>
-            <Heading
-              level={2}
-              fontSize={{ base: "1.75rem", medium: "2.25rem" }}
+            <Text
+              as="h2"
+              fontSize={{ base: '2rem', medium: '2.5rem' }}
               fontWeight="700"
+              lineHeight="1.1"
               marginBottom="1.5rem"
               style={{
                 backgroundImage: mode === 'dark'
-                  ? 'linear-gradient(135deg, #F1F5F9 0%, #94A3B8 100%)'
-                  : 'linear-gradient(135deg, #1E293B 0%, #3B82F6 100%)',
-                backgroundClip: 'text',
+                  ? 'linear-gradient(135deg, #93C5FD, #60A5FA)'
+                  : 'linear-gradient(135deg, #F59E0B, #FBBF24)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
-                color: 'transparent'
+                backgroundClip: 'text',
               }}
             >
-              {t('about.whoAmI')} <Text as="span" color="primary.80">{t('about.whoAmIHighlight')}</Text>
-            </Heading>
+              {t('about.whoAmI')}{' '}
+              <span style={{ 
+                backgroundImage: mode === 'dark'
+                  ? 'linear-gradient(135deg, #FBBF24, #F59E0B)'
+                  : 'linear-gradient(135deg, #2563EB, #3B82F6)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+              }}>
+                {t('about.whoAmIHighlight')}
+              </span>
+            </Text>
 
             <Flex direction="column" gap="1.5rem" marginBottom="2rem">
               <Text

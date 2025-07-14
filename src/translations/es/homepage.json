@@ -149,5 +149,48 @@
     "actions": {
       "viewCredential": "Ver Credencial"
     }
+  },
+  "skills": {
+    "title": "Habilidades",
+    "titleHighlight": "Técnicas",
+    "description": "Explora mis conocimientos técnicos y competencias profesionales en tecnologías cloud, lenguajes de programación y desarrollo de software.",
+    "soft_title": "Habilidades",
+    "soft_titleHighlight": "Blandas",
+    "soft_description": "Descubre cómo aplico mis habilidades interpersonales y de liderazgo para colaborar efectivamente, resolver problemas creativamente y entregar resultados en diversos entornos de equipo.",
+    "all_categories": "Todas las Categorías",
+    "all_types": "Todos los Tipos",
+    "technical": "Habilidades Técnicas",
+    "soft": "Habilidades Blandas",
+    "filter": "Filtrar",
+    "categories": {
+      "cloud_platforms": "Plataformas Cloud",
+      "programming_languages": "Lenguajes de Programación",
+      "frameworks_libraries": "Frameworks y Librerías",
+      "devops_tools": "Herramientas DevOps",
+      "databases": "Bases de Datos",
+      "architecture_design": "Arquitectura y Diseño",
+      "soft_skills": "Habilidades Blandas"
+    },
+    "proficiency": {
+      "beginner": "Principiante",
+      "intermediate": "Intermedio",
+      "advanced": "Avanzado",
+      "expert": "Experto"
+    },
+    "year": "año",
+    "years": "años",
+    "show_more": "Mostrar más",
+    "show_less": "Mostrar menos",
+    "certifications": "Certificaciones",
+    "projects": "Proyectos",
+    "examples": "Ejemplos",
+    "achievements": "Logros",
+    "view_all_skills": "Ver Todas las Habilidades",
+    "no_skills_found": "No se encontraron habilidades que coincidan con sus criterios.",
+    "loading": "Cargando habilidades...",
+    "core_title": "Habilidades",
+    "core_titleHighlight": "Principales",
+    "core_description": "Las tecnologías en las que me especializo y utilizo con mayor frecuencia en mis proyectos.",
+    "no_core_skills_found": "No se encontraron habilidades principales. Agregue algunas en el panel de administración."
   }
 }

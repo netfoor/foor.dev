@@ -153,6 +153,7 @@ const schema = a.schema({
       iconKey: a.string(), // S3 key for skill icon/logo
       priority: a.integer(), // For ordering
       isActive: a.boolean(), // Show/hide skill
+      isCore: a.boolean(), // Mark as core skill for homepage
       lastUsed: a.date(), // When this skill was last used
       // Soft skill specific fields
       examples: a.string().array(), // Examples of how this skill was applied

@@ -4,6 +4,7 @@ import { getTranslations } from '@/lib/i18n/server';
 import HeaderControls from '@/components/ui/HeaderControls';
 import Hero from '@/components/ui/Hero';
 import AboutHomeSection from '@/components/ui/AboutHomeSection';
+import CoreSkillsSection from '@/components/ui/CoreSkillsSection';
 import FeaturedProjects from '@/components/ui/FeaturedProjects';
 import FeaturedCertifications from '@/components/ui/FeaturedCertifications';
 import Footer from '@/components/ui/Footer';
@@ -206,6 +207,10 @@ export default async function Home({ params }: HomeProps) {
 
         {/* Sección Certifications - Certificaciones destacadas */}
         <FeaturedCertifications />
+
+        {/* Core Skills Section - Show selected skills on home page */}
+        <CoreSkillsSection />
+
       </main>
 
       {/* Footer - Pie de página con información de contacto y enlaces */}

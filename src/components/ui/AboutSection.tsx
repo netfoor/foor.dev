@@ -238,28 +238,41 @@ const AboutSection: React.FC<AboutSectionProps> = ({ locale, className = '' }) =
             textAlign="center"
             marginBottom="4rem"
             >
-            <Heading
-              level={1}
-              fontSize={{ base: '2.5rem', medium: '3.5rem' }}
+            <Text
+              as="h1"
+              fontSize={{ base: '2rem', medium: '2.5rem' }}
               fontWeight="700"
-              color={mode === 'dark' ? '#FBBF24' : 'var(--amplify-colors-font-primary)'}
-              marginBottom="1rem"
+              textAlign="center"
+              lineHeight="1.1"
               style={{
-              textShadow: mode === 'dark'
-                ? '0 2px 16px rgba(251,191,36,0.15), 0 1px 0 #000'
-                : undefined
+                backgroundImage: mode === 'dark'
+                  ? 'linear-gradient(135deg, #93C5FD, #60A5FA)'
+                  : 'linear-gradient(135deg, #F59E0B, #FBBF24)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+                marginBottom: '0.5rem',
               }}
             >
-              {t('about.title')}
-            </Heading>
+              {t('about.title')}{' '}
+              <span style={{ 
+                backgroundImage: mode === 'dark'
+                  ? 'linear-gradient(135deg, #FBBF24, #F59E0B)'
+                  : 'linear-gradient(135deg, #2563EB, #3B82F6)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+              }}>
+                {t('about.titleHighlight')}
+              </span>
+            </Text>
             <Text
-              fontSize={{ base: '1.125rem', medium: '1.25rem' }}
-              color={mode === 'dark' ? '#FFFF' : 'var(--amplify-colors-font-secondary)'}
+              fontSize={{ base: '1rem', medium: '1.125rem' }}
+              textAlign="center"
               maxWidth="600px"
               style={{
-              textShadow: mode === 'dark'
-                ? '0 1px 8px rgba(244,114,182,0.10)'
-                : undefined
+                color: mode === 'dark' ? '#CBD5E1' : '#64748B',
+                lineHeight: 1.6,
               }}
             >
               {t('about.subtitle')}

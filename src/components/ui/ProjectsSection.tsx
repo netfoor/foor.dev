@@ -214,38 +214,40 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
         <Flex direction="column" alignItems="center" gap="1.5rem" marginBottom="4rem">
           <Text
             as="h2"
-            fontSize={{ base: '2.5rem', medium: '3.5rem', large: '4rem' }}
-            fontWeight="800"
+            fontSize={{ base: '2rem', medium: '2.5rem' }}
+            fontWeight="700"
             textAlign="center"
-            lineHeight="1.1"            style={{
+            lineHeight="1.1"
+            style={{
               backgroundImage: mode === 'dark'
-                ? 'linear-gradient(135deg, #93C5FD 0%, #C084FC 50%, #60A5FA 100%)'
-                : 'linear-gradient(135deg, #3B82F6 0%, #8B5CF6 50%, #2563EB 100%)',
+                ? 'linear-gradient(135deg, #93C5FD, #60A5FA)'
+                : 'linear-gradient(135deg, #F59E0B, #FBBF24)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text',
               marginBottom: '0.5rem',
             }}
           >
-            {t('projects.title')}{' '}            <Text as="span" style={{ 
+            {t('projects.title')}{' '}
+            <span style={{ 
               backgroundImage: mode === 'dark'
-                ? 'linear-gradient(135deg, #FBBF24 0%, #F59E0B 100%)'
-                : 'linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%)',
+                ? 'linear-gradient(135deg, #FBBF24, #F59E0B)'
+                : 'linear-gradient(135deg, #2563EB, #3B82F6)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text',
             }}>
               {t('projects.titleHighlight')}
-            </Text>
+            </span>
           </Text>
           
           <Text
-            fontSize={{ base: '1.1rem', medium: '1.25rem' }}
+            fontSize={{ base: '1rem', medium: '1.125rem' }}
             textAlign="center"
-            maxWidth="800px"
+            maxWidth="600px"
             style={{
               color: mode === 'dark' ? '#CBD5E1' : '#64748B',
-              lineHeight: '1.6',
+              lineHeight: 1.6,
             }}
           >
             {t('projects.description')}

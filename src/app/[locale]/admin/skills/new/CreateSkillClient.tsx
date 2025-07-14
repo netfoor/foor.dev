@@ -52,6 +52,7 @@ const CreateSkillClient: React.FC<CreateSkillClientProps> = ({ locale }) => {
     achievements: [] as string[],
     priority: '',
     isActive: true,
+    isCore: false,
     lastUsed: '',
   });
 
@@ -186,6 +187,7 @@ const CreateSkillClient: React.FC<CreateSkillClientProps> = ({ locale }) => {
         iconKey,
         priority: formData.priority ? parseInt(formData.priority) : null,
         isActive: formData.isActive,
+        isCore: formData.isCore,
         lastUsed: formData.lastUsed ? new Date(formData.lastUsed).toISOString().split('T')[0] : null,
       };
 
@@ -635,6 +637,13 @@ const CreateSkillClient: React.FC<CreateSkillClientProps> = ({ locale }) => {
                 label={t('skills.is_active_label')}
                 isChecked={formData.isActive}
                 onChange={(e) => handleInputChange('isActive', e.target.checked)}
+              />
+              
+              <SwitchField
+                label={t('skills.is_core_label') || "Show on Home Page (Core Skill)"}
+                isChecked={formData.isCore}
+                onChange={(e) => handleInputChange('isCore', e.target.checked)}
+                labelPosition="end"
               />
             </Flex>
           </Card>

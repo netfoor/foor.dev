@@ -149,5 +149,48 @@
     "actions": {
       "viewCredential": "認定書を見る"
     }
+  },
+  "skills": {
+    "title": "テクニカル",
+    "titleHighlight": "スキル",
+    "description": "クラウド技術、プログラミング言語、ソフトウェア開発における私の専門知識と職業能力をご覧ください。",
+    "soft_title": "ソフト",
+    "soft_titleHighlight": "スキル",
+    "soft_description": "多様なチーム環境で効果的に協力し、創造的に問題を解決し、成果を上げるために対人能力とリーダーシップをどのように適用しているかをご覧ください。",
+    "all_categories": "すべてのカテゴリー",
+    "all_types": "すべてのタイプ",
+    "technical": "テクニカルスキル",
+    "soft": "ソフトスキル",
+    "filter": "フィルター",
+    "categories": {
+      "cloud_platforms": "クラウドプラットフォーム",
+      "programming_languages": "プログラミング言語",
+      "frameworks_libraries": "フレームワーク＆ライブラリ",
+      "devops_tools": "DevOpsツール",
+      "databases": "データベース",
+      "architecture_design": "アーキテクチャ＆設計",
+      "soft_skills": "ソフトスキル"
+    },
+    "proficiency": {
+      "beginner": "初級",
+      "intermediate": "中級",
+      "advanced": "上級",
+      "expert": "エキスパート"
+    },
+    "year": "年",
+    "years": "年",
+    "show_more": "もっと見る",
+    "show_less": "閉じる",
+    "certifications": "認定",
+    "projects": "プロジェクト",
+    "examples": "例",
+    "achievements": "達成",
+    "view_all_skills": "すべてのスキルを見る",
+    "no_skills_found": "条件に一致するスキルが見つかりません。",
+    "loading": "スキルを読み込み中...",
+    "core_title": "コア",
+    "core_titleHighlight": "スキル",
+    "core_description": "私が専門とし、プロジェクトで最も頻繁に使用するテクノロジー。",
+    "no_core_skills_found": "コアスキルが見つかりません。管理パネルで追加してください。"
   }
 }

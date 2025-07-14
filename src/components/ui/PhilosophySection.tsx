@@ -278,13 +278,34 @@ const PhilosophySection: React.FC<PhilosophySectionProps> = ({ className = '' })
       <style>{philosophyStyles}</style>
       
       {/* Header */}
-      <Heading
-        level={2}
+      <Text
+        as="h2"
         fontSize={{ base: '2rem', medium: '2.5rem' }}
-        className="section-title"
+        fontWeight="700"
+        textAlign="center"
+        lineHeight="1.1"
+        style={{
+          backgroundImage: mode === 'dark'
+            ? 'linear-gradient(135deg, #93C5FD, #60A5FA)'
+            : 'linear-gradient(135deg, #F59E0B, #FBBF24)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          backgroundClip: 'text',
+          marginBottom: '1.5rem',
+        }}
       >
-        {t('about.philosophy.title')}
-      </Heading>
+        {t('about.philosophy.title')}{' '}
+        <span style={{ 
+          backgroundImage: mode === 'dark'
+            ? 'linear-gradient(135deg, #FBBF24, #F59E0B)'
+            : 'linear-gradient(135deg, #2563EB, #3B82F6)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          backgroundClip: 'text',
+        }}>
+          {t('about.philosophy.titleHighlight')}
+        </span>
+      </Text>
 
       {/* Philosophy Container */}
       <View className="philosophy-container">
