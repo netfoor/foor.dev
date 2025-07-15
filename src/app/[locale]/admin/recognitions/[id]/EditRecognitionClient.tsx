@@ -317,11 +317,15 @@ const EditRecognitionClient: React.FC<EditRecognitionClientProps> = ({ locale, r
         title,
         description,
         issuer,
-        issueDate: new Date(issueDate).toISOString(),
+        issueDate: issueDate,
         credentialId: credentialId || undefined,
         issuerUrl: issuerUrl || undefined,
         photoKey: newPhotoKey || undefined,
       });
+      
+      if (updatedRecognition.errors) {
+        throw new Error(updatedRecognition.errors[0].message);
+      }
       
       console.log('✅ Recognition updated:', updatedRecognition.data?.id);
       

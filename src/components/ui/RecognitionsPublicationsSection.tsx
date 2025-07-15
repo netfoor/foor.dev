@@ -371,11 +371,11 @@ const RecognitionsPublicationsSection: React.FC<RecognitionsPublicationsProps> =
                         {images[recognition.id] ? (
                           <img 
                             src={images[recognition.id]} 
-                            alt={recognition.title}
+                            alt={recognition.title || 'Recognition image'}
                             style={{
                               width: '100%',
                               height: '100%',
-                              objectFit: 'cover',
+                              objectFit: 'contain',
                               transition: 'all 0.5s ease',
                             }}
                             className="hover:scale-105"
@@ -542,11 +542,11 @@ const RecognitionsPublicationsSection: React.FC<RecognitionsPublicationsProps> =
                         {images[publication.id] ? (
                           <img 
                             src={images[publication.id]} 
-                            alt={publication.title}
+                            alt={publication.title || 'Publication image'}
                             style={{
                               width: '100%',
                               height: '100%',
-                              objectFit: 'cover',
+                              objectFit: 'contain',
                               transition: 'all 0.5s ease',
                             }}
                             className="hover:scale-105"

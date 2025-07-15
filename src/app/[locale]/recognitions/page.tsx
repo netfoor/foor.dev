@@ -113,9 +113,7 @@ export default async function RecognitionsPage({ params }: RecognitionsProps) {
         <HeaderControls />
 
         {/* Sección Recognitions completa */}
-        <div style={{ paddingBottom: '4rem' }}>
-          <RecognitionsPublicationsSection />
-        </div>
+        <RecognitionsPublicationsSection />
       </main>
 
       {/* Footer */}
