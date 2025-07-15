@@ -188,7 +188,7 @@ const CertificationsSection: React.FC<CertificationsSectionProps> = ({
   }
 
   return (
-    <View className={`${className} certifications-section`} paddingTop="xl">
+    <View className={`${className} certifications-section`} padding="4rem 2rem">
       <Flex direction="column" gap="xl">
         {/* Header Section */}
         <Flex direction="column" alignItems="center" gap="medium" paddingTop="xl">

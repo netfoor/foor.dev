@@ -227,7 +227,7 @@ const AboutSection: React.FC<AboutSectionProps> = ({ locale, className = '' }) =
           direction="column"
           alignItems="center"
           justifyContent="flex-start"
-          padding={{ base: '2rem', medium: '4rem' }}
+          padding={{ base: '4rem', medium: '6rem' }}
           maxWidth="1200px"
           margin="0 auto"
         >

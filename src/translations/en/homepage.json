@@ -198,5 +198,30 @@
     "core_titleHighlight": "Skills",
     "core_description": "The technologies I specialize in and use most frequently in my projects.",
     "no_core_skills_found": "No core skills found. Add some in the admin panel."
+  },
+  "recognitions": {
+    "title": "Recognitions &",
+    "titleHighlight": "Publications",
+    "description": "Discover my awards, honors, and media features across various platforms including articles, videos, and social media.",
+    "loading": "Loading recognitions and publications...",
+    "error": "Failed to load recognitions and publications. Please try again later.",
+    "tabs": {
+      "recognitions": "Recognitions",
+      "publications": "Media Publications"
+    },
+    "labels": {
+      "issuer": "Issued by",
+      "issueDate": "Date",
+      "source": "Source",
+      "type": "Type"
+    },
+    "actions": {
+      "viewCredential": "View Credential",
+      "viewPublication": "View Publication"
+    },
+    "noRecognitions": "No recognitions available.",
+    "noPublications": "No publications available.",
+    "viewAll": "View All Recognitions",
+    "viewAllPublications": "View All Publications"
   }
 }

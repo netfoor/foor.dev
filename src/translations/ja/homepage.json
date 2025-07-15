@@ -192,5 +192,30 @@
     "core_titleHighlight": "スキル",
     "core_description": "私が専門とし、プロジェクトで最も頻繁に使用するテクノロジー。",
     "no_core_skills_found": "コアスキルが見つかりません。管理パネルで追加してください。"
+  },
+  "recognitions": {
+    "title": "表彰と",
+    "titleHighlight": "メディア出版物",
+    "description": "記事、動画、ソーシャルメディアなど、さまざまなプラットフォームでの私の受賞歴、栄誉、メディア掲載を発見してください。",
+    "loading": "表彰とメディア出版物を読み込み中...",
+    "error": "表彰とメディア出版物の読み込みに失敗しました。後でもう一度お試しください。",
+    "tabs": {
+      "recognitions": "表彰",
+      "publications": "メディア出版物"
+    },
+    "labels": {
+      "issuer": "発行者",
+      "issueDate": "日付",
+      "source": "ソース",
+      "type": "タイプ"
+    },
+    "actions": {
+      "viewCredential": "資格を見る",
+      "viewPublication": "出版物を見る"
+    },
+    "noRecognitions": "表彰はありません。",
+    "noPublications": "出版物はありません。",
+    "viewAll": "すべての表彰を見る",
+    "viewAllPublications": "すべての出版物を見る"
   }
 }

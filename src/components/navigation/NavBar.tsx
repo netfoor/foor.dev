@@ -15,8 +15,8 @@ const navLinks = [
   { href: '/about', key: 'about' },
   { href: '/projects', key: 'projects' },
   { href: '/certifications', key: 'certifications' },
-  { href: '/skills', key: 'skills' },
-  { href: '/contact', key: 'contact' }
+  { href: '/recognitions', key: 'recognitions' },
+  { href: '/skills', key: 'skills' }
 ];
 
 function NavBar() {

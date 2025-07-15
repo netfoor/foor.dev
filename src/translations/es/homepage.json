@@ -192,5 +192,30 @@
     "core_titleHighlight": "Principales",
     "core_description": "Las tecnologías en las que me especializo y utilizo con mayor frecuencia en mis proyectos.",
     "no_core_skills_found": "No se encontraron habilidades principales. Agregue algunas en el panel de administración."
+  },
+  "recognitions": {
+    "title": "Reconocimientos y",
+    "titleHighlight": "Publicaciones",
+    "description": "Descubre mis premios, reconocimientos y apariciones en medios a través de diversas plataformas incluyendo artículos, videos y redes sociales.",
+    "loading": "Cargando reconocimientos y publicaciones...",
+    "error": "Error al cargar reconocimientos y publicaciones. Por favor, intenta de nuevo más tarde.",
+    "tabs": {
+      "recognitions": "Reconocimientos",
+      "publications": "Publicaciones en Medios"
+    },
+    "labels": {
+      "issuer": "Emitido por",
+      "issueDate": "Fecha",
+      "source": "Fuente",
+      "type": "Tipo"
+    },
+    "actions": {
+      "viewCredential": "Ver Credencial",
+      "viewPublication": "Ver Publicación"
+    },
+    "noRecognitions": "No hay reconocimientos disponibles.",
+    "noPublications": "No hay publicaciones disponibles.",
+    "viewAll": "Ver Todos los Reconocimientos",
+    "viewAllPublications": "Ver Todas las Publicaciones"
   }
 }

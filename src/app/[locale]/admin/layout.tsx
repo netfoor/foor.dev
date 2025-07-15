@@ -43,11 +43,10 @@ export default function AdminLayout({
     { href: '/admin', label: t('dashboard'), icon: LayoutDashboard },
     { href: '/admin/projects', label: t('sections.projects'), icon: FolderOpen },
     { href: '/admin/certifications', label: t('sections.certifications'), icon: Award },
+    { href: '/admin/recognitions', label: t('sections.recognitions'), icon: FileText },
     { href: '/admin/education', label: t('sections.education'), icon: GraduationCap },
     { href: '/admin/experiences', label: t('sections.experiences'), icon: Briefcase },
     { href: '/admin/languages', label: t('sections.languages'), icon: Languages },
-    { href: '/admin/recognitions', label: t('sections.recognitions'), icon: Award },
-    { href: '/admin/publications', label: t('sections.publications'), icon: FileText },
     { href: '/admin/about/profile', label: t('users'), icon: Users },
     { href: '/admin/settings', label: t('settings'), icon: Settings },
   ];

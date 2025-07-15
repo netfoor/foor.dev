@@ -7,6 +7,7 @@ import AboutHomeSection from '@/components/ui/AboutHomeSection';
 import CoreSkillsSection from '@/components/ui/CoreSkillsSection';
 import FeaturedProjects from '@/components/ui/FeaturedProjects';
 import FeaturedCertifications from '@/components/ui/FeaturedCertifications';
+import FeaturedRecognitionsPublications from '@/components/ui/FeaturedRecognitionsPublications';
 import Footer from '@/components/ui/Footer';
 import type { SupportedLocale } from '@/lib/i18n/types';
 
@@ -207,6 +208,9 @@ export default async function Home({ params }: HomeProps) {
 
         {/* Sección Certifications - Certificaciones destacadas */}
         <FeaturedCertifications />
+
+        {/* Sección Reconocimientos y Publicaciones */}
+        <FeaturedRecognitionsPublications />
 
         {/* Core Skills Section - Show selected skills on home page */}
         <CoreSkillsSection />

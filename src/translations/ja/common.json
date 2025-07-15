@@ -24,7 +24,8 @@
   "previous": "前へ",  "home": "ホーム",
   "about": "について",
   "projects": "プロジェクト",
-  "certifications": "認定",
+  "certifications": "認証",
+  "recognitions": "表彰",
   "skills": "スキル",
   "contact": "連絡先",
   "help": "ヘルプ",
@@ -54,6 +55,7 @@
     "about": "私たちについて",
     "projects": "プロジェクト",
     "certifications": "認証",
+    "recognitions": "表彰",
     "skills": "スキル",
     "contact": "連絡先"
   },

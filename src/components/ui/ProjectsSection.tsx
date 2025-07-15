@@ -185,7 +185,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
   return (
     <View
       as="section"
-      padding="4rem 2rem"
+      padding="6rem 4rem"
       className={`${className}`}
       style={{
         minHeight: '70vh',

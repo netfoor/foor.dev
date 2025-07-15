@@ -122,6 +122,7 @@ const CoreSkillsSection: React.FC<CoreSkillsSectionProps> = ({
       className={`${className}`}
       style={{
         position: 'relative',
+        backgroundColor: mode === 'dark' ? '#0F172A' : '#F8FAFC',
       }}
     >
       {/* Background Pattern */}
@@ -132,11 +133,6 @@ const CoreSkillsSection: React.FC<CoreSkillsSectionProps> = ({
           left: 0,
           right: 0,
           bottom: 0,
-          backgroundImage: mode === 'dark'
-            ? `radial-gradient(circle at 75% 25%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
-               radial-gradient(circle at 25% 75%, rgba(139, 92, 246, 0.1) 0%, transparent 50%)`
-            : `radial-gradient(circle at 75% 25%, rgba(59, 130, 246, 0.05) 0%, transparent 50%),
-               radial-gradient(circle at 25% 75%, rgba(139, 92, 246, 0.05) 0%, transparent 50%)`,
           pointerEvents: 'none',
         }}
       />
