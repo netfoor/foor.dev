@@ -5,7 +5,8 @@
     "description": "Apasionado por las soluciones en la nube de AWS, arquitectura serverless e Infraestructura como Código. Ayudo a las empresas a escalar con tecnologías modernas en la nube y prácticas DevOps.",
     "social": {
       "instagram": "Seguir en Instagram",
-      "github": "Ver Proyectos en GitHub",      "linkedin": "Conectar en LinkedIn", 
+      "github": "Ver Proyectos en GitHub",
+      "linkedin": "Conectar en LinkedIn",
       "email": "Enviar Email"
     }
   },
@@ -33,7 +34,8 @@
         "title": "Visión",
         "icon": "🚀",
         "description": "Creo profundamente en el liderazgo con propósito. Más allá de los lenguajes de programación y herramientas, lo que me impulsa es conectar con las personas, trabajar en equipos y diseñar soluciones que generen un impacto social real. Mi objetivo es crear comunidades tecnológicas sostenibles y soluciones escalables."
-      }
+      },
+      "titleHighlight": "Vision"
     },
     "experience": {
       "title": "Trayectoria Profesional",
@@ -49,12 +51,14 @@
         "duration": "Duración",
         "skills": "Habilidades",
         "activities": "Actividades Clave"
-      }
+      },
+      "titleHighlight": "Journey"
     },
     "philosophy": {
       "title": "Filosofía",
       "description": "Estoy convencido de que el liderazgo significativo es el siguiente paso en este viaje. No solo porque comparto los valores de desarrollo ético, compromiso social y apertura, sino porque quiero seguir preparándome para liderar iniciativas que mejoren la vida de otros. Aspiro a crear comunidades tecnológicas sostenibles, construir soluciones escalables con impacto social y colaborar con otros jóvenes líderes para diseñar el futuro que queremos.",
-      "author": "— Fortino Romero Mantilla"
+      "author": "— Fortino Romero Mantilla",
+      "titleHighlight": "Philosophy"
     },
     "connect": {
       "title": "Conectemos y Colaboremos",
@@ -64,7 +68,8 @@
         "github": "Seguir en GitHub",
         "twitter": "Seguir en Twitter",
         "email": "Enviar Email"
-      }
+      },
+      "titleHighlight": "Collaborate"
     },
     "highlights": {
       "title": "Logros Destacados",
@@ -88,7 +93,8 @@
         "title": "Contribuyente Académico",
         "description": "Revisó libros de texto y medios académicos UTP"
       }
-    }
+    },
+    "titleHighlight": "Me"
   },
   "projects": {
     "title": "Proyectos",

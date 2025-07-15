@@ -21,7 +21,8 @@
   "open": "開く",
   "back": "戻る",
   "next": "次へ",
-  "previous": "前へ",  "home": "ホーム",
+  "previous": "前へ",
+  "home": "ホーム",
   "about": "について",
   "projects": "プロジェクト",
   "certifications": "認証",
@@ -34,9 +35,6 @@
   "account": "アカウント",
   "loading": "読み込み中...",
   "login": "ログイン",
-  "logout": "ログアウト",
-  "signin": "サインイン",
-  "signup": "サインアップ",
   "language": "日本語",
   "change_language_to": "言語を変更: ",
   "select_language": "言語を選択",
@@ -49,7 +47,6 @@
     "main_menu": "メインメニュー",
     "breadcrumb": "パンくずリスト",
     "skip_to_content": "コンテンツにスキップ",
-  "admin_access_required": "この操作には管理者権限が必要です",
     "go_to_homepage": "ホームページに移動",
     "home": "ホーム",
     "about": "私たちについて",
@@ -60,28 +57,22 @@
     "contact": "連絡先"
   },
   "hero": {
-    "name": "あなたの名前",
-    "social": {
-      "instagram": "インスタグラム",
-      "email": "メール",
-      "linkedin": "リンクトイン",
-      "github": "ギットハブ"
-    }
+    "social": {}
   },
   "forms": {
     "placeholder": "強力なツールとリソースでモダンなWebを構築しましょう",
     "required": "必須",
-    "optional": "オプション",    "email": "メールアドレス",
-    "password": "パスワード",
-    "confirm_password": "パスワードの確認",
-    "name": "名前",
-    "first_name": "名",
-    "last_name": "姓",
-    "submit": "送信",
-    "reset": "リセット",
-    "search": "検索",
-    "filter": "フィルター"
-  },  "footer": {
+    "optional": "オプション",
+    "select_option": "Select an option",
+    "invalid_email": "Invalid email address",
+    "invalid_phone": "Invalid phone number",
+    "password_too_short": "Password is too short",
+    "passwords_dont_match": "Passwords don't match",
+    "field_required": "This field is required",
+    "min_length": "Minimum {{count}} characters",
+    "max_length": "Maximum {{count}} characters"
+  },
+  "footer": {
     "tagline": "AWSクラウドエンジニア | スケーラブルなソリューションを構築",
     "social": {
       "visit": "訪問"
@@ -89,7 +80,8 @@
     "rights": "全著作権所有",
     "built": "最新のクラウド技術とイノベーションへの情熱で構築"
   },
-  "errors": {    "generic": "エラーが発生しました",
+  "errors": {
+    "generic": "エラーが発生しました",
     "network": "ネットワークエラー",
     "server": "サーバーエラー",
     "not_found": "見つかりません",
@@ -102,8 +94,9 @@
   },
   "scroll_to_top": {
     "button": "トップに戻る",
-    "tooltip": "トップに戻る"  
-  },  "admin_privileges_active": "管理者権限がアクティブ",
+    "tooltip": "トップに戻る"
+  },
+  "admin_privileges_active": "管理者権限がアクティブ",
   "loading_dashboard": "ダッシュボードを読み込み中...",
   "general_overview": "全般的な概要",
   "total_content": "総コンテンツ数",
@@ -143,5 +136,93 @@
       "active": "アクティブ",
       "expired": "期限切れ"
     }
+  },
+  "current_language": "Current language",
+  "error": "Error",
+  "success": "Success",
+  "warning": "Warning",
+  "info": "Information",
+  "search": "Search",
+  "filter": "Filter",
+  "sort": "Sort",
+  "clear": "Clear",
+  "reset": "Reset",
+  "refresh": "Refresh",
+  "copy": "Copy",
+  "paste": "Paste",
+  "admin_access_required": "Admin access required for this operation",
+  "cut": "Cut",
+  "select_all": "Select All",
+  "download": "Download",
+  "upload": "Upload",
+  "print": "Print",
+  "share": "Share",
+  "export": "Export",
+  "import": "Import",
+  "view": "View",
+  "preview": "Preview",
+  "publish": "Publish",
+  "draft": "Draft",
+  "archive": "Archive",
+  "restore": "Restore",
+  "time": {
+    "now": "Now",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "tomorrow": "Tomorrow",
+    "this_week": "This week",
+    "last_week": "Last week",
+    "next_week": "Next week",
+    "this_month": "This month",
+    "last_month": "Last month",
+    "next_month": "Next month",
+    "this_year": "This year",
+    "last_year": "Last year",
+    "next_year": "Next year",
+    "seconds_ago": "{{count}} seconds ago",
+    "minutes_ago": "{{count}} minutes ago",
+    "hours_ago": "{{count}} hours ago",
+    "days_ago": "{{count}} days ago",
+    "weeks_ago": "{{count}} weeks ago",
+    "months_ago": "{{count}} months ago",
+    "years_ago": "{{count}} years ago"
+  },
+  "pagination": {
+    "first": "First",
+    "last": "Last",
+    "previous_page": "Previous page",
+    "next_page": "Next page",
+    "page": "Page",
+    "of": "of",
+    "showing": "Showing",
+    "to": "to",
+    "results": "results",
+    "no_results": "No results found",
+    "page_size": "Items per page"
+  },
+  "notifications": {
+    "new_notification": "New notification",
+    "mark_as_read": "Mark as read",
+    "mark_all_as_read": "Mark all as read",
+    "no_notifications": "No notifications",
+    "view_all": "View all notifications"
+  },
+  "confirmation": {
+    "are_you_sure": "Are you sure?",
+    "this_action_cannot_be_undone": "This action cannot be undone",
+    "confirm_delete": "Confirm deletion",
+    "confirm_action": "Confirm action",
+    "confirm": "Confirm",
+    "proceed": "Proceed"
+  },
+  "accessibility": {
+    "screen_reader_only": "Screen reader only",
+    "open_menu": "Open menu",
+    "close_menu": "Close menu",
+    "toggle_menu": "Toggle menu",
+    "main_content": "Main content",
+    "sidebar": "Sidebar",
+    "footer": "Footer",
+    "search_results": "Search results"
   }
 }

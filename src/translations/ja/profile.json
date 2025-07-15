@@ -15,7 +15,7 @@
   "update_error": "プロフィールの更新中にエラーが発生しました",
   "fields": {
     "first_name": "名",
-    "last_name": "姓", 
+    "last_name": "姓",
     "email": "メールアドレス",
     "phone": "電話番号",
     "bio": "自己紹介",
@@ -29,9 +29,5 @@
     "delete_account": "アカウントを削除",
     "export_data": "データをエクスポート",
     "download_data": "マイデータをダウンロード"
-  },
-  "profile": "プロフィール",
-  "edit": "編集",
-  "save": "保存",
-  "cancel": "キャンセル"
+  }
 }

@@ -8,7 +8,8 @@
       "github": "GitHubプロジェクトを見る",
       "linkedin": "LinkedInで接続",
       "email": "メール送信"
-    }  },
+    }
+  },
   "about": {
     "title": "私について",
     "subtitle": "コードの背後にいる人を知ってください",
@@ -33,7 +34,8 @@
         "title": "ビジョン",
         "icon": "🚀",
         "description": "私は目的を持ったリーダーシップを深く信じています。プログラミング言語やツールを超えて、私を駆り立てるのは人々とのつながり、チームでの協働、そして真の社会的インパクトを生み出すソリューションの設計です。私の目標は持続可能な技術コミュニティとスケーラブルなソリューションを作ることです。"
-      }
+      },
+      "titleHighlight": "Vision"
     },
     "experience": {
       "title": "職歴",
@@ -49,12 +51,14 @@
         "duration": "期間",
         "skills": "スキル",
         "activities": "主な活動"
-      }
+      },
+      "titleHighlight": "Journey"
     },
     "philosophy": {
       "title": "哲学",
       "description": "意味のあるリーダーシップがこの旅の次のステップであると確信しています。倫理的な開発、社会的コミットメント、開放性の価値を共有するだけでなく、他の人々の生活を改善する取り組みをリードするための準備を続けたいからです。持続可能な技術コミュニティを作り、社会的インパクトのあるスケーラブルなソリューションを構築し、他の若いリーダーと協力して私たちが望む未来を設計することを目指しています。",
-      "author": "— フォルティーノ・ロメロ・マンティーヤ"
+      "author": "— フォルティーノ・ロメロ・マンティーヤ",
+      "titleHighlight": "Philosophy"
     },
     "connect": {
       "title": "つながりと協力",
@@ -64,7 +68,8 @@
         "github": "GitHubでフォロー",
         "twitter": "Twitterでフォロー",
         "email": "メール送信"
-      }
+      },
+      "titleHighlight": "Collaborate"
     },
     "highlights": {
       "title": "ハイライト",
@@ -88,7 +93,8 @@
         "title": "学術貢献者",
         "description": "UTP教科書・学術メディアレビュー"
       }
-    }
+    },
+    "titleHighlight": "Me"
   },
   "projects": {
     "title": "注目",
