@@ -201,24 +201,64 @@ const CreatePublicationClient: React.FC<CreatePublicationClientProps> = () => {
         console.log('✅ Photo uploaded to S3:', s3Key);
       }
       
+      // Validate and format the date
+      let formattedDate: string;
+      try {
+        // Check if the date is valid
+        if (!publicationDate || publicationDate.trim() === '') {
+          throw new Error('Date is required');
+        }
+        
+        // Format date correctly for ISO string conversion
+        // Make sure we have a valid date format: YYYY-MM-DD
+        const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+        if (!dateRegex.test(publicationDate)) {
+          throw new Error('Invalid date format');
+        }
+        
+        // Parse the date with UTC time to avoid timezone issues
+        const dateObj = new Date(publicationDate + 'T12:00:00Z');
+        if (isNaN(dateObj.getTime())) {
+          throw new Error('Invalid date');
+        }
+        
+        // The schema expects a date in 'YYYY-MM-DD' format.
+        // The input 'publicationDate' is already in this format, so no conversion is needed.
+        formattedDate = publicationDate;
+        console.log('Formatted date for submission:', formattedDate);
+      } catch (dateErr) {
+        console.error('Date error:', dateErr);
+        setError(t('publications.invalid_date'));
+        setLoading(false);
+        return;
+      }
+      
       // Create publication in DynamoDB
       const newPublication = await client.models.SocialPublications.create({
         title,
         description,
         source: source as any,
         type: type as any,
-        publicationDate: new Date(publicationDate).toISOString(),
+        publicationDate: formattedDate,
         publicationUrl,
         photoKey: photoKey || undefined,
       });
       
-      console.log('✅ Publication created:', newPublication.data?.id);
+      if (newPublication.errors) {
+        throw new Error(newPublication.errors[0].message);
+      }
+      
+      if (!newPublication.data) {
+        throw new Error('Publication data is null');
+      }
+      
+      console.log('✅ Publication created:', newPublication.data.id);
       
       setSuccess(true);
       
-      // Navigate to admin recognitions list after successful creation
+      // Navigate to admin publications list after successful creation
       setTimeout(() => {
-        router.push(getLocalizedPath('/admin/recognitions'));
+        router.push(getLocalizedPath('/admin/publications'));
       }, 1500);
       
     } catch (err) {
@@ -237,7 +277,7 @@ const CreatePublicationClient: React.FC<CreatePublicationClientProps> = () => {
       <Button
         size="small"
         variation="link"
-        onClick={() => router.push(getLocalizedPath('/admin/recognitions'))}
+        onClick={() => router.push(getLocalizedPath('/admin/publications'))}
         marginBottom="1rem"
       >
         <ArrowLeft size={16} />

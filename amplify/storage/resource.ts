@@ -58,6 +58,18 @@ export const storage = defineStorage({
       allow.groups(['ADMINS']).to(['read', 'write', 'delete']),
     ],
     
+    // Reconocimientos - solo lectura para guests, ADMINS pueden modificar
+    'recognitions/*': [
+      allow.guest.to(['read']),
+      allow.groups(['ADMINS']).to(['read', 'write', 'delete']),
+    ],
+    
+    // Publicaciones - solo lectura para guests, ADMINS pueden modificar
+    'publications/*': [
+      allow.guest.to(['read']),
+      allow.groups(['ADMINS']).to(['read', 'write', 'delete']),
+    ],
+    
     // Contenido privado del administrador
     'admin/*': [
       allow.groups(['ADMINS']).to(['read', 'write', 'delete']),

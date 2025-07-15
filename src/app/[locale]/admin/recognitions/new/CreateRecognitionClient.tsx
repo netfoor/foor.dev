@@ -194,18 +194,58 @@ const CreateRecognitionClient: React.FC<CreateRecognitionClientProps> = () => {
         console.log('✅ Photo uploaded to S3:', s3Key);
       }
       
+      // Validate and format the date
+      let formattedDate: string;
+      try {
+        // Check if the date is valid
+        if (!issueDate || issueDate.trim() === '') {
+          throw new Error('Date is required');
+        }
+        
+        // Format date correctly for ISO string conversion
+        // Make sure we have a valid date format: YYYY-MM-DD
+        const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+        if (!dateRegex.test(issueDate)) {
+          throw new Error('Invalid date format');
+        }
+        
+        // Parse the date with UTC time to avoid timezone issues
+        const dateObj = new Date(issueDate + 'T12:00:00Z');
+        if (isNaN(dateObj.getTime())) {
+          throw new Error('Invalid date');
+        }
+        
+        // The schema expects a date in 'YYYY-MM-DD' format.
+        // The input 'issueDate' is already in this format, so no conversion is needed.
+        formattedDate = issueDate;
+        console.log('Formatted date for submission:', formattedDate);
+      } catch (dateErr) {
+        console.error('Date error:', dateErr);
+        setError(t('recognitions.invalid_date'));
+        setLoading(false);
+        return;
+      }
+      
       // Create recognition in DynamoDB
       const newRecognition = await client.models.Recognitions.create({
         title,
         description,
         issuer,
-        issueDate: new Date(issueDate).toISOString(),
+        issueDate: formattedDate,
         credentialId: credentialId || undefined,
         issuerUrl: issuerUrl || undefined,
         photoKey: photoKey || undefined,
       });
       
-      console.log('✅ Recognition created:', newRecognition.data?.id);
+      if (newRecognition.errors) {
+        throw new Error(newRecognition.errors[0].message);
+      }
+      
+      if (!newRecognition.data) {
+        throw new Error('Recognition data is null');
+      }
+      
+      console.log('✅ Recognition created:', newRecognition.data.id);
       
       setSuccess(true);
       
