@@ -97,7 +97,7 @@ export default function AdminDashboard() {
       title: tAdmin('sections.projects'),
       count: stats.projects,
       icon: FolderOpen,
-      href: '/admin/projects',
+      href: '/es/admin/projects',
       color: '#3B82F6',
       description: tAdmin('sections.manage_portfolio')
     },
@@ -105,7 +105,7 @@ export default function AdminDashboard() {
       title: tAdmin('sections.certifications'),
       count: stats.certifications,
       icon: Award,
-      href: '/admin/certifications',
+      href: '/es/admin/certifications',
       color: '#F59E0B',
       description: tAdmin('sections.manage_certifications')
     },
@@ -113,7 +113,7 @@ export default function AdminDashboard() {
       title: tAdmin('sections.education'),
       count: stats.education,
       icon: GraduationCap,
-      href: '/admin/education',
+      href: '/es/admin/projects',
       color: '#10B981',
       description: tAdmin('sections.manage_education')
     },
@@ -121,7 +121,7 @@ export default function AdminDashboard() {
       title: tAdmin('about.profile.title'),
       count: 1, // Profile is always 1
       icon: Users,
-      href: '/admin/about/profile',
+      href: '/es/admin/about/profile',
       color: '#EC4899',
       description: tAdmin('sections.manage_profile')
     },
@@ -129,7 +129,7 @@ export default function AdminDashboard() {
       title: tAdmin('sections.experiences'),
       count: stats.experiences,
       icon: Briefcase,
-      href: '/admin/about/experiences',
+      href: '/es/admin/about/experiences',
       color: '#8B5CF6',
       description: tAdmin('sections.manage_experiences')
     },
@@ -137,7 +137,7 @@ export default function AdminDashboard() {
       title: tAdmin('sections.languages'),
       count: stats.languages,
       icon: Languages,
-      href: '/admin/languages',
+      href: '/es/admin/about/profile',
       color: '#06B6D4',
       description: tAdmin('sections.manage_languages')
     },
@@ -145,7 +145,7 @@ export default function AdminDashboard() {
       title: tAdmin('sections.recognitions'),
       count: stats.recognitions,
       icon: Award,
-      href: '/admin/recognitions',
+      href: '/es/admin/recognitions',
       color: '#EF4444',
       description: tAdmin('sections.manage_recognitions')
     },
@@ -153,7 +153,7 @@ export default function AdminDashboard() {
       title: tAdmin('sections.publications'),
       count: stats.publications,
       icon: FileText,
-      href: '/admin/publications',
+      href: '/en/admin/publications',
       color: '#84CC16',
       description: tAdmin('sections.manage_publications')
     }
@@ -353,7 +353,7 @@ export default function AdminDashboard() {
             marginBottom: '1rem'
           }}
         >
-          Gestión de Contenido
+          {tAdmin('sections.content_management')}
         </Text>          <div 
             className="content-management-grid"
             style={{
@@ -453,7 +453,7 @@ export default function AdminDashboard() {
             color: mode === 'dark' ? '#F1F5F9' : '#1E293B',
             marginBottom: '1rem'
           }}        >
-          Acciones Rápidas
+          {tAdmin('sections.quick_actions')}
         </Text>
         
         <View className="quick-actions-container">          <Flex 

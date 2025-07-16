@@ -223,10 +223,12 @@
     "manage_languages": "言語スキルを管理",
     "manage_recognitions": "賞と表彰を管理",
     "manage_publications": "ソーシャルメディアの出版物を管理",
-    "skills": "Skills",
-    "about": "About",
-    "manage_skills": "Manage your technical and soft skills",
-    "manage_about": "Manage your personal profile and professional experience"
+    "skills": "スキル",
+    "about": "プロフィール",
+    "manage_skills": "技術的およびソフトスキルを管理",
+    "manage_about": "個人プロフィールと専門経験を管理",
+    "content_management": "コンテンツ管理",
+    "quick_actions": "クイックアクション"
   },
   "about": {
     "title": "プロフィール管理",

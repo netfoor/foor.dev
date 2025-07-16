@@ -224,7 +224,9 @@
     "manage_recognitions": "Manage your awards and recognitions",
     "manage_publications": "Manage your social media publications",
     "manage_skills": "Manage your technical and soft skills",
-    "manage_about": "Manage your personal profile and professional experience"
+    "manage_about": "Manage your personal profile and professional experience",
+    "content_management": "Content Management",
+    "quick_actions": "Quick Actions"
   },
   "about": {
     "title": "About Management",

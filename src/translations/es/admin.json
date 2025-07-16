@@ -223,10 +223,12 @@
     "manage_languages": "Administra tus habilidades de idiomas",
     "manage_recognitions": "Administra tus premios y reconocimientos",
     "manage_publications": "Administra tus publicaciones en redes sociales",
-    "skills": "Skills",
-    "about": "About",
-    "manage_skills": "Manage your technical and soft skills",
-    "manage_about": "Manage your personal profile and professional experience"
+    "skills": "Habilidades",
+    "about": "Perfil",
+    "manage_skills": "Administra tus habilidades técnicas y blandas",
+    "manage_about": "Administra tu perfil personal y experiencia profesional",
+    "content_management": "Gestión de Contenido",
+    "quick_actions": "Acciones Rápidas"
   },
   "about": {
     "title": "Gestión de Perfil",
