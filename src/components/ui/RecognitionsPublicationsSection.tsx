@@ -250,64 +250,128 @@ const RecognitionsPublicationsSection: React.FC<RecognitionsPublicationsProps> =
           </Text>
         </Flex>
         
-        {/* Tab Selector - Improved version */}
+        {/* Tab Selector - Modern glassmorphism style */}
         <Flex 
           direction="row" 
-          gap="0" 
+          gap="0.5rem" 
           marginBottom="2rem"
-          className="shadow-sm"
+          justifyContent="center"
           style={{
-            borderRadius: '12px',
-            overflow: 'hidden',
-            border: mode === 'dark' ? '1px solid #334155' : '1px solid #E2E8F0',
-            backgroundColor: mode === 'dark' ? '#1E293B' : '#FFFFFF',
+            padding: '8px',
+            borderRadius: '20px',
+            background: mode === 'dark' 
+              ? 'linear-gradient(135deg, rgba(51, 65, 85, 0.8) 0%, rgba(71, 85, 105, 0.6) 100%)'
+              : 'linear-gradient(135deg, rgba(248, 250, 252, 0.8) 0%, rgba(241, 245, 249, 0.6) 100%)',
+            backdropFilter: 'blur(16px)',
+            WebkitBackdropFilter: 'blur(16px)',
+            border: mode === 'dark' 
+              ? '1px solid rgba(148, 163, 184, 0.2)' 
+              : '1px solid rgba(203, 213, 225, 0.3)',
+            boxShadow: mode === 'dark'
+              ? '0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
+              : '0 8px 32px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
+            maxWidth: '500px',
+            margin: '0 auto',
           }}
         >
-          <Button
+          <button
             onClick={() => setActiveTab('recognitions')}
             style={{
-              padding: '1rem 1.5rem',
-              fontSize: '1rem',
+              padding: '12px 24px',
+              fontSize: '16px',
               fontWeight: '600',
-              backgroundColor: activeTab === 'recognitions' 
-                ? (mode === 'dark' ? '#2563EB' : '#3B82F6') 
+              background: activeTab === 'recognitions' 
+                ? (mode === 'dark' 
+                  ? 'linear-gradient(135deg, rgba(59, 130, 246, 0.9) 0%, rgba(37, 99, 235, 0.9) 100%)'
+                  : 'linear-gradient(135deg, rgba(59, 130, 246, 1) 0%, rgba(37, 99, 235, 1) 100%)')
                 : 'transparent',
               color: activeTab === 'recognitions'
                 ? '#FFFFFF'
-                : (mode === 'dark' ? '#CBD5E1' : '#64748B'),
-              borderRadius: '0',
-              borderRight: mode === 'dark' ? '1px solid #334155' : '1px solid #E2E8F0',
-              transition: 'all 0.3s ease',
+                : (mode === 'dark' ? '#E2E8F0' : '#475569'),
+              border: 'none',
+              borderRadius: '16px',
+              cursor: 'pointer',
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
               display: 'flex',
               alignItems: 'center',
+              justifyContent: 'center',
               gap: '8px',
+              minWidth: '140px',
+              boxShadow: activeTab === 'recognitions'
+                ? (mode === 'dark' 
+                  ? '0 4px 20px rgba(59, 130, 246, 0.4), 0 2px 8px rgba(0, 0, 0, 0.2)'
+                  : '0 4px 20px rgba(59, 130, 246, 0.3), 0 2px 8px rgba(0, 0, 0, 0.1)')
+                : 'none',
+              backdropFilter: activeTab === 'recognitions' ? 'blur(8px)' : 'none',
+              fontFamily: 'inherit',
+            }}
+            onMouseEnter={(e) => {
+              if (activeTab !== 'recognitions') {
+                e.currentTarget.style.background = mode === 'dark' 
+                  ? 'rgba(59, 130, 246, 0.1)' 
+                  : 'rgba(59, 130, 246, 0.05)';
+                e.currentTarget.style.transform = 'translateY(-1px)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (activeTab !== 'recognitions') {
+                e.currentTarget.style.background = 'transparent';
+                e.currentTarget.style.transform = 'translateY(0)';
+              }
             }}
           >
             <Award size={18} />
             {t('recognitions.tabs.recognitions') || 'Recognitions'}
-          </Button>
-          <Button
+          </button>
+          <button
             onClick={() => setActiveTab('publications')}
             style={{
-              padding: '1rem 1.5rem',
-              fontSize: '1rem',
+              padding: '12px 24px',
+              fontSize: '16px',
               fontWeight: '600',
-              backgroundColor: activeTab === 'publications' 
-                ? (mode === 'dark' ? '#2563EB' : '#3B82F6') 
+              background: activeTab === 'publications' 
+                ? (mode === 'dark' 
+                  ? 'linear-gradient(135deg, rgba(59, 130, 246, 0.9) 0%, rgba(37, 99, 235, 0.9) 100%)'
+                  : 'linear-gradient(135deg, rgba(59, 130, 246, 1) 0%, rgba(37, 99, 235, 1) 100%)')
                 : 'transparent',
               color: activeTab === 'publications'
                 ? '#FFFFFF'
-                : (mode === 'dark' ? '#CBD5E1' : '#64748B'),
-              borderRadius: '0',
-              transition: 'all 0.3s ease',
+                : (mode === 'dark' ? '#E2E8F0' : '#475569'),
+              border: 'none',
+              borderRadius: '16px',
+              cursor: 'pointer',
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
               display: 'flex',
               alignItems: 'center',
+              justifyContent: 'center',
               gap: '8px',
+              minWidth: '140px',
+              boxShadow: activeTab === 'publications'
+                ? (mode === 'dark' 
+                  ? '0 4px 20px rgba(59, 130, 246, 0.4), 0 2px 8px rgba(0, 0, 0, 0.2)'
+                  : '0 4px 20px rgba(59, 130, 246, 0.3), 0 2px 8px rgba(0, 0, 0, 0.1)')
+                : 'none',
+              backdropFilter: activeTab === 'publications' ? 'blur(8px)' : 'none',
+              fontFamily: 'inherit',
+            }}
+            onMouseEnter={(e) => {
+              if (activeTab !== 'publications') {
+                e.currentTarget.style.background = mode === 'dark' 
+                  ? 'rgba(59, 130, 246, 0.1)' 
+                  : 'rgba(59, 130, 246, 0.05)';
+                e.currentTarget.style.transform = 'translateY(-1px)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (activeTab !== 'publications') {
+                e.currentTarget.style.background = 'transparent';
+                e.currentTarget.style.transform = 'translateY(0)';
+              }
             }}
           >
             <Share2 size={18} />
             {t('recognitions.tabs.publications') || 'Media Publications'}
-          </Button>
+          </button>
         </Flex>
         
         {/* Loading and Error States */}

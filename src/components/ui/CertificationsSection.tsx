@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { View, Flex, Text, Card, Button, Badge, Loader, SelectField, SearchField, Alert } from '@aws-amplify/ui-react';
-import { ExternalLink, Award, Calendar, ArrowRight, Image as ImageIcon, Search } from 'lucide-react';
+import { ExternalLink, Award, Calendar, ArrowRight, Image as ImageIcon, Search, Filter, ChevronDown, X } from 'lucide-react';
 import { generateClient } from 'aws-amplify/data';
 import { getUrl } from 'aws-amplify/storage';
 import { useRouter } from 'next/navigation';
@@ -250,21 +250,85 @@ const CertificationsSection: React.FC<CertificationsSectionProps> = ({
                 >
                   Search Certifications
                 </Text>
-                <SearchField
-                  label="Search"
-                  placeholder="Search by title, issuer, or skills..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  onClear={() => setSearchTerm('')}
-                  hasSearchIcon={true}
-                  size="large"
-                  width="300px"
+                <View 
+                  position="relative" 
+                  width="320px"
                   style={{
-                    backgroundColor: mode === 'dark' ? 'rgba(51, 65, 85, 0.6)' : 'rgba(255, 255, 255, 0.8)',
-                    border: mode === 'dark' ? '1px solid rgba(148, 163, 184, 0.2)' : '1px solid rgba(203, 213, 225, 0.3)',
-                    borderRadius: '12px',
+                    background: mode === 'dark' 
+                      ? 'linear-gradient(135deg, rgba(51, 65, 85, 0.95) 0%, rgba(71, 85, 105, 0.85) 100%)'
+                      : 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.85) 100%)',
+                    backdropFilter: 'blur(20px)',
+                    WebkitBackdropFilter: 'blur(20px)',
+                    border: mode === 'dark' 
+                      ? '1px solid rgba(148, 163, 184, 0.3)'
+                      : '1px solid rgba(203, 213, 225, 0.4)',
+                    borderRadius: '16px',
+                    boxShadow: mode === 'dark'
+                      ? '0 8px 32px rgba(0, 0, 0, 0.3), 0 2px 8px rgba(0, 0, 0, 0.2)'
+                      : '0 8px 32px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.05)',
+                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                    overflow: 'hidden',
                   }}
-                />
+                >
+                  <View 
+                    position="absolute" 
+                    left="14px" 
+                    top="50%" 
+                    transform="translateY(-50%)"
+                    style={{ pointerEvents: 'none' }}
+                  >
+                    <Search 
+                      size={20} 
+                      color={mode === 'dark' ? '#94A3B8' : '#64748B'} 
+                    />
+                  </View>
+                  <input
+                    type="text"
+                    placeholder="Search by title, issuer, or skills..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="custom-search-input"
+                    style={{
+                      width: '100%',
+                      padding: '14px 44px 14px 44px',
+                      background: 'transparent',
+                      border: 'none',
+                      outline: 'none',
+                      fontSize: '16px',
+                      fontWeight: '500',
+                      color: mode === 'dark' ? '#E2E8F0' : '#1E293B',
+                      fontFamily: 'inherit',
+                    }}
+                  />
+                  {searchTerm && (
+                    <View 
+                      position="absolute" 
+                      right="14px" 
+                      top="50%" 
+                      transform="translateY(-50%)"
+                      style={{ 
+                        cursor: 'pointer',
+                        padding: '2px',
+                        borderRadius: '50%',
+                        transition: 'all 0.2s ease',
+                      }}
+                      onClick={() => setSearchTerm('')}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = mode === 'dark' 
+                          ? 'rgba(148, 163, 184, 0.2)' 
+                          : 'rgba(100, 116, 139, 0.1)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = 'transparent';
+                      }}
+                    >
+                      <X 
+                        size={18} 
+                        color={mode === 'dark' ? '#94A3B8' : '#64748B'} 
+                      />
+                    </View>
+                  )}
+                </View>
               </Flex>
               <Flex direction="column" gap="0.5rem">
                 <Text 
@@ -274,25 +338,79 @@ const CertificationsSection: React.FC<CertificationsSectionProps> = ({
                 >
                   Filter by Issuer
                 </Text>
-                <SelectField
-                  label=""
-                  value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
-                  size="large"
-                  width="200px"
+                <View 
+                  position="relative" 
+                  width="240px"
+                  className="custom-select-container"
                   style={{
-                    backgroundColor: mode === 'dark' ? 'rgba(51, 65, 85, 0.6)' : 'rgba(255, 255, 255, 0.8)',
-                    border: mode === 'dark' ? '1px solid rgba(148, 163, 184, 0.2)' : '1px solid rgba(203, 213, 225, 0.3)',
-                    borderRadius: '12px',
+                    background: mode === 'dark' 
+                      ? 'linear-gradient(135deg, rgba(51, 65, 85, 0.95) 0%, rgba(71, 85, 105, 0.85) 100%)'
+                      : 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.85) 100%)',
+                    backdropFilter: 'blur(20px)',
+                    WebkitBackdropFilter: 'blur(20px)',
+                    border: mode === 'dark' 
+                      ? '1px solid rgba(148, 163, 184, 0.3)'
+                      : '1px solid rgba(203, 213, 225, 0.4)',
+                    borderRadius: '16px',
+                    boxShadow: mode === 'dark'
+                      ? '0 8px 32px rgba(0, 0, 0, 0.3), 0 2px 8px rgba(0, 0, 0, 0.2)'
+                      : '0 8px 32px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.05)',
+                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                    overflow: 'hidden',
                   }}
                 >
-                  <option value="all">{t('certifications.allCategories')}</option>
-                  {categories.map(category => (
-                    <option key={category} value={category}>
-                      {category}
-                    </option>
-                  ))}
-                </SelectField>
+                  <View 
+                    position="absolute" 
+                    left="14px" 
+                    top="50%" 
+                    transform="translateY(-50%)"
+                    style={{ pointerEvents: 'none' }}
+                  >
+                    <Filter 
+                      size={20} 
+                      color={mode === 'dark' ? '#94A3B8' : '#64748B'} 
+                    />
+                  </View>
+                  <select
+                    value={selectedCategory}
+                    onChange={(e) => setSelectedCategory(e.target.value)}
+                    className="custom-select-input"
+                    style={{
+                      width: '100%',
+                      padding: '14px 44px 14px 44px',
+                      background: 'transparent',
+                      border: 'none',
+                      outline: 'none',
+                      fontSize: '16px',
+                      fontWeight: '500',
+                      color: mode === 'dark' ? '#E2E8F0' : '#1E293B',
+                      fontFamily: 'inherit',
+                      cursor: 'pointer',
+                      appearance: 'none',
+                      WebkitAppearance: 'none',
+                      MozAppearance: 'none',
+                    }}
+                  >
+                    <option value="all">{t('certifications.allCategories')}</option>
+                    {categories.map(category => (
+                      <option key={category} value={category}>
+                        {category}
+                      </option>
+                    ))}
+                  </select>
+                  <View 
+                    position="absolute" 
+                    right="14px" 
+                    top="50%" 
+                    transform="translateY(-50%)"
+                    style={{ pointerEvents: 'none' }}
+                  >
+                    <ChevronDown 
+                      size={20} 
+                      color={mode === 'dark' ? '#94A3B8' : '#64748B'} 
+                    />
+                  </View>
+                </View>
               </Flex>
             </Flex>
           </View>

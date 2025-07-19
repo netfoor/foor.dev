@@ -105,6 +105,67 @@
 }
 
 @layer components {
+  /* Estilos para inputs personalizados de certificaciones */
+  .custom-search-input::placeholder {
+    color: #64748B;
+    opacity: 1;
+  }
+
+  .dark .custom-search-input::placeholder {
+    color: #64748B;
+  }
+
+  /* Estilos para el contenedor del select con focus */
+  .custom-select-container:focus-within {
+    border-color: rgba(59, 130, 246, 0.5) !important;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+    transform: translateY(-2px);
+  }
+
+  .dark .custom-select-container:focus-within {
+    border-color: rgba(147, 197, 253, 0.5) !important;
+    box-shadow: 0 0 0 3px rgba(147, 197, 253, 0.1) !important;
+    transform: translateY(-2px);
+  }
+
+  /* Estilos para el select personalizado */
+  .custom-select-input {
+    background: transparent !important;
+  }
+
+  .custom-select-input:focus {
+    outline: none !important;
+    box-shadow: none !important;
+  }
+
+  .custom-select-input option {
+    background: linear-gradient(135deg, rgba(248, 250, 252, 0.95) 0%, rgba(241, 245, 249, 0.9) 100%);
+    color: #1E293B;
+    padding: 12px 16px;
+    border: none;
+    margin: 2px 0;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+
+  .custom-select-input option:hover {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(37, 99, 235, 0.1) 100%);
+    color: #1E40AF;
+  }
+
+  .dark .custom-select-input option {
+    background: linear-gradient(135deg, rgba(51, 65, 85, 0.95) 0%, rgba(71, 85, 105, 0.9) 100%);
+    color: #E2E8F0;
+    border: 1px solid rgba(148, 163, 184, 0.1);
+  }
+
+  .dark .custom-select-input option:hover {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(37, 99, 235, 0.15) 100%);
+    color: #93C5FD;
+    border-color: rgba(59, 130, 246, 0.3);
+  }
+
   /* Clase para el contenido principal debajo del navbar */
   .main-content {
     @apply pt-[60px] min-h-screen; /* Exactamente 60px para coincidir con la altura del navbar */

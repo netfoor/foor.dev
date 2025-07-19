@@ -224,42 +224,128 @@ const SkillsSection: React.FC<SkillsSectionProps> = ({
       <View maxWidth="1200px" margin="0 auto" style={{ position: 'relative', zIndex: 1 }}>
         {/* Header */}
         <Flex direction="column" alignItems="center" gap="1.5rem" marginBottom="2rem">
-          {/* Carousel Navigation */}
+          {/* Tab Selector - Modern glassmorphism style */}
           <Flex 
             direction="row" 
             alignItems="center" 
-            gap="1rem" 
+            gap="0.5rem" 
             justifyContent="center"
             marginBottom="1rem"
+            style={{
+              padding: '8px',
+              borderRadius: '20px',
+              background: mode === 'dark' 
+                ? 'linear-gradient(135deg, rgba(51, 65, 85, 0.8) 0%, rgba(71, 85, 105, 0.6) 100%)'
+                : 'linear-gradient(135deg, rgba(248, 250, 252, 0.8) 0%, rgba(241, 245, 249, 0.6) 100%)',
+              backdropFilter: 'blur(16px)',
+              WebkitBackdropFilter: 'blur(16px)',
+              border: mode === 'dark' 
+                ? '1px solid rgba(148, 163, 184, 0.2)' 
+                : '1px solid rgba(203, 213, 225, 0.3)',
+              boxShadow: mode === 'dark'
+                ? '0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)'
+                : '0 8px 32px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.8)',
+              maxWidth: '400px',
+            }}
           >
-            <Button
+            <button
               onClick={() => setActiveTab('technical')}
-              variation={activeTab === 'technical' ? 'primary' : 'link'}
-              size="large"
               style={{
-                borderRadius: '12px',
+                padding: '12px 24px',
+                fontSize: '16px',
                 fontWeight: '600',
-                fontSize: '1.1rem',
-                padding: '0.75rem 1.5rem',
-                transition: 'all 0.3s ease',
+                background: activeTab === 'technical' 
+                  ? (mode === 'dark' 
+                    ? 'linear-gradient(135deg, rgba(59, 130, 246, 0.9) 0%, rgba(37, 99, 235, 0.9) 100%)'
+                    : 'linear-gradient(135deg, rgba(59, 130, 246, 1) 0%, rgba(37, 99, 235, 1) 100%)')
+                  : 'transparent',
+                color: activeTab === 'technical'
+                  ? '#FFFFFF'
+                  : (mode === 'dark' ? '#E2E8F0' : '#475569'),
+                border: 'none',
+                borderRadius: '16px',
+                cursor: 'pointer',
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                minWidth: '140px',
+                boxShadow: activeTab === 'technical'
+                  ? (mode === 'dark' 
+                    ? '0 4px 20px rgba(59, 130, 246, 0.4), 0 2px 8px rgba(0, 0, 0, 0.2)'
+                    : '0 4px 20px rgba(59, 130, 246, 0.3), 0 2px 8px rgba(0, 0, 0, 0.1)')
+                  : 'none',
+                backdropFilter: activeTab === 'technical' ? 'blur(8px)' : 'none',
+                fontFamily: 'inherit',
+              }}
+              onMouseEnter={(e) => {
+                if (activeTab !== 'technical') {
+                  e.currentTarget.style.background = mode === 'dark' 
+                    ? 'rgba(59, 130, 246, 0.1)' 
+                    : 'rgba(59, 130, 246, 0.05)';
+                  e.currentTarget.style.transform = 'translateY(-1px)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (activeTab !== 'technical') {
+                  e.currentTarget.style.background = 'transparent';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }
               }}
             >
+              <Code size={18} />
               {t('skills.technical')}
-            </Button>
-            <Button
+            </button>
+            <button
               onClick={() => setActiveTab('soft')}
-              variation={activeTab === 'soft' ? 'primary' : 'link'}
-              size="large"
               style={{
-                borderRadius: '12px',
+                padding: '12px 24px',
+                fontSize: '16px',
                 fontWeight: '600',
-                fontSize: '1.1rem',
-                padding: '0.75rem 1.5rem',
-                transition: 'all 0.3s ease',
+                background: activeTab === 'soft' 
+                  ? (mode === 'dark' 
+                    ? 'linear-gradient(135deg, rgba(59, 130, 246, 0.9) 0%, rgba(37, 99, 235, 0.9) 100%)'
+                    : 'linear-gradient(135deg, rgba(59, 130, 246, 1) 0%, rgba(37, 99, 235, 1) 100%)')
+                  : 'transparent',
+                color: activeTab === 'soft'
+                  ? '#FFFFFF'
+                  : (mode === 'dark' ? '#E2E8F0' : '#475569'),
+                border: 'none',
+                borderRadius: '16px',
+                cursor: 'pointer',
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                minWidth: '140px',
+                boxShadow: activeTab === 'soft'
+                  ? (mode === 'dark' 
+                    ? '0 4px 20px rgba(59, 130, 246, 0.4), 0 2px 8px rgba(0, 0, 0, 0.2)'
+                    : '0 4px 20px rgba(59, 130, 246, 0.3), 0 2px 8px rgba(0, 0, 0, 0.1)')
+                  : 'none',
+                backdropFilter: activeTab === 'soft' ? 'blur(8px)' : 'none',
+                fontFamily: 'inherit',
+              }}
+              onMouseEnter={(e) => {
+                if (activeTab !== 'soft') {
+                  e.currentTarget.style.background = mode === 'dark' 
+                    ? 'rgba(59, 130, 246, 0.1)' 
+                    : 'rgba(59, 130, 246, 0.05)';
+                  e.currentTarget.style.transform = 'translateY(-1px)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (activeTab !== 'soft') {
+                  e.currentTarget.style.background = 'transparent';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }
               }}
             >
+              <Brain size={18} />
               {t('skills.soft')}
-            </Button>
+            </button>
           </Flex>
 
           {/* Title based on active tab */}
