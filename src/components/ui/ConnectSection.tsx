@@ -267,17 +267,15 @@ const ConnectSection: React.FC<ConnectSectionProps> = ({ className = '' }) => {
     };
 
     const subtitleColor = mode === 'dark' ? '#CBD5E1' : '#64748B';
-    const footerTextColor = mode === 'dark' ? '#94A3B8' : '#64748B';
     const heartColor = mode === 'dark' ? '#A78BFA' : '#8B5CF6';
+    const footerTextColor = mode === 'dark' ? '#94A3B8' : '#6B7280';
 
-    const getButtonStyles = (platform: string) => ({
+    const getButtonStyles = (type: string) => ({
         background: mode === 'dark'
             ? 'linear-gradient(135deg, rgba(71, 85, 105, 0.8), rgba(51, 65, 85, 0.8))'
             : 'linear-gradient(135deg, rgba(248, 250, 252, 0.9), rgba(241, 245, 249, 0.9))',
         backdropFilter: 'blur(10px)',
-        border: mode === 'dark'
-            ? `2px solid ${getBorderColor(platform, true)}`
-            : `2px solid ${getBorderColor(platform, false)}`,
+        border: getBorderColor(type),
         borderRadius: '16px',
         padding: '1.5rem',
         color: mode === 'dark' ? '#F8FAFC' : '#0F172A',
@@ -292,14 +290,14 @@ const ConnectSection: React.FC<ConnectSectionProps> = ({ className = '' }) => {
         justifyContent: 'center',
     });
 
-    const getBorderColor = (platform: string, isDark: boolean) => {
+    const getBorderColor = (type: string) => {
         const colors = {
-            linkedin: '#0A66C2',
-            github: isDark ? 'rgba(148, 163, 184, 0.3)' : 'rgba(203, 213, 225, 0.4)',
-            twitter: '#1DA1F2',
-            email: '#EA580C'
+            linkedin: '2px solid #0A66C2',
+            github: mode === 'dark' ? '2px solid rgba(148, 163, 184, 0.3)' : '2px solid rgba(203, 213, 225, 0.4)',
+            twitter: '2px solid #1DA1F2',
+            email: '2px solid #EA580C',
         };
-        return colors[platform as keyof typeof colors] || (isDark ? 'rgba(148, 163, 184, 0.3)' : 'rgba(203, 213, 225, 0.4)');
+        return colors[type as keyof typeof colors] || colors.github;
     };
 
     const getIconBackgroundStyles = () => ({

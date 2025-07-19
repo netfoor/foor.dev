@@ -311,6 +311,149 @@ const ExperienceTimeline: React.FC<ExperienceTimelineProps> = ({ className = '' 
   const { t } = useTranslation('homepage');
   const { isAuthenticated } = useAuth();
 
+  // Estilos dinámicos basados en el tema
+  const titleStyles = {
+    backgroundImage: mode === 'dark'
+      ? 'linear-gradient(135deg, #93C5FD, #60A5FA)'
+      : 'linear-gradient(135deg, #F59E0B, #FBBF24)',
+    WebkitBackgroundClip: 'text',
+    WebkitTextFillColor: 'transparent',
+    backgroundClip: 'text',
+    marginBottom: '1.5rem',
+  };
+
+  const titleHighlightStyles = {
+    backgroundImage: mode === 'dark'
+      ? 'linear-gradient(135deg, #FBBF24, #F59E0B)'
+      : 'linear-gradient(135deg, #2563EB, #3B82F6)',
+    WebkitBackgroundClip: 'text',
+    WebkitTextFillColor: 'transparent',
+    backgroundClip: 'text',
+  };
+
+  const timelineLineStyles = {
+    position: 'absolute' as const,
+    left: '1.5rem',
+    top: 0,
+    bottom: 0,
+    width: '4px',
+    background: mode === 'dark' ? '#3B82F6' : '#F59E0B',
+    opacity: 0.7,
+    borderRadius: '2px',
+    zIndex: 1,
+  };
+
+  const timelineDotStyles = {
+    position: 'absolute' as const,
+    left: '-2.75rem',
+    top: '1.5rem',
+    width: '1.5rem',
+    height: '1.5rem',
+    backgroundColor: mode === 'dark' ? '#3B82F6' : '#F59E0B',
+    border: mode === 'dark' ? '4px solid #0F172A' : '4px solid #F8FAFC',
+    borderRadius: '50%',
+    zIndex: 2,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    boxShadow: mode === 'dark' 
+      ? '0 10px 25px rgba(59, 130, 246, 0.3)' 
+      : '0 10px 25px rgba(245, 158, 11, 0.3)',
+    transition: 'all 0.3s ease',
+  };
+
+  const cardStyles = {
+    background: mode === 'dark'
+      ? 'rgba(51, 65, 85, 0.8)'
+      : 'rgba(255, 255, 255, 0.9)',
+    backdropFilter: 'blur(16px)',
+    WebkitBackdropFilter: 'blur(16px)',
+    border: mode === 'dark'
+      ? '1px solid rgba(148, 163, 184, 0.1)'
+      : '1px solid rgba(203, 213, 225, 0.2)',
+    borderRadius: '16px',
+    padding: '2rem',
+    position: 'relative' as const,
+    overflow: 'hidden' as const,
+    transition: 'all 0.3s ease',
+    cursor: 'default',
+    boxShadow: mode === 'dark'
+      ? '0 25px 50px -12px rgba(0, 0, 0, 0.4)'
+      : '0 25px 50px -12px rgba(0, 0, 0, 0.15)',
+  };
+
+  const dateTagStyles = {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '0.5rem',
+    background: mode === 'dark'
+      ? 'linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2))'
+      : 'linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1))',
+    color: mode === 'dark' ? '#E2E8F0' : '#1F2937',
+    padding: '0.5rem 1rem',
+    borderRadius: '12px',
+    fontSize: '0.875rem',
+    fontWeight: '600',
+    marginBottom: '1rem',
+    border: mode === 'dark'
+      ? '1px solid rgba(59, 130, 246, 0.3)'
+      : '1px solid rgba(59, 130, 246, 0.2)',
+  };
+
+  const companyNameColor = mode === 'dark' ? '#F8FAFC' : '#0F172A';
+  const positionColor = mode === 'dark' ? '#CBD5E1' : '#64748B';
+  const locationColor = mode === 'dark' ? '#94A3B8' : '#6B7280';
+  const descriptionColor = mode === 'dark' ? '#E2E8F0' : '#374151';
+  const loadingTextColor = mode === 'dark' ? '#CBD5E1' : '#64748B';
+
+  const skillBadgeStyles = {
+    backgroundColor: mode === 'dark' ? '#1E40AF' : '#3B82F6',
+    color: '#FFFFFF',
+    padding: '0.3rem 0.8rem',
+    borderRadius: '12px',
+    fontSize: '0.75rem',
+    fontWeight: '500',
+    margin: '0.25rem',
+    display: 'inline-block',
+    transition: 'all 0.3s ease',
+    border: 'none',
+  };
+
+  const activitiesButtonStyles = {
+    background: mode === 'dark'
+      ? 'rgba(59, 130, 246, 0.2)'
+      : 'rgba(59, 130, 246, 0.1)',
+    color: mode === 'dark' ? '#93C5FD' : '#2563EB',
+    border: mode === 'dark'
+      ? '1px solid rgba(59, 130, 246, 0.3)'
+      : '1px solid rgba(59, 130, 246, 0.2)',
+    borderRadius: '8px',
+    padding: '0.5rem 1rem',
+    fontSize: '0.875rem',
+    fontWeight: '500',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.5rem',
+    marginBottom: '1rem',
+    transition: 'all 0.3s ease',
+  };
+
+  const companyImagePlaceholderStyles = {
+    width: '40px',
+    height: '40px',
+    borderRadius: '8px',
+    background: mode === 'dark'
+      ? 'linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(139, 92, 246, 0.3))'
+      : 'linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2))',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    border: mode === 'dark'
+      ? '2px solid rgba(148, 163, 184, 0.2)'
+      : '2px solid rgba(203, 213, 225, 0.3)',
+  };
+
   // Client initialization
   const client = generateClient<Schema>();
 
@@ -434,8 +577,8 @@ const ExperienceTimeline: React.FC<ExperienceTimelineProps> = ({ className = '' 
           <Loader size="large" />
           <Text 
             fontSize="1.125rem" 
-            color="var(--amplify-colors-font-tertiary)"
             marginTop="1rem"
+            style={{ color: loadingTextColor }}
           >
             {t('about.experience.loading')}
           </Text>
@@ -474,7 +617,7 @@ const ExperienceTimeline: React.FC<ExperienceTimelineProps> = ({ className = '' 
         <Heading
           level={2}
           fontSize={{ base: '2rem', medium: '2.5rem' }}
-          className="section-title"
+          style={titleStyles}
         >
           {t('about.experience.title')}
         </Heading>
@@ -486,7 +629,7 @@ const ExperienceTimeline: React.FC<ExperienceTimelineProps> = ({ className = '' 
         >
           <Text 
             fontSize="1.125rem" 
-            color="var(--amplify-colors-font-secondary)"
+            style={{ color: positionColor }}
           >
             {t('about.experience.noExperience')}
           </Text>
@@ -506,68 +649,104 @@ const ExperienceTimeline: React.FC<ExperienceTimelineProps> = ({ className = '' 
         fontWeight="700"
         textAlign="center"
         lineHeight="1.1"
-        style={{
-          backgroundImage: 'linear-gradient(135deg, var(--amplify-colors-brand-primary), var(--amplify-colors-brand-primary-80))',
-          WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent',
-          backgroundClip: 'text',
-          marginBottom: '1.5rem',
-        }}
+        style={titleStyles}
       >
         {t('about.experience.title')}{' '}
-        <span style={{ 
-          backgroundImage: 'linear-gradient(135deg, var(--amplify-colors-brand-secondary), var(--amplify-colors-brand-secondary-80))',
-          WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent',
-          backgroundClip: 'text',
-        }}>
+        <span style={titleHighlightStyles}>
           {t('about.experience.titleHighlight')}
         </span>
       </Text>
 
       {/* Timeline */}
-      <View className="timeline-container">
-        <View className="timeline-line" />
+      <View style={{
+        position: 'relative',
+        maxWidth: '800px',
+        margin: '0 auto',
+        paddingLeft: '2rem'
+      }}>
+        <View style={timelineLineStyles} />
         
         {experiences.map((experience, index) => (
-          <View key={experience.id} className="timeline-item">
-            <View className="timeline-dot">
-              <Briefcase className="timeline-dot-icon" size={12} />
+          <View key={experience.id} style={{
+            position: 'relative',
+            marginBottom: '3rem',
+            paddingLeft: '3rem'
+          }}>
+            <View style={timelineDotStyles}>
+              <Briefcase size={12} color="#FFFFFF" />
             </View>
             
-            <Card className="timeline-card">
-              <View className="timeline-content">
+            <View style={cardStyles}>
+              <View style={{ position: 'relative', zIndex: 1 }}>
                 {/* Fecha */}
-                <View className="timeline-date">
+                <View style={dateTagStyles}>
                   <Calendar size={14} />
                   {formatDate(experience.startDate)} - {formatDate(experience.endDate)}
                 </View>
 
                 {/* Empresa */}
-                <Heading level={3} className="timeline-company">
+                <Heading 
+                  level={3} 
+                  fontSize="1.5rem"
+                  fontWeight="700"
+                  marginBottom="0.5rem"
+                  style={{ 
+                    color: companyNameColor,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.75rem'
+                  }}
+                >
                   {experienceImages[experience.id] ? (
                     <Image
                       src={experienceImages[experience.id]}
                       alt={experience.company}
-                      className="timeline-company-image"
+                      style={{
+                        width: '40px',
+                        height: '40px',
+                        borderRadius: '8px',
+                        objectFit: 'cover' as const,
+                        border: mode === 'dark' 
+                          ? '2px solid rgba(148, 163, 184, 0.2)' 
+                          : '2px solid rgba(203, 213, 225, 0.3)',
+                      }}
                     />
                   ) : (
-                    <View className="timeline-company-placeholder">
-                      <Building size={20} color="rgba(255, 255, 255, 0.8)" />
+                    <View style={companyImagePlaceholderStyles}>
+                      <Building size={20} color={mode === 'dark' ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.6)'} />
                     </View>
                   )}
                   {experience.company}
                 </Heading>
 
                 {/* Posición */}
-                <Text className="timeline-position">
+                <Text 
+                  fontSize="1.125rem"
+                  fontWeight="600"
+                  marginBottom="1rem"
+                  style={{ 
+                    color: positionColor,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem'
+                  }}
+                >
                   <Briefcase size={16} />
                   {experience.position}
                 </Text>
 
                 {/* Ubicación */}
                 {experience.location && (
-                  <Text className="timeline-location">
+                  <Text 
+                    fontSize="0.95rem"
+                    marginBottom="1.5rem"
+                    style={{ 
+                      color: locationColor,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem'
+                    }}
+                  >
                     <MapPin size={14} />
                     {experience.location}
                   </Text>
@@ -575,27 +754,37 @@ const ExperienceTimeline: React.FC<ExperienceTimelineProps> = ({ className = '' 
 
                 {/* Descripción */}
                 {experience.description && (
-                  <Text className="timeline-description">
+                  <Text 
+                    fontSize="1rem"
+                    lineHeight={1.6}
+                    marginBottom="1.5rem"
+                    style={{ color: descriptionColor }}
+                  >
                     {experience.description}
                   </Text>
                 )}
 
                 {/* Skills */}
                 {experience.skills && experience.skills.length > 0 && (
-                  <View className="timeline-skills">
+                  <View style={{
+                    display: 'flex',
+                    flexWrap: 'wrap' as const,
+                    gap: '0.5rem',
+                    marginBottom: '1.5rem'
+                  }}>
                     {experience.skills.map((skill, skillIndex) => (
-                      <Badge key={skillIndex} className="timeline-skill-badge">
+                      <span key={skillIndex} style={skillBadgeStyles}>
                         {skill}
-                      </Badge>
+                      </span>
                     ))}
                   </View>
                 )}
 
                 {/* Actividades */}
                 {experience.activities && experience.activities.length > 0 && (
-                  <View className="timeline-activities">
+                  <View>
                     <button
-                      className="timeline-activities-toggle"
+                      style={activitiesButtonStyles}
                       onClick={() => toggleActivities(experience.id)}
                     >
                       <Star size={14} />
@@ -608,9 +797,28 @@ const ExperienceTimeline: React.FC<ExperienceTimelineProps> = ({ className = '' 
                     </button>
                     
                     {expandedActivities[experience.id] && (
-                      <View className="timeline-activities-list">
+                      <View style={{
+                        marginTop: '1rem',
+                        paddingLeft: '1rem'
+                      }}>
                         {experience.activities.map((activity, activityIndex) => (
-                          <Text key={activityIndex} className="timeline-activity-item">
+                          <Text 
+                            key={activityIndex} 
+                            fontSize="0.9rem"
+                            lineHeight={1.5}
+                            marginBottom="0.5rem"
+                            style={{ 
+                              color: descriptionColor,
+                              position: 'relative',
+                              paddingLeft: '1rem'
+                            }}
+                          >
+                            <span style={{
+                              position: 'absolute',
+                              left: 0,
+                              color: mode === 'dark' ? '#60A5FA' : '#3B82F6',
+                              fontWeight: 'bold'
+                            }}>•</span>
                             {activity}
                           </Text>
                         ))}
@@ -619,7 +827,7 @@ const ExperienceTimeline: React.FC<ExperienceTimelineProps> = ({ className = '' 
                   </View>
                 )}
               </View>
-            </Card>
+            </View>
           </View>
         ))}
       </View>
