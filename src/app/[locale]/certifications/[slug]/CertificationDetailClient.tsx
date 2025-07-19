@@ -405,7 +405,7 @@ function CertificationDetailClient({ locale, slug }: CertificationDetailClientPr
           
           <View 
             style={{
-              padding: '2rem 1rem',
+              padding: '6rem 4rem',
               maxWidth: '1200px',
               margin: '0 auto'
             }}

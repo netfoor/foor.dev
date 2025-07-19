@@ -13,6 +13,7 @@ import MissionVisionSection from './MissionVisionSection';
 import ExperienceTimeline from './ExperienceTimeline';
 import PhilosophySection from './PhilosophySection';
 import ConnectSection from './ConnectSection';
+import EducationSection from './EducationSection';
 
 // Tipos para los datos
 type Profile = Schema["Profile"]["type"];
@@ -300,6 +301,9 @@ const AboutSection: React.FC<AboutSectionProps> = ({ locale, className = '' }) =
 
           {/* Experience Timeline */}
           <ExperienceTimeline className="section-spacing" />
+
+          {/* Education Section */}
+          <EducationSection className="section-spacing" />
 
           {/* Philosophy Section */}
           <PhilosophySection className="section-spacing" />
