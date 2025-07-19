@@ -96,6 +96,11 @@ function detectLocaleFromRequest(request: NextRequest): SupportedLocale {
 function processI18n(request: NextRequest): NextResponse | null {
   const { pathname } = request.nextUrl;
   
+  // Skip processing for static files
+  if (pathname.match(/\.(jpg|jpeg|png|gif|svg|ico|css|js)$/i)) {
+    return null;
+  }
+  
   // Si es la ruta raíz, el redirect se maneja en page.tsx
   if (pathname === '/') {
     return null;

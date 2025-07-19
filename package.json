@@ -16,20 +16,16 @@
     "name": "Fortino Romero Mantilla",
     "email": "fortino.rom@gmail.com",
     "url": "https://foor.dev"
-  },  "scripts": {
-    "dev": "next dev --turbopack",
+  },
+  "scripts": {
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "lint:fix": "next lint --fix",
-    "type-check": "tsc --noEmit",
-    "build:analyze": "ANALYZE=true npm run build",
-    "export": "next export",
-    "pre-build": "node scripts/pre-build-check.js",
-    "build:production": "npm run pre-build && npm run build"
+    "seed": "tsx scripts/seed.ts"
   },
   "dependencies": {
-    "@aws-amplify/adapter-nextjs": "^1.6.3",
+    "@aws-amplify/adapter-nextjs": "^1.2.4",
     "@aws-amplify/ui-react": "^6.11.2",
     "@types/negotiator": "^0.6.4",
     "aws-amplify": "^6.15.0",
@@ -55,7 +51,7 @@
     "eslint": "^9",
     "eslint-config-next": "15.3.2",
     "tailwindcss": "^4",
-    "tsx": "^4.19.4",
+    "tsx": "^4.20.3",
     "typescript": "^5.8.3"
   }
 }

@@ -19,47 +19,6 @@ interface ProfileSectionProps {
 
 // Estilos personalizados
 const profileStyles = `
-  .profile-section {
-    background: linear-gradient(135deg, 
-      rgba(59, 130, 246, 0.15) 0%, 
-      rgba(139, 92, 246, 0.1) 50%, 
-      rgba(236, 72, 153, 0.15) 100%);
-    border-radius: 24px;
-    padding: 3rem;
-    position: relative;
-    overflow: hidden;
-    margin-bottom: 4rem;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-  }
-
-  .profile-section.dark-mode {
-    background: linear-gradient(135deg, 
-      rgba(30, 41, 59, 0.9) 0%, 
-      rgba(51, 65, 85, 0.8) 50%, 
-      rgba(71, 85, 105, 0.9) 100%);
-    border: 1px solid rgba(148, 163, 184, 0.3);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-  }
-
-  .profile-section::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: radial-gradient(circle at 30% 20%, rgba(59, 130, 246, 0.2) 0%, transparent 50%),
-                radial-gradient(circle at 70% 80%, rgba(139, 92, 246, 0.2) 0%, transparent 50%);
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  .profile-section.dark-mode::before {
-    background: radial-gradient(circle at 30% 20%, rgba(59, 130, 246, 0.3) 0%, transparent 50%),
-                radial-gradient(circle at 70% 80%, rgba(139, 92, 246, 0.3) 0%, transparent 50%);
-  }
-
   .profile-content {
     position: relative;
     z-index: 1;
@@ -70,8 +29,8 @@ const profileStyles = `
     height: 200px;
     border-radius: 50%;
     object-fit: cover;
-    border: 6px solid rgba(255, 255, 255, 0.3);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    border: 6px solid var(--amplify-colors-border-primary);
+    box-shadow: var(--amplify-shadows-medium);
     transition: all 0.3s ease;
   }
 
@@ -84,21 +43,17 @@ const profileStyles = `
     width: 200px;
     height: 200px;
     border-radius: 50%;
-    background: linear-gradient(135deg, 
-      rgba(59, 130, 246, 0.4) 0%, 
-      rgba(139, 92, 246, 0.4) 100%);
+    background-color: var(--amplify-colors-brand-secondary);
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 6px solid rgba(255, 255, 255, 0.3);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    border: 6px solid var(--amplify-colors-border-primary);
+    box-shadow: var(--amplify-shadows-medium);
   }
 
   .flag-badge {
-    background: linear-gradient(135deg, 
-      rgba(59, 130, 246, 1) 0%, 
-      rgba(139, 92, 246, 1) 100%);
-    color: white;
+    background-color: var(--amplify-colors-brand-primary);
+    color: var(--amplify-colors-font-inverse);
     border: none;
     border-radius: 20px;
     padding: 0.75rem 1.5rem;
@@ -110,15 +65,7 @@ const profileStyles = `
     gap: 0.5rem;
     transition: all 0.3s ease;
     cursor: default;
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-  }
-
-  .dark-mode .flag-badge {
-    background: linear-gradient(135deg, 
-      rgba(99, 102, 241, 0.9) 0%, 
-      rgba(168, 85, 247, 0.9) 100%);
-    color: #F1F5F9;
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.5);
+    box-shadow: var(--amplify-shadows-small);
   }
 
   .flag-badge:hover {
@@ -126,28 +73,10 @@ const profileStyles = `
     box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
   }
 
-  .dark-mode .flag-badge:hover {
-    box-shadow: 0 10px 25px rgba(59, 130, 246, 0.6);
-  }
-
   .profile-name {
-    background: linear-gradient(135deg, 
-      var(--amplify-colors-primary-80) 0%, 
-      var(--amplify-colors-secondary-80) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: var(--amplify-colors-font-primary);
     font-weight: 800;
     margin-bottom: 0.5rem;
-  }
-
-  .dark-mode .profile-name {
-    background: linear-gradient(135deg, 
-      #60A5FA 0%, 
-      #A78BFA 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
   }
 
   .current-position {
@@ -160,20 +89,12 @@ const profileStyles = `
     gap: 0.5rem;
   }
 
-  .dark-mode .current-position {
-    color: #CBD5E1;
-  }
-
   .profile-description {
     color: var(--amplify-colors-font-primary);
     font-size: 1.125rem;
     line-height: 1.7;
     margin-bottom: 2.5rem;
     max-width: 800px;
-  }
-
-  .dark-mode .profile-description {
-    color: #E2E8F0;
   }
 
   .flags-container {
@@ -225,6 +146,70 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ className = '' }) => {
   const { mode } = useTheme();
   const { t } = useTranslation('homepage');
   const { isAuthenticated } = useAuth();
+
+  // Estilos dinámicos basados en el tema
+  const containerStyles = {
+    background: mode === 'dark'
+      ? 'rgba(51, 65, 85, 0.8)'
+      : 'rgba(255, 255, 255, 0.9)',
+    backdropFilter: 'blur(16px)',
+    WebkitBackdropFilter: 'blur(16px)',
+    border: mode === 'dark'
+      ? '1px solid rgba(148, 163, 184, 0.1)'
+      : '1px solid rgba(203, 213, 225, 0.2)',
+    borderRadius: '16px',
+    padding: '2rem',
+    position: 'relative' as const,
+    overflow: 'hidden' as const,
+    marginBottom: '4rem',
+    boxShadow: mode === 'dark'
+      ? '0 25px 50px -12px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05)'
+      : '0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.1)',
+  };
+
+  const imageStyles = {
+    width: '200px',
+    height: '200px',
+    borderRadius: '50%',
+    objectFit: 'cover' as const,
+    border: mode === 'dark' ? '6px solid rgba(148, 163, 184, 0.3)' : '6px solid rgba(203, 213, 225, 0.4)',
+    boxShadow: mode === 'dark' 
+      ? '0 25px 50px rgba(0, 0, 0, 0.3)' 
+      : '0 25px 50px rgba(0, 0, 0, 0.15)',
+    transition: 'all 0.3s ease',
+  };
+
+  const imagePlaceholderStyles = {
+    ...imageStyles,
+    backgroundColor: mode === 'dark' ? 'rgba(139, 92, 246, 0.2)' : 'rgba(139, 92, 246, 0.1)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  };
+
+  const nameColor = mode === 'dark' ? '#F8FAFC' : '#0F172A';
+  const positionColor = mode === 'dark' ? '#CBD5E1' : '#64748B';
+  const descriptionColor = mode === 'dark' ? '#E2E8F0' : '#334155';
+  const loadingTextColor = mode === 'dark' ? '#CBD5E1' : '#64748B';
+
+  const badgeStyles = {
+    backgroundColor: mode === 'dark' ? '#3B82F6' : '#2563EB',
+    color: '#FFFFFF',
+    border: 'none',
+    borderRadius: '20px',
+    padding: '0.75rem 1.5rem',
+    fontSize: '0.875rem',
+    fontWeight: '600',
+    margin: '0.25rem',
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '0.5rem',
+    transition: 'all 0.3s ease',
+    cursor: 'default',
+    boxShadow: mode === 'dark'
+      ? '0 10px 25px rgba(59, 130, 246, 0.3)'
+      : '0 10px 25px rgba(37, 99, 235, 0.2)',
+  };
 
   // Client initialization
   const client = generateClient<Schema>();
@@ -307,7 +292,10 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ className = '' }) => {
   // Mostrar loader mientras carga
   if (!mounted || loading) {
     return (
-      <View className={`profile-section ${className}`}>
+      <View 
+        className={className}
+        style={containerStyles}
+      >
         <style>{profileStyles}</style>
         <Flex 
           direction="column" 
@@ -319,8 +307,8 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ className = '' }) => {
           <Loader size="large" />
           <Text 
             fontSize="1.125rem" 
-            color="var(--amplify-colors-font-tertiary)"
             marginTop="1rem"
+            style={{ color: loadingTextColor }}
           >
             {t('about.profile.loading')}
           </Text>
@@ -332,7 +320,10 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ className = '' }) => {
   // Mostrar error si hay alguno
   if (error) {
     return (
-      <View className={`profile-section ${mode === 'dark' ? 'dark-mode' : ''} ${className}`}>
+      <View 
+        className={className}
+        style={containerStyles}
+      >
         <style>{profileStyles}</style>
         <Flex 
           direction="column" 
@@ -357,7 +348,10 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ className = '' }) => {
   // Si no hay datos de perfil, mostrar versión por defecto
   if (!profile) {
     return (
-      <View className={`profile-section ${mode === 'dark' ? 'dark-mode' : ''} ${className}`}>
+      <View 
+        className={className}
+        style={containerStyles}
+      >
         <style>{profileStyles}</style>
         <Flex 
           direction="column" 
@@ -366,24 +360,39 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ className = '' }) => {
           className="profile-content"
           textAlign="center"
         >
-          <View className="profile-image-placeholder">
-            <User size={60} color="rgba(255, 255, 255, 0.8)" />
+          <View style={imagePlaceholderStyles}>
+            <User size={60} color={mode === 'dark' ? '#A78BFA' : '#8B5CF6'} />
           </View>
           
           <Heading
             level={2}
             fontSize={{ base: '2.5rem', medium: '3rem' }}
-            className="profile-name"
+            style={{ color: nameColor, fontWeight: '800', marginBottom: '0.5rem' }}
           >
             Fortino Romero Mantilla
           </Heading>
           
-          <Text className="current-position">
+          <Text 
+            fontSize="1.25rem"
+            fontWeight="500"
+            marginBottom="2rem"
+            style={{ 
+              color: positionColor,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem'
+            }}
+          >
             <Award size={20} />
             Cloud Engineer | AWS Advocate | DevOps Enthusiast
           </Text>
           
-          <Text className="profile-description">
+          <Text 
+            fontSize="1.125rem"
+            lineHeight={1.7}
+            maxWidth="800px"
+            style={{ color: descriptionColor }}
+          >
             {t('about.description1')}
           </Text>
         </Flex>
@@ -392,7 +401,10 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ className = '' }) => {
   }
 
   return (
-    <View className={`profile-section ${mode === 'dark' ? 'dark-mode' : ''} ${className}`}>
+    <View 
+      className={className}
+      style={containerStyles}
+    >
       <style>{profileStyles}</style>
       <Flex 
         direction="column" 
@@ -406,11 +418,11 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ className = '' }) => {
           <Image
             src={profileImageUrl}
             alt={profile.name || 'Profile'}
-            className="profile-image"
+            style={imageStyles}
           />
         ) : (
-          <View className="profile-image-placeholder">
-            <User size={60} color="rgba(255, 255, 255, 0.8)" />
+          <View style={imagePlaceholderStyles}>
+            <User size={60} color={mode === 'dark' ? '#A78BFA' : '#8B5CF6'} />
           </View>
         )}
         
@@ -418,27 +430,48 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ className = '' }) => {
         <Heading
           level={2}
           fontSize={{ base: '2.5rem', medium: '3rem' }}
-          className="profile-name"
+          style={{ color: nameColor, fontWeight: '800', marginBottom: '0.5rem' }}
         >
           {profile.name || 'Fortino Romero Mantilla'}
         </Heading>
         
         {/* Posición actual */}
-        <Text className="current-position">
+        <Text 
+          fontSize="1.25rem"
+          fontWeight="500"
+          marginBottom="2rem"
+          style={{ 
+            color: positionColor,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem'
+          }}
+        >
           <Award size={20} />
           {profile.currentPosition || 'Cloud Engineer | AWS Advocate | DevOps Enthusiast'}
         </Text>
         
         {/* Descripción */}
-        <Text className="profile-description">
+        <Text 
+          fontSize="1.125rem"
+          lineHeight={1.7}
+          marginBottom="2.5rem"
+          maxWidth="800px"
+          style={{ color: descriptionColor }}
+        >
           {profile.description || t('about.description1')}
         </Text>
         
         {/* Flags/Badges */}
         {profile.flags && profile.flags.length > 0 && (
-          <Flex className="flags-container">
+          <Flex 
+            wrap="wrap"
+            gap="0.5rem"
+            justifyContent="center"
+            marginTop="2rem"
+          >
             {profile.flags.map((flag, index) => (
-              <Badge key={index} className="flag-badge">
+              <Badge key={index} style={badgeStyles}>
                 <Star size={16} />
                 {flag}
               </Badge>

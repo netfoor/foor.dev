@@ -25,41 +25,6 @@ interface AboutSectionProps {
 
 // Estilos personalizados
 const aboutStyles = `
-  .about-container {
-    background: linear-gradient(135deg, 
-      rgba(59, 130, 246, 0.1) 0%, 
-      rgba(139, 92, 246, 0.05) 25%, 
-      rgba(236, 72, 153, 0.05) 50%, 
-      rgba(245, 101, 101, 0.05) 75%, 
-      rgba(251, 191, 36, 0.1) 100%);
-    min-height: 100vh;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .about-container.dark-mode {
-    background: linear-gradient(135deg, 
-      rgba(15, 23, 42, 1) 0%, 
-      rgba(30, 41, 59, 0.98) 25%, 
-      rgba(51, 65, 85, 0.95) 50%, 
-      rgba(71, 85, 105, 0.98) 75%, 
-      rgba(100, 116, 139, 1) 100%);
-  }
-
-  .about-container::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 100%;
-    background: radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 40% 80%, rgba(236, 72, 153, 0.1) 0%, transparent 50%);
-    pointer-events: none;
-    z-index: 0;
-  }
-
   .about-content {
     position: relative;
     z-index: 1;
@@ -91,6 +56,53 @@ const AboutSection: React.FC<AboutSectionProps> = ({ locale, className = '' }) =
   const { mode } = useTheme();
   const { t } = useTranslation('homepage');
   const { isAuthenticated } = useAuth();
+
+  // Estilos dinámicos basados en el tema
+  const containerStyles = {
+    background: mode === 'dark' 
+      ? 'linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.95) 50%, rgba(15, 23, 42, 0.95) 100%)'
+      : 'linear-gradient(135deg, rgba(248, 250, 252, 0.98) 0%, rgba(241, 245, 249, 0.98) 50%, rgba(248, 250, 252, 0.98) 100%)',
+    minHeight: '100vh',
+    position: 'relative' as const,
+    overflow: 'hidden' as const,
+  };
+
+  const backgroundPatternStyles = {
+    position: 'absolute' as const,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundImage: mode === 'dark'
+      ? `radial-gradient(circle at 25% 25%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
+         radial-gradient(circle at 75% 75%, rgba(139, 92, 246, 0.08) 0%, transparent 50%)`
+      : `radial-gradient(circle at 25% 25%, rgba(59, 130, 246, 0.04) 0%, transparent 50%),
+         radial-gradient(circle at 75% 75%, rgba(139, 92, 246, 0.04) 0%, transparent 50%)`,
+    pointerEvents: 'none' as const,
+    zIndex: 0,
+  };
+
+  const titleStyles = {
+    backgroundImage: mode === 'dark'
+      ? 'linear-gradient(135deg, #93C5FD, #60A5FA)'
+      : 'linear-gradient(135deg, #F59E0B, #FBBF24)',
+    WebkitBackgroundClip: 'text',
+    WebkitTextFillColor: 'transparent',
+    backgroundClip: 'text',
+    marginBottom: '0.5rem',
+  };
+
+  const titleHighlightStyles = {
+    backgroundImage: mode === 'dark'
+      ? 'linear-gradient(135deg, #FBBF24, #F59E0B)'
+      : 'linear-gradient(135deg, #2563EB, #3B82F6)',
+    WebkitBackgroundClip: 'text',
+    WebkitTextFillColor: 'transparent',
+    backgroundClip: 'text',
+  };
+
+  const subtitleColor = mode === 'dark' ? '#CBD5E1' : '#64748B';
+  const loadingTextColor = mode === 'dark' ? '#CBD5E1' : '#64748B';
 
   // Client initialization
   const client = generateClient<Schema>();
@@ -171,8 +183,13 @@ const AboutSection: React.FC<AboutSectionProps> = ({ locale, className = '' }) =
   // Mostrar loader mientras carga
   if (!mounted || loading) {
     return (
-      <View className={`about-container ${mode === 'dark' ? 'dark-mode' : ''} ${className}`}>
+      <View 
+        as="section"
+        className={className}
+        style={containerStyles}
+      >
         <style>{aboutStyles}</style>
+        <div style={backgroundPatternStyles} />
         <Flex 
           direction="column" 
           alignItems="center" 
@@ -183,8 +200,8 @@ const AboutSection: React.FC<AboutSectionProps> = ({ locale, className = '' }) =
           <Loader size="large" />
           <Text 
             fontSize="1.125rem" 
-            color="var(--amplify-colors-font-tertiary)"
             marginTop="1rem"
+            style={{ color: loadingTextColor }}
           >
             Loading about information...
           </Text>
@@ -196,8 +213,13 @@ const AboutSection: React.FC<AboutSectionProps> = ({ locale, className = '' }) =
   // Mostrar error si hay alguno
   if (error) {
     return (
-      <View className={`about-container ${mode === 'dark' ? 'dark-mode' : ''} ${className}`}>
+      <View 
+        as="section"
+        className={className}
+        style={containerStyles}
+      >
         <style>{aboutStyles}</style>
+        <div style={backgroundPatternStyles} />
         <Flex 
           direction="column" 
           alignItems="center" 
@@ -220,9 +242,17 @@ const AboutSection: React.FC<AboutSectionProps> = ({ locale, className = '' }) =
   }
 
   return (
-    <View className={`about-container ${mode === 'dark' ? 'dark-mode' : ''} ${className}`}>
+    <View 
+      as="section"
+      className={className}
+      style={containerStyles}
+    >
       <style>{aboutStyles}</style>
-      <View className="about-content">
+      
+      {/* Background Pattern */}
+      <div style={backgroundPatternStyles} />
+      
+      <View className="about-content" style={{ position: 'relative', zIndex: 1 }}>
         <Flex
           direction="column"
           alignItems="center"
@@ -232,37 +262,22 @@ const AboutSection: React.FC<AboutSectionProps> = ({ locale, className = '' }) =
           margin="0 auto"
         >
           {/* Header */}
-            <Flex
+          <Flex
             direction="column"
             alignItems="center"
             textAlign="center"
             marginBottom="4rem"
-            >
+          >
             <Text
               as="h1"
               fontSize={{ base: '2rem', medium: '2.5rem' }}
               fontWeight="700"
               textAlign="center"
               lineHeight="1.1"
-              style={{
-                backgroundImage: mode === 'dark'
-                  ? 'linear-gradient(135deg, #93C5FD, #60A5FA)'
-                  : 'linear-gradient(135deg, #F59E0B, #FBBF24)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-                marginBottom: '0.5rem',
-              }}
+              style={titleStyles}
             >
               {t('about.title')}{' '}
-              <span style={{ 
-                backgroundImage: mode === 'dark'
-                  ? 'linear-gradient(135deg, #FBBF24, #F59E0B)'
-                  : 'linear-gradient(135deg, #2563EB, #3B82F6)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-              }}>
+              <span style={titleHighlightStyles}>
                 {t('about.titleHighlight')}
               </span>
             </Text>
@@ -270,14 +285,12 @@ const AboutSection: React.FC<AboutSectionProps> = ({ locale, className = '' }) =
               fontSize={{ base: '1rem', medium: '1.125rem' }}
               textAlign="center"
               maxWidth="600px"
-              style={{
-                color: mode === 'dark' ? '#CBD5E1' : '#64748B',
-                lineHeight: 1.6,
-              }}
+              lineHeight={1.6}
+              style={{ color: subtitleColor }}
             >
               {t('about.subtitle')}
             </Text>
-            </Flex>
+          </Flex>
 
           {/* Profile Section */}
           <ProfileSection className="section-spacing" />

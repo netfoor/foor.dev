@@ -23,44 +23,15 @@ const connectStyles = `
     }
 
     .connect-container {
-        background: linear-gradient(135deg, 
-            rgba(59, 130, 246, 0.1) 0%, 
-            rgba(139, 92, 246, 0.05) 25%, 
-            rgba(236, 72, 153, 0.05) 50%, 
-            rgba(245, 101, 101, 0.05) 75%, 
-            rgba(251, 191, 36, 0.1) 100%);
-        border-radius: 24px;
-        padding: 4rem;
+        background-color: var(--amplify-colors-background-tertiary);
+        border-radius: 16px;
+        padding: 3rem;
         position: relative;
         overflow: hidden;
         margin-top: 2rem;
         text-align: center;
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .connect-section.dark-mode .connect-container {
-        background: linear-gradient(135deg, 
-            rgba(30, 41, 59, 0.95) 0%, 
-            rgba(51, 65, 85, 0.92) 25%, 
-            rgba(71, 85, 105, 0.92) 50%, 
-            rgba(100, 116, 139, 0.92) 75%, 
-            rgba(148, 163, 184, 0.95) 100%);
-        border: 1px solid rgba(148, 163, 184, 0.3);
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-    }
-
-    .connect-container::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: radial-gradient(circle at 20% 30%, rgba(59, 130, 246, 0.15) 0%, transparent 60%),
-                                radial-gradient(circle at 80% 70%, rgba(236, 72, 153, 0.1) 0%, transparent 60%);
-        pointer-events: none;
-        z-index: 0;
+        border: 1px solid var(--amplify-colors-border-primary);
+        box-shadow: var(--amplify-shadows-medium);
     }
 
     .connect-content {
@@ -77,10 +48,6 @@ const connectStyles = `
         font-weight: 400;
     }
 
-    .connect-section.dark-mode .connect-subtitle {
-        color: #e0e7ef;
-    }
-
     .connect-buttons {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -90,10 +57,10 @@ const connectStyles = `
 
     .connect-button {
         background: linear-gradient(135deg, 
-            rgba(255, 255, 255, 0.1) 0%, 
-            rgba(255, 255, 255, 0.05) 100%);
+            var(--amplify-colors-background-secondary-hover) 0%, 
+            var(--amplify-colors-background-secondary) 100%);
         backdrop-filter: blur(10px);
-        border: 2px solid rgba(255, 255, 255, 0.1);
+        border: 2px solid var(--amplify-colors-border-tertiary);
         border-radius: 16px;
         padding: 1.5rem;
         color: var(--amplify-colors-font-primary);
@@ -108,32 +75,13 @@ const connectStyles = `
         justify-content: center;
     }
 
-    .connect-section.dark-mode .connect-button {
-        background: linear-gradient(135deg, 
-            rgba(30, 41, 59, 0.95) 0%, 
-            rgba(51, 65, 85, 0.92) 100%);
-        color: #f1f5fa;
-        border: 2px solid rgba(148, 163, 184, 0.25);
-    }
-
     .connect-button:hover {
         transform: translateY(-5px);
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
-        border-color: rgba(255, 255, 255, 0.2);
-    }
-
-    .connect-section.dark-mode .connect-button:hover {
-        border-color: #a78bfa;
-        background: linear-gradient(135deg, 
-            rgba(71, 85, 105, 0.98) 0%, 
-            rgba(100, 116, 139, 0.98) 100%);
+        box-shadow: var(--amplify-shadows-medium);
+        border-color: var(--amplify-colors-border-hover);
     }
 
     .connect-button-linkedin {
-        border-color: rgba(10, 102, 194, 0.3);
-    }
-
-    .connect-section.dark-mode .connect-button-linkedin {
         border-color: #0A66C2;
     }
 
@@ -141,43 +89,21 @@ const connectStyles = `
         background: linear-gradient(135deg, 
             rgba(10, 102, 194, 0.15) 0%, 
             rgba(10, 102, 194, 0.05) 100%);
-        border-color: rgba(10, 102, 194, 0.5);
-    }
-
-    .connect-section.dark-mode .connect-button-linkedin:hover {
-        background: linear-gradient(135deg, 
-            rgba(10, 102, 194, 0.25) 0%, 
-            rgba(10, 102, 194, 0.10) 100%);
         border-color: #0A66C2;
     }
 
     .connect-button-github {
-        border-color: rgba(51, 51, 51, 0.3);
-    }
-
-    .connect-section.dark-mode .connect-button-github {
-        border-color: #f1f5fa;
+        border-color: var(--amplify-colors-border-secondary);
     }
 
     .connect-button-github:hover {
         background: linear-gradient(135deg, 
-            rgba(51, 51, 51, 0.15) 0%, 
-            rgba(51, 51, 51, 0.05) 100%);
-        border-color: rgba(51, 51, 51, 0.5);
-    }
-
-    .connect-section.dark-mode .connect-button-github:hover {
-        background: linear-gradient(135deg, 
-            rgba(51, 51, 51, 0.25) 0%, 
-            rgba(51, 51, 51, 0.10) 100%);
-        border-color: #f1f5fa;
+            var(--amplify-colors-background-secondary-hover) 0%, 
+            var(--amplify-colors-background-secondary) 100%);
+        border-color: var(--amplify-colors-border-focus);
     }
 
     .connect-button-twitter {
-        border-color: rgba(29, 161, 242, 0.3);
-    }
-
-    .connect-section.dark-mode .connect-button-twitter {
         border-color: #1DA1F2;
     }
 
@@ -185,21 +111,10 @@ const connectStyles = `
         background: linear-gradient(135deg, 
             rgba(29, 161, 242, 0.15) 0%, 
             rgba(29, 161, 242, 0.05) 100%);
-        border-color: rgba(29, 161, 242, 0.5);
-    }
-
-    .connect-section.dark-mode .connect-button-twitter:hover {
-        background: linear-gradient(135deg, 
-            rgba(29, 161, 242, 0.25) 0%, 
-            rgba(29, 161, 242, 0.10) 100%);
         border-color: #1DA1F2;
     }
 
     .connect-button-email {
-        border-color: rgba(234, 88, 12, 0.3);
-    }
-
-    .connect-section.dark-mode .connect-button-email {
         border-color: #EA580C;
     }
 
@@ -207,13 +122,6 @@ const connectStyles = `
         background: linear-gradient(135deg, 
             rgba(234, 88, 12, 0.15) 0%, 
             rgba(234, 88, 12, 0.05) 100%);
-        border-color: rgba(234, 88, 12, 0.5);
-    }
-
-    .connect-section.dark-mode .connect-button-email:hover {
-        background: linear-gradient(135deg, 
-            rgba(234, 88, 12, 0.25) 0%, 
-            rgba(234, 88, 12, 0.10) 100%);
         border-color: #EA580C;
     }
 
@@ -222,18 +130,12 @@ const connectStyles = `
         height: 40px;
         border-radius: 50%;
         background: linear-gradient(135deg, 
-            rgba(255, 255, 255, 0.2) 0%, 
-            rgba(255, 255, 255, 0.1) 100%);
+            var(--amplify-colors-background-secondary-hover) 0%, 
+            var(--amplify-colors-background-secondary) 100%);
         display: flex;
         align-items: center;
         justify-content: center;
         transition: all 0.3s ease;
-    }
-
-    .connect-section.dark-mode .connect-button-icon {
-        background: linear-gradient(135deg, 
-            rgba(71, 85, 105, 0.7) 0%, 
-            rgba(100, 116, 139, 0.7) 100%);
     }
 
     .connect-button:hover .connect-button-icon {
@@ -244,11 +146,7 @@ const connectStyles = `
         font-size: 1rem;
         font-weight: 600;
         margin: 0;
-        color: inherit;
-    }
-
-    .connect-section.dark-mode .connect-button-text {
-        color: #f1f5fa;
+        color: var(--amplify-colors-font-primary);
     }
 
     .connect-button-description {
@@ -258,10 +156,6 @@ const connectStyles = `
         text-align: center;
     }
 
-    .connect-section.dark-mode .connect-button-description {
-        color: #cbd5e1;
-    }
-
     .connect-footer {
         display: flex;
         align-items: center;
@@ -269,11 +163,7 @@ const connectStyles = `
         gap: 0.5rem;
         margin-top: 2rem;
         padding-top: 2rem;
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .connect-section.dark-mode .connect-footer {
-        border-top: 1px solid rgba(148, 163, 184, 0.3);
+        border-top: 1px solid var(--amplify-colors-border-primary);
     }
 
     .connect-footer-text {
@@ -281,29 +171,16 @@ const connectStyles = `
         font-size: 0.9rem;
     }
 
-    .connect-section.dark-mode .connect-footer-text {
-        color: #cbd5e1;
-    }
-
     .section-title {
         background: linear-gradient(135deg, 
-            var(--amplify-colors-primary-80) 0%, 
-            var(--amplify-colors-secondary-80) 100%);
+            var(--amplify-colors-brand-primary-80) 0%, 
+            var(--amplify-colors-brand-secondary-80) 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
         font-weight: 800;
         text-align: center;
         margin-bottom: 1rem;
-    }
-
-    .connect-section.dark-mode .section-title {
-        background: linear-gradient(135deg, 
-            #60A5FA 0%, 
-            #A78BFA 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
     }
 
     @media (max-width: 768px) {
@@ -348,6 +225,95 @@ const ConnectSection: React.FC<ConnectSectionProps> = ({ className = '' }) => {
     const { mode } = useTheme();
     const { t } = useTranslation('homepage');
     const { isAuthenticated } = useAuth();
+
+    // Estilos dinámicos basados en el tema
+    const titleStyles = {
+        backgroundImage: mode === 'dark'
+            ? 'linear-gradient(135deg, #93C5FD, #60A5FA)'
+            : 'linear-gradient(135deg, #F59E0B, #FBBF24)',
+        WebkitBackgroundClip: 'text',
+        WebkitTextFillColor: 'transparent',
+        backgroundClip: 'text',
+        marginBottom: '1.5rem',
+    };
+
+    const titleHighlightStyles = {
+        backgroundImage: mode === 'dark'
+            ? 'linear-gradient(135deg, #FBBF24, #F59E0B)'
+            : 'linear-gradient(135deg, #2563EB, #3B82F6)',
+        WebkitBackgroundClip: 'text',
+        WebkitTextFillColor: 'transparent',
+        backgroundClip: 'text',
+    };
+
+    const containerStyles = {
+        background: mode === 'dark'
+            ? 'rgba(51, 65, 85, 0.8)'
+            : 'rgba(255, 255, 255, 0.9)',
+        backdropFilter: 'blur(16px)',
+        WebkitBackdropFilter: 'blur(16px)',
+        border: mode === 'dark'
+            ? '1px solid rgba(148, 163, 184, 0.1)'
+            : '1px solid rgba(203, 213, 225, 0.2)',
+        borderRadius: '16px',
+        padding: '3rem',
+        position: 'relative' as const,
+        overflow: 'hidden' as const,
+        marginTop: '2rem',
+        textAlign: 'center' as const,
+        boxShadow: mode === 'dark'
+            ? '0 25px 50px -12px rgba(0, 0, 0, 0.4)'
+            : '0 25px 50px -12px rgba(0, 0, 0, 0.15)',
+    };
+
+    const subtitleColor = mode === 'dark' ? '#CBD5E1' : '#64748B';
+    const footerTextColor = mode === 'dark' ? '#94A3B8' : '#64748B';
+    const heartColor = mode === 'dark' ? '#A78BFA' : '#8B5CF6';
+
+    const getButtonStyles = (platform: string) => ({
+        background: mode === 'dark'
+            ? 'linear-gradient(135deg, rgba(71, 85, 105, 0.8), rgba(51, 65, 85, 0.8))'
+            : 'linear-gradient(135deg, rgba(248, 250, 252, 0.9), rgba(241, 245, 249, 0.9))',
+        backdropFilter: 'blur(10px)',
+        border: mode === 'dark'
+            ? `2px solid ${getBorderColor(platform, true)}`
+            : `2px solid ${getBorderColor(platform, false)}`,
+        borderRadius: '16px',
+        padding: '1.5rem',
+        color: mode === 'dark' ? '#F8FAFC' : '#0F172A',
+        textDecoration: 'none',
+        transition: 'all 0.3s ease',
+        cursor: 'pointer',
+        display: 'flex',
+        flexDirection: 'column' as const,
+        alignItems: 'center',
+        gap: '1rem',
+        minHeight: '140px',
+        justifyContent: 'center',
+    });
+
+    const getBorderColor = (platform: string, isDark: boolean) => {
+        const colors = {
+            linkedin: '#0A66C2',
+            github: isDark ? 'rgba(148, 163, 184, 0.3)' : 'rgba(203, 213, 225, 0.4)',
+            twitter: '#1DA1F2',
+            email: '#EA580C'
+        };
+        return colors[platform as keyof typeof colors] || (isDark ? 'rgba(148, 163, 184, 0.3)' : 'rgba(203, 213, 225, 0.4)');
+    };
+
+    const getIconBackgroundStyles = () => ({
+        width: '40px',
+        height: '40px',
+        borderRadius: '50%',
+        background: mode === 'dark'
+            ? 'linear-gradient(135deg, rgba(71, 85, 105, 0.8), rgba(51, 65, 85, 0.8))'
+            : 'linear-gradient(135deg, rgba(248, 250, 252, 0.9), rgba(241, 245, 249, 0.9))',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        transition: 'all 0.3s ease',
+    });
 
     // Client initialization
     const client = generateClient<Schema>();
@@ -405,126 +371,177 @@ const ConnectSection: React.FC<ConnectSectionProps> = ({ className = '' }) => {
         window.open(url, '_blank', 'noopener,noreferrer');
     };
 
-    return (
-        <View className={`connect-section ${mode === 'dark' ? 'dark-mode' : ''} ${className}`}>
-            <style>{connectStyles}</style>
-            
-            {/* Header */}
-            <Text
-                as="h2"
-                fontSize={{ base: '2rem', medium: '2.5rem' }}
-                fontWeight="700"
-                textAlign="center"
-                lineHeight="1.1"
-                style={{
-                    backgroundImage: mode === 'dark'
-                        ? 'linear-gradient(135deg, #93C5FD, #60A5FA)'
-                        : 'linear-gradient(135deg, #F59E0B, #FBBF24)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text',
-                    marginBottom: '1.5rem',
-                }}
+  return (
+    <View className={`connect-section ${className}`}>
+      <style>{connectStyles}</style>
+      
+      {/* Header */}
+      <Text
+        as="h2"
+        fontSize={{ base: '2rem', medium: '2.5rem' }}
+        fontWeight="700"
+        textAlign="center"
+        lineHeight="1.1"
+        style={titleStyles}
+      >
+        {t('about.connect.title')}{' '}
+        <span style={titleHighlightStyles}>
+          {t('about.connect.titleHighlight')}
+        </span>
+      </Text>
+
+      {/* Connect Container */}
+      <View style={containerStyles}>
+        <View style={{
+          position: 'relative',
+          zIndex: 1,
+          maxWidth: '800px',
+          margin: '0 auto'
+        }}>
+          {/* Subtitle */}
+          <Text 
+            fontSize="1.25rem"
+            marginBottom="3rem"
+            fontWeight="400"
+            style={{ color: subtitleColor }}
+          >
+            {t('about.connect.subtitle')}
+          </Text>
+
+          {/* Social Buttons */}
+          <View style={{
+            display: 'grid',
+            gridTemplateColumns: window.innerWidth > 768 ? 'repeat(auto-fit, minmax(200px, 1fr))' : '1fr',
+            gap: '1.5rem',
+            marginBottom: '3rem'
+          }}>
+            {/* LinkedIn */}
+            <button
+              style={getButtonStyles('linkedin')}
+              onClick={() => handleLinkClick(links.linkedin)}
             >
-                {t('about.connect.title')}{' '}
-                <span style={{ 
-                    backgroundImage: mode === 'dark'
-                        ? 'linear-gradient(135deg, #FBBF24, #F59E0B)'
-                        : 'linear-gradient(135deg, #2563EB, #3B82F6)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text',
-                }}>
-                    {t('about.connect.titleHighlight')}
-                </span>
+              <View style={getIconBackgroundStyles()}>
+                <Linkedin size={20} color="#0A66C2" />
+              </View>
+              <Text 
+                fontSize="1rem"
+                fontWeight="600"
+                margin="0"
+                style={{ color: mode === 'dark' ? '#F8FAFC' : '#0F172A' }}
+              >
+                {t('about.connect.actions.linkedin')}
+              </Text>
+              <Text 
+                fontSize="0.875rem"
+                margin="0"
+                textAlign="center"
+                style={{ color: mode === 'dark' ? '#94A3B8' : '#64748B' }}
+              >
+                Professional networking
+              </Text>
+            </button>
+
+            {/* GitHub */}
+            <button
+              style={getButtonStyles('github')}
+              onClick={() => handleLinkClick(links.github)}
+            >
+              <View style={getIconBackgroundStyles()}>
+                <Github size={20} color={mode === 'dark' ? '#F8FAFC' : '#0F172A'} />
+              </View>
+              <Text 
+                fontSize="1rem"
+                fontWeight="600"
+                margin="0"
+                style={{ color: mode === 'dark' ? '#F8FAFC' : '#0F172A' }}
+              >
+                {t('about.connect.actions.github')}
+              </Text>
+              <Text 
+                fontSize="0.875rem"
+                margin="0"
+                textAlign="center"
+                style={{ color: mode === 'dark' ? '#94A3B8' : '#64748B' }}
+              >
+                Code repositories
+              </Text>
+            </button>
+
+            {/* Twitter */}
+            <button
+              style={getButtonStyles('twitter')}
+              onClick={() => handleLinkClick(links.twitter)}
+            >
+              <View style={getIconBackgroundStyles()}>
+                <Twitter size={20} color="#1DA1F2" />
+              </View>
+              <Text 
+                fontSize="1rem"
+                fontWeight="600"
+                margin="0"
+                style={{ color: mode === 'dark' ? '#F8FAFC' : '#0F172A' }}
+              >
+                {t('about.connect.actions.twitter')}
+              </Text>
+              <Text 
+                fontSize="0.875rem"
+                margin="0"
+                textAlign="center"
+                style={{ color: mode === 'dark' ? '#94A3B8' : '#64748B' }}
+              >
+                Tech thoughts & updates
+              </Text>
+            </button>
+
+            {/* Email */}
+            <button
+              style={getButtonStyles('email')}
+              onClick={handleEmailClick}
+            >
+              <View style={getIconBackgroundStyles()}>
+                <Mail size={20} color="#EA580C" />
+              </View>
+              <Text 
+                fontSize="1rem"
+                fontWeight="600"
+                margin="0"
+                style={{ color: mode === 'dark' ? '#F8FAFC' : '#0F172A' }}
+              >
+                {t('about.connect.actions.email')}
+              </Text>
+              <Text 
+                fontSize="0.875rem"
+                margin="0"
+                textAlign="center"
+                style={{ color: mode === 'dark' ? '#94A3B8' : '#64748B' }}
+              >
+                Direct collaboration
+              </Text>
+            </button>
+          </View>
+
+          {/* Footer */}
+          <View style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '0.5rem',
+            marginTop: '2rem',
+            paddingTop: '2rem',
+            borderTop: mode === 'dark' ? '1px solid rgba(148, 163, 184, 0.2)' : '1px solid rgba(203, 213, 225, 0.3)'
+          }}>
+            <Heart size={16} color={heartColor} />
+            <Text 
+              fontSize="0.9rem"
+              style={{ color: footerTextColor }}
+            >
+              Let's build something amazing together
             </Text>
-
-            {/* Connect Container */}
-            <View className="connect-container">
-                <View className="connect-content">
-                    {/* Subtitle */}
-                    <Text className="connect-subtitle">
-                        {t('about.connect.subtitle')}
-                    </Text>
-
-                    {/* Social Buttons */}
-                    <View className="connect-buttons">
-                        {/* LinkedIn */}
-                        <button
-                            className="connect-button connect-button-linkedin"
-                            onClick={() => handleLinkClick(links.linkedin)}
-                        >
-                            <View className="connect-button-icon">
-                                <Linkedin size={20} color="#0A66C2" />
-                            </View>
-                            <Text className="connect-button-text">
-                                {t('about.connect.actions.linkedin')}
-                            </Text>
-                            <Text className="connect-button-description">
-                                Professional networking
-                            </Text>
-                        </button>
-
-                        {/* GitHub */}
-                        <button
-                            className="connect-button connect-button-github"
-                            onClick={() => handleLinkClick(links.github)}
-                        >
-                            <View className="connect-button-icon">
-                                <Github size={20} color="#333" />
-                            </View>
-                            <Text className="connect-button-text">
-                                {t('about.connect.actions.github')}
-                            </Text>
-                            <Text className="connect-button-description">
-                                Code repositories
-                            </Text>
-                        </button>
-
-                        {/* Twitter */}
-                        <button
-                            className="connect-button connect-button-twitter"
-                            onClick={() => handleLinkClick(links.twitter)}
-                        >
-                            <View className="connect-button-icon">
-                                <Twitter size={20} color="#1DA1F2" />
-                            </View>
-                            <Text className="connect-button-text">
-                                {t('about.connect.actions.twitter')}
-                            </Text>
-                            <Text className="connect-button-description">
-                                Tech thoughts & updates
-                            </Text>
-                        </button>
-
-                        {/* Email */}
-                        <button
-                            className="connect-button connect-button-email"
-                            onClick={handleEmailClick}
-                        >
-                            <View className="connect-button-icon">
-                                <Mail size={20} color="#EA580C" />
-                            </View>
-                            <Text className="connect-button-text">
-                                {t('about.connect.actions.email')}
-                            </Text>
-                            <Text className="connect-button-description">
-                                Direct collaboration
-                            </Text>
-                        </button>
-                    </View>
-
-                    {/* Footer */}
-                    <View className="connect-footer">
-                        <Heart size={16} color="rgba(236, 72, 153, 0.7)" />
-                        <Text className="connect-footer-text">
-                            Let's build something amazing together
-                        </Text>
-                    </View>
-                </View>
-            </View>
+          </View>
         </View>
-    );
+      </View>
+    </View>
+  );
 };
 
 export default ConnectSection;

@@ -23,48 +23,14 @@ const philosophyStyles = `
   }
 
   .philosophy-container {
-    background: linear-gradient(135deg, 
-      rgba(59, 130, 246, 0.1) 0%, 
-      rgba(139, 92, 246, 0.05) 25%, 
-      rgba(236, 72, 153, 0.05) 50%, 
-      rgba(245, 101, 101, 0.05) 75%, 
-      rgba(251, 191, 36, 0.1) 100%);
-    border-radius: 24px;
-    padding: 4rem;
+    background-color: var(--amplify-colors-background-tertiary);
+    border-radius: 16px;
+    padding: 3rem;
     position: relative;
     overflow: hidden;
     margin-top: 2rem;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-  }
-
-  .philosophy-section.dark-mode .philosophy-container {
-    background: linear-gradient(135deg, 
-      rgba(30, 41, 59, 0.9) 0%, 
-      rgba(51, 65, 85, 0.8) 25%, 
-      rgba(71, 85, 105, 0.8) 50%, 
-      rgba(100, 116, 139, 0.8) 75%, 
-      rgba(148, 163, 184, 0.9) 100%);
-    border: 1px solid rgba(148, 163, 184, 0.3);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-  }
-
-  .philosophy-container::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: radial-gradient(circle at 30% 20%, rgba(139, 92, 246, 0.15) 0%, transparent 60%),
-                radial-gradient(circle at 70% 80%, rgba(236, 72, 153, 0.1) 0%, transparent 60%);
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  .philosophy-section.dark-mode .philosophy-container::before {
-    background: radial-gradient(circle at 30% 20%, rgba(139, 92, 246, 0.25) 0%, transparent 60%),
-                radial-gradient(circle at 70% 80%, rgba(236, 72, 153, 0.2) 0%, transparent 60%);
+    border: 1px solid var(--amplify-colors-border-primary);
+    box-shadow: var(--amplify-shadows-medium);
   }
 
   .philosophy-content {
@@ -80,20 +46,20 @@ const philosophyStyles = `
     height: 80px;
     border-radius: 50%;
     background: linear-gradient(135deg, 
-      rgba(139, 92, 246, 0.2) 0%, 
-      rgba(236, 72, 153, 0.2) 100%);
+      var(--amplify-colors-brand-secondary-20) 0%, 
+      var(--amplify-colors-brand-tertiary-20) 100%);
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 0 auto 2rem;
-    border: 3px solid rgba(255, 255, 255, 0.2);
+    border: 3px solid var(--amplify-colors-border-tertiary);
     backdrop-filter: blur(10px);
     transition: all 0.3s ease;
   }
 
   .philosophy-icon:hover {
     transform: scale(1.1);
-    box-shadow: 0 15px 35px rgba(139, 92, 246, 0.3);
+    box-shadow: var(--amplify-shadows-medium);
   }
 
   .philosophy-quote {
@@ -106,23 +72,15 @@ const philosophyStyles = `
     margin-bottom: 2rem;
   }
 
-  .philosophy-section.dark-mode .philosophy-quote {
-    color: #E2E8F0;
-  }
-
   .philosophy-quote::before {
     content: '"';
     position: absolute;
     left: -30px;
     top: -10px;
     font-size: 4rem;
-    color: rgba(139, 92, 246, 0.3);
+    color: var(--amplify-colors-brand-secondary-30);
     font-family: Georgia, serif;
     line-height: 1;
-  }
-
-  .philosophy-section.dark-mode .philosophy-quote::before {
-    color: rgba(139, 92, 246, 0.5);
   }
 
   .philosophy-quote::after {
@@ -131,13 +89,9 @@ const philosophyStyles = `
     right: -30px;
     bottom: -30px;
     font-size: 4rem;
-    color: rgba(139, 92, 246, 0.3);
+    color: var(--amplify-colors-brand-secondary-30);
     font-family: Georgia, serif;
     line-height: 1;
-  }
-
-  .philosophy-section.dark-mode .philosophy-quote::after {
-    color: rgba(139, 92, 246, 0.5);
   }
 
   .philosophy-author {
@@ -149,39 +103,26 @@ const philosophyStyles = `
     margin-top: 1.5rem;
   }
 
-  .philosophy-section.dark-mode .philosophy-author {
-    color: #94A3B8;
-  }
-
   .philosophy-decoration {
     width: 100px;
     height: 2px;
     background: linear-gradient(to right, 
-      rgba(139, 92, 246, 0.5) 0%, 
-      rgba(236, 72, 153, 0.5) 100%);
+      var(--amplify-colors-brand-secondary-50) 0%, 
+      var(--amplify-colors-brand-tertiary-50) 100%);
     margin: 2rem auto;
     border-radius: 1px;
   }
 
   .section-title {
     background: linear-gradient(135deg, 
-      var(--amplify-colors-primary-80) 0%, 
-      var(--amplify-colors-secondary-80) 100%);
+      var(--amplify-colors-brand-primary-80) 0%, 
+      var(--amplify-colors-brand-secondary-80) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
     font-weight: 800;
     text-align: center;
     margin-bottom: 1rem;
-  }
-
-  .philosophy-section.dark-mode .section-title {
-    background: linear-gradient(135deg, 
-      #60A5FA 0%, 
-      #A78BFA 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
   }
 
   @media (max-width: 768px) {
@@ -231,6 +172,78 @@ const PhilosophySection: React.FC<PhilosophySectionProps> = ({ className = '' })
   const { t } = useTranslation('homepage');
   const { isAuthenticated } = useAuth();
 
+  // Estilos dinámicos basados en el tema
+  const titleStyles = {
+    backgroundImage: mode === 'dark'
+      ? 'linear-gradient(135deg, #93C5FD, #60A5FA)'
+      : 'linear-gradient(135deg, #F59E0B, #FBBF24)',
+    WebkitBackgroundClip: 'text',
+    WebkitTextFillColor: 'transparent',
+    backgroundClip: 'text',
+    marginBottom: '1.5rem',
+  };
+
+  const titleHighlightStyles = {
+    backgroundImage: mode === 'dark'
+      ? 'linear-gradient(135deg, #FBBF24, #F59E0B)'
+      : 'linear-gradient(135deg, #2563EB, #3B82F6)',
+    WebkitBackgroundClip: 'text',
+    WebkitTextFillColor: 'transparent',
+    backgroundClip: 'text',
+  };
+
+  const containerStyles = {
+    background: mode === 'dark'
+      ? 'rgba(51, 65, 85, 0.8)'
+      : 'rgba(255, 255, 255, 0.9)',
+    backdropFilter: 'blur(16px)',
+    WebkitBackdropFilter: 'blur(16px)',
+    border: mode === 'dark'
+      ? '1px solid rgba(148, 163, 184, 0.1)'
+      : '1px solid rgba(203, 213, 225, 0.2)',
+    borderRadius: '16px',
+    padding: '3rem',
+    position: 'relative' as const,
+    overflow: 'hidden' as const,
+    marginTop: '2rem',
+    boxShadow: mode === 'dark'
+      ? '0 25px 50px -12px rgba(0, 0, 0, 0.4)'
+      : '0 25px 50px -12px rgba(0, 0, 0, 0.15)',
+  };
+
+  const iconStyles = {
+    width: '80px',
+    height: '80px',
+    borderRadius: '50%',
+    background: mode === 'dark'
+      ? 'linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(168, 85, 247, 0.3))'
+      : 'linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(168, 85, 247, 0.1))',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: '0 auto 2rem',
+    border: mode === 'dark'
+      ? '3px solid rgba(148, 163, 184, 0.2)'
+      : '3px solid rgba(203, 213, 225, 0.3)',
+    backdropFilter: 'blur(10px)',
+    transition: 'all 0.3s ease',
+  };
+
+  const quoteColor = mode === 'dark' ? '#F8FAFC' : '#0F172A';
+  const authorColor = mode === 'dark' ? '#CBD5E1' : '#64748B';
+  const quoteAccentColor = mode === 'dark' ? 'rgba(139, 92, 246, 0.3)' : 'rgba(139, 92, 246, 0.2)';
+  const iconColor = mode === 'dark' ? '#A78BFA' : '#8B5CF6';
+
+  const decorationStyles = {
+    width: '100px',
+    height: '2px',
+    background: mode === 'dark'
+      ? 'linear-gradient(to right, rgba(139, 92, 246, 0.5), rgba(168, 85, 247, 0.5))'
+      : 'linear-gradient(to right, rgba(139, 92, 246, 0.4), rgba(168, 85, 247, 0.4))',
+    margin: '2rem auto',
+    borderRadius: '1px',
+  };
+
   // Client initialization
   const client = generateClient<Schema>();
 
@@ -274,7 +287,7 @@ const PhilosophySection: React.FC<PhilosophySectionProps> = ({ className = '' })
   const philosophyText = profile?.philosophy || t('about.philosophy.description');
 
   return (
-    <View className={`philosophy-section ${mode === 'dark' ? 'dark-mode' : ''} ${className}`}>
+    <View className={`philosophy-section ${className}`}>
       <style>{philosophyStyles}</style>
       
       {/* Header */}
@@ -284,47 +297,57 @@ const PhilosophySection: React.FC<PhilosophySectionProps> = ({ className = '' })
         fontWeight="700"
         textAlign="center"
         lineHeight="1.1"
-        style={{
-          backgroundImage: mode === 'dark'
-            ? 'linear-gradient(135deg, #93C5FD, #60A5FA)'
-            : 'linear-gradient(135deg, #F59E0B, #FBBF24)',
-          WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent',
-          backgroundClip: 'text',
-          marginBottom: '1.5rem',
-        }}
+        style={titleStyles}
       >
         {t('about.philosophy.title')}{' '}
-        <span style={{ 
-          backgroundImage: mode === 'dark'
-            ? 'linear-gradient(135deg, #FBBF24, #F59E0B)'
-            : 'linear-gradient(135deg, #2563EB, #3B82F6)',
-          WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent',
-          backgroundClip: 'text',
-        }}>
+        <span style={titleHighlightStyles}>
           {t('about.philosophy.titleHighlight')}
         </span>
       </Text>
 
       {/* Philosophy Container */}
-      <View className="philosophy-container">
-        <View className="philosophy-content">
+      <View style={containerStyles}>
+        <View style={{
+          position: 'relative',
+          zIndex: 1,
+          textAlign: 'center' as const,
+          maxWidth: '900px',
+          margin: '0 auto'
+        }}>
           {/* Icon */}
-          <View className="philosophy-icon">
-            <Quote size={32} color="rgba(139, 92, 246, 0.8)" />
+          <View style={iconStyles}>
+            <Quote size={32} color={iconColor} />
           </View>
 
           {/* Quote */}
-          <Text className="philosophy-quote">
+          <Text 
+            fontSize="1.25rem"
+            lineHeight={1.8}
+            fontWeight="400"
+            fontStyle="italic"
+            marginBottom="2rem"
+            style={{ 
+              color: quoteColor,
+              position: 'relative'
+            }}
+          >
             {philosophyText}
           </Text>
 
           {/* Decoration line */}
-          <View className="philosophy-decoration" />
+          <View style={decorationStyles} />
 
           {/* Author */}
-          <Text className="philosophy-author">
+          <Text 
+            fontSize="1rem"
+            fontWeight="600"
+            marginTop="1.5rem"
+            style={{ 
+              color: authorColor,
+              textTransform: 'uppercase' as const,
+              letterSpacing: '1px'
+            }}
+          >
             {t('about.philosophy.author')}
           </Text>
         </View>

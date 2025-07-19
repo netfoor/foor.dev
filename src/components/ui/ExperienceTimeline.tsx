@@ -23,10 +23,6 @@ const timelineStyles = `
     margin-bottom: 4rem;
   }
 
-  .timeline-section.dark-mode .timeline-container {
-    color: #E2E8F0;
-  }
-
   .timeline-container {
     position: relative;
     max-width: 800px;
@@ -40,19 +36,10 @@ const timelineStyles = `
     top: 0;
     bottom: 0;
     width: 4px;
-    background: linear-gradient(to bottom,
-      rgba(59, 130, 246, 0.8) 0%,
-      rgba(139, 92, 246, 0.6) 50%,
-      rgba(236, 72, 153, 0.4) 100%);
+    background-color: var(--amplify-colors-brand-primary);
+    opacity: 0.7;
     border-radius: 2px;
     z-index: 1;
-  }
-
-  .timeline-section.dark-mode .timeline-line {
-    background: linear-gradient(to bottom,
-      rgba(99, 102, 241, 0.9) 0%,
-      rgba(168, 85, 247, 0.7) 50%,
-      rgba(236, 72, 153, 0.6) 100%);
   }
 
   .timeline-item {
@@ -67,80 +54,42 @@ const timelineStyles = `
     top: 1.5rem;
     width: 1.5rem;
     height: 1.5rem;
-    background: linear-gradient(135deg,
-      rgba(59, 130, 246, 1) 0%,
-      rgba(139, 92, 246, 1) 100%);
+    background-color: var(--amplify-colors-brand-primary);
     border: 4px solid var(--amplify-colors-background-primary);
     border-radius: 50%;
     z-index: 2;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    box-shadow: var(--amplify-shadows-small);
     transition: all 0.3s ease;
   }
 
   .timeline-dot:hover {
     transform: scale(1.2);
-    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+    box-shadow: var(--amplify-shadows-medium);
   }
 
   .timeline-dot-icon {
-    color: white;
+    color: var(--amplify-colors-font-inverse);
     font-size: 0.75rem;
   }
 
   .timeline-card {
-    background: linear-gradient(135deg, 
-      rgba(255, 255, 255, 0.1) 0%, 
-      rgba(255, 255, 255, 0.05) 100%);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 20px;
+    background-color: var(--amplify-colors-background-tertiary);
+    border: 1px solid var(--amplify-colors-border-primary);
+    border-radius: 16px;
     padding: 2rem;
     position: relative;
     overflow: hidden;
     transition: all 0.3s ease;
     cursor: default;
-  }
-
-  .timeline-section.dark-mode .timeline-card {
-    background: linear-gradient(135deg, 
-      rgba(30, 41, 59, 0.9) 0%, 
-      rgba(51, 65, 85, 0.8) 100%);
-    border: 1px solid rgba(148, 163, 184, 0.3);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
-  }
-
-  .timeline-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(135deg, 
-      rgba(59, 130, 246, 0.05) 0%, 
-      rgba(139, 92, 246, 0.03) 100%);
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  .timeline-section.dark-mode .timeline-card::before {
-    background: linear-gradient(135deg, 
-      rgba(59, 130, 246, 0.1) 0%, 
-      rgba(139, 92, 246, 0.08) 100%);
+    box-shadow: var(--amplify-shadows-small);
   }
 
   .timeline-card:hover {
     transform: translateX(10px);
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
-  }
-
-  .timeline-card:hover::before {
-    background: linear-gradient(135deg, 
-      rgba(59, 130, 246, 0.1) 0%, 
-      rgba(139, 92, 246, 0.05) 100%);
+    box-shadow: var(--amplify-shadows-medium);
   }
 
   .timeline-content {
@@ -153,15 +102,15 @@ const timelineStyles = `
     align-items: center;
     gap: 0.5rem;
     background: linear-gradient(135deg, 
-      rgba(59, 130, 246, 0.2) 0%, 
-      rgba(139, 92, 246, 0.2) 100%);
+      var(--amplify-colors-brand-primary-10) 0%, 
+      var(--amplify-colors-brand-secondary-10) 100%);
     color: var(--amplify-colors-font-primary);
     padding: 0.5rem 1rem;
     border-radius: 12px;
     font-size: 0.875rem;
     font-weight: 600;
     margin-bottom: 1rem;
-    border: 1px solid rgba(59, 130, 246, 0.3);
+    border: 1px solid var(--amplify-colors-brand-primary-20);
   }
 
   .timeline-company {
@@ -209,8 +158,8 @@ const timelineStyles = `
 
   .timeline-skill-badge {
     background: linear-gradient(135deg, 
-      rgba(139, 92, 246, 0.9) 0%, 
-      rgba(236, 72, 153, 0.9) 100%);
+      var(--amplify-colors-brand-secondary) 0%, 
+      var(--amplify-colors-brand-tertiary) 100%);
     color: white;
     border: none;
     border-radius: 16px;
@@ -222,7 +171,7 @@ const timelineStyles = `
 
   .timeline-skill-badge:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3);
+    box-shadow: var(--amplify-shadows-small);
   }
 
   .timeline-activities {
@@ -231,7 +180,7 @@ const timelineStyles = `
 
   .timeline-activities-toggle {
     background: transparent;
-    border: 2px solid rgba(59, 130, 246, 0.3);
+    border: 2px solid var(--amplify-colors-brand-primary-20);
     border-radius: 12px;
     padding: 0.5rem 1rem;
     color: var(--amplify-colors-font-primary);
@@ -245,8 +194,8 @@ const timelineStyles = `
   }
 
   .timeline-activities-toggle:hover {
-    border-color: rgba(59, 130, 246, 0.6);
-    background: rgba(59, 130, 246, 0.1);
+    border-color: var(--amplify-colors-brand-primary-40);
+    background: var(--amplify-colors-brand-primary-10);
   }
 
   .timeline-activities-list {
@@ -267,7 +216,7 @@ const timelineStyles = `
     content: '•';
     position: absolute;
     left: 0;
-    color: rgba(59, 130, 246, 0.7);
+    color: var(--amplify-colors-brand-primary-60);
     font-weight: bold;
   }
 
@@ -276,7 +225,7 @@ const timelineStyles = `
     height: 40px;
     border-radius: 8px;
     object-fit: cover;
-    border: 2px solid rgba(255, 255, 255, 0.2);
+    border: 2px solid var(--amplify-colors-border-tertiary);
   }
 
   .timeline-company-placeholder {
@@ -284,18 +233,18 @@ const timelineStyles = `
     height: 40px;
     border-radius: 8px;
     background: linear-gradient(135deg, 
-      rgba(59, 130, 246, 0.3) 0%, 
-      rgba(139, 92, 246, 0.3) 100%);
+      var(--amplify-colors-brand-primary-20) 0%, 
+      var(--amplify-colors-brand-secondary-20) 100%);
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 2px solid rgba(255, 255, 255, 0.2);
+    border: 2px solid var(--amplify-colors-border-tertiary);
   }
 
   .section-title {
     background: linear-gradient(135deg, 
-      var(--amplify-colors-primary-80) 0%, 
-      var(--amplify-colors-secondary-80) 100%);
+      var(--amplify-colors-brand-primary-80) 0%, 
+      var(--amplify-colors-brand-secondary-80) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -474,7 +423,7 @@ const ExperienceTimeline: React.FC<ExperienceTimelineProps> = ({ className = '' 
 
   if (!mounted || loading) {
     return (
-      <View className={`timeline-section ${mode === 'dark' ? 'dark-mode' : ''} ${className}`}>
+      <View className={`timeline-section ${className}`}>
         <style>{timelineStyles}</style>
         <Flex 
           direction="column" 
@@ -497,7 +446,7 @@ const ExperienceTimeline: React.FC<ExperienceTimelineProps> = ({ className = '' 
 
   if (error) {
     return (
-      <View className={`timeline-section ${mode === 'dark' ? 'dark-mode' : ''} ${className}`}>
+      <View className={`timeline-section ${className}`}>
         <style>{timelineStyles}</style>
         <Flex 
           direction="column" 
@@ -520,7 +469,7 @@ const ExperienceTimeline: React.FC<ExperienceTimelineProps> = ({ className = '' 
 
   if (experiences.length === 0) {
     return (
-      <View className={`timeline-section ${mode === 'dark' ? 'dark-mode' : ''} ${className}`}>
+      <View className={`timeline-section ${className}`}>
         <style>{timelineStyles}</style>
         <Heading
           level={2}
@@ -547,7 +496,7 @@ const ExperienceTimeline: React.FC<ExperienceTimelineProps> = ({ className = '' 
   }
 
   return (
-    <View className={`timeline-section ${mode === 'dark' ? 'dark-mode' : ''} ${className}`}>
+    <View className={`timeline-section ${className}`}>
       <style>{timelineStyles}</style>
       
       {/* Header */}
@@ -558,9 +507,7 @@ const ExperienceTimeline: React.FC<ExperienceTimelineProps> = ({ className = '' 
         textAlign="center"
         lineHeight="1.1"
         style={{
-          backgroundImage: mode === 'dark'
-            ? 'linear-gradient(135deg, #93C5FD, #60A5FA)'
-            : 'linear-gradient(135deg, #F59E0B, #FBBF24)',
+          backgroundImage: 'linear-gradient(135deg, var(--amplify-colors-brand-primary), var(--amplify-colors-brand-primary-80))',
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
           backgroundClip: 'text',
@@ -569,9 +516,7 @@ const ExperienceTimeline: React.FC<ExperienceTimelineProps> = ({ className = '' 
       >
         {t('about.experience.title')}{' '}
         <span style={{ 
-          backgroundImage: mode === 'dark'
-            ? 'linear-gradient(135deg, #FBBF24, #F59E0B)'
-            : 'linear-gradient(135deg, #2563EB, #3B82F6)',
+          backgroundImage: 'linear-gradient(135deg, var(--amplify-colors-brand-secondary), var(--amplify-colors-brand-secondary-80))',
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
           backgroundClip: 'text',

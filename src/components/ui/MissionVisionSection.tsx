@@ -18,10 +18,6 @@ interface MissionVisionSectionProps {
 
 // Estilos personalizados
 const missionVisionStyles = `
-  .mission-vision-section {
-    margin-bottom: 4rem;
-  }
-
   .mission-vision-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -30,26 +26,15 @@ const missionVisionStyles = `
   }
 
   .mission-card, .vision-card {
-    background: linear-gradient(135deg, 
-      rgba(255, 255, 255, 0.15) 0%, 
-      rgba(255, 255, 255, 0.1) 100%);
-    backdrop-filter: blur(15px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 20px;
-    padding: 2.5rem;
+    background-color: var(--amplify-colors-background-tertiary);
+    border: 1px solid var(--amplify-colors-border-primary);
+    border-radius: 16px;
+    padding: 2rem;
     position: relative;
     overflow: hidden;
     transition: all 0.3s ease;
     cursor: default;
-  }
-
-  .mission-vision-section.dark-mode .mission-card, 
-  .mission-vision-section.dark-mode .vision-card {
-    background: linear-gradient(135deg, 
-      rgba(30, 41, 59, 0.9) 0%, 
-      rgba(51, 65, 85, 0.8) 100%);
-    border: 1px solid rgba(148, 163, 184, 0.3);
-    backdrop-filter: blur(15px);
+    box-shadow: var(--amplify-shadows-small);
   }
 
   .mission-card::before {
@@ -60,8 +45,8 @@ const missionVisionStyles = `
     right: 0;
     bottom: 0;
     background: linear-gradient(135deg, 
-      rgba(59, 130, 246, 0.15) 0%, 
-      rgba(139, 92, 246, 0.1) 100%);
+      var(--amplify-colors-brand-primary-10) 0%, 
+      var(--amplify-colors-brand-secondary-10) 100%);
     pointer-events: none;
     z-index: 0;
   }
@@ -74,27 +59,27 @@ const missionVisionStyles = `
     right: 0;
     bottom: 0;
     background: linear-gradient(135deg, 
-      rgba(139, 92, 246, 0.15) 0%, 
-      rgba(236, 72, 153, 0.1) 100%);
+      var(--amplify-colors-brand-secondary-10) 0%, 
+      var(--amplify-colors-brand-tertiary-10) 100%);
     pointer-events: none;
     z-index: 0;
   }
 
   .mission-card:hover, .vision-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    box-shadow: var(--amplify-shadows-medium);
   }
 
   .mission-card:hover::before {
     background: linear-gradient(135deg, 
-      rgba(59, 130, 246, 0.2) 0%, 
-      rgba(139, 92, 246, 0.15) 100%);
+      var(--amplify-colors-brand-primary-20) 0%, 
+      var(--amplify-colors-brand-secondary-20) 100%);
   }
 
   .vision-card:hover::before {
     background: linear-gradient(135deg, 
-      rgba(139, 92, 246, 0.2) 0%, 
-      rgba(236, 72, 153, 0.15) 100%);
+      var(--amplify-colors-brand-secondary-20) 0%, 
+      var(--amplify-colors-brand-tertiary-20) 100%);
   }
 
   .card-content {
@@ -106,31 +91,28 @@ const missionVisionStyles = `
     width: 60px;
     height: 60px;
     border-radius: 50%;
+    background-color: var(--amplify-colors-background-secondary);
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto 1.5rem;
-    font-size: 2rem;
-    background: linear-gradient(135deg, 
-      rgba(255, 255, 255, 0.3) 0%, 
-      rgba(255, 255, 255, 0.2) 100%);
-    border: 2px solid rgba(255, 255, 255, 0.3);
+    margin-bottom: 1rem;
+    border: 1px solid var(--amplify-colors-border-secondary);
     transition: all 0.3s ease;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--amplify-shadows-small);
   }
 
   .mission-card:hover .card-icon {
     background: linear-gradient(135deg, 
-      rgba(59, 130, 246, 0.4) 0%, 
-      rgba(139, 92, 246, 0.3) 100%);
-    box-shadow: 0 12px 25px rgba(59, 130, 246, 0.2);
+      var(--amplify-colors-brand-primary-40) 0%, 
+      var(--amplify-colors-brand-secondary-30) 100%);
+    box-shadow: var(--amplify-shadows-medium);
   }
 
   .vision-card:hover .card-icon {
     background: linear-gradient(135deg, 
-      rgba(139, 92, 246, 0.4) 0%, 
-      rgba(236, 72, 153, 0.3) 100%);
-    box-shadow: 0 12px 25px rgba(139, 92, 246, 0.2);
+      var(--amplify-colors-brand-secondary-40) 0%, 
+      var(--amplify-colors-brand-tertiary-30) 100%);
+    box-shadow: var(--amplify-shadows-medium);
   }
 
   .card-emoji {
@@ -146,10 +128,6 @@ const missionVisionStyles = `
     text-align: center;
   }
 
-  .mission-vision-section.dark-mode .card-title {
-    color: #F1F5F9;
-  }
-
   .card-description {
     color: var(--amplify-colors-font-secondary);
     font-size: 1rem;
@@ -157,29 +135,16 @@ const missionVisionStyles = `
     text-align: left;
   }
 
-  .mission-vision-section.dark-mode .card-description {
-    color: #CBD5E1;
-  }
-
   .section-title {
     background: linear-gradient(135deg, 
-      var(--amplify-colors-primary-80) 0%, 
-      var(--amplify-colors-secondary-80) 100%);
+      var(--amplify-colors-brand-primary-80) 0%, 
+      var(--amplify-colors-brand-secondary-80) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
     font-weight: 800;
     text-align: center;
     margin-bottom: 1rem;
-  }
-
-  .mission-vision-section.dark-mode .section-title {
-    background: linear-gradient(135deg, 
-      #60A5FA 0%, 
-      #A78BFA 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
   }
 
   .section-subtitle {
@@ -232,6 +197,80 @@ const MissionVisionSection: React.FC<MissionVisionSectionProps> = ({ className =
   const { t } = useTranslation('homepage');
   const { isAuthenticated } = useAuth();
 
+  // Estilos dinámicos basados en el tema
+  const titleStyles = {
+    backgroundImage: mode === 'dark'
+      ? 'linear-gradient(135deg, #93C5FD, #60A5FA)'
+      : 'linear-gradient(135deg, #F59E0B, #FBBF24)',
+    WebkitBackgroundClip: 'text',
+    WebkitTextFillColor: 'transparent',
+    backgroundClip: 'text',
+    marginBottom: '1.5rem',
+  };
+
+  const titleHighlightStyles = {
+    backgroundImage: mode === 'dark'
+      ? 'linear-gradient(135deg, #FBBF24, #F59E0B)'
+      : 'linear-gradient(135deg, #2563EB, #3B82F6)',
+    WebkitBackgroundClip: 'text',
+    WebkitTextFillColor: 'transparent',
+    backgroundClip: 'text',
+  };
+
+  const missionCardStyles = {
+    background: mode === 'dark'
+      ? 'rgba(51, 65, 85, 0.8)'
+      : 'rgba(255, 255, 255, 0.9)',
+    backdropFilter: 'blur(16px)',
+    WebkitBackdropFilter: 'blur(16px)',
+    border: mode === 'dark'
+      ? '1px solid rgba(148, 163, 184, 0.1)'
+      : '1px solid rgba(203, 213, 225, 0.2)',
+    borderRadius: '16px',
+    padding: '2rem',
+    position: 'relative' as const,
+    overflow: 'hidden' as const,
+    transition: 'all 0.3s ease',
+    cursor: 'default',
+    boxShadow: mode === 'dark'
+      ? '0 25px 50px -12px rgba(0, 0, 0, 0.4)'
+      : '0 25px 50px -12px rgba(0, 0, 0, 0.15)',
+  };
+
+  const visionCardStyles = {
+    ...missionCardStyles,
+  };
+
+  const cardIconStyles = {
+    width: '60px',
+    height: '60px',
+    borderRadius: '50%',
+    background: mode === 'dark'
+      ? 'linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(139, 92, 246, 0.3))'
+      : 'linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1))',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: '1rem',
+    border: mode === 'dark'
+      ? '1px solid rgba(148, 163, 184, 0.2)'
+      : '1px solid rgba(203, 213, 225, 0.3)',
+    transition: 'all 0.3s ease',
+    boxShadow: mode === 'dark'
+      ? '0 10px 25px rgba(0, 0, 0, 0.2)'
+      : '0 10px 25px rgba(0, 0, 0, 0.1)',
+  };
+
+  const cardTitleColor = mode === 'dark' ? '#F8FAFC' : '#0F172A';
+  const cardDescriptionColor = mode === 'dark' ? '#CBD5E1' : '#64748B';
+
+  const gridStyles = {
+    display: 'grid',
+    gridTemplateColumns: window.innerWidth > 768 ? '1fr 1fr' : '1fr',
+    gap: '2rem',
+    marginTop: '2rem',
+  };
+
   // Client initialization
   const client = generateClient<Schema>();
 
@@ -276,7 +315,7 @@ const MissionVisionSection: React.FC<MissionVisionSectionProps> = ({ className =
   const visionText = profile?.vision || t('about.journey.vision.description');
 
   return (
-    <View className={`mission-vision-section ${mode === 'dark' ? 'dark-mode' : ''} ${className}`}>
+    <View className={className}>
       <style>{missionVisionStyles}</style>
       
       {/* Header */}
@@ -287,61 +326,70 @@ const MissionVisionSection: React.FC<MissionVisionSectionProps> = ({ className =
           fontWeight="700"
           textAlign="center"
           lineHeight="1.1"
-          style={{
-            backgroundImage: mode === 'dark'
-              ? 'linear-gradient(135deg, #93C5FD, #60A5FA)'
-              : 'linear-gradient(135deg, #F59E0B, #FBBF24)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text',
-            marginBottom: '1.5rem',
-          }}
+          style={titleStyles}
         >
           {t('about.journey.title')}{' '}
-          <span style={{ 
-            backgroundImage: mode === 'dark'
-              ? 'linear-gradient(135deg, #FBBF24, #F59E0B)'
-              : 'linear-gradient(135deg, #2563EB, #3B82F6)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text',
-          }}>
+          <span style={titleHighlightStyles}>
             {t('about.journey.titleHighlight')}
           </span>
         </Text>
       </Flex>
 
       {/* Mission and Vision Cards */}
-      <View className="mission-vision-grid">
+      <View style={gridStyles}>
         {/* Mission Card */}
-        <Card className="mission-card">
-          <View className="card-content">
-            <View className="card-icon">
-              <span className="card-emoji">{t('about.journey.mission.icon')}</span>
+        <View style={missionCardStyles}>
+          <View style={{ position: 'relative', zIndex: 1 }}>
+            <View style={cardIconStyles}>
+              <span style={{ fontSize: '1.8rem' }}>{t('about.journey.mission.icon')}</span>
             </View>
-            <Heading level={3} className="card-title">
+            <Heading 
+              level={3} 
+              fontSize="1.5rem"
+              fontWeight="700"
+              marginBottom="1rem"
+              textAlign="center"
+              style={{ color: cardTitleColor }}
+            >
               {t('about.journey.mission.title')}
             </Heading>
-            <Text className="card-description">
+            <Text 
+              fontSize="1rem"
+              lineHeight={1.6}
+              textAlign="left"
+              style={{ color: cardDescriptionColor }}
+            >
               {missionText}
             </Text>
           </View>
-        </Card>
+        </View>
 
         {/* Vision Card */}
-        <Card className="vision-card">
-          <View className="card-content">
-            <View className="card-icon">
-              <span className="card-emoji">{t('about.journey.vision.icon')}</span>
+        <View style={visionCardStyles}>
+          <View style={{ position: 'relative', zIndex: 1 }}>
+            <View style={cardIconStyles}>
+              <span style={{ fontSize: '1.8rem' }}>{t('about.journey.vision.icon')}</span>
             </View>
-            <Heading level={3} className="card-title">
+            <Heading 
+              level={3} 
+              fontSize="1.5rem"
+              fontWeight="700"
+              marginBottom="1rem"
+              textAlign="center"
+              style={{ color: cardTitleColor }}
+            >
               {t('about.journey.vision.title')}
             </Heading>
-            <Text className="card-description">
+            <Text 
+              fontSize="1rem"
+              lineHeight={1.6}
+              textAlign="left"
+              style={{ color: cardDescriptionColor }}
+            >
               {visionText}
             </Text>
           </View>
-        </Card>
+        </View>
       </View>
     </View>
   );
