@@ -40,9 +40,17 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-
+layer
 # amplify
 node_modules
 .amplify
 amplify_outputs*
 amplifyconfiguration*
+
+# terraform
+.terraform
+*.tfstate
+*.tfstate.*
+*.tfvars
+.terraformrc
+terraform.rc

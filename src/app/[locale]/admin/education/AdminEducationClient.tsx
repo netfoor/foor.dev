@@ -15,7 +15,7 @@ import {
   ExternalLink
 } from 'lucide-react';
 import { generateClient } from 'aws-amplify/data';
-import { getUrl } from 'aws-amplify/storage';
+import { getUrl, remove } from 'aws-amplify/storage';
 import { useRouter } from 'next/navigation';
 import type { Schema } from '../../../../../amplify/data/resource';
 import { useTheme } from '@/hooks/useTheme';
@@ -118,9 +118,51 @@ const AdminEducationClient: React.FC<AdminEducationClientProps> = ({ locale }) =
 
     try {
       setDeleteLoading(id);
+      
+      // 1. Get education data to access S3 keys before deleting
+      const { data: educationData } = await client.models.Education.get({ id }, { authMode: 'userPool' });
+      
+      if (!educationData) {
+        throw new Error('Education record not found');
+      }
+
+      // 2. Delete S3 files if they exist
+      const filesToDelete: string[] = [];
+      
+      // Main photo
+      if (educationData.photoKey) {
+        filesToDelete.push(educationData.photoKey);
+      }
+      
+      // Additional photos array
+      if (educationData.Photos && educationData.Photos.length > 0) {
+        // Filter out null/undefined values
+        const validPhotos = educationData.Photos.filter((photo): photo is string => Boolean(photo));
+        filesToDelete.push(...validPhotos);
+      }
+
+      // Delete all S3 files
+      for (const photoKey of filesToDelete) {
+        if (!photoKey) continue; // Skip null/undefined keys
+        
+        try {
+          // Normalize path - remove 'public/' if exists (for Gen 1 compatibility)
+          const normalizedPath = photoKey.startsWith('public/') ? photoKey.slice(7) : photoKey;
+          
+          await remove({ path: normalizedPath });
+          console.log(`✅ S3 file deleted: ${normalizedPath}`);
+        } catch (s3Error) {
+          console.error(`⚠️ Error deleting S3 file ${photoKey}:`, s3Error);
+          // Continue with deletion even if S3 cleanup fails
+        }
+      }
+
+      // 3. Delete DynamoDB record
       await client.models.Education.delete({ id }, { authMode: 'userPool' });
       
-      // Actualizar el estado local
+      console.log(`✅ Education ${id} deleted completely`);
+      
+      // 4. Update local state
       setEducation(prev => prev.filter(edu => edu.id !== id));
       setEducationImages(prev => {
         const newImages = { ...prev };
@@ -129,7 +171,7 @@ const AdminEducationClient: React.FC<AdminEducationClientProps> = ({ locale }) =
       });
     } catch (err) {
       console.error('Error eliminando educación:', err);
-      setError('Error al eliminar la entrada educativa. Por favor, intente más tarde.');
+      setError(`Error al eliminar la entrada educativa: ${err instanceof Error ? err.message : 'Error desconocido'}`);
     } finally {
       setDeleteLoading(null);
     }

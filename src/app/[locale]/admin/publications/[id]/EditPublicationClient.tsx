@@ -282,6 +282,32 @@ const EditPublicationClient: React.FC<EditPublicationClientProps> = ({ locale, p
       setError(t('required_fields'));
       return;
     }
+
+    // Validate source and type values
+    if (!SOURCE_OPTIONS.includes(source)) {
+      setError(`Invalid source: ${source}. Must be one of: ${SOURCE_OPTIONS.join(', ')}`);
+      return;
+    }
+
+    if (!TYPE_OPTIONS.includes(type)) {
+      setError(`Invalid type: ${type}. Must be one of: ${TYPE_OPTIONS.join(', ')}`);
+      return;
+    }
+
+    // Validate date format
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+    if (!dateRegex.test(publicationDate)) {
+      setError('Invalid date format. Please use YYYY-MM-DD format.');
+      return;
+    }
+
+    // Validate URL format
+    try {
+      new URL(publicationUrl);
+    } catch {
+      setError('Invalid publication URL format.');
+      return;
+    }
     
     try {
       setLoading(true);
@@ -319,19 +345,33 @@ const EditPublicationClient: React.FC<EditPublicationClientProps> = ({ locale, p
         console.log('✅ New photo uploaded to S3:', s3Key);
       }
       
-      // Update publication in DynamoDB
-      const updatedPublication = await client.models.SocialPublications.update({
+      // Update publication in DynamoDB with proper typing
+      const updateData = {
         id: publicationId,
         title,
         description,
-        source: source as any,
-        type: type as any,
-        publicationDate: new Date(publicationDate).toISOString(),
+        source: source as "LinkedIn" | "Twitter" | "GitHub" | "Blog" | "Youtube",
+        type: type as "Article" | "Blog" | "Video" | "Podcast" | "Book" | "Course" | "Conference" | "Presentation" | "Research" | "Workshop" | "Other",
+        publicationDate: publicationDate, // Keep as date string format YYYY-MM-DD
         publicationUrl,
-        photoKey: newPhotoKey || undefined,
-      });
+        ...(newPhotoKey && { photoKey: newPhotoKey })
+      };
       
-      console.log('✅ Publication updated:', updatedPublication.data?.id);
+      console.log('🔄 Updating publication with data:', updateData);
+      
+      const updatedPublication = await client.models.SocialPublications.update(updateData);
+      
+      // Check for errors in the response
+      if (updatedPublication.errors && updatedPublication.errors.length > 0) {
+        throw new Error(`DynamoDB Error: ${updatedPublication.errors.map(e => e.message).join(', ')}`);
+      }
+      
+      if (!updatedPublication.data) {
+        throw new Error('Update operation returned no data. Publication may not have been updated.');
+      }
+      
+      console.log('✅ Publication updated successfully:', updatedPublication.data?.id);
+      console.log('✅ Updated data:', JSON.stringify(updatedPublication.data, null, 2));
       
       setSuccess(true);
       
@@ -341,8 +381,29 @@ const EditPublicationClient: React.FC<EditPublicationClientProps> = ({ locale, p
       }, 1500);
       
     } catch (err) {
-      console.error('Error updating publication:', err);
-      setError(`${t('error_updating')}: ${err instanceof Error ? err.message : t('unknown_error')}`);
+      console.error('❌ Error updating publication:', err);
+      
+      // Enhanced error reporting
+      if (err instanceof Error) {
+        console.error('❌ Error details:', {
+          message: err.message,
+          stack: err.stack,
+          formData: { title, description, source, type, publicationDate, publicationUrl }
+        });
+        
+        // Check for specific error types
+        if (err.message.includes('access')) {
+          setError(`${t('error_updating')}: Access denied. Please check your permissions.`);
+        } else if (err.message.includes('validation')) {
+          setError(`${t('error_updating')}: Validation error. Please check your input values.`);
+        } else if (err.message.includes('DynamoDB Error')) {
+          setError(`${t('error_updating')}: Database error - ${err.message}`);
+        } else {
+          setError(`${t('error_updating')}: ${err.message}`);
+        }
+      } else {
+        setError(`${t('error_updating')}: ${t('unknown_error')}`);
+      }
     } finally {
       setLoading(false);
     }

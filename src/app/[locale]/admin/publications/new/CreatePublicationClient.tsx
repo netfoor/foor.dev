@@ -32,6 +32,7 @@ import type { Schema } from '../../../../../../amplify/data/resource';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation, useLocalizedPath } from '@/lib/i18n/client';
 import { FileUploadInput } from '../../recognitions/new/FileUploadInput';
+import { uploadImageWithMetadata } from '@/lib/utils/image-helpers';
 
 // Custom styles for consistent form appearance
 const createFormStyles = `
@@ -181,24 +182,40 @@ const CreatePublicationClient: React.FC<CreatePublicationClientProps> = () => {
       setError(null);
       
       const client = generateClient<Schema>();
-      let photoKey: string | undefined;
+      
+      // First create the publication without the image
+      const newPublication = await client.models.SocialPublications.create({
+        title,
+        source: source as any,
+        type: type as any,
+        description,
+        publicationDate,
+        publicationUrl
+      });
+      
+      if (!newPublication.data) {
+        throw new Error(t('error_creating_publication'));
+      }
+      
+      const publicationId = newPublication.data.id;
       
       // Upload photo to S3 if provided
-      if (photoFile) {
-        const fileExt = photoFile.name.split('.').pop();
-        const fileName = `${uuidv4()}.${fileExt}`;
-        const s3Key = `publications/${fileName}`;
+      if (photoFile && publicationId) {
+        // Use the helper that adds metadata for Lambda processing
+        const photoKey = await uploadImageWithMetadata(
+          photoFile, 
+          publicationId, 
+          'SocialPublications', 
+          'photoKey'
+        );
         
-        await uploadData({
-          path: s3Key,
-          data: photoFile,
-          options: {
-            contentType: photoFile.type,
-          }
+        // Update the publication with the photoKey
+        await client.models.SocialPublications.update({
+          id: publicationId,
+          photoKey
         });
         
-        photoKey = s3Key;
-        console.log('✅ Photo uploaded to S3:', s3Key);
+        console.log('✅ Photo uploaded with metadata for Lambda processing');
       }
       
       // Validate and format the date
@@ -233,26 +250,17 @@ const CreatePublicationClient: React.FC<CreatePublicationClientProps> = () => {
         return;
       }
       
-      // Create publication in DynamoDB
-      const newPublication = await client.models.SocialPublications.create({
+      // Create publication in DynamoDB with proper typing
+      const createData = {
         title,
         description,
-        source: source as any,
-        type: type as any,
+        source: source as "LinkedIn" | "Twitter" | "GitHub" | "Blog" | "Youtube",
+        type: type as "Article" | "Blog" | "Video" | "Podcast" | "Book" | "Course" | "Conference" | "Presentation" | "Research" | "Workshop" | "Other",
         publicationDate: formattedDate,
-        publicationUrl,
-        photoKey: photoKey || undefined,
-      });
+        publicationUrl
+      };
       
-      if (newPublication.errors) {
-        throw new Error(newPublication.errors[0].message);
-      }
-      
-      if (!newPublication.data) {
-        throw new Error('Publication data is null');
-      }
-      
-      console.log('✅ Publication created:', newPublication.data.id);
+      console.log('✅ Publication created successfully');
       
       setSuccess(true);
       

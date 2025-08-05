@@ -28,6 +28,7 @@ import type { Schema } from '../../../../../../../amplify/data/resource';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation, useLocalizedPath } from '@/lib/i18n/client';
 import type { SupportedLocale } from '@/lib/i18n/types';
+import { uploadImageWithMetadata } from '@/lib/utils/image-helpers';
 
 // Estilos personalizados para el formulario
 const createProfileStyles = `
@@ -204,23 +205,15 @@ function CreateProfileClient({ locale }: CreateProfileClientProps): React.JSX.El
   }, []);
 
   // Subir imagen a S3
-  const uploadImageToS3 = async (file: File): Promise<string> => {
-    const timestamp = Date.now();
-    const randomString = Math.random().toString(36).substring(2, 15);
-    const fileName = `profile-${timestamp}-${randomString}.${file.name.split('.').pop()}`;
-    const s3Path = `about/profiles/${fileName}`;
-
+  const uploadImageToS3 = async (file: File, profileId: string): Promise<string> => {
     try {
-      const result = await uploadData({
-        path: s3Path,
-        data: file,
-        options: {
-          contentType: file.type,
-        }
-      }).result;
-
-      console.log('✅ Image uploaded to S3:', result.path);
-      return result.path;
+      // Usar el helper que agrega metadatos para Lambda
+      return await uploadImageWithMetadata(
+        file,
+        profileId,
+        'Profile',
+        'profilePhotoKey'
+      );
     } catch (uploadError) {
       console.error('❌ Error uploading image to S3:', uploadError);
       throw new Error(t('about.profile.error_uploading_image'));
@@ -241,14 +234,7 @@ function CreateProfileClient({ locale }: CreateProfileClientProps): React.JSX.El
     setSuccess('');
 
     try {
-      let profilePhotoKey: string | undefined;
-
-      // Subir imagen si existe
-      if (profileImage) {
-        profilePhotoKey = await uploadImageToS3(profileImage);
-      }
-
-      // Crear el perfil en DynamoDB
+      // Primero crear el perfil sin imagen
       const response = await client.models.Profile.create({
         name: formData.name.trim(),
         currentPosition: formData.currentPosition.trim(),
@@ -261,11 +247,29 @@ function CreateProfileClient({ locale }: CreateProfileClientProps): React.JSX.El
         twitterUrl: formData.twitterUrl.trim() || undefined,
         emailContact: formData.emailContact.trim() || undefined,
         flags: formData.flags.length > 0 ? formData.flags : undefined,
-        profilePhotoKey: profilePhotoKey,
         isActive: true, // Marcar como activo por defecto
       }, {
         authMode: 'userPool'
       });
+
+      if (!response.data) {
+        throw new Error(t('about.profile.error_creating'));
+      }
+      
+      const profileId = response.data.id;
+
+      // Subir imagen si existe
+      if (profileImage && profileId) {
+        const profilePhotoKey = await uploadImageToS3(profileImage, profileId);
+        
+        // Actualizar el perfil con la clave de imagen
+        await client.models.Profile.update({
+          id: profileId,
+          profilePhotoKey
+        }, {
+          authMode: 'userPool'
+        });
+      }
 
       if (response.data) {
         console.log('✅ Profile created successfully:', response.data);

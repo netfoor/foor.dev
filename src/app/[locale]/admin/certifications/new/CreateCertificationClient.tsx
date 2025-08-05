@@ -6,24 +6,23 @@ import {
   Flex, 
   Text, 
   Button, 
-  Card, 
-  Heading,
+  Card,
   TextField,
   TextAreaField,
   SelectField,
   SwitchField,
   Badge,
   Alert,
-  Divider
+  Divider,
+  Heading
 } from '@aws-amplify/ui-react';
 import '../../admin.css';
 import { 
   ArrowLeft, 
   Save, 
-  Image as ImageIcon,
+  Award,
   X,
-  Plus,
-  Award
+  Plus
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { generateClient } from 'aws-amplify/data';
@@ -32,6 +31,7 @@ import type { Schema } from '../../../../../../amplify/data/resource';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation, useLocalizedPath } from '@/lib/i18n/client';
 import { FileUploadInput } from '../../projects/new/FileUploadInput';
+import { uploadImageWithMetadata } from '@/lib/utils/image-helpers';
 
 // Tipos para la nueva certificación
 type CreateCertificationInput = {
@@ -133,24 +133,19 @@ const CreateCertificationClient: React.FC = () => {
     handleInputChange('skills', formData.skills?.filter(skill => skill !== skillToRemove) || []);
   }, [formData.skills, handleInputChange]);
 
-  // Subir imagen a S3
-  const uploadImage = async (file: File, folder: string): Promise<string> => {
-    const timestamp = Date.now();
-    const fileName = `${folder}/${timestamp}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
-    
+  // Subir imagen a S3 con metadatos para la optimización
+  const uploadImage = async (file: File, certificationId: string): Promise<string> => {
     try {
-      const result = await uploadData({
-        path: fileName,
-        data: file,
-        options: {
-          contentType: file.type,
-        }
-      }).result;
-      
-      return fileName;
+      // Usar el helper que agrega metadatos para Lambda
+      return await uploadImageWithMetadata(
+        file,
+        certificationId,
+        'Certifications',
+        'photoKey'
+      );
     } catch (error) {
       console.error('Error uploading image:', error);
-      throw new Error(`Error uploading ${folder} image`);
+      throw new Error('Error uploading certification image');
     }
   };
 
@@ -181,13 +176,7 @@ const CreateCertificationClient: React.FC = () => {
       // Generar el cliente
       const client = generateClient<Schema>();
 
-      // Subir imagen de certificado si existe
-      let photoKey: string | undefined;
-      if (certificateImage) {
-        photoKey = await uploadImage(certificateImage, 'certifications');
-      }
-
-      // Crear la certificación
+      // Primero creamos la certificación en la base de datos sin imagen
       const certificationData = {
         title: formData.title.trim(),
         issuer: formData.issuer.trim(),
@@ -196,19 +185,35 @@ const CreateCertificationClient: React.FC = () => {
         credentialId: formData.credentialId?.trim() || undefined,
         credentialUrl: formData.credentialUrl?.trim() || undefined,
         content: formData.description?.trim() || undefined,
-        photoKey,
         skills: formData.skills || [],
         category: formData.category as "Technology" | "Business" | "Arts" | "Health" | "Languages",
         slug: formData.slug || generateSlug(formData.title),
       };
 
-      const response = await client.models.Certifications.create(certificationData);
+      const createResponse = await client.models.Certifications.create(certificationData);
       
-      if (response.errors) {
-        throw new Error(response.errors[0].message);
+      if (createResponse.errors) {
+        throw new Error(createResponse.errors[0].message);
       }
 
-      console.log('✅ Certificación creada exitosamente:', response.data);
+      const certificationId = createResponse.data?.id;
+      
+      if (!certificationId) {
+        throw new Error(t('certifications.error_creating_certification'));
+      }
+
+      // Subir imagen de certificado si existe
+      if (certificateImage) {
+        const photoKey = await uploadImage(certificateImage, certificationId);
+        
+        // Actualizar el registro con la clave de la imagen
+        await client.models.Certifications.update({
+          id: certificationId,
+          photoKey
+        });
+      }
+
+      console.log('✅ Certificación creada exitosamente:', createResponse.data);
       
       // Redirigir a la lista de certificaciones
       router.push(getLocalizedPath('/admin/certifications'));

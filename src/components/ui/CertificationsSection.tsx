@@ -4,12 +4,12 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { View, Flex, Text, Card, Button, Badge, Loader, SelectField, SearchField, Alert } from '@aws-amplify/ui-react';
 import { ExternalLink, Award, Calendar, ArrowRight, Image as ImageIcon, Search, Filter, ChevronDown, X } from 'lucide-react';
 import { generateClient } from 'aws-amplify/data';
-import { getUrl } from 'aws-amplify/storage';
 import { useRouter } from 'next/navigation';
 import type { Schema } from '../../../amplify/data/resource';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation, useLocalizedPath } from '@/lib/i18n/client';
 import { useAuth } from '@/context/auth-context';
+import { OptimizedImage } from '@/components/optimitation/OptimizedImage';
 
 // Tipos para la certificación
 type Certification = Schema["Certifications"]["type"];
@@ -26,7 +26,6 @@ const CertificationsSection: React.FC<CertificationsSectionProps> = ({
   maxItems = 6 
 }) => {
   const [certifications, setCertifications] = useState<Certification[]>([]);
-  const [certificationImages, setCertificationImages] = useState<{ [key: string]: string }>({});
   const [filteredCertifications, setFilteredCertifications] = useState<Certification[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
@@ -50,22 +49,6 @@ const CertificationsSection: React.FC<CertificationsSectionProps> = ({
     
     const certificationPath = getLocalizedPath(`/certifications/${certification.slug || certification.id}`);
     router.push(certificationPath);
-  };
-
-  // Función para obtener URL de imagen desde S3
-  const getImageUrl = async (photoKey: string | null | undefined): Promise<string | null> => {
-    if (!photoKey) return null;
-    
-    try {
-      // Normalizar el path - remover 'public/' si existe (para compatibilidad con Gen 1)
-      const normalizedPath = photoKey.startsWith('public/') ? photoKey.slice(7) : photoKey;
-      
-      const url = await getUrl({ path: normalizedPath });
-      return url.url.toString();
-    } catch (err) {
-      console.error('Error getting image URL for key:', photoKey, err);
-      return null;
-    }
   };
 
   // Evitar problemas de hidratación
@@ -99,20 +82,6 @@ const CertificationsSection: React.FC<CertificationsSectionProps> = ({
         
         setCertifications(sortedCertifications);
         setFilteredCertifications(sortedCertifications);
-        
-        // Cargar URLs de las imágenes para cada certificación
-        const imageUrls: { [key: string]: string } = {};
-        
-        for (const certification of sortedCertifications) {
-          if (certification.photoKey) {
-            const imageUrl = await getImageUrl(certification.photoKey);
-            if (imageUrl) {
-              imageUrls[certification.id] = imageUrl;
-            }
-          }
-        }
-        
-        setCertificationImages(imageUrls);
       }
     } catch (err) {
       console.error('Error fetching certifications:', err);
@@ -188,8 +157,17 @@ const CertificationsSection: React.FC<CertificationsSectionProps> = ({
   }
 
   return (
-    <View className={`${className} certifications-section`} padding="4rem 2rem">
-      <Flex direction="column" gap="xl">
+    <>
+      <style jsx global>{`
+        .certification-image {
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+          border-radius: 8px;
+        }
+      `}</style>
+      <View className={`${className} certifications-section`} padding="4rem 2rem">
+        <Flex direction="column" gap="xl">
         {/* Header Section */}
         <Flex direction="column" alignItems="center" gap="medium" paddingTop="xl">
           <Text
@@ -450,16 +428,11 @@ const CertificationsSection: React.FC<CertificationsSectionProps> = ({
                 <Flex direction="column" gap="medium" height="100%">
                   {/* Certification Image */}
                   <View className="certification-image-container" height="180px">
-                    {certificationImages[certification.id] ? (
-                      <img
-                        src={certificationImages[certification.id]}
+                    {certification.photoKey ? (
+                      <OptimizedImage
+                        s3Key={certification.photoKey}
                         alt={certification.title}
-                        style={{
-                          width: '100%',
-                          height: '100%',
-                          objectFit: 'contain',
-                          borderRadius: '8px'
-                        }}
+                        className="certification-image"
                       />
                     ) : (
                       <Flex
@@ -597,6 +570,7 @@ const CertificationsSection: React.FC<CertificationsSectionProps> = ({
         )}
       </Flex>
     </View>
+    </>
   );
 };
 

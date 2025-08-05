@@ -279,7 +279,7 @@ const AdminEducationFormClient: React.FC<AdminEducationFormClientProps> = ({
   }
 
   return (
-    <View style={containerStyles}>
+    <View style={containerStyles} data-amplify-theme={themeMode}>
       <View style={{ maxWidth: '800px', margin: '0 auto' }}>
         {/* Header */}
         <Flex direction="column" gap="2rem" marginBottom="2rem">
@@ -358,6 +358,7 @@ const AdminEducationFormClient: React.FC<AdminEducationFormClientProps> = ({
                     value={formData.degree}
                     onChange={(e) => setFormData(prev => ({ ...prev, degree: e.target.value }))}
                     placeholder="Ej: Licenciatura en Ingeniería de Sistemas"
+                    descriptiveText="El título académico que obtuviste o estás obteniendo"
                     required
                   />
                   
@@ -366,6 +367,7 @@ const AdminEducationFormClient: React.FC<AdminEducationFormClientProps> = ({
                     value={formData.institution}
                     onChange={(e) => setFormData(prev => ({ ...prev, institution: e.target.value }))}
                     placeholder="Ej: Universidad Nacional"
+                    descriptiveText="Nombre completo de la institución educativa"
                     required
                   />
                   
@@ -374,6 +376,7 @@ const AdminEducationFormClient: React.FC<AdminEducationFormClientProps> = ({
                     value={formData.fieldOfStudy}
                     onChange={(e) => setFormData(prev => ({ ...prev, fieldOfStudy: e.target.value }))}
                     placeholder="Ej: Ciencias de la Computación"
+                    descriptiveText="Área específica de especialización (opcional)"
                   />
                   
                   <TextField
@@ -381,6 +384,7 @@ const AdminEducationFormClient: React.FC<AdminEducationFormClientProps> = ({
                     value={formData.location}
                     onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
                     placeholder="Ej: Madrid, España"
+                    descriptiveText="Ciudad y país donde se encuentra la institución"
                   />
                 </Flex>
               </View>
@@ -408,6 +412,7 @@ const AdminEducationFormClient: React.FC<AdminEducationFormClientProps> = ({
                     type="date"
                     value={formData.startDate}
                     onChange={(e) => setFormData(prev => ({ ...prev, startDate: e.target.value }))}
+                    descriptiveText="Cuándo comenzaste estos estudios"
                     required
                   />
                   
@@ -416,7 +421,7 @@ const AdminEducationFormClient: React.FC<AdminEducationFormClientProps> = ({
                     type="date"
                     value={formData.endDate}
                     onChange={(e) => setFormData(prev => ({ ...prev, endDate: e.target.value }))}
-                    placeholder="Deja en blanco si es actual"
+                    descriptiveText="Deja en blanco si es actual"
                   />
                 </Flex>
               </View>
@@ -443,6 +448,7 @@ const AdminEducationFormClient: React.FC<AdminEducationFormClientProps> = ({
                     <TextField
                       label="Nuevo reconocimiento"
                       placeholder="Agregar reconocimiento..."
+                      descriptiveText="Menciones honoríficas, becas, premios académicos..."
                       value={newRecognition}
                       onChange={(e) => setNewRecognition(e.target.value)}
                       onKeyDown={(e) => {
@@ -513,6 +519,7 @@ const AdminEducationFormClient: React.FC<AdminEducationFormClientProps> = ({
                   value={formData.description}
                   onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
                   placeholder="Descripción adicional de tus estudios, proyectos destacados, etc."
+                  descriptiveText="Información adicional sobre tus estudios, proyectos destacados, logros específicos..."
                   rows={4}
                 />
               </View>

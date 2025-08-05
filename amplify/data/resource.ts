@@ -1,5 +1,6 @@
 import { type ClientSchema, a, defineData } from '@aws-amplify/backend';
 
+
 const schema = a.schema({
   Certifications: a
     .model({
@@ -162,7 +163,9 @@ const schema = a.schema({
     .authorization((allow) => [
       allow.guest().to(['read']),
       allow.group('ADMINS').to(['create', 'read', 'update', 'delete'])
-    ])
+    ]),
+
+
 });
 
 export type Schema = ClientSchema<typeof schema>;

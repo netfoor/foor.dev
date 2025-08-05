@@ -37,6 +37,7 @@ import type { SupportedLocale } from '@/lib/i18n/types';
 import HeaderControls from '@/components/ui/HeaderControls';
 import Footer from '@/components/ui/Footer';
 import { useAuth } from '@/context/auth-context';
+import { OptimizedImage } from '@/components/optimitation/OptimizedImage';
 
 // Tipos para el proyecto
 type Project = Schema["Projects"]["type"];
@@ -270,12 +271,10 @@ function ProjectDetailClient({ locale, slug }: ProjectDetailClientProps): React.
 
   // Estados
   const [project, setProject] = useState<Project | null>(null);
-  const [mainImageUrl, setMainImageUrl] = useState<string>('');
-  const [galleryUrls, setGalleryUrls] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>('');
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
-  const [allImages, setAllImages] = useState<string[]>([]);
+  const [allImageKeys, setAllImageKeys] = useState<string[]>([]);
 
   // Función para obtener URL de imagen desde S3
   const getImageUrl = async (photoKey: string | null | undefined): Promise<string | null> => {
@@ -320,48 +319,34 @@ function ProjectDetailClient({ locale, slug }: ProjectDetailClientProps): React.
     fetchProject();
   }, [slug, isAuthenticated]);
 
-  // Cargar imágenes del proyecto
+  // Preparar las keys de imágenes
   useEffect(() => {
     if (!project) return;
     
-    const loadImages = async () => {
-      try {
-        const images: string[] = [];
+    try {
+      const imageKeys: string[] = [];
 
-        // Cargar imagen principal
-        if (project.photoKey) {
-          const mainUrl = await getImageUrl(project.photoKey);
-          if (mainUrl) {
-            setMainImageUrl(mainUrl);
-            images.push(mainUrl);
-          }
-        }
-
-        // Cargar galería
-        if (project.galleryKeys && project.galleryKeys.length > 0) {
-          const galleryPromises = project.galleryKeys
-            .filter((key): key is string => !!key)
-            .map(async (key) => {
-              const url = await getImageUrl(key);
-              return url;
-            });
-          
-          const galleryResults = await Promise.all(galleryPromises);
-          const validGalleryUrls = galleryResults.filter((url): url is string => !!url);
-          setGalleryUrls(validGalleryUrls);
-          images.push(...validGalleryUrls);
-        }
-
-        setAllImages(images);
-      } catch (err) {
-        console.error('Error loading images:', err);
-        setError('Error loading project images');
-      } finally {
-        setLoading(false);
+      // Agregar imagen principal
+      if (project.photoKey) {
+        imageKeys.push(project.photoKey);
       }
-    };
 
-    loadImages();
+      // Agregar galería
+      if (project.galleryKeys && project.galleryKeys.length > 0) {
+        project.galleryKeys
+          .filter((key): key is string => !!key)
+          .forEach(key => {
+            imageKeys.push(key);
+          });
+      }
+
+      setAllImageKeys(imageKeys);
+    } catch (err) {
+      console.error('Error preparing image keys:', err);
+      setError('Error loading project images');
+    } finally {
+      setLoading(false);
+    }
   }, [project]);
 
   // Función para obtener el color del badge según la categoría
@@ -399,9 +384,9 @@ function ProjectDetailClient({ locale, slug }: ProjectDetailClientProps): React.
     if (selectedImage === null) return;
     
     if (direction === 'prev') {
-      setSelectedImage(selectedImage === 0 ? allImages.length - 1 : selectedImage - 1);
+      setSelectedImage(selectedImage === 0 ? allImageKeys.length - 1 : selectedImage - 1);
     } else {
-      setSelectedImage(selectedImage === allImages.length - 1 ? 0 : selectedImage + 1);
+      setSelectedImage(selectedImage === allImageKeys.length - 1 ? 0 : selectedImage + 1);
     }
   };
   const isDark = mode === 'dark';
@@ -640,15 +625,18 @@ function ProjectDetailClient({ locale, slug }: ProjectDetailClientProps): React.
                 <Divider />
 
                 {/* Imagen principal */}
-                {mainImageUrl && (
+                {project.photoKey && (
                   <View>
-                    <img
-                      src={mainImageUrl}
-                      alt={project.title}
-                      className="project-main-image"
-                      onClick={() => openImageModal(0)}
+                    <div 
+                      onClick={() => openImageModal(0)} 
                       style={{ cursor: 'pointer' }}
-                    />
+                    >
+                      <OptimizedImage
+                        s3Key={project.photoKey}
+                        alt={project.title || 'Project image'}
+                        className="project-main-image"
+                      />
+                    </div>
                   </View>
                 )}
 
@@ -743,7 +731,7 @@ function ProjectDetailClient({ locale, slug }: ProjectDetailClientProps): React.
                 )}
 
                 {/* Galería */}
-                {galleryUrls.length > 0 && (
+                {project.galleryKeys && project.galleryKeys.length > 0 && (
                   <View>
                     <Heading 
                       level={3}
@@ -759,14 +747,20 @@ function ProjectDetailClient({ locale, slug }: ProjectDetailClientProps): React.
                       {t('gallery')}
                     </Heading>
                     <div className="gallery-container">
-                      {galleryUrls.map((url, index) => (
-                        <img
-                          key={index}
-                          src={url}
-                          alt={`${project.title} - Image ${index + 1}`}
-                          className="gallery-image"
-                          onClick={() => openImageModal(index + 1)} // +1 porque la imagen principal es el índice 0
-                        />
+                      {project.galleryKeys.map((key, index) => (
+                        key && (
+                          <div 
+                            key={index} 
+                            onClick={() => openImageModal(index + 1)}
+                            style={{ cursor: 'pointer' }}
+                          >
+                            <OptimizedImage
+                              s3Key={key}
+                              alt={`${project.title} - Image ${index + 1}`}
+                              className="gallery-image"
+                            />
+                          </div>
+                        )
                       ))}
                     </div>
                   </View>
@@ -780,7 +774,7 @@ function ProjectDetailClient({ locale, slug }: ProjectDetailClientProps): React.
       </div>
 
       {/* Modal de imagen */}
-      {selectedImage !== null && (
+      {selectedImage !== null && allImageKeys[selectedImage] && (
         <div className="modal-overlay" onClick={closeImageModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <button
@@ -791,13 +785,13 @@ function ProjectDetailClient({ locale, slug }: ProjectDetailClientProps): React.
               ✕
             </button>
             
-            <img
-              src={allImages[selectedImage]}
-              alt={`${project.title} - Image ${selectedImage + 1}`}
+            <OptimizedImage
+              s3Key={allImageKeys[selectedImage]}
+              alt={`${project?.title || 'Project'} - Image ${selectedImage + 1}`}
               className="modal-image"
             />
 
-            {allImages.length > 1 && (
+            {allImageKeys.length > 1 && (
               <>
                 <button
                   className="modal-nav modal-nav-left"

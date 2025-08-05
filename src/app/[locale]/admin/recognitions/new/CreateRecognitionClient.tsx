@@ -32,6 +32,7 @@ import type { Schema } from '../../../../../../amplify/data/resource';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation, useLocalizedPath } from '@/lib/i18n/client';
 import { FileUploadInput } from './FileUploadInput';
+import { uploadImageWithMetadata } from '@/lib/utils/image-helpers';
 
 // Custom styles for consistent form appearance
 const createFormStyles = `
@@ -174,25 +175,6 @@ const CreateRecognitionClient: React.FC<CreateRecognitionClientProps> = () => {
       setError(null);
       
       const client = generateClient<Schema>();
-      let photoKey: string | undefined;
-      
-      // Upload photo to S3 if provided
-      if (photoFile) {
-        const fileExt = photoFile.name.split('.').pop();
-        const fileName = `${uuidv4()}.${fileExt}`;
-        const s3Key = `recognitions/${fileName}`;
-        
-        await uploadData({
-          path: s3Key,
-          data: photoFile,
-          options: {
-            contentType: photoFile.type,
-          }
-        });
-        
-        photoKey = s3Key;
-        console.log('✅ Photo uploaded to S3:', s3Key);
-      }
       
       // Validate and format the date
       let formattedDate: string;
@@ -218,7 +200,6 @@ const CreateRecognitionClient: React.FC<CreateRecognitionClientProps> = () => {
         // The schema expects a date in 'YYYY-MM-DD' format.
         // The input 'issueDate' is already in this format, so no conversion is needed.
         formattedDate = issueDate;
-        console.log('Formatted date for submission:', formattedDate);
       } catch (dateErr) {
         console.error('Date error:', dateErr);
         setError(t('recognitions.invalid_date'));
@@ -226,26 +207,48 @@ const CreateRecognitionClient: React.FC<CreateRecognitionClientProps> = () => {
         return;
       }
       
-      // Create recognition in DynamoDB
-      const newRecognition = await client.models.Recognitions.create({
+      // First create the recognition without the image
+      const createData = {
         title,
         description,
         issuer,
         issueDate: formattedDate,
         credentialId: credentialId || undefined,
-        issuerUrl: issuerUrl || undefined,
-        photoKey: photoKey || undefined,
-      });
+        issuerUrl: issuerUrl || undefined
+      };
+      
+      const newRecognition = await client.models.Recognitions.create(createData);
       
       if (newRecognition.errors) {
         throw new Error(newRecognition.errors[0].message);
       }
       
       if (!newRecognition.data) {
-        throw new Error('Recognition data is null');
+        throw new Error(t('recognitions.error_creating'));
       }
       
-      console.log('✅ Recognition created:', newRecognition.data.id);
+      const recognitionId = newRecognition.data.id;
+      
+      // Upload photo to S3 if provided, with metadata for Lambda processing
+      if (photoFile && recognitionId) {
+        // Use the helper that adds metadata for Lambda processing
+        const photoKey = await uploadImageWithMetadata(
+          photoFile, 
+          recognitionId, 
+          'Recognitions', 
+          'photoKey'
+        );
+        
+        // Update the recognition with the photoKey
+        await client.models.Recognitions.update({
+          id: recognitionId,
+          photoKey
+        });
+        
+        console.log('✅ Photo uploaded with metadata for Lambda processing');
+      }
+      
+      console.log('✅ Recognition created successfully');
       
       setSuccess(true);
       

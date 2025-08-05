@@ -31,6 +31,7 @@ import type { Schema } from '../../../../../../amplify/data/resource';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation, useLocalizedPath } from '@/lib/i18n/client';
 import { FileUploadInput } from './FileUploadInput';
+import { uploadImageWithMetadata } from '@/lib/utils/image-helpers';
 
 // Estilos personalizados para mejorar el contraste en tema oscuro
 const createProjectStyles = `
@@ -334,7 +335,7 @@ function CreateProjectClient(): React.JSX.Element {
   };
 
   // Función para subir archivos a S3
-  const uploadFiles = async () => {
+  const uploadFiles = async (projectId: string) => {
     const uploadResults = {
       photoKey: '',
       galleryKeys: [] as string[]
@@ -342,27 +343,24 @@ function CreateProjectClient(): React.JSX.Element {
 
     try {      // Subir imagen principal
       if (mainImage) {
-        const photoKey = `projects/${Date.now()}-${mainImage.name}`;
-        await uploadData({
-          path: photoKey,
-          data: mainImage,
-          options: {
-            contentType: mainImage.type
-          }
-        }).result;
+        // Usamos el nuevo helper que agrega metadatos para el procesamiento Lambda
+        const photoKey = await uploadImageWithMetadata(
+          mainImage, 
+          projectId, 
+          'Projects', 
+          'photoKey'
+        );
         uploadResults.photoKey = photoKey;
       }      // Subir galería
       if (galleryImages.length > 0) {
         const galleryPromises = galleryImages.map(async (file, index) => {
-          const galleryKey = `projects/gallery/${Date.now()}-${index}-${file.name}`;
-          await uploadData({
-            path: galleryKey,
-            data: file,
-            options: {
-              contentType: file.type
-            }
-          }).result;
-          return galleryKey;
+          // Para la galería, también usamos metadatos para cada imagen
+          return uploadImageWithMetadata(
+            file,
+            projectId,
+            'Projects',
+            `galleryKeys[${index}]`
+          );
         });
 
         uploadResults.galleryKeys = await Promise.all(galleryPromises);
@@ -378,7 +376,9 @@ function CreateProjectClient(): React.JSX.Element {
     event.preventDefault();
     setIsLoading(true);
     setError('');
-    setSuccess('');    try {
+    setSuccess('');    
+    
+    try {
       // Validaciones básicas
       if (!formData.title.trim()) {
         throw new Error(t('projects.error_title_required'));
@@ -387,11 +387,8 @@ function CreateProjectClient(): React.JSX.Element {
         throw new Error(t('projects.error_description_required'));
       }
 
-      // Subir archivos
-      const uploadResults = await uploadFiles();
-
-      // Crear el proyecto en la base de datos
-      const result = await client.models.Projects.create({
+      // Primero creamos el proyecto en la base de datos sin imágenes
+      const newProject = await client.models.Projects.create({
         title: formData.title,
         description: formData.description,
         place: formData.place,
@@ -400,8 +397,7 @@ function CreateProjectClient(): React.JSX.Element {
         demoUrl: formData.demoUrl || undefined,
         skills: formData.skills,
         categories: formData.categories,
-        photoKey: uploadResults.photoKey || undefined,
-        galleryKeys: uploadResults.galleryKeys,
+        // Inicialmente sin imágenes
         startDate: formData.startDate || undefined,
         endDate: formData.endDate || undefined,
         status: formData.status,
@@ -411,9 +407,20 @@ function CreateProjectClient(): React.JSX.Element {
         tags: formData.tags
       });
 
-      if (result.errors) {
-        throw new Error(result.errors[0].message);
-      }      setSuccess(t('projects.success_project_created'));
+      if (newProject.errors) {
+        throw new Error(newProject.errors[0].message);
+      }
+
+      // Ahora que tenemos el ID del proyecto, subimos las imágenes con los metadatos
+      if ((mainImage || galleryImages.length > 0) && newProject.data) {
+        const uploadResults = await uploadFiles(newProject.data.id);
+        
+        // Actualizamos el proyecto con las claves de las imágenes
+        // Nota: no necesitamos actualizar el proyecto manualmente ya que la función Lambda
+        // lo hará automáticamente gracias a los metadatos que enviamos
+      }
+
+      setSuccess(t('projects.success_project_created'));
       
       // Redirigir a la lista de proyectos después de 2 segundos
       setTimeout(() => {

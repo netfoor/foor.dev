@@ -1,5 +1,38 @@
 /* Admin Panel Responsive Styles */
 
+/* Form field descriptions styling for dark/light mode */
+[data-amplify-theme="dark"] .amplify-field-group__description,
+[data-amplify-theme="dark"] .amplify-field .amplify-field__description {
+  color: #94A3B8 !important; /* Slate-400 for dark mode */
+  opacity: 0.9 !important;
+}
+
+[data-amplify-theme="light"] .amplify-field-group__description,
+[data-amplify-theme="light"] .amplify-field .amplify-field__description {
+  color: #64748B !important; /* Slate-500 for light mode */
+  opacity: 0.8 !important;
+}
+
+/* Default fallback for field descriptions when no theme attribute */
+.amplify-field-group__description,
+.amplify-field .amplify-field__description {
+  font-size: 0.875rem !important;
+  margin-top: 0.25rem !important;
+  font-weight: 400 !important;
+  line-height: 1.4 !important;
+}
+
+/* Form field labels styling improvements */
+[data-amplify-theme="dark"] .amplify-field > label,
+[data-amplify-theme="dark"] .amplify-field-group > label {
+  color: #F8FAFC !important; /* Slate-50 for dark mode labels */
+}
+
+[data-amplify-theme="light"] .amplify-field > label,
+[data-amplify-theme="light"] .amplify-field-group > label {
+  color: #0F172A !important; /* Slate-900 for light mode labels */
+}
+
 /* Contenedor principal del admin - respeta la arquitectura de la app */
 .admin-main-content {
   /* En desktop, dejar espacio para sidebar cuando esté visible */
