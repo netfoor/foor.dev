@@ -452,7 +452,7 @@ function EditExperienceClient({ locale, experienceId }: EditExperienceClientProp
             <ArrowLeft size={16} />
           </Button>
           <View>
-            <Heading level={2}>{t('about.experiences.edit')}</Heading>
+            <Heading level={2}>{t('about.edit_experience')}</Heading>
             <Text color="font.tertiary">{t('about.experiences.edit_description')}</Text>
           </View>
         </Flex>
@@ -555,41 +555,41 @@ function EditExperienceClient({ locale, experienceId }: EditExperienceClientProp
               {/* Basic Information */}
               <Flex direction="column" gap="medium">
                 <Text fontSize="large" fontWeight="semibold">
-                  {t('about.experiences.basic_information')}
+                  {t('about.basic_info')}
                 </Text>
 
                 <Flex direction={{ base: 'column', medium: 'row' }} gap="medium">
                   <TextField
-                    label={t('about.experiences.company')}
+                    label={t('about.company_label')}
                     value={formData.company}
                     onChange={(e) => handleInputChange('company', e.target.value)}
                     required
-                    placeholder={t('about.experiences.company_placeholder')}
+                    placeholder={t('about.company_placeholder')}
                     flex="1"
                   />
                   <TextField
-                    label={t('about.experiences.position')}
+                    label={t('about.position_label')}
                     value={formData.position}
                     onChange={(e) => handleInputChange('position', e.target.value)}
                     required
-                    placeholder={t('about.experiences.position_placeholder')}
+                    placeholder={t('about.position_placeholder')}
                     flex="1"
                   />
                 </Flex>
 
                 <TextAreaField
-                  label={t('about.experiences.description')}
+                  label={t('about.description_label')}
                   value={formData.description}
                   onChange={(e) => handleInputChange('description', e.target.value)}
-                  placeholder={t('about.experiences.description_placeholder')}
+                  placeholder={t('about.description_placeholder')}
                   rows={4}
                 />
 
                 <TextField
-                  label={t('about.experiences.location')}
+                  label={t('about.location_label')}
                   value={formData.location}
                   onChange={(e) => handleInputChange('location', e.target.value)}
-                  placeholder={t('about.experiences.location_placeholder')}
+                  placeholder={t('about.location_placeholder')}
                 />
               </Flex>
 
@@ -598,12 +598,12 @@ function EditExperienceClient({ locale, experienceId }: EditExperienceClientProp
               {/* Dates */}
               <Flex direction="column" gap="medium">
                 <Text fontSize="large" fontWeight="semibold">
-                  {t('about.experiences.employment_period')}
+                  {t('about.employment_period')}
                 </Text>
 
                 <Flex direction={{ base: 'column', medium: 'row' }} gap="medium">
                   <TextField
-                    label={t('about.experiences.start_date')}
+                    label={t('about.start_date_label')}
                     value={formData.startDate}
                     onChange={(e) => handleInputChange('startDate', e.target.value)}
                     type="date"
@@ -611,7 +611,7 @@ function EditExperienceClient({ locale, experienceId }: EditExperienceClientProp
                     flex="1"
                   />
                   <TextField
-                    label={t('about.experiences.end_date')}
+                    label={t('about.end_date_label')}
                     value={formData.endDate}
                     onChange={(e) => handleInputChange('endDate', e.target.value)}
                     type="date"
@@ -625,15 +625,15 @@ function EditExperienceClient({ locale, experienceId }: EditExperienceClientProp
               {/* Skills */}
               <Flex direction="column" gap="medium">
                 <Text fontSize="large" fontWeight="semibold">
-                  {t('about.experiences.skills')}
+                  {t('about.skills')}
                 </Text>
 
                 <Flex direction={{ base: 'column', medium: 'row' }} gap="medium" alignItems="flex-end">
                   <TextField
-                    label={t('about.experiences.add_skill')}
+                    label={t('about.add_skill')}
                     value={skillInput}
                     onChange={(e) => setSkillInput(e.target.value)}
-                    placeholder={t('about.experiences.skill_placeholder')}
+                    placeholder={t('about.skill_placeholder')}
                     flex="1"
                     onKeyPress={(e) => {
                       if (e.key === 'Enter') {
@@ -647,7 +647,7 @@ function EditExperienceClient({ locale, experienceId }: EditExperienceClientProp
                     onClick={addSkill}
                     isDisabled={!skillInput.trim()}
                   >
-                    {t('about.experiences.add')}
+                    {t('about.add_skill')}
                   </Button>
                 </Flex>
 
@@ -678,15 +678,15 @@ function EditExperienceClient({ locale, experienceId }: EditExperienceClientProp
               {/* Activities */}
               <Flex direction="column" gap="medium">
                 <Text fontSize="large" fontWeight="semibold">
-                  {t('about.experiences.activities')}
+                  {t('about.activities')}
                 </Text>
 
                 <Flex direction={{ base: 'column', medium: 'row' }} gap="medium" alignItems="flex-end">
                   <TextField
-                    label={t('about.experiences.add_activity')}
+                    label={t('about.add_activity')}
                     value={activityInput}
                     onChange={(e) => setActivityInput(e.target.value)}
-                    placeholder={t('about.experiences.activity_placeholder')}
+                    placeholder={t('about.activity_placeholder')}
                     flex="1"
                     onKeyPress={(e) => {
                       if (e.key === 'Enter') {
@@ -700,7 +700,7 @@ function EditExperienceClient({ locale, experienceId }: EditExperienceClientProp
                     onClick={addActivity}
                     isDisabled={!activityInput.trim()}
                   >
-                    {t('about.experiences.add')}
+                    {t('about.add_activity')}
                   </Button>
                 </Flex>
 
@@ -735,17 +735,17 @@ function EditExperienceClient({ locale, experienceId }: EditExperienceClientProp
                   onClick={() => router.push(getLocalizedPath('/admin/about'))}
                   isDisabled={isSaving}
                 >
-                  {t('about.experiences.cancel')}
+                  {t('about.cancel')}
                 </Button>
                 <Button 
                   type="submit"
                   variation="primary"
                   isLoading={isSaving}
-                  loadingText={t('about.experiences.updating')}
+                  loadingText={t('about.saving')}
                 >
                   <Flex alignItems="center" gap="xs">
                     <Save size={16} />
-                    {t('about.experiences.update_experience')}
+                    {t('about.save_changes')}
                   </Flex>
                 </Button>
               </Flex>

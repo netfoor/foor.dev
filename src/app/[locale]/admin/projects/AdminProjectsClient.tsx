@@ -38,6 +38,7 @@ import { useTheme } from '@/hooks/useTheme';
 import { useTranslation, useLocalizedPath } from '@/lib/i18n/client';
 import type { SupportedLocale } from '@/lib/i18n/types';
 import S3Cleanup from '@/lib/utils/s3-cleanup';
+import { getImageUrl as getImageUrlHelper } from '@/lib/utils/image-helpers';
 
 // Tipos para el proyecto actualizado
 type Project = Schema["Projects"]["type"];
@@ -131,20 +132,7 @@ const AdminProjectsClient: React.FC<AdminProjectsClientProps> = ({ locale }) => 
   };
   // Obtener URL de imagen desde Storage
   const getImageUrl = async (key: string | null | undefined) => {
-    if (!key) return null;
-    
-    try {
-      // Normalizar el path - remover 'public/' si existe (para compatibilidad con Gen 1)
-      const normalizedPath = key.startsWith('public/') ? key.slice(7) : key;
-      
-      const url = await getUrl({
-        path: normalizedPath,
-      });
-      return url.url.toString();
-    } catch (err) {
-      console.error('Error getting image URL:', err);
-      return null;
-    }
+    return await getImageUrlHelper(key);
   };
 
   // Función para obtener el color del badge según el estado

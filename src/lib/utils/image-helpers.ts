@@ -64,6 +64,10 @@ const getWebpKey = (originalKey: string): string | null => {
 };
 
 
+export const getImageUrl = async (originalKey: string): Promise<string | null> => {
+    return await getOptimizedImageUrl(originalKey);
+};
+
 export const getOptimizedImageUrl = async (originalKey: string): Promise<string | null> => {
     if (!originalKey) return null;
 
@@ -257,6 +261,9 @@ export const uploadImageWithMetadata = async (
                 break;
             case 'experiences':
                 folder = 'experiences';
+                break;
+            case 'education':
+                folder = 'education';
                 break;
             default:
                 folder = modelName.toLowerCase();

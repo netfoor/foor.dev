@@ -18,7 +18,9 @@ import {
   Menu,
   MenuItem,
   Divider,
-  Heading
+  Heading,
+  useTheme as useAmplifyTheme,
+  Grid
 } from '@aws-amplify/ui-react';
 import { 
   Plus, 
@@ -26,7 +28,10 @@ import {
   Trash2, 
   MoreVertical, 
   Briefcase,
-  ArrowLeft
+  ArrowLeft,
+  Building2,
+  Calendar,
+  MapPin
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -36,6 +41,7 @@ import type { Schema } from '../../../../../../amplify/data/resource';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation, useLocalizedPath } from '@/lib/i18n/client';
 import type { SupportedLocale } from '@/lib/i18n/types';
+import { getImageUrl as getImageUrlHelper } from '@/lib/utils/image-helpers';
 
 // Tipos para Experience
 type Experience = Schema["Experiences"]["type"];
@@ -50,8 +56,10 @@ const ExperiencesManagementClient: React.FC<ExperiencesManagementClientProps> = 
   const [error, setError] = useState<string | null>(null);
   const [deleteLoading, setDeleteLoading] = useState<string | null>(null);
   const [experienceImageUrls, setExperienceImageUrls] = useState<Record<string, string>>({});
+  const [isMobile, setIsMobile] = useState(false);
 
   const { mode } = useTheme();
+  const { tokens } = useAmplifyTheme();
   const { t } = useTranslation('admin');
   const getLocalizedPath = useLocalizedPath();
   const router = useRouter();
@@ -86,7 +94,7 @@ const ExperiencesManagementClient: React.FC<ExperiencesManagementClientProps> = 
       }
     } catch (err) {
       console.error('Error fetching experiences data:', err);
-      setError(t('about.error_loading_data'));
+      setError(t('about.experiences.error_loading_data'));
     } finally {
       setLoading(false);
     }
@@ -94,6 +102,16 @@ const ExperiencesManagementClient: React.FC<ExperiencesManagementClientProps> = 
 
   useEffect(() => {
     fetchExperiences();
+    
+    // Handle responsive design
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   // Delete experience
@@ -152,7 +170,7 @@ const ExperiencesManagementClient: React.FC<ExperiencesManagementClientProps> = 
       
     } catch (err) {
       console.error('Error deleting experience:', err);
-      setError(`${t('about.experiences.error_deleting')}: ${err instanceof Error ? err.message : t('about.unknown_error')}`);
+      setError(`${t('about.experiences.error_deleting')}: ${err instanceof Error ? err.message : t('about.experiences.unknown_error')}`);
     } finally {
       setDeleteLoading(null);
     }
@@ -160,19 +178,7 @@ const ExperiencesManagementClient: React.FC<ExperiencesManagementClientProps> = 
 
   // Get image URL from Storage
   const getImageUrl = async (key: string | null | undefined) => {
-    if (!key) return null;
-    
-    try {
-      const normalizedPath = key.startsWith('public/') ? key.slice(7) : key;
-      
-      const url = await getUrl({
-        path: normalizedPath,
-      });
-      return url.url.toString();
-    } catch (err) {
-      console.error('Error getting image URL:', err);
-      return null;
-    }
+    return await getImageUrlHelper(key);
   };
 
   if (loading) {
@@ -180,7 +186,7 @@ const ExperiencesManagementClient: React.FC<ExperiencesManagementClientProps> = 
       <View padding="large" textAlign="center">
         <Loader size="large" />
         <Text fontSize="medium" color="font.tertiary" marginTop="medium">
-          {t('about.loading')}
+          {t('about.experiences.loading')}
         </Text>
       </View>
     );
@@ -190,27 +196,38 @@ const ExperiencesManagementClient: React.FC<ExperiencesManagementClientProps> = 
     <View padding="large">
       <Flex direction="column" gap="large">
         {/* Header */}
-        <Flex justifyContent="space-between" alignItems="center">
+        <Flex direction={isMobile ? 'column' : 'row'} justifyContent="space-between" alignItems={isMobile ? 'stretch' : 'center'} gap="medium">
           <Flex direction="row" alignItems="center" gap="medium">
             <Button
               variation="link"
               onClick={() => router.push(getLocalizedPath('/admin'))}
               size="small"
+              style={{
+                color: mode === 'dark' ? '#CBD5E1' : '#64748B',
+                minWidth: 'auto',
+                padding: '8px'
+              }}
             >
               <ArrowLeft size={16} />
             </Button>
-            <View>
-              <Heading level={1} fontSize="xl" fontWeight="bold" color="font.primary">
+            <View flex="1">
+              <Heading level={1} fontSize={isMobile ? 'large' : 'xl'} fontWeight="bold" style={{ color: mode === 'dark' ? '#F1F5F9' : '#1E293B' }}>
                 {t('about.experiences.title')}
               </Heading>
-              <Text fontSize="medium" color="font.secondary">
+              <Text fontSize={isMobile ? 'small' : 'medium'} style={{ color: mode === 'dark' ? '#CBD5E1' : '#64748B' }}>
                 {t('about.experiences.description')}
               </Text>
             </View>
           </Flex>
           <Link href={getLocalizedPath('/admin/about/experiences/new')}>
-            <Button variation="primary" size="small">
-              <Flex alignItems="center" gap="xs">
+            <Button 
+              variation="primary" 
+              size={isMobile ? 'large' : 'small'}
+              style={{
+                width: isMobile ? '100%' : 'auto'
+              }}
+            >
+              <Flex alignItems="center" gap="xs" justifyContent="center">
                 <Plus size={16} />
                 {t('about.experiences.create')}
               </Flex>
@@ -229,82 +246,344 @@ const ExperiencesManagementClient: React.FC<ExperiencesManagementClientProps> = 
           </Alert>
         )}
 
+        {/* Stats Summary */}
+        {experiences.length > 0 && (
+          <Grid templateColumns={isMobile ? '1fr' : 'repeat(3, 1fr)'} gap="medium">
+            <Card 
+              padding="medium"
+              style={{
+                backgroundColor: mode === 'dark' ? 'rgba(51, 65, 85, 0.8)' : 'rgba(255, 255, 255, 0.9)',
+                border: mode === 'dark' ? '1px solid rgba(148, 163, 184, 0.1)' : '1px solid rgba(203, 213, 225, 0.2)',
+                borderRadius: '12px'
+              }}
+            >
+              <Flex direction="column" alignItems="center" gap="xs">
+                <Text fontSize="2xl" fontWeight="bold" color="#3B82F6">
+                  {experiences.length}
+                </Text>
+                <Text fontSize="small" style={{ color: mode === 'dark' ? '#CBD5E1' : '#64748B' }} textAlign="center">
+                  {t('about.experiences.total_experiences')}
+                </Text>
+              </Flex>
+            </Card>
+            <Card 
+              padding="medium"
+              style={{
+                backgroundColor: mode === 'dark' ? 'rgba(51, 65, 85, 0.8)' : 'rgba(255, 255, 255, 0.9)',
+                border: mode === 'dark' ? '1px solid rgba(148, 163, 184, 0.1)' : '1px solid rgba(203, 213, 225, 0.2)',
+                borderRadius: '12px'
+              }}
+            >
+              <Flex direction="column" alignItems="center" gap="xs">
+                <Text fontSize="2xl" fontWeight="bold" color="#22C55E">
+                  {experiences.filter(exp => !exp.endDate).length}
+                </Text>
+                <Text fontSize="small" style={{ color: mode === 'dark' ? '#CBD5E1' : '#64748B' }} textAlign="center">
+                  {t('about.experiences.current_positions')}
+                </Text>
+              </Flex>
+            </Card>
+            <Card 
+              padding="medium"
+              style={{
+                backgroundColor: mode === 'dark' ? 'rgba(51, 65, 85, 0.8)' : 'rgba(255, 255, 255, 0.9)',
+                border: mode === 'dark' ? '1px solid rgba(148, 163, 184, 0.1)' : '1px solid rgba(203, 213, 225, 0.2)',
+                borderRadius: '12px'
+              }}
+            >
+              <Flex direction="column" alignItems="center" gap="xs">
+                <Text fontSize="2xl" fontWeight="bold" color="#F59E0B">
+                  {new Set(experiences.map(exp => exp.company)).size}
+                </Text>
+                <Text fontSize="small" style={{ color: mode === 'dark' ? '#CBD5E1' : '#64748B' }} textAlign="center">
+                  {t('about.experiences.companies')}
+                </Text>
+              </Flex>
+            </Card>
+          </Grid>
+        )}
+
         {/* Experiences Content */}
         <View>
           {experiences.length > 0 ? (
-            <Table highlightOnHover>
-              <TableHead>
-                <TableRow>
-                  <TableCell>{t('about.experiences.company')}</TableCell>
-                  <TableCell>{t('about.experiences.position')}</TableCell>
-                  <TableCell>{t('about.experiences.period')}</TableCell>
-                  <TableCell>{t('about.experiences.actions')}</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {experiences.map((experience) => (
-                  <TableRow key={experience.id}>
-                    <TableCell>
-                      <Flex alignItems="center" gap="small">
-                        {experience.photoKey && experienceImageUrls[experience.id] && (
-                          <div style={{ width: '32px', height: '32px' }}>
-                            <img 
-                              src={experienceImageUrls[experience.id]} 
-                              alt="Company" 
-                              style={{ 
-                                width: '100%', 
-                                height: '100%', 
-                                objectFit: 'cover', 
-                                borderRadius: '4px' 
+            <>
+              {/* Desktop Table View */}
+              {!isMobile && (
+                <Table 
+                  highlightOnHover
+                  style={{
+                    backgroundColor: mode === 'dark' ? 'rgba(51, 65, 85, 0.8)' : 'rgba(255, 255, 255, 0.9)',
+                    border: mode === 'dark' ? '1px solid rgba(148, 163, 184, 0.1)' : '1px solid rgba(203, 213, 225, 0.2)',
+                    borderRadius: '12px'
+                  }}
+                >
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>
+                        <Text fontWeight="semibold" style={{ color: mode === 'dark' ? '#F1F5F9' : '#1E293B' }}>
+                          {t('about.experiences.company')}
+                        </Text>
+                      </TableCell>
+                      <TableCell>
+                        <Text fontWeight="semibold" style={{ color: mode === 'dark' ? '#F1F5F9' : '#1E293B' }}>
+                          {t('about.experiences.position')}
+                        </Text>
+                      </TableCell>
+                      <TableCell>
+                        <Text fontWeight="semibold" style={{ color: mode === 'dark' ? '#F1F5F9' : '#1E293B' }}>
+                          {t('about.experiences.period')}
+                        </Text>
+                      </TableCell>
+                      <TableCell>
+                        <Text fontWeight="semibold" style={{ color: mode === 'dark' ? '#F1F5F9' : '#1E293B' }}>
+                          {t('about.experiences.actions')}
+                        </Text>
+                      </TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {experiences.map((experience) => (
+                      <TableRow key={experience.id}>
+                        <TableCell>
+                          <Flex alignItems="center" gap="small">
+                            {experience.photoKey && experienceImageUrls[experience.id] ? (
+                              <div style={{ 
+                                width: '40px', 
+                                height: '40px',
+                                borderRadius: '8px',
+                                overflow: 'hidden',
+                                border: mode === 'dark' ? '1px solid rgba(148, 163, 184, 0.1)' : '1px solid rgba(203, 213, 225, 0.2)'
+                              }}>
+                                <img 
+                                  src={experienceImageUrls[experience.id]} 
+                                  alt={`${experience.company} logo`}
+                                  style={{ 
+                                    width: '100%', 
+                                    height: '100%', 
+                                    objectFit: 'cover'
+                                  }}
+                                  onError={(e) => {
+                                    (e.target as HTMLImageElement).style.display = 'none';
+                                  }}
+                                />
+                              </div>
+                            ) : (
+                              <div style={{
+                                width: '40px',
+                                height: '40px',
+                                borderRadius: '8px',
+                                backgroundColor: mode === 'dark' ? '#374151' : '#F3F4F6',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                              }}>
+                                <Building2 size={20} color={mode === 'dark' ? '#9CA3AF' : '#6B7280'} />
+                              </div>
+                            )}
+                            <Text fontWeight="semibold" style={{ color: mode === 'dark' ? '#F1F5F9' : '#1E293B' }}>
+                              {experience.company}
+                            </Text>
+                          </Flex>
+                        </TableCell>
+                        <TableCell>
+                          <Text style={{ color: mode === 'dark' ? '#F1F5F9' : '#1E293B' }}>{experience.position}</Text>
+                        </TableCell>
+                        <TableCell>
+                          <Flex alignItems="center" gap="xs">
+                            <Calendar size={14} color={mode === 'dark' ? '#9CA3AF' : '#6B7280'} />
+                            <Text fontSize="small" style={{ color: mode === 'dark' ? '#CBD5E1' : '#64748B' }}>
+                              {experience.startDate} - {experience.endDate || t('about.experiences.present')}
+                            </Text>
+                          </Flex>
+                        </TableCell>
+                        <TableCell>
+                          <Menu
+                            trigger={
+                              <Button 
+                                variation="link" 
+                                size="small"
+                                style={{
+                                  color: mode === 'dark' ? '#CBD5E1' : '#64748B'
+                                }}
+                              >
+                                <MoreVertical size={16} />
+                              </Button>
+                            }
+                            menuAlign="end"
+                          >
+                            <Link href={getLocalizedPath(`/admin/about/experiences/${experience.id}`)}>
+                              <MenuItem>
+                                <Flex alignItems="center" gap="small">
+                                  <Edit3 size={16} />
+                                  {t('about.experiences.edit')}
+                                </Flex>
+                              </MenuItem>
+                            </Link>
+                            <Divider />
+                            <MenuItem 
+                              onClick={() => handleDeleteExperience(experience.id)}
+                              isDisabled={deleteLoading === experience.id}
+                              style={{
+                                color: tokens.colors.font.error
                               }}
-                              onError={(e) => {
-                                (e.target as HTMLImageElement).src = '/placeholder-company.png';
+                            >
+                              <Flex alignItems="center" gap="small">
+                                <Trash2 size={16} />
+                                {deleteLoading === experience.id ? t('about.experiences.deleting') : t('about.experiences.delete')}
+                              </Flex>
+                            </MenuItem>
+                          </Menu>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+
+              {/* Mobile Card View */}
+              {isMobile && (
+                <Grid templateColumns="1fr" gap="medium">
+                  {experiences.map((experience) => (
+                    <Card 
+                      key={experience.id} 
+                      padding="medium"
+                      className="admin-experience-card"
+                      style={{
+                        backgroundColor: mode === 'dark' ? tokens.colors.background.secondary : tokens.colors.background.primary,
+                        border: `1px solid ${tokens.colors.border.primary}`,
+                        borderRadius: tokens.radii.medium
+                      }}
+                    >
+                      <Flex direction="column" gap="small">
+                        {/* Header with company and actions */}
+                        <Flex justifyContent="space-between" alignItems="flex-start">
+                          <Flex alignItems="center" gap="small" flex="1">
+                            {experience.photoKey && experienceImageUrls[experience.id] ? (
+                              <div style={{ 
+                                width: '48px', 
+                                height: '48px',
+                                borderRadius: '8px',
+                                overflow: 'hidden',
+                                border: mode === 'dark' ? '1px solid rgba(148, 163, 184, 0.1)' : '1px solid rgba(203, 213, 225, 0.2)',
+                                flexShrink: 0
+                              }}>
+                                <img 
+                                  src={experienceImageUrls[experience.id]} 
+                                  alt={`${experience.company} logo`}
+                                  style={{ 
+                                    width: '100%', 
+                                    height: '100%', 
+                                    objectFit: 'cover'
+                                  }}
+                                  onError={(e) => {
+                                    (e.target as HTMLImageElement).style.display = 'none';
+                                  }}
+                                />
+                              </div>
+                            ) : (
+                              <div style={{
+                                width: '48px',
+                                height: '48px',
+                                borderRadius: '8px',
+                                backgroundColor: mode === 'dark' ? '#374151' : '#F3F4F6',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                flexShrink: 0
+                              }}>
+                                <Building2 size={24} color={mode === 'dark' ? '#9CA3AF' : '#6B7280'} />
+                              </div>
+                            )}
+                            <View flex="1">
+                              <Text fontWeight="bold" fontSize="medium" style={{ color: mode === 'dark' ? '#F1F5F9' : '#1E293B' }}>
+                                {experience.company}
+                              </Text>
+                              <Text fontSize="small" style={{ color: mode === 'dark' ? '#CBD5E1' : '#64748B' }}>
+                                {experience.position}
+                              </Text>
+                            </View>
+                          </Flex>
+                          <Menu
+                            trigger={
+                              <Button 
+                                variation="link" 
+                                size="small"
+                                style={{
+                                  color: mode === 'dark' ? '#CBD5E1' : '#64748B',
+                                  minWidth: 'auto',
+                                  padding: '8px'
+                                }}
+                              >
+                                <MoreVertical size={16} />
+                              </Button>
+                            }
+                            menuAlign="end"
+                          >
+                            <Link href={getLocalizedPath(`/admin/about/experiences/${experience.id}`)}>
+                              <MenuItem>
+                                <Flex alignItems="center" gap="small">
+                                  <Edit3 size={16} />
+                                  {t('about.experiences.edit')}
+                                </Flex>
+                              </MenuItem>
+                            </Link>
+                            <Divider />
+                            <MenuItem 
+                              onClick={() => handleDeleteExperience(experience.id)}
+                              isDisabled={deleteLoading === experience.id}
+                              style={{
+                                color: tokens.colors.font.error
                               }}
-                            />
-                          </div>
+                            >
+                              <Flex alignItems="center" gap="small">
+                                <Trash2 size={16} />
+                                {deleteLoading === experience.id ? t('about.experiences.deleting') : t('about.experiences.delete')}
+                              </Flex>
+                            </MenuItem>
+                          </Menu>
+                        </Flex>
+
+                        {/* Period */}
+                        <Flex alignItems="center" gap="xs">
+                          <Calendar size={14} color={mode === 'dark' ? '#9CA3AF' : '#6B7280'} />
+                          <Text fontSize="small" style={{ color: mode === 'dark' ? '#CBD5E1' : '#64748B' }}>
+                            {experience.startDate} - {experience.endDate || t('about.experiences.present')}
+                          </Text>
+                        </Flex>
+
+                        {/* Location if available */}
+                        {experience.location && (
+                          <Flex alignItems="center" gap="xs">
+                            <MapPin size={14} color={mode === 'dark' ? '#9CA3AF' : '#6B7280'} />
+                            <Text fontSize="small" style={{ color: mode === 'dark' ? '#CBD5E1' : '#64748B' }}>
+                              {experience.location}
+                            </Text>
+                          </Flex>
                         )}
-                        <Text fontWeight="semibold">{experience.company}</Text>
                       </Flex>
-                    </TableCell>
-                    <TableCell>{experience.position}</TableCell>
-                    <TableCell>
-                      <Text fontSize="small">
-                        {experience.startDate} - {experience.endDate || t('about.experiences.present')}
-                      </Text>
-                    </TableCell>
-                    <TableCell>
-                      <Menu
-                        trigger={
-                          <Button variation="link" size="small">
-                            <MoreVertical size={16} />
-                          </Button>
-                        }
-                        menuAlign="end"
-                      >
-                        <Link href={getLocalizedPath(`/admin/about/experiences/${experience.id}`)}>
-                          <MenuItem>
-                            <Edit3 size={16} />
-                            {t('about.experiences.edit')}
-                          </MenuItem>
-                        </Link>
-                        <Divider />
-                        <MenuItem 
-                          onClick={() => handleDeleteExperience(experience.id)}
-                          isDisabled={deleteLoading === experience.id}
-                        >
-                          <Trash2 size={16} />
-                          {deleteLoading === experience.id ? t('about.experiences.deleting') : t('about.experiences.delete')}
-                        </MenuItem>
-                      </Menu>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                    </Card>
+                  ))}
+                </Grid>
+              )}
+            </>
           ) : (
-            <Card padding="large" textAlign="center">
-              <Briefcase size={48} style={{ margin: '0 auto 16px', opacity: 0.5 }} />
-              <Text fontSize="medium" color="font.secondary" marginBottom="medium">
+            <Card 
+              padding="large" 
+              textAlign="center"
+              style={{
+                backgroundColor: mode === 'dark' ? 'rgba(51, 65, 85, 0.8)' : 'rgba(255, 255, 255, 0.9)',
+                border: mode === 'dark' ? '1px solid rgba(148, 163, 184, 0.1)' : '1px solid rgba(203, 213, 225, 0.2)',
+                borderRadius: '12px'
+              }}
+            >
+              <Briefcase 
+                size={48} 
+                style={{ 
+                  margin: '0 auto 16px', 
+                  color: mode === 'dark' ? '#9CA3AF' : '#6B7280'
+                }} 
+              />
+              <Text fontSize="medium" style={{ color: mode === 'dark' ? '#CBD5E1' : '#64748B' }} marginBottom="medium">
                 {t('about.experiences.no_experiences')}
               </Text>
               <Link href={getLocalizedPath('/admin/about/experiences/new')}>

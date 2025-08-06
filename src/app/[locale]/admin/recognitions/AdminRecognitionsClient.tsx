@@ -275,7 +275,7 @@ const AdminRecognitionsClient: React.FC<AdminRecognitionsClientProps> = ({ local
             border: mode === 'dark'
               ? '1px solid rgba(148, 163, 184, 0.2)'
               : '1px solid rgba(203, 213, 225, 0.3)',
-            borderRadius: '16px',
+            borderRadius: '4px',
           }}>
             <Award size={48} style={{ 
               color: mode === 'dark' ? '#60A5FA' : '#3B82F6',
@@ -300,10 +300,12 @@ const AdminRecognitionsClient: React.FC<AdminRecognitionsClientProps> = ({ local
           border: mode === 'dark'
             ? '1px solid rgba(148, 163, 184, 0.2)'
             : '1px solid rgba(203, 213, 225, 0.3)',
-          borderRadius: '16px',
-          overflow: 'hidden',
+          borderRadius: '4px',
+          overflow: 'auto',
+          overflowX: 'auto',
+          minWidth: '100%',
         }}>
-          <Table size="small">
+          <Table size="small" style={{ minWidth: '800px' }}>
             <TableHead>
               <TableRow style={{
                 background: mode === 'dark'
@@ -481,120 +483,145 @@ const AdminRecognitionsClient: React.FC<AdminRecognitionsClientProps> = ({ local
                       </Text>
                     )}
                   </TableCell>
-                  <TableCell style={{ padding: '1rem 0.75rem' }}>
-                    <Flex gap="8px">
+                  <TableCell style={{ padding: '1rem 0.75rem', position: 'relative' }}>
+                    <Flex gap="8px" justifyContent="center">
                       <Menu 
                         trigger={
                           <Button 
                             size="small" 
                             style={{
-                              background: 'transparent',
+                              background: mode === 'dark' 
+                                ? 'rgba(71, 85, 105, 0.8)' 
+                                : 'rgba(248, 250, 252, 0.8)',
                               border: mode === 'dark' 
-                                ? '1px solid rgba(148, 163, 184, 0.3)' 
-                                : '1px solid rgba(203, 213, 225, 0.4)',
-                              borderRadius: '6px',
-                              padding: '6px',
-                              color: mode === 'dark' ? '#94A3B8' : '#64748B',
+                                ? '1px solid rgba(148, 163, 184, 0.4)' 
+                                : '1px solid rgba(203, 213, 225, 0.5)',
+                              borderRadius: '8px',
+                              padding: '8px',
+                              color: mode === 'dark' ? '#E2E8F0' : '#475569',
                               cursor: 'pointer',
+                              minWidth: '32px',
+                              minHeight: '32px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
                             }}
                           >
                             <MoreVertical size={16} />
                           </Button>
                         }
+                        menuAlign="end"
                         style={{
                           background: mode === 'dark'
-                            ? 'linear-gradient(135deg, rgba(51, 65, 85, 0.95) 0%, rgba(71, 85, 105, 0.95) 100%)'
-                            : 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%)',
-                          backdropFilter: 'blur(16px)',
+                            ? 'rgba(30, 41, 59, 0.98)'
+                            : 'rgba(255, 255, 255, 0.98)',
+                          backdropFilter: 'blur(20px)',
                           border: mode === 'dark'
-                            ? '1px solid rgba(148, 163, 184, 0.3)'
-                            : '1px solid rgba(203, 213, 225, 0.4)',
-                          borderRadius: '8px',
+                            ? '1px solid rgba(148, 163, 184, 0.4)'
+                            : '1px solid rgba(203, 213, 225, 0.5)',
+                          borderRadius: '12px',
                           boxShadow: mode === 'dark'
-                            ? '0 10px 40px rgba(0, 0, 0, 0.3)'
-                            : '0 10px 40px rgba(0, 0, 0, 0.15)',
+                            ? '0 20px 60px rgba(0, 0, 0, 0.5), 0 8px 25px rgba(0, 0, 0, 0.3)'
+                            : '0 20px 60px rgba(0, 0, 0, 0.15), 0 8px 25px rgba(0, 0, 0, 0.1)',
+                          minWidth: '160px',
+                          zIndex: 1000,
                         }}
                       >
                         <MenuItem 
                           onClick={() => window.open(getLocalizedPath(`/recognitions`), '_blank')}
                           style={{
-                            color: mode === 'dark' ? '#E2E8F0' : '#1E293B',
-                            padding: '8px 12px',
-                            borderRadius: '4px',
+                            color: mode === 'dark' ? '#F1F5F9' : '#1E293B',
+                            padding: '12px 16px',
+                            borderRadius: '8px',
                             cursor: 'pointer',
                             transition: 'all 0.2s ease',
+                            margin: '4px',
+                            fontSize: '14px',
+                            fontWeight: '500',
                           }}
                           onMouseEnter={(e) => {
                             e.currentTarget.style.background = mode === 'dark'
-                              ? 'rgba(59, 130, 246, 0.2)'
+                              ? 'rgba(59, 130, 246, 0.25)'
                               : 'rgba(59, 130, 246, 0.1)';
+                            e.currentTarget.style.color = mode === 'dark' ? '#FFFFFF' : '#1E293B';
                           }}
                           onMouseLeave={(e) => {
                             e.currentTarget.style.background = 'transparent';
+                            e.currentTarget.style.color = mode === 'dark' ? '#F1F5F9' : '#1E293B';
                           }}
                         >
-                          <Flex alignItems="center" gap="8px">
+                          <Flex alignItems="center" gap="10px">
                             <Eye size={16} />
-                            <Text style={{ color: 'inherit' }}>{t('view')}</Text>
+                            <Text style={{ color: 'inherit', fontSize: 'inherit' }}>{t('view')}</Text>
                           </Flex>
                         </MenuItem>
                         <MenuItem 
                           onClick={() => window.location.href = getLocalizedPath(`/admin/recognitions/${recognition.id}`)}
                           style={{
-                            color: mode === 'dark' ? '#E2E8F0' : '#1E293B',
-                            padding: '8px 12px',
-                            borderRadius: '4px',
+                            color: mode === 'dark' ? '#F1F5F9' : '#1E293B',
+                            padding: '12px 16px',
+                            borderRadius: '8px',
                             cursor: 'pointer',
                             transition: 'all 0.2s ease',
+                            margin: '4px',
+                            fontSize: '14px',
+                            fontWeight: '500',
                           }}
                           onMouseEnter={(e) => {
                             e.currentTarget.style.background = mode === 'dark'
-                              ? 'rgba(59, 130, 246, 0.2)'
+                              ? 'rgba(59, 130, 246, 0.25)'
                               : 'rgba(59, 130, 246, 0.1)';
+                            e.currentTarget.style.color = mode === 'dark' ? '#FFFFFF' : '#1E293B';
                           }}
                           onMouseLeave={(e) => {
                             e.currentTarget.style.background = 'transparent';
+                            e.currentTarget.style.color = mode === 'dark' ? '#F1F5F9' : '#1E293B';
                           }}
                         >
-                          <Flex alignItems="center" gap="8px">
+                          <Flex alignItems="center" gap="10px">
                             <Edit3 size={16} />
-                            <Text style={{ color: 'inherit' }}>{t('edit')}</Text>
+                            <Text style={{ color: 'inherit', fontSize: 'inherit' }}>{t('edit')}</Text>
                           </Flex>
                         </MenuItem>
                         <View style={{
                           height: '1px',
                           background: mode === 'dark' 
-                            ? 'rgba(148, 163, 184, 0.3)' 
-                            : 'rgba(203, 213, 225, 0.4)',
-                          margin: '4px 0'
+                            ? 'rgba(148, 163, 184, 0.4)' 
+                            : 'rgba(203, 213, 225, 0.5)',
+                          margin: '8px 12px'
                         }} />
                         <MenuItem 
                           isDisabled={deleteLoading === recognition.id} 
                           onClick={() => handleDeleteRecognition(recognition.id)}
                           style={{
                             color: '#EF4444',
-                            padding: '8px 12px',
-                            borderRadius: '4px',
+                            padding: '12px 16px',
+                            borderRadius: '8px',
                             cursor: deleteLoading === recognition.id ? 'not-allowed' : 'pointer',
                             opacity: deleteLoading === recognition.id ? 0.6 : 1,
                             transition: 'all 0.2s ease',
+                            margin: '4px',
+                            fontSize: '14px',
+                            fontWeight: '500',
                           }}
                           onMouseEnter={(e) => {
                             if (deleteLoading !== recognition.id) {
-                              e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)';
+                              e.currentTarget.style.background = 'rgba(239, 68, 68, 0.15)';
+                              e.currentTarget.style.color = '#DC2626';
                             }
                           }}
                           onMouseLeave={(e) => {
                             e.currentTarget.style.background = 'transparent';
+                            e.currentTarget.style.color = '#EF4444';
                           }}
                         >
-                          <Flex alignItems="center" gap="8px">
+                          <Flex alignItems="center" gap="10px">
                             {deleteLoading === recognition.id ? (
                               <Loader size="small" />
                             ) : (
                               <Trash2 size={16} />
                             )}
-                            <Text style={{ color: 'inherit' }}>{t('delete')}</Text>
+                            <Text style={{ color: 'inherit', fontSize: 'inherit' }}>{t('delete')}</Text>
                           </Flex>
                         </MenuItem>
                       </Menu>
@@ -620,7 +647,7 @@ const AdminRecognitionsClient: React.FC<AdminRecognitionsClientProps> = ({ local
             border: mode === 'dark'
               ? '1px solid rgba(148, 163, 184, 0.2)'
               : '1px solid rgba(203, 213, 225, 0.3)',
-            borderRadius: '16px',
+            borderRadius: '4px',
           }}>
             <BookOpen size={48} style={{ 
               color: mode === 'dark' ? '#60A5FA' : '#3B82F6',
@@ -645,10 +672,12 @@ const AdminRecognitionsClient: React.FC<AdminRecognitionsClientProps> = ({ local
           border: mode === 'dark'
             ? '1px solid rgba(148, 163, 184, 0.2)'
             : '1px solid rgba(203, 213, 225, 0.3)',
-          borderRadius: '16px',
-          overflow: 'hidden',
+          borderRadius: '4px',
+          overflow: 'auto',
+          overflowX: 'auto',
+          minWidth: '100%',
         }}>
-          <Table size="small">
+          <Table size="small" style={{ minWidth: '900px' }}>
             <TableHead>
               <TableRow style={{
                 background: mode === 'dark'
@@ -850,120 +879,145 @@ const AdminRecognitionsClient: React.FC<AdminRecognitionsClientProps> = ({ local
                       </Text>
                     </Flex>
                   </TableCell>
-                  <TableCell style={{ padding: '1rem 0.75rem' }}>
-                    <Flex gap="8px">
+                  <TableCell style={{ padding: '1rem 0.75rem', position: 'relative' }}>
+                    <Flex gap="8px" justifyContent="center">
                       <Menu 
                         trigger={
                           <Button 
                             size="small" 
                             style={{
-                              background: 'transparent',
+                              background: mode === 'dark' 
+                                ? 'rgba(71, 85, 105, 0.8)' 
+                                : 'rgba(248, 250, 252, 0.8)',
                               border: mode === 'dark' 
-                                ? '1px solid rgba(148, 163, 184, 0.3)' 
-                                : '1px solid rgba(203, 213, 225, 0.4)',
-                              borderRadius: '6px',
-                              padding: '6px',
-                              color: mode === 'dark' ? '#94A3B8' : '#64748B',
+                                ? '1px solid rgba(148, 163, 184, 0.4)' 
+                                : '1px solid rgba(203, 213, 225, 0.5)',
+                              borderRadius: '8px',
+                              padding: '8px',
+                              color: mode === 'dark' ? '#E2E8F0' : '#475569',
                               cursor: 'pointer',
+                              minWidth: '32px',
+                              minHeight: '32px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
                             }}
                           >
                             <MoreVertical size={16} />
                           </Button>
                         }
+                        menuAlign="end"
                         style={{
                           background: mode === 'dark'
-                            ? 'linear-gradient(135deg, rgba(51, 65, 85, 0.95) 0%, rgba(71, 85, 105, 0.95) 100%)'
-                            : 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%)',
-                          backdropFilter: 'blur(16px)',
+                            ? 'rgba(30, 41, 59, 0.98)'
+                            : 'rgba(255, 255, 255, 0.98)',
+                          backdropFilter: 'blur(20px)',
                           border: mode === 'dark'
-                            ? '1px solid rgba(148, 163, 184, 0.3)'
-                            : '1px solid rgba(203, 213, 225, 0.4)',
-                          borderRadius: '8px',
+                            ? '1px solid rgba(148, 163, 184, 0.4)'
+                            : '1px solid rgba(203, 213, 225, 0.5)',
+                          borderRadius: '12px',
                           boxShadow: mode === 'dark'
-                            ? '0 10px 40px rgba(0, 0, 0, 0.3)'
-                            : '0 10px 40px rgba(0, 0, 0, 0.15)',
+                            ? '0 20px 60px rgba(0, 0, 0, 0.5), 0 8px 25px rgba(0, 0, 0, 0.3)'
+                            : '0 20px 60px rgba(0, 0, 0, 0.15), 0 8px 25px rgba(0, 0, 0, 0.1)',
+                          minWidth: '160px',
+                          zIndex: 1000,
                         }}
                       >
                         <MenuItem 
                           onClick={() => window.open(getLocalizedPath(`/recognitions`), '_blank')}
                           style={{
-                            color: mode === 'dark' ? '#E2E8F0' : '#1E293B',
-                            padding: '8px 12px',
-                            borderRadius: '4px',
+                            color: mode === 'dark' ? '#F1F5F9' : '#1E293B',
+                            padding: '12px 16px',
+                            borderRadius: '8px',
                             cursor: 'pointer',
                             transition: 'all 0.2s ease',
+                            margin: '4px',
+                            fontSize: '14px',
+                            fontWeight: '500',
                           }}
                           onMouseEnter={(e) => {
                             e.currentTarget.style.background = mode === 'dark'
-                              ? 'rgba(59, 130, 246, 0.2)'
+                              ? 'rgba(59, 130, 246, 0.25)'
                               : 'rgba(59, 130, 246, 0.1)';
+                            e.currentTarget.style.color = mode === 'dark' ? '#FFFFFF' : '#1E293B';
                           }}
                           onMouseLeave={(e) => {
                             e.currentTarget.style.background = 'transparent';
+                            e.currentTarget.style.color = mode === 'dark' ? '#F1F5F9' : '#1E293B';
                           }}
                         >
-                          <Flex alignItems="center" gap="8px">
+                          <Flex alignItems="center" gap="10px">
                             <Eye size={16} />
-                            <Text style={{ color: 'inherit' }}>{t('view')}</Text>
+                            <Text style={{ color: 'inherit', fontSize: 'inherit' }}>{t('view')}</Text>
                           </Flex>
                         </MenuItem>
                         <MenuItem 
                           onClick={() => window.location.href = getLocalizedPath(`/admin/publications/${publication.id}`)}
                           style={{
-                            color: mode === 'dark' ? '#E2E8F0' : '#1E293B',
-                            padding: '8px 12px',
-                            borderRadius: '4px',
+                            color: mode === 'dark' ? '#F1F5F9' : '#1E293B',
+                            padding: '12px 16px',
+                            borderRadius: '8px',
                             cursor: 'pointer',
                             transition: 'all 0.2s ease',
+                            margin: '4px',
+                            fontSize: '14px',
+                            fontWeight: '500',
                           }}
                           onMouseEnter={(e) => {
                             e.currentTarget.style.background = mode === 'dark'
-                              ? 'rgba(59, 130, 246, 0.2)'
+                              ? 'rgba(59, 130, 246, 0.25)'
                               : 'rgba(59, 130, 246, 0.1)';
+                            e.currentTarget.style.color = mode === 'dark' ? '#FFFFFF' : '#1E293B';
                           }}
                           onMouseLeave={(e) => {
                             e.currentTarget.style.background = 'transparent';
+                            e.currentTarget.style.color = mode === 'dark' ? '#F1F5F9' : '#1E293B';
                           }}
                         >
-                          <Flex alignItems="center" gap="8px">
+                          <Flex alignItems="center" gap="10px">
                             <Edit3 size={16} />
-                            <Text style={{ color: 'inherit' }}>{t('edit')}</Text>
+                            <Text style={{ color: 'inherit', fontSize: 'inherit' }}>{t('edit')}</Text>
                           </Flex>
                         </MenuItem>
                         <View style={{
                           height: '1px',
                           background: mode === 'dark' 
-                            ? 'rgba(148, 163, 184, 0.3)' 
-                            : 'rgba(203, 213, 225, 0.4)',
-                          margin: '4px 0'
+                            ? 'rgba(148, 163, 184, 0.4)' 
+                            : 'rgba(203, 213, 225, 0.5)',
+                          margin: '8px 12px'
                         }} />
                         <MenuItem 
                           isDisabled={deleteLoading === publication.id} 
                           onClick={() => handleDeletePublication(publication.id)}
                           style={{
                             color: '#EF4444',
-                            padding: '8px 12px',
-                            borderRadius: '4px',
+                            padding: '12px 16px',
+                            borderRadius: '8px',
                             cursor: deleteLoading === publication.id ? 'not-allowed' : 'pointer',
                             opacity: deleteLoading === publication.id ? 0.6 : 1,
                             transition: 'all 0.2s ease',
+                            margin: '4px',
+                            fontSize: '14px',
+                            fontWeight: '500',
                           }}
                           onMouseEnter={(e) => {
                             if (deleteLoading !== publication.id) {
-                              e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)';
+                              e.currentTarget.style.background = 'rgba(239, 68, 68, 0.15)';
+                              e.currentTarget.style.color = '#DC2626';
                             }
                           }}
                           onMouseLeave={(e) => {
                             e.currentTarget.style.background = 'transparent';
+                            e.currentTarget.style.color = '#EF4444';
                           }}
                         >
-                          <Flex alignItems="center" gap="8px">
+                          <Flex alignItems="center" gap="10px">
                             {deleteLoading === publication.id ? (
                               <Loader size="small" />
                             ) : (
                               <Trash2 size={16} />
                             )}
-                            <Text style={{ color: 'inherit' }}>{t('delete')}</Text>
+                            <Text style={{ color: 'inherit', fontSize: 'inherit' }}>{t('delete')}</Text>
                           </Flex>
                         </MenuItem>
                       </Menu>

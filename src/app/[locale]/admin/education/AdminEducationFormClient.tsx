@@ -136,22 +136,28 @@ const AdminEducationFormClient: React.FC<AdminEducationFormClientProps> = ({
   };
 
   // Subir imagen a S3
-  const uploadImage = async (): Promise<string | null> => {
+  const uploadImage = async (recordId: string): Promise<string | null> => {
     if (!imageFile) return formData.photoKey;
     
     try {
       const fileExtension = imageFile.name.split('.').pop();
       const fileName = `education-${Date.now()}.${fileExtension}`;
+      const path = `education/${fileName}`;
       
       await uploadData({
-        path: `public/${fileName}`,
+        path,
         data: imageFile,
         options: {
+          metadata: {
+            'recordid': recordId,
+            'modelname': 'Education',
+            'fieldname': 'photoKey',
+          },
           contentType: imageFile.type,
         }
       });
 
-      return fileName;
+      return path;
     } catch (err) {
       console.error('Error subiendo imagen:', err);
       throw new Error('Error al subir la imagen');
@@ -197,9 +203,6 @@ const AdminEducationFormClient: React.FC<AdminEducationFormClientProps> = ({
       setError(null);
       setSuccess(null);
 
-      // Subir imagen si hay una nueva
-      const photoKey = await uploadImage();
-
       const educationData = {
         degree: formData.degree.trim(),
         institution: formData.institution.trim(),
@@ -209,18 +212,35 @@ const AdminEducationFormClient: React.FC<AdminEducationFormClientProps> = ({
         location: formData.location.trim() || null,
         recognition: formData.recognition.length > 0 ? formData.recognition : null,
         description: formData.description.trim() || null,
-        photoKey: photoKey || null,
+        photoKey: formData.photoKey, // Will be updated after image upload
       };
 
       if (mode === 'create') {
-        await client.models.Education.create(educationData as CreateEducationInput, {
+        const result = await client.models.Education.create(educationData as CreateEducationInput, {
           authMode: 'userPool'
         });
+        
+        // Upload image with record ID for Lambda processing
+        if (imageFile && result.data?.id) {
+          const photoKey = await uploadImage(result.data.id);
+          // Update record with photo key
+          await client.models.Education.update({
+            id: result.data.id,
+            photoKey
+          } as UpdateEducationInput, {
+            authMode: 'userPool'
+          });
+        }
+        
         setSuccess('Educación creada exitosamente');
       } else {
+        // For edit mode, upload image first if there's a new one
+        const photoKey = imageFile ? await uploadImage(educationId!) : educationData.photoKey;
+        
         await client.models.Education.update({
           id: educationId!,
-          ...educationData
+          ...educationData,
+          photoKey
         } as UpdateEducationInput, {
           authMode: 'userPool'
         });

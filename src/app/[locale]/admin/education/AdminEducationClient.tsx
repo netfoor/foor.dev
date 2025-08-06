@@ -22,6 +22,7 @@ import { useTheme } from '@/hooks/useTheme';
 import { useTranslation, useLocalizedPath } from '@/lib/i18n/client';
 import type { SupportedLocale } from '@/lib/i18n/types';
 import S3Cleanup from '@/lib/utils/s3-cleanup';
+import { getImageUrl as getImageUrlHelper } from '@/lib/utils/image-helpers';
 
 // Tipos para la educación
 type Education = Schema["Education"]["type"];
@@ -49,23 +50,9 @@ const AdminEducationClient: React.FC<AdminEducationClientProps> = ({ locale }) =
   // Función para obtener URL de imagen desde S3
   const getImageUrl = async (photoKey: string | null | undefined): Promise<string | null> => {
     if (!photoKey) return null;
-    
-    try {
-      const cleanKey = photoKey.startsWith('public/') ? photoKey.substring(7) : photoKey;
-      const { url } = await getUrl({
-        path: `public/${cleanKey}`,
-        options: {
-          validateObjectExistence: false,
-          expiresIn: 3600
-        }
-      });
-      return url.toString();
-    } catch (err) {
-      console.warn(`No se pudo obtener la imagen para la clave: ${photoKey}`, err);
-      return null;
-    }
+    return await getImageUrlHelper(photoKey);
   };
-
+  
   // Función para cargar educación
   const loadEducation = async () => {
     try {

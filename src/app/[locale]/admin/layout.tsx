@@ -41,13 +41,12 @@ export default function AdminLayout({
 
   const menuItems = [
     { href: '/admin', label: t('dashboard'), icon: LayoutDashboard },
+    { href: '/admin/about', label: t('sections.about'), icon: Users },
     { href: '/admin/projects', label: t('sections.projects'), icon: FolderOpen },
     { href: '/admin/certifications', label: t('sections.certifications'), icon: Award },
     { href: '/admin/recognitions', label: t('sections.recognitions'), icon: FileText },
     { href: '/admin/education', label: t('sections.education'), icon: GraduationCap },
-    { href: '/admin/experiences', label: t('sections.experiences'), icon: Briefcase },
     { href: '/admin/languages', label: t('sections.languages'), icon: Languages },
-    { href: '/admin/about/profile', label: t('users'), icon: Users },
     { href: '/admin/settings', label: t('settings'), icon: Settings },
   ];
 

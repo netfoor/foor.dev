@@ -1,519 +1,662 @@
 'use client';
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, memo } from 'react';
 import { 
   View, 
   Flex, 
   Text, 
   Button, 
-  Card, 
-  Heading,
+  Card,
   TextField,
   TextAreaField,
+  SwitchField,
   Badge,
   Alert,
-  Divider
+  Divider,
+  Heading
 } from '@aws-amplify/ui-react';
+import '../../../admin.css';
 import { 
   ArrowLeft, 
   Save, 
-  Image as ImageIcon,
+  User,
   X,
-  User
+  Plus
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { generateClient } from 'aws-amplify/data';
-import { uploadData } from 'aws-amplify/storage';
 import type { Schema } from '../../../../../../../amplify/data/resource';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation, useLocalizedPath } from '@/lib/i18n/client';
-import type { SupportedLocale } from '@/lib/i18n/types';
+import { FileUploadInput } from '../../../projects/new/FileUploadInput';
 import { uploadImageWithMetadata } from '@/lib/utils/image-helpers';
 
-// Estilos personalizados para el formulario
-const createProfileStyles = `
-  .create-profile-form .amplify-field {
-    margin-bottom: 1rem;
+const CreateProfileClient: React.FC = () => {
+  interface ProfileFormData {
+    name: string;
+    currentPosition: string;
+    description: string;
+    mission: string;
+    vision: string;
+    philosophy: string;
+    linkedinUrl: string;
+    githubUrl: string;
+    twitterUrl: string;
+    emailContact: string;
+    flags: string[];
+    isActive: boolean;
   }
   
-  .create-profile-form .amplify-field > label {
-    color: var(--form-label-color) !important;
-    font-weight: 600 !important;
-    margin-bottom: 0.5rem !important;
-    display: block !important;
-    font-size: 0.95rem !important;
-  }
-  
-  .create-profile-form .amplify-input,
-  .create-profile-form .amplify-textarea {
-    background-color: var(--form-input-background) !important;
-    border: 1px solid var(--form-input-border) !important;
-    color: var(--form-input-color) !important;
-    border-radius: 6px !important;
-    padding: 0.75rem !important;
-    font-size: 0.95rem !important;
-    transition: all 0.2s ease !important;
-  }
-  
-  .create-profile-form .amplify-input:focus,
-  .create-profile-form .amplify-textarea:focus {
-    border-color: var(--amplify-colors-brand-primary-80) !important;
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1) !important;
-    outline: none !important;
-  }
+  const [formData, setFormData] = useState<ProfileFormData>({
+      name: '',
+      currentPosition: '',
+      description: '',
+      mission: '',
+      vision: '',
+      philosophy: '',
+      linkedinUrl: '',
+      githubUrl: '',
+      twitterUrl: '',
+      emailContact: '',
+      flags: [],
+      isActive: true,
+    });
 
-  .image-upload-container {
-    border: 2px dashed var(--form-input-border);
-    border-radius: 8px;
-    padding: 2rem;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    background-color: var(--form-input-background);
-  }
+  const [profileImage, setProfileImage] = useState<File | null>(null);
+  const [profileImagePreview, setProfileImagePreview] = useState<string | null>(null);
+  const [flagInput, setFlagInput] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  .image-upload-container:hover {
-    border-color: var(--amplify-colors-brand-primary-80);
-    background-color: var(--amplify-colors-brand-primary-10);
-  }
-
-  .image-preview {
-    position: relative;
-    display: inline-block;
-    margin-top: 1rem;
-  }
-
-  .image-preview img {
-    max-width: 200px;
-    max-height: 200px;
-    border-radius: 8px;
-    object-fit: cover;
-  }
-
-  .image-remove-button {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    background-color: rgba(239, 68, 68, 0.9);
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 32px;
-    height: 32px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-  }
-
-  .image-remove-button:hover {
-    background-color: rgba(239, 68, 68, 1);
-    transform: scale(1.1);
-  }
-`;
-
-// Generar el cliente de Amplify
-const client = generateClient<Schema>();
-
-interface ProfileFormData {
-  name: string;
-  currentPosition: string;
-  description: string;
-  mission: string;
-  vision: string;
-  philosophy: string;
-  linkedinUrl: string;
-  githubUrl: string;
-  twitterUrl: string;
-  emailContact: string;
-  flags: string[];
-}
-
-interface CreateProfileClientProps {
-  locale: SupportedLocale;
-}
-
-function CreateProfileClient({ locale }: CreateProfileClientProps): React.JSX.Element {  
   const { mode } = useTheme();
   const { t } = useTranslation('admin');
-  const router = useRouter();
   const getLocalizedPath = useLocalizedPath();
+  const router = useRouter();
 
-  // Estados para el formulario
-  const [formData, setFormData] = useState<ProfileFormData>({
-    name: '',
-    currentPosition: '',
-    description: '',
-    mission: '',
-    vision: '',
-    philosophy: '',
-    linkedinUrl: '',
-    githubUrl: '',
-    twitterUrl: '',
-    emailContact: '',
-    flags: []
-  });
-
-  // Estados para archivo de imagen
-  const [profileImage, setProfileImage] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string>('');
-
-  // Estados de la UI
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string>('');
-  const [success, setSuccess] = useState<string>('');
-
-  // Manejadores de formulario
-  const handleInputChange = (field: keyof ProfileFormData, value: string | string[]) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
-  };
-
-  // Manejador de subida de imagen
-  const handleImageChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      if (file.size > 5 * 1024 * 1024) { // 5MB limit
-        setError(t('about.profile.image_too_large'));
-        return;
-      }
-
-      if (!file.type.startsWith('image/')) {
-        setError(t('about.profile.invalid_image_format'));
-        return;
-      }
-
-      setProfileImage(file);
-      
-      // Crear preview
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setImagePreview(e.target?.result as string);
-      };
-      reader.readAsDataURL(file);
-      setError('');
-    }
-  }, [t]);
-
-  // Remover imagen
-  const removeImage = useCallback(() => {
-    setProfileImage(null);
-    setImagePreview('');
+  const handleInputChange = useCallback((field: string, value: any) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
   }, []);
 
-  // Subir imagen a S3
-  const uploadImageToS3 = async (file: File, profileId: string): Promise<string> => {
-    try {
-      // Usar el helper que agrega metadatos para Lambda
-      return await uploadImageWithMetadata(
-        file,
-        profileId,
-        'Profile',
-        'profilePhotoKey'
-      );
-    } catch (uploadError) {
-      console.error('❌ Error uploading image to S3:', uploadError);
-      throw new Error(t('about.profile.error_uploading_image'));
-    }
-  };
-
-  // Enviar formulario
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!formData.name.trim() || !formData.currentPosition.trim()) {
-      setError(t('about.profile.required_fields_missing'));
+  const handleProfileImageSelect = useCallback((file: File) => {
+    if (file.size > 5 * 1024 * 1024) {
+      setError(t('certifications.image_size_error'));
       return;
     }
 
-    setIsLoading(true);
-    setError('');
-    setSuccess('');
+    setProfileImage(file);
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setProfileImagePreview(e.target?.result as string);
+    };
+    reader.readAsDataURL(file);
+  }, [t]);
 
+  const removeProfileImage = useCallback(() => {
+    setProfileImage(null);
+    setProfileImagePreview(null);
+  }, []);
+
+  const addFlag = useCallback(() => {
+    if (flagInput.trim() && !formData.flags?.includes(flagInput.trim())) {
+      handleInputChange('flags', [...(formData.flags || []), flagInput.trim()]);
+      setFlagInput('');
+    }
+  }, [flagInput, formData.flags, handleInputChange]);
+
+  const removeFlag = useCallback((flagToRemove: string) => {
+    handleInputChange('flags', formData.flags?.filter(flag => flag !== flagToRemove) || []);
+  }, [formData.flags, handleInputChange]);
+
+  const uploadImage = async (file: File, profileId: string): Promise<string> => {
     try {
-      // Primero crear el perfil sin imagen
-      const response = await client.models.Profile.create({
-        name: formData.name.trim(),
-        currentPosition: formData.currentPosition.trim(),
-        description: formData.description.trim(),
-        mission: formData.mission.trim() || undefined,
-        vision: formData.vision.trim() || undefined,
-        philosophy: formData.philosophy.trim() || undefined,
-        linkedinUrl: formData.linkedinUrl.trim() || undefined,
-        githubUrl: formData.githubUrl.trim() || undefined,
-        twitterUrl: formData.twitterUrl.trim() || undefined,
-        emailContact: formData.emailContact.trim() || undefined,
-        flags: formData.flags.length > 0 ? formData.flags : undefined,
-        isActive: true, // Marcar como activo por defecto
-      }, {
-        authMode: 'userPool'
-      });
-
-      if (!response.data) {
-        throw new Error(t('about.profile.error_creating'));
-      }
-      
-      const profileId = response.data.id;
-
-      // Subir imagen si existe
-      if (profileImage && profileId) {
-        const profilePhotoKey = await uploadImageToS3(profileImage, profileId);
-        
-        // Actualizar el perfil con la clave de imagen
-        await client.models.Profile.update({
-          id: profileId,
-          profilePhotoKey
-        }, {
-          authMode: 'userPool'
-        });
-      }
-
-      if (response.data) {
-        console.log('✅ Profile created successfully:', response.data);
-        setSuccess(t('about.profile.created_successfully'));
-        
-        // Redirect después de un delay
-        setTimeout(() => {
-          router.push(getLocalizedPath('/admin/about'));
-        }, 2000);
-      }
-    } catch (createError) {
-      console.error('❌ Error creating profile:', createError);
-      setError(`${t('about.profile.error_creating')}: ${createError instanceof Error ? createError.message : t('about.unknown_error')}`);
-    } finally {
-      setIsLoading(false);
+      return await uploadImageWithMetadata(file, profileId, 'Profile', 'profilePhotoKey');
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      throw new Error('Error uploading profile image');
     }
   };
 
-  // Insertar estilos en el DOM
-  React.useEffect(() => {
-    const styleElement = document.createElement('style');
-    styleElement.textContent = createProfileStyles;
-    document.head.appendChild(styleElement);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     
-    return () => {
-      document.head.removeChild(styleElement);
-    };
-  }, []);
+    if (!formData.name.trim()) {
+      setError(t('about.error_title_required'));
+      return;
+    }
+
+    if (!formData.currentPosition.trim()) {
+      setError(t('about.error_issuer_required'));
+      return;
+    }
+
+    if (!formData.description.trim()) {
+      setError(t('about.error_description_required'));
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError(null);
+
+      const client = generateClient<Schema>();
+
+      const profileData = {
+        name: formData.name.trim(),
+        currentPosition: formData.currentPosition.trim(),
+        description: formData.description.trim(),
+        mission: formData.mission?.trim() || undefined,
+        vision: formData.vision?.trim() || undefined,
+        philosophy: formData.philosophy?.trim() || undefined,
+        linkedinUrl: formData.linkedinUrl?.trim() || undefined,
+        githubUrl: formData.githubUrl?.trim() || undefined,
+        twitterUrl: formData.twitterUrl?.trim() || undefined,
+        emailContact: formData.emailContact?.trim() || undefined,
+        flags: formData.flags || [],
+        isActive: formData.isActive || true,
+      };
+
+      const createResponse = await client.models.Profile.create(profileData);
+      
+      if (createResponse.errors) {
+        throw new Error(createResponse.errors[0].message);
+      }
+
+      const profileId = createResponse.data?.id;
+      
+      if (!profileId) {
+        throw new Error(t('about.error_creating_profile'));
+      }
+
+      if (profileImage) {
+        const profilePhotoKey = await uploadImage(profileImage, profileId);
+        await client.models.Profile.update({
+          id: profileId,
+          profilePhotoKey
+        });
+      }
+
+      console.log('✅ Perfil creado exitosamente:', createResponse.data);
+      router.push(getLocalizedPath('/admin/about'));
+      
+    } catch (err) {
+      console.error('Error creating profile:', err);
+      setError(`${t('about.error_creating_profile')}: ${err instanceof Error ? err.message : t('about.unknown_error')}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const cssVariables = {
+    '--form-label-color': mode === 'dark' ? '#F1F5F9' : '#1E293B',
+    '--form-input-bg': mode === 'dark' ? 'rgba(51, 65, 85, 0.8)' : 'rgba(255, 255, 255, 0.9)',
+    '--form-input-border': mode === 'dark' ? 'rgba(148, 163, 184, 0.3)' : 'rgba(203, 213, 225, 0.4)',
+    '--form-input-text': mode === 'dark' ? '#F1F5F9' : '#1E293B',
+    '--form-placeholder-color': mode === 'dark' ? '#9CA3AF' : '#6B7280',
+    '--form-focus-border': mode === 'dark' ? '#3B82F6' : '#2563EB',
+    '--form-focus-shadow': mode === 'dark' ? 'rgba(59, 130, 246, 0.3)' : 'rgba(37, 99, 235, 0.2)',
+    '--form-description-color': mode === 'dark' ? '#CBD5E1' : '#64748B',
+  } as React.CSSProperties;
 
   return (
-    <View padding="large" className="create-profile-form">
-      <Flex direction="column" gap="large" maxWidth="800px">
-        {/* Header */}
-        <Flex alignItems="center" gap="medium">
+    <View style={cssVariables}>
+      <style dangerouslySetInnerHTML={{ __html: `
+        .create-profile-form .amplify-field {
+          margin-bottom: 1rem;
+        }
+        
+        .create-profile-form .amplify-field > label {
+          color: var(--form-label-color) !important;
+          font-weight: 600 !important;
+          margin-bottom: 0.5rem !important;
+          display: block !important;
+          font-size: 0.95rem !important;
+        }
+        
+        .create-profile-form .amplify-input,
+        .create-profile-form .amplify-textarea,
+        .create-profile-form .amplify-select select {
+          background-color: var(--form-input-bg) !important;
+          border: 1px solid var(--form-input-border) !important;
+          color: var(--form-input-text) !important;
+          border-radius: 6px !important;
+          padding: 0.75rem !important;
+          font-size: 0.9rem !important;
+        }
+        
+        .create-profile-form .amplify-input::placeholder,
+        .create-profile-form .amplify-textarea::placeholder {
+          color: var(--form-placeholder-color) !important;
+          opacity: 0.8 !important;
+          font-weight: 400 !important;
+        }
+        
+        .create-profile-form .amplify-input:focus,
+        .create-profile-form .amplify-textarea:focus,
+        .create-profile-form .amplify-select select:focus {
+          border-color: var(--form-focus-border) !important;
+          box-shadow: 0 0 0 2px var(--form-focus-shadow) !important;
+          outline: none !important;
+        }
+        
+        .create-profile-form .amplify-field-group__control .amplify-field__description {
+          color: var(--form-description-color) !important;
+          font-size: 0.8rem !important;
+          margin-top: 0.25rem !important;
+          font-weight: 500 !important;
+        }
+      ` }} />
+
+      {/* Header */}
+      <Flex direction="column" gap="1rem" marginBottom="2rem">
+        <Flex alignItems="center" gap="1rem">
           <Button
             variation="link"
             onClick={() => router.push(getLocalizedPath('/admin/about'))}
-            size="small"
+            style={{
+              color: mode === 'dark' ? '#93C5FD' : '#3B82F6',
+              padding: '0.5rem',
+            }}
           >
-            <ArrowLeft size={16} />
+            <ArrowLeft size={20} />
           </Button>
-          <View>
-            <Heading level={2}>{t('about.profile.create')}</Heading>
-            <Text color="font.tertiary">{t('about.profile.create_description')}</Text>
-          </View>
+          
+          <Heading level={1} style={{
+            color: mode === 'dark' ? '#F1F5F9' : '#1E293B',
+            fontSize: '1.875rem',
+            fontWeight: '700'
+          }}>
+            {t('about.create_profile')}
+          </Heading>
         </Flex>
+      </Flex>
 
-        {/* Alerts */}
-        {error && (
-          <Alert variation="error" isDismissible onDismiss={() => setError('')}>
-            {error}
-          </Alert>
-        )}
+      {/* Error Alert */}
+      {error && (
+        <Alert variation="error" marginBottom="1rem">
+          {error}
+        </Alert>
+      )}
 
-        {success && (
-          <Alert variation="success">
-            {success}
-          </Alert>
-        )}
+      {/* Formulario */}
+      <form onSubmit={handleSubmit} className="create-profile-form">
+        <Flex direction="column" gap="2rem">
+          
+          {/* Información Básica */}
+          <Card style={{
+            backgroundColor: mode === 'dark' ? 'rgba(51, 65, 85, 0.8)' : 'rgba(255, 255, 255, 0.9)',
+            border: mode === 'dark' ? '1px solid rgba(148, 163, 184, 0.1)' : '1px solid rgba(203, 213, 225, 0.2)',
+            borderRadius: '12px'
+          }}>
+            <View padding="1.5rem">
+              <Heading level={3} marginBottom="1rem" style={{
+                color: mode === 'dark' ? '#F1F5F9' : '#1E293B',
+                fontSize: '1.125rem'
+              }}>
+                {t('about.basic_info')}
+              </Heading>
 
-        {/* Form */}
-        <Card padding="large">
-          <form onSubmit={handleSubmit}>
-            <Flex direction="column" gap="large">
-              
-              {/* Profile Image Upload */}
-              <View>
-                <Text fontSize="medium" fontWeight="semibold" marginBottom="small">
-                  {t('about.profile.profile_image')}
-                </Text>
-                
-                {!imagePreview ? (
-                  <div className="image-upload-container" onClick={() => document.getElementById('profile-image-input')?.click()}>
-                    <User size={48} style={{ margin: '0 auto 16px', opacity: 0.5 }} />
-                    <Text fontSize="medium" color="font.secondary" marginBottom="small">
-                      {t('about.profile.click_to_upload_image')}
-                    </Text>
-                    <Text fontSize="small" color="font.tertiary">
-                      {t('about.profile.image_requirements')}
-                    </Text>
-                  </div>
-                ) : (
-                  <div className="image-preview">
-                    <img src={imagePreview} alt="Profile preview" />
-                    <button
-                      type="button"
-                      className="image-remove-button"
-                      onClick={removeImage}
-                      title={t('about.profile.remove_image')}
-                    >
-                      <X size={16} />
-                    </button>
-                  </div>
-                )}
-                
-                <input
-                  id="profile-image-input"
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  style={{ display: 'none' }}
+              <Flex direction="column" gap="1rem">
+                <TextField
+                  label={`${t('about.name_label')} *`}
+                  placeholder={t('about.name_placeholder')}
+                  value={formData.name}
+                  onChange={(e) => handleInputChange('name', e.target.value)}
+                  required
                 />
-              </View>
 
-              <Divider />
-
-              {/* Basic Information */}
-              <Flex direction="column" gap="medium">
-                <Text fontSize="large" fontWeight="semibold">
-                  {t('about.profile.basic_information')}
-                </Text>
-
-                <Flex direction={{ base: 'column', medium: 'row' }} gap="medium">
-                  <TextField
-                    label={t('about.profile.name')}
-                    value={formData.name}
-                    onChange={(e) => handleInputChange('name', e.target.value)}
-                    required
-                    placeholder={t('about.profile.name_placeholder')}
-                    flex="1"
-                  />
-                  <TextField
-                    label={t('about.profile.current_position')}
-                    value={formData.currentPosition}
-                    onChange={(e) => handleInputChange('currentPosition', e.target.value)}
-                    required
-                    placeholder={t('about.profile.position_placeholder')}
-                    flex="1"
-                  />
-                </Flex>
-
-                <TextAreaField
-                  label={t('about.profile.description')}
-                  value={formData.description}
-                  onChange={(e) => handleInputChange('description', e.target.value)}
-                  placeholder={t('about.profile.description_placeholder')}
-                  rows={4}
+                <TextField
+                  label={`${t('about.current_position_label')} *`}
+                  placeholder={t('about.current_position_placeholder')}
+                  value={formData.currentPosition}
+                  onChange={(e) => handleInputChange('currentPosition', e.target.value)}
                   required
                 />
 
                 <TextAreaField
-                  label={t('about.profile.mission')}
-                  value={formData.mission}
+                  label={`${t('about.description_label')} *`}
+                  placeholder={t('about.description_placeholder')}
+                  value={formData.description || ''}
+                  onChange={(e) => handleInputChange('description', e.target.value)}
+                  rows={4}
+                  required
+                />
+              </Flex>
+            </View>
+          </Card>
+
+          {/* Foto de Perfil */}
+          <Card style={{
+            backgroundColor: mode === 'dark' ? 'rgba(51, 65, 85, 0.8)' : 'rgba(255, 255, 255, 0.9)',
+            border: mode === 'dark' ? '1px solid rgba(148, 163, 184, 0.1)' : '1px solid rgba(203, 213, 225, 0.2)',
+            borderRadius: '12px'
+          }}>
+            <View padding="1.5rem">
+              <Heading level={3} marginBottom="1rem" style={{
+                color: mode === 'dark' ? '#F1F5F9' : '#1E293B',
+                fontSize: '1.125rem'
+              }}>
+                {t('about.profile_photo')}
+              </Heading>
+
+              {profileImagePreview ? (
+                <View>
+                  <Text fontSize="0.875rem" marginBottom="0.5rem" style={{
+                    color: mode === 'dark' ? '#CBD5E1' : '#64748B'
+                  }}>
+                    {t('about.current_photo')}
+                  </Text>
+                  <View style={{ position: 'relative', display: 'inline-block' }}>
+                    <img
+                      src={profileImagePreview}
+                      alt="Profile preview"
+                      style={{
+                        width: '200px',
+                        height: '200px',
+                        objectFit: 'cover',
+                        borderRadius: '8px',
+                        border: mode === 'dark' ? '1px solid rgba(148, 163, 184, 0.2)' : '1px solid rgba(203, 213, 225, 0.3)'
+                      }}
+                    />
+                    <Button
+                      onClick={removeProfileImage}
+                      style={{
+                        position: 'absolute',
+                        top: '8px',
+                        right: '8px',
+                        backgroundColor: 'rgba(239, 68, 68, 0.9)',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '6px',
+                        width: '28px',
+                        height: '28px',
+                        padding: '0',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}
+                    >
+                      <X size={16} />
+                    </Button>
+                  </View>
+                </View>
+              ) : (
+                <FileUploadInput
+                  onFileSelect={handleProfileImageSelect}
+                  accept="image/*"
+                >
+                  <Card
+                    style={{
+                      backgroundColor: mode === 'dark' ? 'rgba(71, 85, 105, 0.5)' : 'rgba(241, 245, 249, 0.8)',
+                      border: `2px dashed ${mode === 'dark' ? 'rgba(148, 163, 184, 0.3)' : 'rgba(203, 213, 225, 0.5)'}`,
+                      borderRadius: '12px',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease'
+                    }}
+                  >
+                    <View padding="2rem" textAlign="center">
+                      <User size={48} color={mode === 'dark' ? '#9CA3AF' : '#6B7280'} style={{ margin: '0 auto 1rem' }} />
+                      <Text style={{
+                        color: mode === 'dark' ? '#CBD5E1' : '#64748B',
+                        fontSize: '1rem',
+                        fontWeight: '500'
+                      }}>
+                        {t('about.add_new_photo')}
+                      </Text>
+                      <Text style={{
+                        color: mode === 'dark' ? '#9CA3AF' : '#6B7280',
+                        fontSize: '0.875rem',
+                        marginTop: '0.5rem'
+                      }}>
+                        {t('certifications.max_5mb')}
+                      </Text>
+                    </View>
+                  </Card>
+                </FileUploadInput>
+              )}
+            </View>
+          </Card>
+
+          {/* Información Adicional */}
+          <Card style={{
+            backgroundColor: mode === 'dark' ? 'rgba(51, 65, 85, 0.8)' : 'rgba(255, 255, 255, 0.9)',
+            border: mode === 'dark' ? '1px solid rgba(148, 163, 184, 0.1)' : '1px solid rgba(203, 213, 225, 0.2)',
+            borderRadius: '12px'
+          }}>
+            <View padding="1.5rem">
+              <Heading level={3} marginBottom="1rem" style={{
+                color: mode === 'dark' ? '#F1F5F9' : '#1E293B',
+                fontSize: '1.125rem'
+              }}>
+                {t('about.additional_info')}
+              </Heading>
+
+              <Flex direction="column" gap="1rem">
+                <TextAreaField
+                  label={t('about.mission_label')}
+                  placeholder={t('about.mission_placeholder')}
+                  value={formData.mission || ''}
                   onChange={(e) => handleInputChange('mission', e.target.value)}
-                  placeholder={t('about.profile.mission_placeholder')}
                   rows={3}
                 />
 
                 <TextAreaField
-                  label={t('about.profile.vision')}
-                  value={formData.vision}
+                  label={t('about.vision_label')}
+                  placeholder={t('about.vision_placeholder')}
+                  value={formData.vision || ''}
                   onChange={(e) => handleInputChange('vision', e.target.value)}
-                  placeholder={t('about.profile.vision_placeholder')}
                   rows={3}
                 />
 
                 <TextAreaField
-                  label={t('about.profile.philosophy')}
-                  value={formData.philosophy}
+                  label={t('about.philosophy_label')}
+                  placeholder={t('about.philosophy_placeholder')}
+                  value={formData.philosophy || ''}
                   onChange={(e) => handleInputChange('philosophy', e.target.value)}
-                  placeholder={t('about.profile.philosophy_placeholder')}
                   rows={3}
                 />
               </Flex>
+            </View>
+          </Card>
 
-              <Divider />
+          {/* Enlaces Sociales */}
+          <Card style={{
+            backgroundColor: mode === 'dark' ? 'rgba(51, 65, 85, 0.8)' : 'rgba(255, 255, 255, 0.9)',
+            border: mode === 'dark' ? '1px solid rgba(148, 163, 184, 0.1)' : '1px solid rgba(203, 213, 225, 0.2)',
+            borderRadius: '12px'
+          }}>
+            <View padding="1.5rem">
+              <Heading level={3} marginBottom="1rem" style={{
+                color: mode === 'dark' ? '#F1F5F9' : '#1E293B',
+                fontSize: '1.125rem'
+              }}>
+                {t('about.social_links')}
+              </Heading>
 
-              {/* Contact Information */}
-              <Flex direction="column" gap="medium">
-                <Text fontSize="large" fontWeight="semibold">
-                  {t('about.profile.contact_information')}
-                </Text>
+              <Flex direction="column" gap="1rem">
+                <TextField
+                  label={t('about.linkedin_url_label')}
+                  placeholder={t('about.linkedin_url_placeholder')}
+                  value={formData.linkedinUrl || ''}
+                  onChange={(e) => handleInputChange('linkedinUrl', e.target.value)}
+                />
 
                 <TextField
-                  label={t('about.profile.email_contact')}
-                  value={formData.emailContact}
+                  label={t('about.github_url_label')}
+                  placeholder={t('about.github_url_placeholder')}
+                  value={formData.githubUrl || ''}
+                  onChange={(e) => handleInputChange('githubUrl', e.target.value)}
+                />
+
+                <TextField
+                  label={t('about.twitter_url_label')}
+                  placeholder={t('about.twitter_url_placeholder')}
+                  value={formData.twitterUrl || ''}
+                  onChange={(e) => handleInputChange('twitterUrl', e.target.value)}
+                />
+
+                <TextField
+                  label={t('about.email_contact_label')}
+                  placeholder={t('about.email_contact_placeholder')}
+                  value={formData.emailContact || ''}
                   onChange={(e) => handleInputChange('emailContact', e.target.value)}
                   type="email"
-                  placeholder={t('about.profile.email_placeholder')}
                 />
               </Flex>
+            </View>
+          </Card>
 
-              <Divider />
+          {/* Etiquetas Profesionales */}
+          <Card style={{
+            backgroundColor: mode === 'dark' ? 'rgba(51, 65, 85, 0.8)' : 'rgba(255, 255, 255, 0.9)',
+            border: mode === 'dark' ? '1px solid rgba(148, 163, 184, 0.1)' : '1px solid rgba(203, 213, 225, 0.2)',
+            borderRadius: '12px'
+          }}>
+            <View padding="1.5rem">
+              <Heading level={3} marginBottom="1rem" style={{
+                color: mode === 'dark' ? '#F1F5F9' : '#1E293B',
+                fontSize: '1.125rem'
+              }}>
+                {t('about.flags')}
+              </Heading>
 
-              {/* Social Links */}
-              <Flex direction="column" gap="medium">
-                <Text fontSize="large" fontWeight="semibold">
-                  {t('about.profile.social_links')}
-                </Text>
-
-                <Flex direction={{ base: 'column', medium: 'row' }} gap="medium">
+              <Flex direction="column" gap="1rem">
+                <Flex gap="0.5rem">
                   <TextField
-                    label={t('about.profile.linkedin')}
-                    value={formData.linkedinUrl}
-                    onChange={(e) => handleInputChange('linkedinUrl', e.target.value)}
-                    placeholder={t('about.profile.linkedin_placeholder')}
-                    flex="1"
+                    label=""
+                    placeholder={t('about.flag_placeholder')}
+                    value={flagInput}
+                    onChange={(e) => setFlagInput(e.target.value)}
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        addFlag();
+                      }
+                    }}
+                    style={{ flex: 1 }}
                   />
-                  <TextField
-                    label={t('about.profile.github')}
-                    value={formData.githubUrl}
-                    onChange={(e) => handleInputChange('githubUrl', e.target.value)}
-                    placeholder={t('about.profile.github_placeholder')}
-                    flex="1"
-                  />
+                  <Button
+                    type="button"
+                    onClick={addFlag}
+                    variation="primary"
+                    style={{
+                      backgroundColor: mode === 'dark' ? '#3B82F6' : '#2563EB',
+                      alignSelf: 'flex-end'
+                    }}
+                  >
+                    <Plus size={16} />
+                    {t('about.add_flag')}
+                  </Button>
                 </Flex>
 
-                <TextField
-                  label={t('about.profile.twitter')}
-                  value={formData.twitterUrl}
-                  onChange={(e) => handleInputChange('twitterUrl', e.target.value)}
-                  placeholder={t('about.profile.twitter_placeholder')}
-                />
-              </Flex>
-
-              <Divider />
-
-              {/* Submit Buttons */}
-              <Flex direction={{ base: 'column', medium: 'row' }} gap="medium" justifyContent="flex-end">
-                <Button
-                  variation="link"
-                  onClick={() => router.push(getLocalizedPath('/admin/about'))}
-                  isDisabled={isLoading}
-                >
-                  {t('about.profile.cancel')}
-                </Button>
-                <Button 
-                  type="submit"
-                  variation="primary"
-                  isLoading={isLoading}
-                  loadingText={t('about.profile.creating')}
-                >
-                  <Flex alignItems="center" gap="xs">
-                    <Save size={16} />
-                    {t('about.profile.create_profile')}
+                {formData.flags && formData.flags.length > 0 && (
+                  <Flex wrap="wrap" gap="0.5rem">
+                    {formData.flags.map((flag, index) => (
+                      <Badge
+                        key={index}
+                        style={{
+                          backgroundColor: mode === 'dark' ? 'rgba(59, 130, 246, 0.2)' : 'rgba(37, 99, 235, 0.1)',
+                          color: mode === 'dark' ? '#93C5FD' : '#2563EB',
+                          border: mode === 'dark' ? '1px solid rgba(59, 130, 246, 0.3)' : '1px solid rgba(37, 99, 235, 0.2)',
+                          borderRadius: '6px',
+                          padding: '0.5rem 1rem',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.5rem'
+                        }}
+                      >
+                        {flag}
+                        <Button
+                          type="button"
+                          onClick={() => removeFlag(flag)}
+                          style={{
+                            backgroundColor: 'transparent',
+                            border: 'none',
+                            color: 'inherit',
+                            padding: '0',
+                            width: '16px',
+                            height: '16px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                          }}
+                        >
+                          <X size={12} />
+                        </Button>
+                      </Badge>
+                    ))}
                   </Flex>
-                </Button>
+                )}
               </Flex>
-            </Flex>
-          </form>
-        </Card>
-      </Flex>
+            </View>
+          </Card>
+
+          {/* Estado */}
+          <Card style={{
+            backgroundColor: mode === 'dark' ? 'rgba(51, 65, 85, 0.8)' : 'rgba(255, 255, 255, 0.9)',
+            border: mode === 'dark' ? '1px solid rgba(148, 163, 184, 0.1)' : '1px solid rgba(203, 213, 225, 0.2)',
+            borderRadius: '12px'
+          }}>
+            <View padding="1.5rem">
+              <Heading level={3} marginBottom="1rem" style={{
+                color: mode === 'dark' ? '#F1F5F9' : '#1E293B',
+                fontSize: '1.125rem'
+              }}>
+                {t('about.status')}
+              </Heading>
+
+              <SwitchField
+                label={t('about.is_active_label')}
+                isChecked={formData.isActive}
+                onChange={(e) => handleInputChange('isActive', e.target.checked)}
+                labelPosition="end"
+              />
+              <Text fontSize="0.875rem" style={{
+                color: mode === 'dark' ? '#9CA3AF' : '#6B7280',
+                marginTop: '0.25rem'
+              }}>
+                {t('about.is_active_description')}
+              </Text>
+            </View>
+          </Card>
+
+        </Flex>
+
+        {/* Botones de acción */}
+        <Flex 
+          justifyContent="space-between" 
+          alignItems="center" 
+          marginTop="2rem"
+          gap="1rem"
+          direction={{ base: 'column', medium: 'row' }}
+        >
+          <Button
+            type="button"
+            variation="link"
+            onClick={() => router.push(getLocalizedPath('/admin/about'))}
+            style={{
+              color: mode === 'dark' ? '#9CA3AF' : '#6B7280'
+            }}
+          >
+            {t('about.cancel')}
+          </Button>
+
+          <Button
+            type="submit"
+            variation="primary"
+            isLoading={loading}
+            loadingText={t('about.saving')}
+            style={{
+              backgroundColor: mode === 'dark' ? '#22C55E' : '#16A34A',
+              minWidth: '150px'
+            }}
+          >
+            <Save size={16} style={{ marginRight: '0.5rem' }} />
+            {t('about.save_changes')}
+          </Button>
+        </Flex>
+      </form>
     </View>
   );
-}
+};
 
 export default CreateProfileClient;

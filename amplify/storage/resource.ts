@@ -52,6 +52,9 @@ export const storage = defineStorage({
       // Contenido privado del administrador
       'admin/*': adminOnlyPermissions,
 
+      // Educación
+      'education/*': baseAdminPermissions,
+
     };
   },
   triggers: {

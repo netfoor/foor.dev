@@ -25,6 +25,7 @@ import type { Schema } from '../../../../../../amplify/data/resource';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation, useLocalizedPath } from '@/lib/i18n/client';
 import type { SupportedLocale } from '@/lib/i18n/types';
+import { getImageUrl as getImageUrlHelper } from '@/lib/utils/image-helpers';
 
 // Tipos para Profile
 type Profile = Schema["Profile"]["type"];
@@ -83,19 +84,7 @@ const ProfileManagementClient: React.FC<ProfileManagementClientProps> = ({ local
 
   // Get image URL from Storage
   const getImageUrl = async (key: string | null | undefined) => {
-    if (!key) return null;
-    
-    try {
-      const normalizedPath = key.startsWith('public/') ? key.slice(7) : key;
-      
-      const url = await getUrl({
-        path: normalizedPath,
-      });
-      return url.url.toString();
-    } catch (err) {
-      console.error('Error getting image URL:', err);
-      return null;
-    }
+    return await getImageUrlHelper(key);
   };
 
   if (loading) {

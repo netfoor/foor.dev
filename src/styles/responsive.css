@@ -1,0 +1,45 @@
+/* Responsive utilities for admin components */
+.responsive-hidden {
+  display: none;
+}
+
+.responsive-block {
+  display: block;
+}
+
+/* Medium screens and up (768px+) */
+@media (min-width: 768px) {
+  .md-block {
+    display: block !important;
+  }
+  
+  .md-hidden {
+    display: none !important;
+  }
+}
+
+/* Admin experience cards hover effects */
+.admin-experience-card {
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+.admin-experience-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.dark .admin-experience-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Mobile-first responsive button */
+.responsive-button {
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .responsive-button {
+    width: auto;
+  }
+}
