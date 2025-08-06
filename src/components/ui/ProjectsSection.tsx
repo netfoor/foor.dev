@@ -4,12 +4,12 @@ import React, { useState, useEffect } from 'react';
 import { View, Flex, Text, Card, Button, Badge, Loader, Alert } from '@aws-amplify/ui-react';
 import { ExternalLink, Github, MapPin, Calendar, Code, Layers, ArrowRight, Image as ImageIcon } from 'lucide-react';
 import { generateClient } from 'aws-amplify/data';
-import { getUrl } from 'aws-amplify/storage';
 import { useRouter } from 'next/navigation';
 import type { Schema } from '../../../amplify/data/resource';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation, useLocalizedPath } from '@/lib/i18n/client';
 import { useAuth } from '@/context/auth-context';
+import { OptimizedImage } from '@/components/optimitation/OptimizedImage';
 
 // Tipos para el proyecto
 type Project = Schema["Projects"]["type"];
@@ -25,7 +25,6 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
   showAll = false, 
   maxItems = 6 
 }) => {  const [projects, setProjects] = useState<Project[]>([]);
-  const [projectImages, setProjectImages] = useState<{ [key: string]: string }>({});
   const [filteredProjects, setFilteredProjects] = useState<Project[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [loading, setLoading] = useState(true);
@@ -46,21 +45,6 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
     const projectPath = getLocalizedPath(`/projects/${project.slug || project.id}`);
     router.push(projectPath);
   };
-  // Función para obtener URL de imagen desde S3
-  const getImageUrl = async (photoKey: string | null | undefined): Promise<string | null> => {
-    if (!photoKey) return null;
-    
-    try {
-      // Normalizar el path - remover 'public/' si existe (para compatibilidad con Gen 1)
-      const normalizedPath = photoKey.startsWith('public/') ? photoKey.slice(7) : photoKey;
-      
-      const url = await getUrl({ path: normalizedPath });
-      return url.url.toString();
-    } catch (err) {
-      console.error('Error getting image URL for key:', photoKey, err);
-      return null;
-    }
-  };
 
   // Evitar problemas de hidratación
   useEffect(() => {
@@ -77,31 +61,25 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
     try {
       setLoading(true);
       setError(null);
-        // Generar el cliente solo en el cliente
+      // Generar el cliente solo en el cliente
       const client = generateClient<Schema>();
-        const response = await client.models.Projects.list({
+      const response = await client.models.Projects.list({
         authMode: isAuthenticated ? 'userPool' : 'identityPool' // Usar authMode dinámico basado en autenticación
       });
-        if (response.data) {
+        
+      if (response.data) {
+        console.log('[ProjectsSection] Fetched projects:', response.data.length);
+        
+        // Log photo keys for debugging
+        response.data.forEach(project => {
+          console.log('[ProjectsSection] Project:', project.title, 'photoKey:', project.photoKey);
+        });
+        
         setProjects(response.data);
         setFilteredProjects(response.data);
-        
-        // Cargar URLs de las imágenes para cada proyecto
-        const imageUrls: { [key: string]: string } = {};
-        
-        for (const project of response.data) {
-          if (project.photoKey) {
-            const imageUrl = await getImageUrl(project.photoKey);
-            if (imageUrl) {
-              imageUrls[project.id] = imageUrl;
-            }
-          }
-        }
-        
-        setProjectImages(imageUrls);
       }
     } catch (err) {
-      console.error('Error fetching projects:', err);
+      console.error('[ProjectsSection] Error fetching projects:', err);
       setError(t('projects.error'));
     } finally {
       setLoading(false);
@@ -343,36 +321,24 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
                     : '0 10px 30px rgba(0, 0, 0, 0.05)';
                 }}
               >{/* Project Image */}
-                {project.photoKey && projectImages[project.id] && (
+                {project.photoKey ? (
                   <View
                     style={{
                       height: '200px',
-                      backgroundImage: `url(${projectImages[project.id]})`,
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center',
                       borderRadius: '12px 12px 0 0',
-                    }}
-                  />
-                )}
-
-                {/* Fallback cuando no hay imagen o está cargando */}
-                {project.photoKey && !projectImages[project.id] && (
-                  <View
-                    style={{
-                      height: '200px',
-                      backgroundColor: mode === 'dark' ? '#374151' : '#F3F4F6',
+                      overflow: 'hidden',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      borderRadius: '12px 12px 0 0',
                     }}
                   >
-                    <Loader size="large" />
+                    <OptimizedImage 
+                      s3Key={project.photoKey} 
+                      alt={project.title || 'Project image'} 
+                      className="w-full h-full object-cover"
+                    />
                   </View>
-                )}
-
-                {/* Fallback cuando no hay photoKey */}
-                {!project.photoKey && (
+                ) : (
                   <View
                     style={{
                       height: '200px',

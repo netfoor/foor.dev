@@ -38,7 +38,7 @@ import type { Schema } from '../../../../../amplify/data/resource';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation, useLocalizedPath } from '@/lib/i18n/client';
 import type { SupportedLocale } from '@/lib/i18n/types';
-import S3ProjectCleanup from '@/lib/utils/s3-cleanup';
+import S3Cleanup from '@/lib/utils/s3-cleanup';
 
 // Types for Recognitions and Publications
 type Recognition = Schema["Recognitions"]["type"];
@@ -114,12 +114,7 @@ const AdminRecognitionsClient: React.FC<AdminRecognitionsClientProps> = ({ local
 
       // 2. Delete S3 file if exists
       if (recognitionData.photoKey) {
-        const normalizedPath = recognitionData.photoKey.startsWith('public/') 
-          ? recognitionData.photoKey.slice(7) 
-          : recognitionData.photoKey;
-          
-        await remove({ path: normalizedPath });
-        console.log(`✅ S3 file deleted: ${normalizedPath}`);
+        await S3Cleanup.deleteSingleFile(recognitionData.photoKey);
       }
 
       // 3. Delete DynamoDB record
@@ -161,12 +156,7 @@ const AdminRecognitionsClient: React.FC<AdminRecognitionsClientProps> = ({ local
 
       // 2. Delete S3 file if exists
       if (publicationData.photoKey) {
-        const normalizedPath = publicationData.photoKey.startsWith('public/') 
-          ? publicationData.photoKey.slice(7) 
-          : publicationData.photoKey;
-          
-        await remove({ path: normalizedPath });
-        console.log(`✅ S3 file deleted: ${normalizedPath}`);
+        await S3Cleanup.deleteSingleFile(publicationData.photoKey);
       }
 
       // 3. Delete DynamoDB record

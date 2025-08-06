@@ -67,34 +67,34 @@ const FeaturedCertifications: React.FC<FeaturedCertificationsProps> = ({ classNa
         setLoading(true);
         setError(null);
         const client = generateClient<Schema>();
-        const { data: certificationsData, errors } = await client.models.Certifications.list({
-          limit: 3,
-          authMode: isAuthenticated ? 'userPool' : 'identityPool',
-        });
-
-        if (errors) {
-          console.error('Error fetching certifications:', errors);
-          setError('Failed to load certifications');
-          return;
-        }
+        const response = await client.models.Certifications.list();
         
-        const sortedCertifications = (certificationsData || [])
-          .sort((a, b) => new Date(b.issueDate).getTime() - new Date(a.issueDate).getTime())
-          .slice(0, 3);
+        if (response.data) {
+          // Filter nulls and sort by issue date (most recent first)
+          const sortedCertifications = response.data
+            .filter(cert => cert !== null && cert.issueDate && cert.title && cert.issuer)
+            .sort((a, b) => 
+              new Date(b.issueDate).getTime() - new Date(a.issueDate).getTime()
+            )
+            .slice(0, 3);
 
-        setCertifications(sortedCertifications);
-
-        const imageUrls: { [key: string]: string } = {};
-        for (const cert of sortedCertifications) {
-          if (cert.photoKey) {
-            const imageUrl = await getImageUrl(cert.photoKey);
-            if (imageUrl) {
-              imageUrls[cert.id] = imageUrl;
+          setCertifications(sortedCertifications);
+          
+          const imageUrls: { [key: string]: string } = {};
+          for (const cert of sortedCertifications) {
+            if (cert.photoKey) {
+              const imageUrl = await getImageUrl(cert.photoKey);
+              if (imageUrl) {
+                imageUrls[cert.id] = imageUrl;
+              }
             }
           }
+          
+          setCertificationImages(imageUrls);
+        } else {
+          setCertifications([]);
+          setCertificationImages({});
         }
-        
-        setCertificationImages(imageUrls);
       } catch (err) {
         console.error('Error fetching certifications:', err);
         setError('Failed to load certifications');

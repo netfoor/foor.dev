@@ -415,9 +415,18 @@ function CreateProjectClient(): React.JSX.Element {
       if ((mainImage || galleryImages.length > 0) && newProject.data) {
         const uploadResults = await uploadFiles(newProject.data.id);
         
-        // Actualizamos el proyecto con las claves de las imágenes
-        // Nota: no necesitamos actualizar el proyecto manualmente ya que la función Lambda
-        // lo hará automáticamente gracias a los metadatos que enviamos
+        // Actualizamos el proyecto con las claves de las imágenes manualmente,
+        // por si la función Lambda no lo hace automáticamente
+        await client.models.Projects.update({
+          id: newProject.data.id,
+          photoKey: uploadResults.photoKey || undefined,
+          galleryKeys: uploadResults.galleryKeys.length > 0 ? uploadResults.galleryKeys : undefined
+        });
+        
+        console.log('Manually updated project with image keys:', {
+          photoKey: uploadResults.photoKey,
+          galleryKeys: uploadResults.galleryKeys
+        });
       }
 
       setSuccess(t('projects.success_project_created'));

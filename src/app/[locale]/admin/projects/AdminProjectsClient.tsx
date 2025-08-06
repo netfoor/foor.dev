@@ -37,7 +37,7 @@ import type { Schema } from '../../../../../amplify/data/resource';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation, useLocalizedPath } from '@/lib/i18n/client';
 import type { SupportedLocale } from '@/lib/i18n/types';
-import S3ProjectCleanup from '@/lib/utils/s3-cleanup';
+import S3Cleanup from '@/lib/utils/s3-cleanup';
 
 // Tipos para el proyecto actualizado
 type Project = Schema["Projects"]["type"];
@@ -98,10 +98,15 @@ const AdminProjectsClient: React.FC<AdminProjectsClientProps> = ({ locale }) => 
       }
 
       // 2. SEGUNDO: Eliminar archivos de S3 usando utilidad
-      await S3ProjectCleanup.deleteProjectFiles(
+      const fileKeys = [
         projectData.photoKey,
-        projectData.galleryKeys,
-        projectId
+        ...(projectData.galleryKeys || [])
+      ].filter(Boolean);
+      
+      await S3Cleanup.deleteMultipleFiles(
+        fileKeys,
+        projectId,
+        'Project'
       );
 
       // 3. TERCERO: Eliminar el registro de DynamoDB

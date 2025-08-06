@@ -23,6 +23,7 @@ export const storage = defineStorage({
       ],
       
       // Proyectos
+      'projects/*': baseAdminPermissions,
       'projects/main/*': baseAdminPermissions,
       'projects/gallery/*': baseAdminPermissions,
       'projects/thumbnails/*': baseAdminPermissions,
@@ -35,6 +36,7 @@ export const storage = defineStorage({
       
       // Perfiles
       'profiles/*': baseAdminPermissions,
+      'profile/*': baseAdminPermissions,
       
       // Sección About
       'about/profiles/*': baseAdminPermissions,
@@ -45,6 +47,7 @@ export const storage = defineStorage({
       
       // Publicaciones
       'publications/*': baseAdminPermissions,
+      'socialpublications/*': baseAdminPermissions,
       
       // Contenido privado del administrador
       'admin/*': adminOnlyPermissions,

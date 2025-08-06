@@ -4,11 +4,11 @@ import React, { useState, useEffect } from 'react';
 import { View, Flex, Text, Card, Badge, Loader, Alert } from '@aws-amplify/ui-react';
 import { GraduationCap, MapPin, Calendar, Award, ExternalLink } from 'lucide-react';
 import { generateClient } from 'aws-amplify/data';
-import { getUrl } from 'aws-amplify/storage';
 import type { Schema } from '../../../amplify/data/resource';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation } from '@/lib/i18n/client';
 import { useAuth } from '@/context/auth-context';
+import { OptimizedImage } from '@/components/optimitation/OptimizedImage';
 
 // Tipos para la educación
 type Education = Schema["Education"]["type"];
@@ -25,7 +25,6 @@ const EducationSection: React.FC<EducationSectionProps> = ({
   maxItems = 3 
 }) => {
   const [education, setEducation] = useState<Education[]>([]);
-  const [educationImages, setEducationImages] = useState<{ [key: string]: string }>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
@@ -42,26 +41,7 @@ const EducationSection: React.FC<EducationSectionProps> = ({
     setMounted(true);
   }, []);
 
-  // Función para obtener URL de imagen desde S3
-  const getImageUrl = async (photoKey: string | null | undefined): Promise<string | null> => {
-    if (!photoKey) return null;
-    
-    try {
-      // Normalizar path - remove 'public/' si existe (para compatibilidad Gen 1)
-      const cleanKey = photoKey.startsWith('public/') ? photoKey.substring(7) : photoKey;
-      const { url } = await getUrl({
-        path: `public/${cleanKey}`,
-        options: {
-          validateObjectExistence: false,
-          expiresIn: 3600
-        }
-      });
-      return url.toString();
-    } catch (err) {
-      console.warn(`No se pudo obtener la imagen para la clave: ${photoKey}`, err);
-      return null;
-    }
-  };
+  // We no longer need the getImageUrl function since we're using the OptimizedImage component
 
   // Función para cargar educación desde Amplify
   const loadEducationFromAmplify = async (): Promise<Education[]> => {
@@ -82,20 +62,6 @@ const EducationSection: React.FC<EducationSectionProps> = ({
         return new Date(b.startDate).getTime() - new Date(a.startDate).getTime();
       });
 
-      // Cargar imágenes para cada educación
-      const imagePromises = sortedEducation.map(async (edu) => {
-        if (edu.photoKey) {
-          const imageUrl = await getImageUrl(edu.photoKey);
-          if (imageUrl) {
-            setEducationImages(prev => ({
-              ...prev,
-              [edu.id]: imageUrl
-            }));
-          }
-        }
-      });
-
-      await Promise.all(imagePromises);
       return sortedEducation;
     } catch (err) {
       console.error('Error cargando educación desde Amplify:', err);
@@ -260,6 +226,14 @@ const EducationSection: React.FC<EducationSectionProps> = ({
 
   return (
     <View style={containerStyles} className={className}>
+      <style jsx global>{`
+        .education-image {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          border-radius: 16px;
+        }
+      `}</style>
       {/* Header */}
       <Flex direction="column" alignItems="center" gap="1rem" marginBottom="3rem">
         <Text
@@ -294,7 +268,7 @@ const EducationSection: React.FC<EducationSectionProps> = ({
               alignItems={{ base: 'stretch', medium: 'flex-start' }}
             >
               {/* Institution Image */}
-              {educationImages[edu.id] && (
+              {edu.photoKey && (
                 <View style={{
                   flexShrink: 0,
                   width: '120px',
@@ -305,15 +279,10 @@ const EducationSection: React.FC<EducationSectionProps> = ({
                     ? 'linear-gradient(135deg, rgba(71, 85, 105, 0.5), rgba(51, 65, 85, 0.5))'
                     : 'linear-gradient(135deg, rgba(248, 250, 252, 0.5), rgba(241, 245, 249, 0.5))',
                 }}>
-                  <img
-                    src={educationImages[edu.id]}
-                    alt={edu.institution}
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'cover',
-                      borderRadius: '16px',
-                    }}
+                  <OptimizedImage
+                    s3Key={edu.photoKey}
+                    alt={edu.institution || 'Institution logo'}
+                    className="education-image"
                   />
                 </View>
               )}

@@ -14,10 +14,10 @@ import {
   BookOpen,
   FileText
 } from 'lucide-react';
-import { getUrl } from 'aws-amplify/storage';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation } from '@/lib/i18n/client';
 import { useAuth } from '@/context/auth-context';
+import { OptimizedImage } from '@/components/optimitation/OptimizedImage';
 import { 
   loadRecognitionsFromAmplify, 
   loadPublicationsFromAmplify,
@@ -32,7 +32,6 @@ interface RecognitionsPublicationsProps {
 const RecognitionsPublicationsSection: React.FC<RecognitionsPublicationsProps> = ({ className = '' }) => {
   const [recognitions, setRecognitions] = useState<Recognition[]>([]);
   const [publications, setPublications] = useState<Publication[]>([]);
-  const [images, setImages] = useState<{ [key: string]: string }>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
@@ -41,22 +40,6 @@ const RecognitionsPublicationsSection: React.FC<RecognitionsPublicationsProps> =
   const { mode } = useTheme();
   const { t } = useTranslation('homepage');
   const { isAuthenticated } = useAuth();
-
-  // Get image URL from S3
-  const getImageUrl = async (photoKey: string | null | undefined): Promise<string | null> => {
-    if (!photoKey) return null;
-    
-    try {
-      // Normalize path - remove 'public/' if exists (for Gen 1 compatibility)
-      const normalizedPath = photoKey.startsWith('public/') ? photoKey.slice(7) : photoKey;
-      
-      const url = await getUrl({ path: normalizedPath });
-      return url.url.toString();
-    } catch (err) {
-      console.error('Error getting image URL for key:', photoKey, err);
-      return null;
-    }
-  };
 
   // Handle mounting to avoid hydration issues
   useEffect(() => {
@@ -83,30 +66,7 @@ const RecognitionsPublicationsSection: React.FC<RecognitionsPublicationsProps> =
         const publicationsData = await loadPublicationsFromAmplify(undefined, isAuthenticated);
         setPublications(publicationsData);
         
-        // Load images for both types
-        const imageUrls: { [key: string]: string } = {};
-        
-        // Process recognition images
-        for (const recognition of recognitionsData) {
-          if (recognition.photoKey) {
-            const imageUrl = await getImageUrl(recognition.photoKey);
-            if (imageUrl) {
-              imageUrls[recognition.id] = imageUrl;
-            }
-          }
-        }
-        
-        // Process publication images
-        for (const publication of publicationsData) {
-          if (publication.photoKey) {
-            const imageUrl = await getImageUrl(publication.photoKey);
-            if (imageUrl) {
-              imageUrls[publication.id] = imageUrl;
-            }
-          }
-        }
-        
-        setImages(imageUrls);
+        // We no longer need to fetch and store image URLs, since we'll use OptimizedImage
       } catch (err) {
         console.error('Error fetching data:', err);
         setError('Failed to load data');
@@ -432,17 +392,11 @@ const RecognitionsPublicationsSection: React.FC<RecognitionsPublicationsProps> =
                           alignItems: 'center',
                         }}
                       >
-                        {images[recognition.id] ? (
-                          <img 
-                            src={images[recognition.id]} 
+                        {recognition.photoKey ? (
+                          <OptimizedImage 
+                            s3Key={recognition.photoKey} 
                             alt={recognition.title || 'Recognition image'}
-                            style={{
-                              width: '100%',
-                              height: '100%',
-                              objectFit: 'contain',
-                              transition: 'all 0.5s ease',
-                            }}
-                            className="hover:scale-105"
+                            className="w-full h-full object-contain hover:scale-105 transition-all duration-500"
                           />
                         ) : (
                           <Award 
@@ -603,17 +557,11 @@ const RecognitionsPublicationsSection: React.FC<RecognitionsPublicationsProps> =
                           alignItems: 'center',
                         }}
                       >
-                        {images[publication.id] ? (
-                          <img 
-                            src={images[publication.id]} 
+                        {publication.photoKey ? (
+                          <OptimizedImage 
+                            s3Key={publication.photoKey} 
                             alt={publication.title || 'Publication image'}
-                            style={{
-                              width: '100%',
-                              height: '100%',
-                              objectFit: 'contain',
-                              transition: 'all 0.5s ease',
-                            }}
-                            className="hover:scale-105"
+                            className="w-full h-full object-contain hover:scale-105 transition-all duration-500"
                           />
                         ) : (
                           <div style={{

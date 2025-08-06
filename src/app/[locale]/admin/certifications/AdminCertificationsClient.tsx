@@ -37,6 +37,7 @@ import type { Schema } from '../../../../../amplify/data/resource';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation, useLocalizedPath } from '@/lib/i18n/client';
 import type { SupportedLocale } from '@/lib/i18n/types';
+import S3Cleanup from '@/lib/utils/s3-cleanup';
 
 // Tipos para la certificación
 type Certification = Schema["Certifications"]["type"];
@@ -68,10 +69,12 @@ const AdminCertificationsClient: React.FC<AdminCertificationsClientProps> = ({ l
       });
       
       if (response.data) {
-        // Ordenar por fecha de emisión (más reciente primero)
-        const sortedCertifications = response.data.sort((a, b) => 
-          new Date(b.issueDate).getTime() - new Date(a.issueDate).getTime()
-        );
+        // Filtrar nulls y ordenar por fecha de emisión (más reciente primero)
+        const sortedCertifications = response.data
+          .filter(cert => cert !== null && cert.issueDate)
+          .sort((a, b) => 
+            new Date(b.issueDate).getTime() - new Date(a.issueDate).getTime()
+          );
         setCertifications(sortedCertifications);
       }
     } catch (err) {
@@ -104,17 +107,7 @@ const AdminCertificationsClient: React.FC<AdminCertificationsClientProps> = ({ l
 
       // 2. SEGUNDO: Eliminar archivo de S3 si existe
       if (certificationData.photoKey) {
-        try {
-          // Normalizar el path - remover 'public/' si existe (para compatibilidad con Gen 1)
-          const normalizedPath = certificationData.photoKey.startsWith('public/') 
-            ? certificationData.photoKey.slice(7) 
-            : certificationData.photoKey;
-          
-          await remove({ path: normalizedPath });
-          console.log(`✅ Archivo eliminado de S3: ${normalizedPath}`);
-        } catch (s3Error) {
-          console.warn('Error eliminando archivo de S3 (puede no existir):', s3Error);
-        }
+        await S3Cleanup.deleteSingleFile(certificationData.photoKey);
       }
 
       // 3. TERCERO: Eliminar el registro de DynamoDB
@@ -161,8 +154,8 @@ const AdminCertificationsClient: React.FC<AdminCertificationsClientProps> = ({ l
   };
 
   // Función para determinar el estado basado en la fecha de expiración
-  const getCertificationStatus = (cert: Certification) => {
-    if (!cert.expirationDate) return 'Active';
+  const getCertificationStatus = (cert: Certification | null) => {
+    if (!cert || !cert.expirationDate) return 'Active';
     
     const now = new Date();
     const expirationDate = new Date(cert.expirationDate);
@@ -266,7 +259,7 @@ const AdminCertificationsClient: React.FC<AdminCertificationsClientProps> = ({ l
         >
           <View padding="1rem">
             <Text fontSize="1.25rem" fontWeight="700" color="#22C55E">
-              {certifications.filter(c => getCertificationStatus(c) === 'Active').length}
+              {certifications.filter(c => c && getCertificationStatus(c) === 'Active').length}
             </Text>
             <Text fontSize="0.875rem" color={mode === 'dark' ? '#CBD5E1' : '#64748B'}>
               {t('certifications.active_count')}
@@ -286,7 +279,7 @@ const AdminCertificationsClient: React.FC<AdminCertificationsClientProps> = ({ l
         >
           <View padding="1rem">
             <Text fontSize="1.25rem" fontWeight="700" color="#F59E0B">
-              {certifications.filter(c => getCertificationStatus(c) === 'Expired').length}
+              {certifications.filter(c => c && getCertificationStatus(c) === 'Expired').length}
             </Text>
             <Text fontSize="0.875rem" color={mode === 'dark' ? '#CBD5E1' : '#64748B'}>
               {t('certifications.expired_count')}
@@ -364,7 +357,7 @@ const AdminCertificationsClient: React.FC<AdminCertificationsClientProps> = ({ l
                 </TableRow>
               </TableHead>
               <TableBody>
-              {certifications.map((certification) => (
+              {certifications.filter(certification => certification !== null).map((certification) => (
                 <TableRow key={certification.id}>
                   <TableCell>
                     <Flex alignItems="center" gap="0.75rem">

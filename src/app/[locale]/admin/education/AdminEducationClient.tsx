@@ -21,6 +21,7 @@ import type { Schema } from '../../../../../amplify/data/resource';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation, useLocalizedPath } from '@/lib/i18n/client';
 import type { SupportedLocale } from '@/lib/i18n/types';
+import S3Cleanup from '@/lib/utils/s3-cleanup';
 
 // Tipos para la educación
 type Education = Schema["Education"]["type"];
@@ -142,19 +143,8 @@ const AdminEducationClient: React.FC<AdminEducationClientProps> = ({ locale }) =
       }
 
       // Delete all S3 files
-      for (const photoKey of filesToDelete) {
-        if (!photoKey) continue; // Skip null/undefined keys
-        
-        try {
-          // Normalize path - remove 'public/' if exists (for Gen 1 compatibility)
-          const normalizedPath = photoKey.startsWith('public/') ? photoKey.slice(7) : photoKey;
-          
-          await remove({ path: normalizedPath });
-          console.log(`✅ S3 file deleted: ${normalizedPath}`);
-        } catch (s3Error) {
-          console.error(`⚠️ Error deleting S3 file ${photoKey}:`, s3Error);
-          // Continue with deletion even if S3 cleanup fails
-        }
+      if (filesToDelete.length > 0) {
+        await S3Cleanup.deleteMultipleFiles(filesToDelete, id, 'Education');
       }
 
       // 3. Delete DynamoDB record

@@ -29,12 +29,13 @@ import {
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { generateClient } from 'aws-amplify/data';
-import { uploadData, getUrl, remove } from 'aws-amplify/storage';
+import { getUrl, remove } from 'aws-amplify/storage';
+import { uploadImageWithMetadata } from '@/lib/utils/image-helpers';
 import type { Schema } from '../../../../../../amplify/data/resource';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation, useLocalizedPath } from '@/lib/i18n/client';
 import type { SupportedLocale } from '@/lib/i18n/types';
-import S3ProjectCleanup from '@/lib/utils/s3-cleanup';
+import S3Cleanup from '@/lib/utils/s3-cleanup';
 import { FileUploadInput } from '../new/FileUploadInput';
 
 // Estilos personalizados para mejorar el contraste en tema oscuro
@@ -380,6 +381,7 @@ function EditProjectClient({ locale, projectId }: EditProjectClientProps): React
         setError(t('projects.image_size_error'));
         return;
       }
+      console.log('Selected new main image:', file.name);
       setNewMainImage(file);
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -399,6 +401,7 @@ function EditProjectClient({ locale, projectId }: EditProjectClientProps): React
 
   const removeCurrentMainImage = () => {
     if (project?.photoKey) {
+      console.log('Marking main image for deletion:', project.photoKey);
       setImagesToDelete(prev => [...prev, project.photoKey!]);
     }
     setCurrentMainImageUrl('');
@@ -410,6 +413,8 @@ function EditProjectClient({ locale, projectId }: EditProjectClientProps): React
     
     const files = Array.from(event.target.files || []);
     if (files.length === 0) return;
+
+    console.log(`Selected ${files.length} new gallery images`);
 
     // Validar tamaño y cantidad
     const validFiles = files.filter(file => {
@@ -450,6 +455,7 @@ function EditProjectClient({ locale, projectId }: EditProjectClientProps): React
   const removeCurrentGalleryImage = (index: number) => {
     const keyToDelete = project?.galleryKeys?.[index];
     if (keyToDelete) {
+      console.log('Marking gallery image for deletion:', keyToDelete);
       setImagesToDelete(prev => [...prev, keyToDelete]);
     }
     setCurrentGalleryUrls(prev => prev.filter((_, i) => i !== index));
@@ -483,17 +489,26 @@ function EditProjectClient({ locale, projectId }: EditProjectClientProps): React
     const uploadResults = {
       photoKey: project?.photoKey || '',
       galleryKeys: [...(project?.galleryKeys || [])]
-    };    try {
+    };
+    
+    console.log('Initial upload results:', JSON.stringify(uploadResults));
+    console.log('Images to delete:', JSON.stringify(imagesToDelete));
+    
+    try {
       // Eliminar archivos marcados para borrar usando utilidad S3
       for (const keyToDelete of imagesToDelete) {
-        const success = await S3ProjectCleanup.deleteSingleFile(keyToDelete);
+        console.log('Attempting to delete file:', keyToDelete);
+        const success = await S3Cleanup.deleteSingleFile(keyToDelete);
         if (!success) {
           console.warn(`⚠️ No se pudo eliminar el archivo: ${keyToDelete}`);
+        } else {
+          console.log(`✅ Archivo eliminado: ${keyToDelete}`);
         }
       }
 
       // Si se removió la imagen principal, limpiar el key
       if (imagesToDelete.includes(project?.photoKey || '')) {
+        console.log('Main image was deleted, clearing photoKey');
         uploadResults.photoKey = '';
       }
 
@@ -501,38 +516,42 @@ function EditProjectClient({ locale, projectId }: EditProjectClientProps): React
       uploadResults.galleryKeys = uploadResults.galleryKeys
         .filter((key): key is string => key !== null)
         .filter(key => !imagesToDelete.includes(key));
+      
+      console.log('After removing deleted images:', JSON.stringify(uploadResults));
 
       // Subir nueva imagen principal
       if (newMainImage) {
-        const photoKey = `projects/${Date.now()}-${newMainImage.name}`;
-        await uploadData({
-          path: photoKey,
-          data: newMainImage,
-          options: {
-            contentType: newMainImage.type
-          }
-        }).result;
+        console.log('Uploading new main image:', newMainImage.name);
+        const photoKey = await uploadImageWithMetadata(
+          newMainImage,
+          projectId,
+          'Projects',
+          'photoKey'
+        );
+        console.log('New main image uploaded with key:', photoKey);
         uploadResults.photoKey = photoKey;
       }
 
       // Subir nuevas imágenes de galería
       if (newGalleryImages.length > 0) {
+        console.log(`Uploading ${newGalleryImages.length} new gallery images`);
         const galleryPromises = newGalleryImages.map(async (file, index) => {
-          const galleryKey = `projects/gallery/${Date.now()}-${index}-${file.name}`;
-          await uploadData({
-            path: galleryKey,
-            data: file,
-            options: {
-              contentType: file.type
-            }
-          }).result;
-          return galleryKey;
+          const currentGalleryLength = uploadResults.galleryKeys.length;
+          console.log(`Uploading gallery image ${index + 1}/${newGalleryImages.length}: ${file.name}`);
+          return uploadImageWithMetadata(
+            file,
+            projectId,
+            'Projects',
+            `galleryKeys[${currentGalleryLength + index}]`
+          );
         });
 
         const newGalleryKeys = await Promise.all(galleryPromises);
+        console.log('New gallery keys:', JSON.stringify(newGalleryKeys));
         uploadResults.galleryKeys = [...uploadResults.galleryKeys, ...newGalleryKeys];
       }
 
+      console.log('Final upload results:', JSON.stringify(uploadResults));
       return uploadResults;
     } catch (error) {
       console.error('Error uploading files:', error);
@@ -557,6 +576,11 @@ function EditProjectClient({ locale, projectId }: EditProjectClientProps): React
 
       // Subir archivos
       const uploadResults = await uploadFiles();
+
+      console.log('Updating project with image keys:', {
+        photoKey: uploadResults.photoKey,
+        galleryKeys: uploadResults.galleryKeys
+      });
 
       // Actualizar el proyecto en la base de datos
       const result = await client.models.Projects.update({

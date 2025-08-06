@@ -6,11 +6,11 @@ import { ExternalLink, MapPin, Code, ArrowRight, Image as ImageIcon } from 'luci
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { generateClient } from 'aws-amplify/data';
-import { getUrl } from 'aws-amplify/storage';
 import type { Schema } from '../../../amplify/data/resource';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation, useLocalizedPath } from '@/lib/i18n/client';
 import { useAuth } from '@/context/auth-context';
+import { OptimizedImage } from '@/components/optimitation/OptimizedImage';
 
 // Tipos para el proyecto
 type Project = Schema["Projects"]["type"];
@@ -21,10 +21,10 @@ interface FeaturedProjectsProps {
 
 const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({ className = '' }) => {
   const [projects, setProjects] = useState<Project[]>([]);
-  const [projectImages, setProjectImages] = useState<{ [key: string]: string }>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [mounted, setMounted] = useState(false);  const { mode } = useTheme();
+  const [mounted, setMounted] = useState(false);  
+  const { mode } = useTheme();
   const { t } = useTranslation('homepage');
   const getLocalizedPath = useLocalizedPath();
   const router = useRouter();
@@ -40,21 +40,6 @@ const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({ className = '' }) =
     
     const projectPath = getLocalizedPath(`/projects/${project.slug || project.id}`);
     router.push(projectPath);
-  };
-  // Función para obtener URL de imagen desde S3
-  const getImageUrl = async (photoKey: string | null | undefined): Promise<string | null> => {
-    if (!photoKey) return null;
-    
-    try {
-      // Normalizar el path - remover 'public/' si existe (para compatibilidad con Gen 1)
-      const normalizedPath = photoKey.startsWith('public/') ? photoKey.slice(7) : photoKey;
-      
-      const url = await getUrl({ path: normalizedPath });
-      return url.url.toString();
-    } catch (err) {
-      console.error('Error getting image URL for key:', photoKey, err);
-      return null;
-    }
   };
 
   // Verificar si el componente está montado para evitar hidratación mismatch
@@ -76,33 +61,17 @@ const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({ className = '' }) =
         const client = generateClient<Schema>();
           const { data: projectsData, errors } = await client.models.Projects.list({
           limit: 3,
-          authMode: isAuthenticated ? 'userPool' : 'identityPool',
         });
 
         if (errors) {
-          console.error('Error fetching projects:', errors);
-          setError('Failed to load projects');
-          return;
+          console.error('Error fetching projects:', JSON.stringify(errors, null, 2));
+          // Continue processing - GraphQL may return partial data with errors
         }        // Sort by createdAt descending to get most recent first
         const sortedProjects = (projectsData || [])
           .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
           .slice(0, 3);
 
         setProjects(sortedProjects);
-
-        // Cargar URLs de las imágenes para cada proyecto
-        const imageUrls: { [key: string]: string } = {};
-        
-        for (const project of sortedProjects) {
-          if (project.photoKey) {
-            const imageUrl = await getImageUrl(project.photoKey);
-            if (imageUrl) {
-              imageUrls[project.id] = imageUrl;
-            }
-          }
-        }
-        
-        setProjectImages(imageUrls);
       } catch (err) {
         console.error('Error fetching projects:', err);
         setError('Failed to load projects');
@@ -202,6 +171,23 @@ const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({ className = '' }) =
         backgroundColor: mode === 'dark' ? '#0F172A' : '#F8FAFC',
       }}
     >
+      <style jsx global>{`
+        .project-image-container {
+          width: 100%;
+          height: 200px;
+          position: relative;
+          overflow: hidden;
+        }
+        .project-image {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          transition: transform 0.5s ease;
+        }
+        .project-card:hover .project-image {
+          transform: scale(1.05);
+        }
+      `}</style>
       <Flex direction="column" alignItems="center" gap="3rem" maxWidth="1200px" margin="0 auto">
         {/* Header */}        <Flex direction="column" alignItems="center" gap="1rem" textAlign="center">
           <Text
@@ -271,7 +257,7 @@ const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({ className = '' }) =
                   overflow: 'hidden',
                   cursor: 'pointer',
                 }}
-                className="hover:scale-105"
+                className="hover:scale-105 project-card"
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = 'scale(1.02) translateY(-4px)';
                   e.currentTarget.style.boxShadow = mode === 'dark'
@@ -284,18 +270,15 @@ const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({ className = '' }) =
                     ? '0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2)'
                     : '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)';
                 }}
-              >{/* Project Image */}
-                {project.photoKey && projectImages[project.id] && (
-                  <View
-                    style={{
-                      width: '100%',
-                      height: '200px',
-                      backgroundImage: `url(${projectImages[project.id]})`,
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center',
-                      position: 'relative',
-                    }}
-                  >
+              >
+                {/* Project Image */}
+                {project.photoKey ? (
+                  <View className="project-image-container">
+                    <OptimizedImage
+                      s3Key={project.photoKey}
+                      alt={project.title || 'Project image'}
+                      className="project-image"
+                    />
                     <View
                       style={{
                         position: 'absolute',
@@ -319,49 +302,7 @@ const FeaturedProjects: React.FC<FeaturedProjectsProps> = ({ className = '' }) =
                       )}
                     </View>
                   </View>
-                )}
-
-                {/* Fallback cuando no hay imagen o está cargando */}
-                {project.photoKey && !projectImages[project.id] && (
-                  <View
-                    style={{
-                      width: '100%',
-                      height: '200px',
-                      backgroundColor: mode === 'dark' ? '#374151' : '#F3F4F6',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      position: 'relative',
-                    }}
-                  >
-                    <Loader size="large" />
-                    <View
-                      style={{
-                        position: 'absolute',
-                        top: '12px',
-                        right: '12px',
-                      }}
-                    >
-                      {project.categories && (
-                        <Badge
-                          size="small"
-                          style={{
-                            backgroundColor: getCategoryColor(project.categories),
-                            color: 'white',
-                            fontWeight: '600',
-                            borderRadius: '8px',
-                            padding: '4px 8px',
-                          }}
-                        >
-                          {t(`projects.categories.${project.categories}`)}
-                        </Badge>
-                      )}
-                    </View>
-                  </View>
-                )}
-
-                {/* Fallback cuando no hay photoKey */}
-                {!project.photoKey && (
+                ) : (
                   <View
                     style={{
                       width: '100%',

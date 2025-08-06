@@ -83,7 +83,7 @@ export const handler = async (event: S3Event): Promise<void> => {
             const updateCommand = new UpdateCommand({
                 TableName: amplifyDataTableName,
                 Key: {
-                    id: `${modelName}#${recordID}`,
+                    id: recordID,
                 },
                 UpdateExpression: `SET #fieldName = :webpKey`,
                 ExpressionAttributeValues: {

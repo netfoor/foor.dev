@@ -1,14 +1,14 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { View, Flex, Text, Heading, Badge, Loader, Alert, Image } from '@aws-amplify/ui-react';
+import { View, Flex, Text, Heading, Badge, Loader, Alert } from '@aws-amplify/ui-react';
 import { User, MapPin, Mail, Globe, Award, Star } from 'lucide-react';
 import { generateClient } from 'aws-amplify/data';
-import { getUrl } from 'aws-amplify/storage';
 import type { Schema } from '../../../amplify/data/resource';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation } from '@/lib/i18n/client';
 import { useAuth } from '@/context/auth-context';
+import { OptimizedImage } from '@/components/optimitation/OptimizedImage';
 
 // Tipos para los datos
 type Profile = Schema["Profile"]["type"];
@@ -138,7 +138,6 @@ const profileStyles = `
 
 const ProfileSection: React.FC<ProfileSectionProps> = ({ className = '' }) => {
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
@@ -219,26 +218,6 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ className = '' }) => {
     setMounted(true);
   }, []);
 
-  // Función para obtener URL de imagen desde S3
-  const getImageUrl = async (photoKey: string | null | undefined): Promise<string | null> => {
-    if (!photoKey) return null;
-    
-    try {
-      // Normalize path - remove 'public/' prefix if present
-      const normalizedPath = photoKey.startsWith('public/') 
-        ? photoKey.slice(7) 
-        : photoKey;
-      
-      const result = await getUrl({
-        path: normalizedPath,
-      });
-      return result.url.toString();
-    } catch (error) {
-      console.error('Error getting image URL:', error);
-      return null;
-    }
-  };
-
   // Función para obtener datos del perfil
   const fetchProfile = async () => {
     try {
@@ -255,12 +234,6 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ className = '' }) => {
       if (profiles && profiles.length > 0) {
         const profileData = profiles[0];
         setProfile(profileData);
-
-        // Obtener URL de la imagen si existe
-        if (profileData.profilePhotoKey) {
-          const imageUrl = await getImageUrl(profileData.profilePhotoKey);
-          setProfileImageUrl(imageUrl);
-        }
       }
     } catch (err) {
       console.error('Error fetching profile:', err);
@@ -406,6 +379,27 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ className = '' }) => {
       style={containerStyles}
     >
       <style>{profileStyles}</style>
+      <style jsx global>{`
+        .profile-image {
+          width: 200px;
+          height: 200px;
+          border-radius: 50%;
+          object-fit: cover;
+          border: ${mode === 'dark' ? '6px solid rgba(148, 163, 184, 0.3)' : '6px solid rgba(203, 213, 225, 0.4)'};
+          box-shadow: ${mode === 'dark' ? '0 25px 50px rgba(0, 0, 0, 0.3)' : '0 25px 50px rgba(0, 0, 0, 0.15)'};
+          transition: all 0.3s ease;
+        }
+        .profile-image:hover {
+          transform: scale(1.05);
+          box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+        }
+        @media (max-width: 768px) {
+          .profile-image {
+            width: 150px;
+            height: 150px;
+          }
+        }
+      `}</style>
       <Flex 
         direction="column" 
         alignItems="center" 
@@ -414,11 +408,11 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ className = '' }) => {
         textAlign="center"
       >
         {/* Imagen de perfil */}
-        {profileImageUrl ? (
-          <Image
-            src={profileImageUrl}
+        {profile.profilePhotoKey ? (
+          <OptimizedImage
+            s3Key={profile.profilePhotoKey}
             alt={profile.name || 'Profile'}
-            style={imageStyles}
+            className="profile-image"
           />
         ) : (
           <View style={imagePlaceholderStyles}>

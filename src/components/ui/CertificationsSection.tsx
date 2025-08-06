@@ -75,10 +75,12 @@ const CertificationsSection: React.FC<CertificationsSectionProps> = ({
       });
       
       if (response.data) {
-        // Ordenar por fecha de emisión (más reciente primero)
-        const sortedCertifications = response.data.sort((a, b) => 
-          new Date(b.issueDate).getTime() - new Date(a.issueDate).getTime()
-        );
+        // Filtrar nulls y ordenar por fecha de emisión (más reciente primero)
+        const sortedCertifications = response.data
+          .filter(cert => cert !== null && cert.issueDate)
+          .sort((a, b) => 
+            new Date(b.issueDate).getTime() - new Date(a.issueDate).getTime()
+          );
         
         setCertifications(sortedCertifications);
         setFilteredCertifications(sortedCertifications);

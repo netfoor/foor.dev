@@ -44,6 +44,7 @@ import { useTheme } from '@/hooks/useTheme';
 import { useAuthorization } from '@/hooks/useAuthorization';
 import { useTranslation, useLocalizedPath } from '@/lib/i18n/client';
 import type { SupportedLocale } from '@/lib/i18n/types';
+import S3Cleanup from '@/lib/utils/s3-cleanup';
 
 // Tipos para Skills
 type Skill = Schema["Skills"]["type"];
@@ -152,18 +153,7 @@ const AdminSkillsClient: React.FC<AdminSkillsClientProps> = ({ locale }) => {
 
       // Clean up icon from S3 if exists
       if (skillData.iconKey) {
-        try {
-          const normalizedPath = skillData.iconKey.startsWith('public/') 
-            ? skillData.iconKey.slice(7) 
-            : skillData.iconKey;
-          
-          await remove({
-            path: normalizedPath
-          });
-          console.log(`✅ Icon deleted from S3: ${skillData.iconKey}`);
-        } catch (imgError) {
-          console.warn('Could not delete icon from S3:', imgError);
-        }
+        await S3Cleanup.deleteSingleFile(skillData.iconKey);
       }
 
       // Delete from DynamoDB
