@@ -25,7 +25,9 @@ import {
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { generateClient } from 'aws-amplify/data';
-import { uploadData, getUrl, remove } from 'aws-amplify/storage';
+import { getUrl } from 'aws-amplify/storage';
+import { uploadImageWithMetadata } from '@/lib/utils/image-helpers';
+import S3Cleanup from '@/lib/utils/s3-cleanup';
 import type { Schema } from '../../../../../../../amplify/data/resource';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation, useLocalizedPath } from '@/lib/i18n/client';
@@ -46,71 +48,89 @@ const editProfileStyles = `
   }
   
   .edit-profile-form .amplify-input,
-  .edit-profile-form .amplify-textarea {
-    background-color: var(--form-input-background) !important;
+  .edit-profile-form .amplify-textarea,
+  .edit-profile-form .amplify-select select {
+    background-color: var(--form-input-bg) !important;
     border: 1px solid var(--form-input-border) !important;
-    color: var(--form-input-color) !important;
+    color: var(--form-input-text) !important;
     border-radius: 6px !important;
     padding: 0.75rem !important;
-    font-size: 0.95rem !important;
-    transition: all 0.2s ease !important;
+    font-size: 0.9rem !important;
+  }
+  
+  .edit-profile-form .amplify-input::placeholder,
+  .edit-profile-form .amplify-textarea::placeholder {
+    color: var(--form-placeholder-color) !important;
+    opacity: 0.8 !important;
+    font-weight: 400 !important;
   }
   
   .edit-profile-form .amplify-input:focus,
-  .edit-profile-form .amplify-textarea:focus {
-    border-color: var(--amplify-colors-brand-primary-80) !important;
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1) !important;
+  .edit-profile-form .amplify-textarea:focus,
+  .edit-profile-form .amplify-select select:focus {
+    border-color: var(--form-focus-border) !important;
+    box-shadow: 0 0 0 2px var(--form-focus-shadow) !important;
     outline: none !important;
   }
-
-  .image-upload-container {
-    border: 2px dashed var(--form-input-border);
-    border-radius: 8px;
-    padding: 2rem;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    background-color: var(--form-input-background);
+  
+  .edit-profile-form .amplify-field-group__control .amplify-field__description {
+    color: var(--form-description-color) !important;
+    font-size: 0.8rem !important;
+    margin-top: 0.25rem !important;
+    font-weight: 500 !important;
   }
 
-  .image-upload-container:hover {
-    border-color: var(--amplify-colors-brand-primary-80);
-    background-color: var(--amplify-colors-brand-primary-10);
+  .edit-profile-form .image-remove-button {
+    position: absolute !important;
+    background-color: rgba(239, 68, 68, 0.9) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 6px !important;
+    padding: 0.5rem !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    max-width: 32px !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+    transition: all 0.2s ease !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    top: 8px !important;
+    right: 8px !important;
+    z-index: 10 !important;
   }
 
-  .image-preview {
-    position: relative;
-    display: inline-block;
-    margin-top: 1rem;
+  .edit-profile-form .image-remove-button:hover {
+    background-color: rgba(239, 68, 68, 1) !important;
+    transform: scale(1.1) !important;
   }
 
-  .image-preview img {
-    max-width: 200px;
-    max-height: 200px;
-    border-radius: 8px;
-    object-fit: cover;
-  }
+  /* Responsive design improvements */
+  @media (max-width: 768px) {
+    .edit-profile-form .amplify-flex {
+      flex-direction: column !important;
+    }
+    
+    .edit-profile-form .amplify-button {
+      width: 100% !important;
+      margin-top: 0.5rem !important;
+    }
 
-  .image-remove-button {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    background-color: rgba(239, 68, 68, 0.9);
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 32px;
-    height: 32px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-  }
-
-  .image-remove-button:hover {
-    background-color: rgba(239, 68, 68, 1);
-    transform: scale(1.1);
+    .edit-profile-form .image-remove-button {
+      width: 28px !important;
+      height: 28px !important;
+      min-width: 28px !important;
+      max-width: 28px !important;
+      padding: 0.25rem !important;
+      font-size: 12px !important;
+      border-radius: 4px !important;
+      top: 4px !important;
+      right: 4px !important;
+    }
   }
 `;
 
@@ -280,14 +300,7 @@ function EditProfileClient({ locale, profileId }: EditProfileClientProps): React
     if (!profile?.profilePhotoKey) return;
 
     try {
-      const normalizedPath = profile.profilePhotoKey.startsWith('public/') 
-        ? profile.profilePhotoKey.slice(7) 
-        : profile.profilePhotoKey;
-      
-      await remove({
-        path: normalizedPath,
-      });
-
+      await S3Cleanup.deleteSingleFile(profile.profilePhotoKey);
       setCurrentImageUrl('');
       console.log('✅ Current image removed from S3');
     } catch (removeError) {
@@ -295,22 +308,12 @@ function EditProfileClient({ locale, profileId }: EditProfileClientProps): React
     }
   }, [profile?.profilePhotoKey]);
 
-  // Subir imagen a S3
+  // Subir imagen a S3 (optimized)
   const uploadImageToS3 = async (file: File): Promise<string> => {
-    const timestamp = Date.now();
-    const fileName = `about/profiles/${timestamp}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
-
     try {
-      const result = await uploadData({
-        path: fileName,
-        data: file,
-        options: {
-          contentType: file.type,
-        }
-      }).result;
-
-      console.log('✅ Image uploaded to S3:', result.path);
-      return fileName;
+      const key = await uploadImageWithMetadata(file, profileId, 'Profile', 'profilePhotoKey');
+      console.log('✅ Image uploaded to S3 with metadata:', key);
+      return key;
     } catch (uploadError) {
       console.error('❌ Error uploading image to S3:', uploadError);
       throw new Error(t('about.profile.error_uploading_image'));
@@ -384,16 +387,7 @@ function EditProfileClient({ locale, profileId }: EditProfileClientProps): React
     }
   };
 
-  // Insertar estilos en el DOM
-  React.useEffect(() => {
-    const styleElement = document.createElement('style');
-    styleElement.textContent = editProfileStyles;
-    document.head.appendChild(styleElement);
-    
-    return () => {
-      document.head.removeChild(styleElement);
-    };
-  }, []);
+
 
   if (isLoading) {
     return (
@@ -416,41 +410,88 @@ function EditProfileClient({ locale, profileId }: EditProfileClientProps): React
     );
   }
 
+  const isDark = mode === 'dark';
+  
+  // Definir variables CSS para el tema con mejor contraste
+  const cssVariables = {
+    '--form-label-color': isDark ? '#F8FAFC' : '#0F172A',
+    '--form-input-bg': isDark ? '#1E293B' : '#FFFFFF',
+    '--form-input-border': isDark ? '#64748B' : '#D1D5DB',
+    '--form-input-text': isDark ? '#F8FAFC' : '#111827',
+    '--form-placeholder-color': isDark ? '#94A3B8' : '#6B7280',
+    '--form-focus-border': isDark ? '#3B82F6' : '#2563EB',
+    '--form-focus-shadow': isDark ? 'rgba(59, 130, 246, 0.35)' : 'rgba(37, 99, 235, 0.25)',
+    '--form-description-color': isDark ? '#D1D5DB' : '#6B7280'
+  } as React.CSSProperties;
+
   return (
-    <View padding="large" className="edit-profile-form">
-      <Flex direction="column" gap="large" maxWidth="800px">
-        {/* Header */}
-        <Flex alignItems="center" gap="medium">
-          <Button
-            variation="link"
-            onClick={() => router.push(getLocalizedPath('/admin/about'))}
-            size="small"
-          >
-            <ArrowLeft size={16} />
-          </Button>
-          <View>
-            <Heading level={2}>{t('about.profile.edit')}</Heading>
-            <Text color="font.tertiary">{t('about.profile.edit_description')}</Text>
-          </View>
-        </Flex>
+    <>
+      <style dangerouslySetInnerHTML={{ __html: editProfileStyles }} />
+      <View 
+        style={{
+          padding: '1.5rem',
+          backgroundColor: isDark ? '#0F172A' : '#F8FAFC',
+          minHeight: '100vh',
+          ...cssVariables
+        }}
+        className="edit-profile-form"
+      >
+        <Card
+          style={{
+            padding: '2rem',
+            backgroundColor: isDark ? 'rgba(51, 65, 85, 0.9)' : 'rgba(255, 255, 255, 0.9)',
+            border: isDark ? '1px solid rgba(148, 163, 184, 0.1)' : '1px solid rgba(203, 213, 225, 0.2)',
+            borderRadius: '12px',
+            backdropFilter: 'blur(10px)',
+            maxWidth: '800px',
+            margin: '0 auto'
+          }}
+        >
+          <Flex direction="column" gap="large">
+            {/* Header */}
+            <Flex justifyContent="space-between" alignItems="center">
+              <Flex alignItems="center" gap="medium">
+                <Button
+                  style={{
+                    backgroundColor: 'transparent',
+                    border: 'none',
+                    color: isDark ? '#CBD5E1' : '#64748B',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem'
+                  }}
+                  onClick={() => router.push(getLocalizedPath('/admin/about'))}
+                >
+                  <ArrowLeft size={20} />
+                </Button>
+                <Heading 
+                  level={2} 
+                  style={{
+                    color: isDark ? '#F1F5F9' : '#1E293B',
+                    margin: 0
+                  }}
+                >
+                  {t('about.profile.edit')}
+                </Heading>
+              </Flex>
+            </Flex>
 
-        {/* Alerts */}
-        {error && (
-          <Alert variation="error" isDismissible onDismiss={() => setError('')}>
-            {error}
-          </Alert>
-        )}
+            {error && (
+              <Alert variation="error" hasIcon={true}>
+                {error}
+              </Alert>
+            )}
 
-        {success && (
-          <Alert variation="success">
-            {success}
-          </Alert>
-        )}
+            {success && (
+              <Alert variation="success" hasIcon={true}>
+                {success}
+              </Alert>
+            )}
 
-        {/* Form */}
-        <Card padding="large">
-          <form onSubmit={handleSubmit}>
-            <Flex direction="column" gap="large">
+            {/* Formulario */}
+            <form onSubmit={handleSubmit} className="edit-profile-form">
+              <Flex direction="column" gap="large">
               
               {/* Profile Image Upload */}
               <View>
@@ -678,32 +719,59 @@ function EditProfileClient({ locale, profileId }: EditProfileClientProps): React
 
               <Divider />
 
-              {/* Submit Buttons */}
-              <Flex direction={{ base: 'column', medium: 'row' }} gap="medium" justifyContent="flex-end">
+              {/* Botones de acción */}
+              <Flex 
+                direction={{ base: 'column', medium: 'row' }}
+                justifyContent="space-between" 
+                gap="medium"
+              >
                 <Button
-                  variation="link"
                   onClick={() => router.push(getLocalizedPath('/admin/about'))}
-                  isDisabled={isSaving}
+                  disabled={isSaving}
+                  style={{
+                    backgroundColor: 'transparent',
+                    color: isDark ? '#CBD5E1' : '#64748B',
+                    border: isDark ? '1px solid #475569' : '1px solid #CBD5E1',
+                    borderRadius: '6px',
+                    padding: '0.75rem 1.5rem',
+                    cursor: 'pointer',
+                    fontSize: '0.9rem',
+                    fontWeight: '500'
+                  }}
                 >
                   {t('about.profile.cancel')}
                 </Button>
-                <Button 
+
+                <Button
                   type="submit"
-                  variation="primary"
-                  isLoading={isSaving}
-                  loadingText={t('about.profile.updating')}
+                  disabled={isSaving || !formData.name.trim() || !formData.currentPosition.trim()}
+                  style={{
+                    backgroundColor: isDark ? '#3B82F6' : '#2563EB',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '6px',
+                    padding: '0.75rem 1.5rem',
+                    cursor: isSaving ? 'not-allowed' : 'pointer',
+                    opacity: (isSaving || !formData.name.trim() || !formData.currentPosition.trim()) ? 0.6 : 1,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.5rem',
+                    fontSize: '0.9rem',
+                    fontWeight: '600',
+                    minWidth: '160px'
+                  }}
                 >
-                  <Flex alignItems="center" gap="xs">
-                    <Save size={16} />
-                    {t('about.profile.update_profile')}
-                  </Flex>
+                  <Save size={16} />
+                  {isSaving ? t('about.profile.updating') : t('about.profile.update_profile')}
                 </Button>
               </Flex>
-            </Flex>
-          </form>
+              </Flex>
+            </form>
+          </Flex>
         </Card>
-      </Flex>
-    </View>
+      </View>
+    </>
   );
 }
 

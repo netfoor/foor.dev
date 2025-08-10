@@ -4,10 +4,10 @@
 
 El sistema de optimización de imágenes sigue el siguiente flujo:
 
-1. **Frontend**: La aplicación sube una imagen a S3 con metadatos específicos
+1. **Frontend**: La aplicación sube una imagen a S3 con metadatos específicos usando el helper `uploadImageWithMetadata`
 2. **Evento S3**: La creación del objeto desencadena la función Lambda
 3. **Lambda**: Procesa la imagen, crea versión WebP, y actualiza DynamoDB
-4. **Frontend**: Muestra la imagen optimizada usando el componente `OptimizedImage`
+4. **Frontend**: Muestra la imagen optimizada usando helpers (`getOptimizedImageUrl`, `getResponsiveImageSources`) o componentes que los utilicen
 
 ## Detalles de la Función Lambda
 
@@ -33,6 +33,8 @@ La función Lambda (`imageOptimizationFunction`) ubicada en `amplify/functions/i
 ## Helpers de Frontend
 
 ### `uploadImageWithMetadata`
+
+Este helper centraliza la subida con metadatos para que la Lambda optimice la imagen y actualice el registro.
 
 ```typescript
 export const uploadImageWithMetadata = async (
@@ -67,12 +69,32 @@ export const uploadImageWithMetadata = async (
 };
 ```
 
+Uso recomendado (Ejemplos):
+- Profile (edit): `uploadImageWithMetadata(file, profileId, 'Profile', 'profilePhotoKey')`
+- Experiences (edit): `uploadImageWithMetadata(file, experienceId, 'Experiences', 'photoKey')`
+- Recognitions (edit): `uploadImageWithMetadata(file, recognitionId, 'Recognitions', 'photoKey')`
+- Publications (edit): `uploadImageWithMetadata(file, publicationId, 'SocialPublications', 'photoKey')`
+- Skills (edit): `uploadImageWithMetadata(file, skillId, 'Skills', 'iconKey')`
+- Projects (edit y create): ya implementado
+
 ### `getOptimizedImageUrl` y `getResponsiveImageSources`
 
 Estos helpers:
+- Normalizan claves antiguas o con prefijos `public/`
 - Construyen la ruta a la versión WebP a partir de la ruta original
 - Intentan obtener la URL de la imagen WebP
 - Si no está disponible, recurren a la imagen original
+
+## Limpieza en S3 (original + WebP)
+
+Para evitar basura en S3 cuando se reemplazan o eliminan imágenes, usar la utilidad centralizada:
+
+```ts
+import S3Cleanup from '@/lib/utils/s3-cleanup';
+await S3Cleanup.deleteSingleFile(key);
+```
+
+Esto elimina la imagen original y su versión WebP (si existe). No usar `remove()` directo en los formularios.
 
 ## Componente OptimizedImage
 
@@ -117,14 +139,15 @@ El sistema incluye:
 
 ### Modelos de Datos
 Para cada modelo que use imágenes:
-1. Usar campos como `photoKey` o `imageKey` (no URLs)
+1. Usar campos como `photoKey`, `iconKey` o similar (no URLs)
 2. Asegurarse que el ID del registro esté disponible antes de subir imágenes
 
-### Formularios
-1. Crear primero el registro en la base de datos
-2. Luego subir imágenes con los metadatos correctos
-3. No es necesario actualizar manualmente el registro (Lambda lo hace)
+### Formularios (Create y Edit)
+1. Crear primero el registro en la base de datos (en Create)
+2. Subir imágenes con `uploadImageWithMetadata` y los metadatos correctos
+3. En Edit, si se reemplaza la imagen, borrar la anterior con `S3Cleanup.deleteSingleFile`
+4. No es necesario actualizar manualmente el registro tras la subida (la Lambda lo hace), pero mantener `photoKey`/`iconKey` sincronizado mejora la UX inmediata
 
 ### Visualización
-1. Siempre usar el componente `OptimizedImage`
-2. Pasar la clave S3 directamente, no la URL
+1. Usar siempre helpers o componentes que llamen a `getUrl` con las claves S3 (no guardar URLs)
+2. Preferir un componente que consuma `getResponsiveImageSources` para servir WebP cuando esté disponible

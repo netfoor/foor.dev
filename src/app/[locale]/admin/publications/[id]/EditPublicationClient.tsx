@@ -25,8 +25,10 @@ import {
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { generateClient } from 'aws-amplify/data';
-import { uploadData, remove, getUrl } from 'aws-amplify/storage';
-import { v4 as uuidv4 } from 'uuid';
+// Switch to helpers: keep getUrl for previews, use uploadImageWithMetadata + S3Cleanup
+import { getUrl } from 'aws-amplify/storage';
+import { uploadImageWithMetadata } from '@/lib/utils/image-helpers';
+import S3Cleanup from '@/lib/utils/s3-cleanup';
 import type { Schema } from '../../../../../../amplify/data/resource';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation, useLocalizedPath } from '@/lib/i18n/client';
@@ -89,6 +91,15 @@ const editFormStyles = `
     margin-top: 0.25rem !important;
     font-weight: 500 !important;
   }
+
+  .edit-form .amplify-select select {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'><path fill='%23666' d='M2 0L0 2h4zm0 5L0 3h4z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 0.65rem;
+    padding-right: 2.5rem !important;
+  }
   
   .image-preview {
     position: relative;
@@ -136,6 +147,18 @@ const editFormStyles = `
     border-color: var(--form-focus-border);
     box-shadow: 0 0 0 2px var(--form-focus-shadow);
     outline: none;
+  }
+
+  /* Responsive design improvements */
+  @media (max-width: 768px) {
+    .edit-form .amplify-flex {
+      flex-direction: column !important;
+    }
+    
+    .edit-form .amplify-button {
+      width: 100% !important;
+      margin-top: 0.5rem !important;
+    }
   }
 `;
 
@@ -254,19 +277,11 @@ const EditPublicationClient: React.FC<EditPublicationClientProps> = ({ locale, p
     }
     
     try {
-      // Normalize path - remove 'public/' if exists (for Gen 1 compatibility)
-      const normalizedPath = photoKey.startsWith('public/') ? photoKey.slice(7) : photoKey;
-      
-      await remove({
-        path: normalizedPath,
-      });
-      
+      await S3Cleanup.deleteSingleFile(photoKey);
       setPhotoKey(null);
       setPhotoPreview(null);
       setPhotoFile(null);
-      
-      console.log('✅ Photo deleted from S3:', normalizedPath);
-      
+      console.log('✅ Photo deleted from S3 (including WEBP if exists):', photoKey);
     } catch (err) {
       console.error('Error deleting photo:', err);
       setError(`${t('publications.error_deleting_photo')}: ${err instanceof Error ? err.message : t('unknown_error')}`);
@@ -316,52 +331,35 @@ const EditPublicationClient: React.FC<EditPublicationClientProps> = ({ locale, p
       const client = generateClient<Schema>();
       let newPhotoKey = photoKey;
       
-      // Upload new photo to S3 if provided
+      // Upload new photo to S3 if provided (with metadata for optimization)
       if (photoFile) {
-        const fileExt = photoFile.name.split('.').pop();
-        const fileName = `${uuidv4()}.${fileExt}`;
-        const s3Key = `publications/${fileName}`;
-        
-        await uploadData({
-          path: s3Key,
-          data: photoFile,
-          options: {
-            contentType: photoFile.type,
-          }
-        });
-        
-        // If we had a previous photo and uploaded a new one, delete the old one
-        if (photoKey && photoKey !== s3Key) {
-          try {
-            const normalizedPath = photoKey.startsWith('public/') ? photoKey.slice(7) : photoKey;
-            await remove({ path: normalizedPath });
-            console.log('✅ Old photo deleted from S3:', normalizedPath);
-          } catch (err) {
-            console.error('Error deleting old photo (non-critical):', err);
-          }
+        // If we had a previous photo and we're uploading a new one, delete the old one (original + webp)
+        if (photoKey) {
+          try { await S3Cleanup.deleteSingleFile(photoKey); } catch {}
         }
-        
-        newPhotoKey = s3Key;
-        console.log('✅ New photo uploaded to S3:', s3Key);
+        newPhotoKey = await uploadImageWithMetadata(
+          photoFile,
+          publicationId,
+          'SocialPublications',
+          'photoKey'
+        );
+        console.log('✅ New photo uploaded to S3 with metadata:', newPhotoKey);
       }
       
-      // Update publication in DynamoDB with proper typing
+      // Update publication in DynamoDB
       const updateData = {
         id: publicationId,
         title,
         description,
         source: source as "LinkedIn" | "Twitter" | "GitHub" | "Blog" | "Youtube",
         type: type as "Article" | "Blog" | "Video" | "Podcast" | "Book" | "Course" | "Conference" | "Presentation" | "Research" | "Workshop" | "Other",
-        publicationDate: publicationDate, // Keep as date string format YYYY-MM-DD
+        publicationDate,
         publicationUrl,
         ...(newPhotoKey && { photoKey: newPhotoKey })
       };
       
-      console.log('🔄 Updating publication with data:', updateData);
-      
       const updatedPublication = await client.models.SocialPublications.update(updateData);
       
-      // Check for errors in the response
       if (updatedPublication.errors && updatedPublication.errors.length > 0) {
         throw new Error(`DynamoDB Error: ${updatedPublication.errors.map(e => e.message).join(', ')}`);
       }
@@ -371,15 +369,8 @@ const EditPublicationClient: React.FC<EditPublicationClientProps> = ({ locale, p
       }
       
       console.log('✅ Publication updated successfully:', updatedPublication.data?.id);
-      console.log('✅ Updated data:', JSON.stringify(updatedPublication.data, null, 2));
-      
       setSuccess(true);
-      
-      // Navigate to admin recognitions list after successful update
-      setTimeout(() => {
-        router.push(getLocalizedPath('/admin/recognitions'));
-      }, 1500);
-      
+      setTimeout(() => { router.push(getLocalizedPath('/admin/recognitions')); }, 1500);
     } catch (err) {
       console.error('❌ Error updating publication:', err);
       
@@ -426,195 +417,261 @@ const EditPublicationClient: React.FC<EditPublicationClientProps> = ({ locale, p
     );
   }
 
+  const isDark = mode === 'dark';
+  
+  // Definir variables CSS para el tema con mejor contraste
+  const cssVariables = {
+    '--form-label-color': isDark ? '#F8FAFC' : '#0F172A',
+    '--form-input-bg': isDark ? '#1E293B' : '#FFFFFF',
+    '--form-input-border': isDark ? '#64748B' : '#D1D5DB',
+    '--form-input-text': isDark ? '#F8FAFC' : '#111827',
+    '--form-placeholder-color': isDark ? '#94A3B8' : '#6B7280',
+    '--form-focus-border': isDark ? '#3B82F6' : '#2563EB',
+    '--form-focus-shadow': isDark ? 'rgba(59, 130, 246, 0.35)' : 'rgba(37, 99, 235, 0.25)',
+    '--form-description-color': isDark ? '#D1D5DB' : '#6B7280'
+  } as React.CSSProperties;
+
   return (
-    <main className="p-6">
-      <style>{editFormStyles}</style>
-      
-      {/* Back button */}
-      <Button
-        size="small"
-        variation="link"
-        onClick={() => router.push(getLocalizedPath('/admin/recognitions'))}
-        marginBottom="1rem"
+    <>
+      <style dangerouslySetInnerHTML={{ __html: editFormStyles }} />
+      <View 
+        style={{
+          padding: '1.5rem',
+          backgroundColor: isDark ? '#0F172A' : '#F8FAFC',
+          minHeight: '100vh',
+          ...cssVariables
+        }}
+        className="edit-form"
       >
-        <ArrowLeft size={16} />
-        <Text>{t('back_to_list')}</Text>
-      </Button>
-      
-      <Card>
-        <Flex direction="column" gap="16px">
-          <AmplifyHeading level={1} marginBottom="1rem">
-            <Flex alignItems="center" gap="8px">
-              <BookOpen size={24} />
-              <Text>{t('publications.edit')}</Text>
+        <Card
+          style={{
+            padding: '2rem',
+            backgroundColor: isDark ? 'rgba(51, 65, 85, 0.9)' : 'rgba(255, 255, 255, 0.9)',
+            border: isDark ? '1px solid rgba(148, 163, 184, 0.1)' : '1px solid rgba(203, 213, 225, 0.2)',
+            borderRadius: '12px',
+            backdropFilter: 'blur(10px)',
+            maxWidth: '800px',
+            margin: '0 auto'
+          }}
+        >
+          <Flex direction="column" gap="large">
+            {/* Header */}
+            <Flex justifyContent="space-between" alignItems="center">
+              <Flex alignItems="center" gap="medium">
+                <Button
+                  style={{
+                    backgroundColor: 'transparent',
+                    border: 'none',
+                    color: isDark ? '#CBD5E1' : '#64748B',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem'
+                  }}
+                  onClick={() => router.push(getLocalizedPath('/admin/recognitions'))}
+                >
+                  <ArrowLeft size={20} />
+                </Button>
+                <Heading 
+                  level={2} 
+                  style={{
+                    color: isDark ? '#F1F5F9' : '#1E293B',
+                    margin: 0
+                  }}
+                >
+                  {t('publications.edit')}
+                </Heading>
+              </Flex>
             </Flex>
-          </AmplifyHeading>
+
+            {error && (
+              <Alert variation="error" hasIcon={true}>
+                {error}
+              </Alert>
+            )}
+
+            {success && (
+              <Alert variation="success" hasIcon={true}>
+                {t('publications.update_success')}
+              </Alert>
+            )}
           
-          {error && (
-            <Alert variation="error" isDismissible={false}>
-              {error}
-            </Alert>
-          )}
-          
-          {success && (
-            <Alert variation="success" isDismissible={false}>
-              {t('publications.update_success')}
-            </Alert>
-          )}
-          
-          <form onSubmit={handleSubmit} className="edit-form">
-            <Flex direction={{ base: 'column', large: 'row' }} gap="2rem">
-              {/* Left column - Photo upload */}
-              <View width={{ base: '100%', large: '35%' }}>
-                <Text fontWeight="bold" marginBottom="0.5rem">
-                  {t('publications.photo')}
-                </Text>
-                
-                <div className="image-preview">
-                  {photoPreview && (
-                    <>
-                      <img src={photoPreview} alt="Publication Preview" />
-                      <div className="image-actions">
-                        <Button
-                          size="small"
-                          variation="destructive"
-                          onClick={handleDeletePhoto}
-                          isDisabled={!photoKey || loading}
-                        >
-                          <Trash2 size={16} />
-                        </Button>
-                      </div>
-                    </>
-                  )}
-                  
-                  {!photoPreview && (
-                    <Flex direction="column" alignItems="center" gap="8px">
-                      <BookOpen size={48} />
-                      <Text>{t('publications.add_photo')}</Text>
-                    </Flex>
-                  )}
-                </div>
-                
-                <FileUploadInput
-                  id="publication-photo"
-                  onChange={handlePhotoChange}
-                  accept="image/*"
-                  label={photoKey ? t('publications.change_photo') : t('publications.upload_photo')}
-                />
-                
-                <Text fontSize="0.8rem" color="var(--amplify-colors-font-tertiary)" marginTop="0.5rem">
-                  {t('publications.photo_description')}
-                </Text>
-              </View>
-              
-              {/* Right column - Publication details */}
-              <View width={{ base: '100%', large: '65%' }}>
-                <TextField
-                  label={t('publications.title_label')}
-                  placeholder={t('publications.title_placeholder')}
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  isRequired
-                />
-                
-                <TextAreaField
-                  label={t('publications.description_label')}
-                  placeholder={t('publications.description_placeholder')}
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  rows={4}
-                  isRequired
-                />
-                
-                <SelectField
-                  label={t('publications.source_label')}
-                  placeholder={t('publications.source_placeholder')}
-                  value={source}
-                  onChange={(e) => setSource(e.target.value)}
-                  isRequired
-                >
-                  <option value="">{t('publications.select_source')}</option>
-                  {SOURCE_OPTIONS.map((option) => (
-                    <option key={option} value={option}>
-                      {option}
-                    </option>
-                  ))}
-                </SelectField>
-                
-                <SelectField
-                  label={t('publications.type_label')}
-                  placeholder={t('publications.type_placeholder')}
-                  value={type}
-                  onChange={(e) => setType(e.target.value)}
-                  isRequired
-                >
-                  <option value="">{t('publications.select_type')}</option>
-                  {TYPE_OPTIONS.map((option) => (
-                    <option key={option} value={option}>
-                      {option}
-                    </option>
-                  ))}
-                </SelectField>
-                
-                <div>
-                  <label htmlFor="publicationDate" className="amplify-field">
-                    <span>{t('publications.date_label')} *</span>
-                    <div className="date-field">
-                      <input
-                        id="publicationDate"
-                        type="date"
-                        value={publicationDate}
-                        onChange={(e) => setPublicationDate(e.target.value)}
-                        required
-                      />
+            {/* Formulario */}
+            <form onSubmit={handleSubmit} className="edit-form">
+              <Flex direction="column" gap="large">
+                <Flex direction={{ base: 'column', large: 'row' }} gap="2rem">
+                  {/* Left column - Photo upload */}
+                  <View width={{ base: '100%', large: '35%' }}>
+                    <Text fontWeight="bold" marginBottom="0.5rem">
+                      {t('publications.photo')}
+                    </Text>
+                    
+                    <div className="image-preview">
+                      {photoPreview && (
+                        <>
+                          <img src={photoPreview} alt="Publication Preview" />
+                          <div className="image-actions">
+                            <Button
+                              size="small"
+                              variation="destructive"
+                              onClick={handleDeletePhoto}
+                              isDisabled={!photoKey || loading}
+                            >
+                              <Trash2 size={16} />
+                            </Button>
+                          </div>
+                        </>
+                      )}
+                      
+                      {!photoPreview && (
+                        <Flex direction="column" alignItems="center" gap="8px">
+                          <BookOpen size={48} />
+                          <Text>{t('publications.add_photo')}</Text>
+                        </Flex>
+                      )}
                     </div>
-                  </label>
-                </div>
+                    
+                    <FileUploadInput
+                      id="publication-photo"
+                      onChange={handlePhotoChange}
+                      accept="image/*"
+                      label={photoKey ? t('publications.change_photo') : t('publications.upload_photo')}
+                    />
+                    
+                    <Text fontSize="0.8rem" color="var(--amplify-colors-font-tertiary)" marginTop="0.5rem">
+                      {t('publications.photo_description')}
+                    </Text>
+                  </View>
+                  
+                  {/* Right column - Publication details */}
+                  <View width={{ base: '100%', large: '65%' }}>
+                    <TextField
+                      label={t('publications.title_label')}
+                      placeholder={t('publications.title_placeholder')}
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                      isRequired
+                    />
+                    
+                    <TextAreaField
+                      label={t('publications.description_label')}
+                      placeholder={t('publications.description_placeholder')}
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                      rows={4}
+                      isRequired
+                    />
+                    
+                    <SelectField
+                      label={t('publications.source_label')}
+                      placeholder={t('publications.source_placeholder')}
+                      value={source}
+                      onChange={(e) => setSource(e.target.value)}
+                      isRequired
+                    >
+                      <option value="">{t('publications.select_source')}</option>
+                      {SOURCE_OPTIONS.map((option) => (
+                        <option key={option} value={option}>
+                          {option}
+                        </option>
+                      ))}
+                    </SelectField>
+                    
+                    <SelectField
+                      label={t('publications.type_label')}
+                      placeholder={t('publications.type_placeholder')}
+                      value={type}
+                      onChange={(e) => setType(e.target.value)}
+                      isRequired
+                    >
+                      <option value="">{t('publications.select_type')}</option>
+                      {TYPE_OPTIONS.map((option) => (
+                        <option key={option} value={option}>
+                          {option}
+                        </option>
+                      ))}
+                    </SelectField>
+                    
+                    <div>
+                      <label htmlFor="publicationDate" className="amplify-field">
+                        <span>{t('publications.date_label')} *</span>
+                        <div className="date-field">
+                          <input
+                            id="publicationDate"
+                            type="date"
+                            value={publicationDate}
+                            onChange={(e) => setPublicationDate(e.target.value)}
+                            required
+                          />
+                        </div>
+                      </label>
+                    </div>
+                    
+                    <TextField
+                      label={t('publications.url_label')}
+                      placeholder={t('publications.url_placeholder')}
+                      value={publicationUrl}
+                      onChange={(e) => setPublicationUrl(e.target.value)}
+                      isRequired
+                    />
+                  </View>
+                </Flex>
                 
-                <TextField
-                  label={t('publications.url_label')}
-                  placeholder={t('publications.url_placeholder')}
-                  value={publicationUrl}
-                  onChange={(e) => setPublicationUrl(e.target.value)}
-                  isRequired
-                />
-              </View>
-            </Flex>
-            
-            <Divider marginTop="2rem" marginBottom="2rem" />
-            
-            {/* Submit button */}
-            <Flex justifyContent="flex-end" gap="1rem">
-              <Button
-                type="button"
-                onClick={() => router.push(getLocalizedPath('/admin/recognitions'))}
-                variation="link"
-              >
-                {t('cancel')}
-              </Button>
-              
-              <Button
-                type="submit"
-                variation="primary"
-                isDisabled={loading || success}
-              >
-                {loading ? (
-                  <Flex alignItems="center" gap="8px">
-                    <Loader size="small" />
-                    <Text>{t('saving')}</Text>
-                  </Flex>
-                ) : (
-                  <Flex alignItems="center" gap="8px">
+                <Divider />
+
+                {/* Botones de acción */}
+                <Flex 
+                  direction={{ base: 'column', medium: 'row' }}
+                  justifyContent="space-between" 
+                  gap="medium"
+                >
+                  <Button
+                    onClick={() => router.push(getLocalizedPath('/admin/recognitions'))}
+                    disabled={loading}
+                    style={{
+                      backgroundColor: 'transparent',
+                      color: isDark ? '#CBD5E1' : '#64748B',
+                      border: isDark ? '1px solid #475569' : '1px solid #CBD5E1',
+                      borderRadius: '6px',
+                      padding: '0.75rem 1.5rem',
+                      cursor: 'pointer',
+                      fontSize: '0.9rem',
+                      fontWeight: '500'
+                    }}
+                  >
+                    {t('cancel')}
+                  </Button>
+
+                  <Button
+                    type="submit"
+                    disabled={loading || success || !title || !description || !source || !type || !publicationDate || !publicationUrl}
+                    style={{
+                      backgroundColor: isDark ? '#3B82F6' : '#2563EB',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '6px',
+                      padding: '0.75rem 1.5rem',
+                      cursor: loading ? 'not-allowed' : 'pointer',
+                      opacity: (loading || success || !title || !description || !source || !type || !publicationDate || !publicationUrl) ? 0.6 : 1,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '0.5rem',
+                      fontSize: '0.9rem',
+                      fontWeight: '600',
+                      minWidth: '160px'
+                    }}
+                  >
                     <Save size={16} />
-                    <Text>{t('save')}</Text>
-                  </Flex>
-                )}
-              </Button>
-            </Flex>
-          </form>
-        </Flex>
-      </Card>
-    </main>
+                    {loading ? t('saving') : t('save')}
+                  </Button>
+                </Flex>
+              </Flex>
+            </form>
+          </Flex>
+        </Card>
+      </View>
+    </>
   );
 };
 

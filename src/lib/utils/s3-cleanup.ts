@@ -1,6 +1,5 @@
 // lib/utils/s3-cleanup.ts
-import { remove } from 'aws-amplify/storage';
-
+import { remove, list } from 'aws-amplify/storage';
 /**
  * Gets the WebP version key from an original image key
  * @param originalKey The original image key
@@ -18,14 +17,42 @@ const getWebpKey = (originalKey: string): string | null => {
   return [...pathParts, 'webp', `${fileNameWithoutExtension}.webp`].join('/');
 };
 
+// NEW: Detect if a key points to the optimized WebP version
+const isWebpKey = (key: string): boolean => key.includes('/webp/');
+
+// NEW: Given a WebP key, guess possible original keys with common extensions
+const getOriginalCandidatesFromWebpKey = (webpKey: string): string[] => {
+  try {
+    const pathParts = webpKey.split('/');
+    const filename = pathParts.pop() || '';
+    const nameWithoutExt = filename.replace(/\.webp$/i, '');
+
+    // remove the `webp` folder segment
+    const webpIndex = pathParts.lastIndexOf('webp');
+    if (webpIndex >= 0) pathParts.splice(webpIndex, 1);
+
+    const basePath = pathParts.join('/');
+
+    // Include lower and upper case variants and more formats (covers scanners/cameras)
+    const lower = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'tiff', 'heic', 'avif', 'webp', 'jfif', 'svg'];
+    const variants = [...lower, ...lower.map(ext => ext.toUpperCase())];
+
+    const candidates = variants.map(ext => `${basePath}/${nameWithoutExt}.${ext}`);
+    return candidates;
+  } catch {
+    return [];
+  }
+};
+
 /**
  * Generic S3 cleanup utility for all model types
  */
 export class S3Cleanup {
   /**
    * Elimina un solo archivo de S3 y su versión WebP si existe
+   * Accepts either the original key OR the WebP key.
    * @param fileKey - Clave del archivo a eliminar
-   * @returns Promise<boolean> - true si se eliminó exitosamente
+   * @returns Promise<boolean> - true si se eliminó exitosamente (alguna de las variantes)
    */
   static async deleteSingleFile(fileKey: string | null | undefined): Promise<boolean> {
     if (!fileKey) return true; // Nada que eliminar
@@ -33,6 +60,62 @@ export class S3Cleanup {
     try {
       // Normalizar el path - remover 'public/' si existe (compatibilidad Gen 1)
       const normalizedPath = fileKey.startsWith('public/') ? fileKey.slice(7) : fileKey;
+
+      // Case A: the key points to a WebP file (DB updated by Lambda)
+      if (isWebpKey(normalizedPath)) {
+        let anyDeleted = false;
+        // 1) Delete the WebP itself first
+        try {
+          await remove({ path: normalizedPath });
+          console.log(`✅ Versión WebP eliminada de S3: ${normalizedPath}`);
+          anyDeleted = true;
+        } catch (err) {
+          console.log(`ℹ️ No se pudo eliminar WebP (puede no existir): ${normalizedPath}`, err);
+        }
+
+        // 2) Try deleting the likely original(s) with common extensions
+        const originals = getOriginalCandidatesFromWebpKey(normalizedPath);
+        for (const originalKey of originals) {
+          try {
+            await remove({ path: originalKey });
+            console.log(`✅ Original eliminado de S3: ${originalKey}`);
+            anyDeleted = true;
+            // Do not break; try to delete other potential duplicates too
+          } catch (err) {
+            console.log(`ℹ️ Original no encontrado (o no se pudo eliminar): ${originalKey}`);
+          }
+        }
+
+        // 3) Fallback: list the folder and remove any file that matches the base name (unknown extensions)
+        try {
+          const pathParts = normalizedPath.split('/');
+          const file = pathParts.pop() || '';
+          const nameWithoutExt = file.replace(/\.webp$/i, '');
+          const webpIndex = pathParts.lastIndexOf('webp');
+          if (webpIndex >= 0) pathParts.splice(webpIndex, 1);
+          const baseDir = pathParts.join('/') + '/';
+          const listing = await list({ path: baseDir });
+          const toDelete = (listing?.items || [])
+            .map((it: any) => it?.path)
+            .filter((p: string | undefined): p is string => !!p)
+            .filter((p: string) => !p.includes('/webp/') && new RegExp(`${baseDir}${nameWithoutExt}\.[^.]+$`, 'i').test(p));
+          for (const candidate of toDelete) {
+            try {
+              await remove({ path: candidate });
+              console.log(`✅ Original (by listing) eliminado de S3: ${candidate}`);
+              anyDeleted = true;
+            } catch (err) {
+              console.log(`ℹ️ No se pudo eliminar (listing): ${candidate}`);
+            }
+          }
+        } catch (err) {
+          console.log('ℹ️ Fallback listing failed or not supported for this path');
+        }
+
+        return anyDeleted;
+      }
+
+      // Case B: the key points to the original
       await remove({ path: normalizedPath });
       console.log(`✅ Archivo eliminado de S3: ${normalizedPath}`);
       

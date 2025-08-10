@@ -14,7 +14,8 @@ import {
   SwitchField,
   Badge,
   Alert,
-  Loader
+  Loader,
+  Divider
 } from '@aws-amplify/ui-react';
 import '../../admin.css';
 import { 
@@ -26,7 +27,9 @@ import {
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { generateClient } from 'aws-amplify/data';
-import { uploadData, getUrl, remove } from 'aws-amplify/storage';
+import { getUrl } from 'aws-amplify/storage';
+import { uploadImageWithMetadata } from '@/lib/utils/image-helpers';
+import S3Cleanup from '@/lib/utils/s3-cleanup';
 import type { Schema } from '../../../../../../amplify/data/resource';
 import { useAuth } from '@/context/auth-context';
 import { useAuthorization } from '@/hooks/useAuthorization';
@@ -203,6 +206,7 @@ const EditSkillClient: React.FC<EditSkillClientProps> = ({ locale, skillId }) =>
     }));
   }, []);
 
+  // Handle submit with optimized upload and cleanup
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -223,33 +227,15 @@ const EditSkillClient: React.FC<EditSkillClientProps> = ({ locale, skillId }) =>
 
       const client = generateClient<Schema>();
       
-      let iconKey = skill?.iconKey;
+      let iconKey = skill?.iconKey || undefined;
       
       // Handle icon upload
       if (iconFile) {
-        // Remove old icon if exists
+        // Remove old icon if exists (original + webp)
         if (skill?.iconKey) {
-          try {
-            const normalizedPath = skill.iconKey.startsWith('public/') ? skill.iconKey.slice(7) : skill.iconKey;
-            await remove({ path: normalizedPath });
-          } catch (err) {
-            console.warn('Could not delete old icon:', err);
-          }
+          try { await S3Cleanup.deleteSingleFile(skill.iconKey); } catch {}
         }
-        
-        // Upload new icon
-        const iconExtension = iconFile.name.split('.').pop();
-        const iconFileName = `skills/${Date.now()}_${Math.random().toString(36).substr(2, 9)}.${iconExtension}`;
-        
-        const uploadResult = await uploadData({
-          path: iconFileName,
-          data: iconFile,
-          options: {
-            contentType: iconFile.type
-          }
-        }).result;
-        
-        iconKey = uploadResult.path;
+        iconKey = await uploadImageWithMetadata(iconFile, skillId, 'Skills', 'iconKey');
       }
 
       // Update skill
@@ -272,7 +258,7 @@ const EditSkillClient: React.FC<EditSkillClientProps> = ({ locale, skillId }) =>
         lastUsed: formData.lastUsed ? new Date(formData.lastUsed).toISOString().split('T')[0] : null,
       };
 
-      // Map the category from UI-friendly format to schema format
+      // Map category labels to schema
       const categoryMapping: Record<string, string> = {
         'Cloud Platforms': 'CLOUD_PLATFORMS',
         'Programming Languages': 'PROGRAMMING_LANGUAGES',
@@ -283,26 +269,16 @@ const EditSkillClient: React.FC<EditSkillClientProps> = ({ locale, skillId }) =>
         'Soft Skills': 'SOFT_SKILLS'
       };
 
-      // Update skill with correctly mapped category
-      const mappedSkillData = {
-        ...skillData,
-        category: categoryMapping[skillData.category as string] as any
-      };
+      const mappedSkillData = { ...skillData, category: categoryMapping[skillData.category as string] as any };
 
-      console.log('Updating skill with data:', mappedSkillData);
       const result = await client.models.Skills.update(mappedSkillData);
       
       if (result.errors) {
         throw new Error(result.errors[0].message);
       }
       
-      console.log('Skill updated successfully:', result);
       setSuccess(t('skills.skill_updated_success'));
-      
-      // Redirect to skills list after a short delay
-      setTimeout(() => {
-        router.push(getLocalizedPath('/admin/skills'));
-      }, 2000);
+      setTimeout(() => { router.push(getLocalizedPath('/admin/skills')); }, 2000);
       
     } catch (err) {
       console.error('Error updating skill:', err);
@@ -333,73 +309,188 @@ const EditSkillClient: React.FC<EditSkillClientProps> = ({ locale, skillId }) =>
     );
   }
 
+  const isDark = mode === 'dark';
+  
+  // Definir variables CSS para el tema con mejor contraste
+  const cssVariables = {
+    '--form-label-color': isDark ? '#F8FAFC' : '#0F172A',
+    '--form-input-bg': isDark ? '#1E293B' : '#FFFFFF',
+    '--form-input-border': isDark ? '#64748B' : '#D1D5DB',
+    '--form-input-text': isDark ? '#F8FAFC' : '#111827',
+    '--form-placeholder-color': isDark ? '#94A3B8' : '#6B7280',
+    '--form-focus-border': isDark ? '#3B82F6' : '#2563EB',
+    '--form-focus-shadow': isDark ? 'rgba(59, 130, 246, 0.35)' : 'rgba(37, 99, 235, 0.25)',
+    '--form-description-color': isDark ? '#D1D5DB' : '#6B7280'
+  } as React.CSSProperties;
+
+  const editSkillStyles = `
+    .edit-skill-form .amplify-field {
+      margin-bottom: 1rem;
+    }
+    
+    .edit-skill-form .amplify-field > label {
+      color: var(--form-label-color) !important;
+      font-weight: 600 !important;
+      margin-bottom: 0.5rem !important;
+      display: block !important;
+      font-size: 0.95rem !important;
+    }
+    
+    .edit-skill-form .amplify-input,
+    .edit-skill-form .amplify-textarea,
+    .edit-skill-form .amplify-select select {
+      background-color: var(--form-input-bg) !important;
+      border: 1px solid var(--form-input-border) !important;
+      color: var(--form-input-text) !important;
+      border-radius: 6px !important;
+      padding: 0.75rem !important;
+      font-size: 0.9rem !important;
+    }
+    
+    .edit-skill-form .amplify-input::placeholder,
+    .edit-skill-form .amplify-textarea::placeholder {
+      color: var(--form-placeholder-color) !important;
+      opacity: 0.8 !important;
+      font-weight: 400 !important;
+    }
+    
+    .edit-skill-form .amplify-input:focus,
+    .edit-skill-form .amplify-textarea:focus,
+    .edit-skill-form .amplify-select select:focus {
+      border-color: var(--form-focus-border) !important;
+      box-shadow: 0 0 0 2px var(--form-focus-shadow) !important;
+      outline: none !important;
+    }
+    
+    .edit-skill-form .amplify-field-group__control .amplify-field__description {
+      color: var(--form-description-color) !important;
+      font-size: 0.8rem !important;
+      margin-top: 0.25rem !important;
+      font-weight: 500 !important;
+    }
+
+    .edit-skill-form .amplify-select select {
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=US-ASCII,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'><path fill='%23666' d='M2 0L0 2h4zm0 5L0 3h4z'/></svg>");
+      background-repeat: no-repeat;
+      background-position: right 0.75rem center;
+      background-size: 0.65rem;
+      padding-right: 2.5rem !important;
+    }
+
+    .edit-skill-form .input-with-button-container {
+      display: flex;
+      gap: 0.75rem;
+      align-items: end;
+      margin-bottom: 1rem;
+    }
+
+    .edit-skill-form .input-wrapper {
+      flex: 1;
+    }
+
+    .edit-skill-form .add-button {
+      flex-shrink: 0;
+      min-width: 120px;
+    }
+
+    .edit-skill-form .badges-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+    }
+
+    /* Responsive design improvements */
+    @media (max-width: 768px) {
+      .edit-skill-form .input-with-button-container {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 0.5rem !important;
+      }
+      
+      .edit-skill-form .add-button {
+        width: 100% !important;
+        min-width: auto !important;
+      }
+      
+      .edit-skill-form .amplify-flex {
+        flex-direction: column !important;
+      }
+      
+      .edit-skill-form .amplify-button {
+        width: 100% !important;
+        margin-top: 0.5rem !important;
+      }
+    }
+  `;
+
   return (
-    <View className="create-project-form">
-      <style dangerouslySetInnerHTML={{ __html: `
-        .create-project-form .amplify-field > label {
-          color: var(--form-label-color) !important;
-          font-weight: 600 !important;
-          margin-bottom: 0.5rem !important;
-          display: block !important;
-          font-size: 0.95rem !important;
-        }
-        .create-project-form .amplify-input,
-        .create-project-form .amplify-textarea,
-        .create-project-form .amplify-select select {
-          background-color: var(--form-input-bg) !important;
-          border: 1px solid var(--form-input-border) !important;
-          color: var(--form-input-text) !important;
-          border-radius: 6px !important;
-          padding: 0.75rem !important;
-          font-size: 0.9rem !important;
-        }
-        .create-project-form .amplify-input::placeholder,
-        .create-project-form .amplify-textarea::placeholder {
-          color: var(--form-placeholder-color) !important;
-          opacity: 0.8 !important;
-        }
-        .create-project-form .amplify-input:focus,
-        .create-project-form .amplify-textarea:focus,
-        .create-project-form .amplify-select select:focus {
-          border-color: var(--form-focus-border) !important;
-          box-shadow: 0 0 0 2px var(--form-focus-shadow) !important;
-          outline: none !important;
-        }
-      ` }} />
+    <>
+      <style dangerouslySetInnerHTML={{ __html: editSkillStyles }} />
+      <View 
+        style={{
+          padding: '1.5rem',
+          backgroundColor: isDark ? '#0F172A' : '#F8FAFC',
+          minHeight: '100vh',
+          ...cssVariables
+        }}
+        className="edit-skill-form"
+      >
+        <Card
+          style={{
+            padding: '2rem',
+            backgroundColor: isDark ? 'rgba(51, 65, 85, 0.9)' : 'rgba(255, 255, 255, 0.9)',
+            border: isDark ? '1px solid rgba(148, 163, 184, 0.1)' : '1px solid rgba(203, 213, 225, 0.2)',
+            borderRadius: '12px',
+            backdropFilter: 'blur(10px)',
+            maxWidth: '800px',
+            margin: '0 auto'
+          }}
+        >
 
-      <form onSubmit={handleSubmit}>
-        <Flex direction="column" gap="large">
-          {/* Header */}
-          <Flex justifyContent="space-between" alignItems="center">
-            <View>
-              <Heading level={1} fontSize="xl" fontWeight="bold" color="font.primary">
-                {t('skills.edit')}
-              </Heading>
-              <Text fontSize="medium" color="font.secondary">
-                {t('skills.edit_description')}
-              </Text>
-            </View>
-            <Button
-              variation="link"
-              onClick={() => router.push(getLocalizedPath('/admin/skills'))}
-            >
-              <Flex alignItems="center" gap="xs">
-                <ArrowLeft size={16} />
-                {t('skills.back_to_skills')}
+          <form onSubmit={handleSubmit} className="edit-skill-form">
+            <Flex direction="column" gap="large">
+              {/* Header */}
+              <Flex justifyContent="space-between" alignItems="center">
+                <Flex alignItems="center" gap="medium">
+                  <Button
+                    style={{
+                      backgroundColor: 'transparent',
+                      border: 'none',
+                      color: isDark ? '#CBD5E1' : '#64748B',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem'
+                    }}
+                    onClick={() => router.push(getLocalizedPath('/admin/skills'))}
+                  >
+                    <ArrowLeft size={20} />
+                  </Button>
+                  <Heading 
+                    level={2} 
+                    style={{
+                      color: isDark ? '#F1F5F9' : '#1E293B',
+                      margin: 0
+                    }}
+                  >
+                    {t('skills.edit')}
+                  </Heading>
+                </Flex>
               </Flex>
-            </Button>
-          </Flex>
 
-          {/* Alerts */}
-          {(error || success) && (
-            <Alert
-              variation={error ? "error" : "success"}
-              isDismissible={true}
-              onDismiss={() => { setError(null); setSuccess(null); }}
-            >
-              {error || success}
-            </Alert>
-          )}
+              {error && (
+                <Alert variation="error" hasIcon={true}>
+                  {error}
+                </Alert>
+              )}
+
+              {success && (
+                <Alert variation="success" hasIcon={true}>
+                  {success}
+                </Alert>
+              )}
 
           {/* Basic Information */}
           <Card padding="large">
@@ -555,40 +646,41 @@ const EditSkillClient: React.FC<EditSkillClientProps> = ({ locale, skillId }) =>
                 <Text fontSize="medium" fontWeight="semibold" marginBottom="small">
                   {t('skills.certifications_label')}
                 </Text>
-                <Flex direction="column" gap="small">
-                  <Flex gap="small">
+                <div className="input-with-button-container">
+                  <div className="input-wrapper">
                     <TextField
                       label=""
                       placeholder={t('skills.certifications_placeholder')}
                       value={newCertification}
                       onChange={(e) => setNewCertification(e.target.value)}
-                      flex="1"
+                      style={{ width: '100%' }}
                     />
-                    <Button
-                      variation="link"
-                      size="small"
-                      onClick={() => addItem('certifications', newCertification)}
-                    >
-                      <Plus size={16} />
-                    </Button>
-                  </Flex>
-                  {formData.certifications.length > 0 && (
-                    <Flex wrap="wrap" gap="small">
-                      {formData.certifications.map((cert, index) => (
-                        <Badge key={index} variation="info">
-                          {cert}
-                          <button
-                            type="button"
-                            onClick={() => removeItem('certifications', index)}
-                            style={{ marginLeft: '8px', background: 'none', border: 'none', color: 'inherit' }}
-                          >
-                            <X size={14} />
-                          </button>
-                        </Badge>
-                      ))}
-                    </Flex>
-                  )}
-                </Flex>
+                  </div>
+                  <Button
+                    type="button"
+                    onClick={() => addItem('certifications', newCertification)}
+                    className="add-button"
+                    style={{
+                      backgroundColor: isDark ? '#3B82F6' : '#2563EB',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '6px',
+                      padding: '0.75rem 1rem',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <Plus size={16} />
+                  </Button>
+                </div>
+                {formData.certifications.length > 0 && (
+                  <div className="badges-container">
+                    {formData.certifications.map((cert, index) => (
+                      <Badge key={index} variation="info" style={{ cursor: 'pointer' }} onClick={() => removeItem('certifications', index)}>
+                        {cert} ×
+                      </Badge>
+                    ))}
+                  </div>
+                )}
               </View>
 
               {/* Projects */}
@@ -596,40 +688,41 @@ const EditSkillClient: React.FC<EditSkillClientProps> = ({ locale, skillId }) =>
                 <Text fontSize="medium" fontWeight="semibold" marginBottom="small">
                   {t('skills.projects_label')}
                 </Text>
-                <Flex direction="column" gap="small">
-                  <Flex gap="small">
+                <div className="input-with-button-container">
+                  <div className="input-wrapper">
                     <TextField
                       label=""
                       placeholder={t('skills.projects_placeholder')}
                       value={newProject}
                       onChange={(e) => setNewProject(e.target.value)}
-                      flex="1"
+                      style={{ width: '100%' }}
                     />
-                    <Button
-                      variation="link"
-                      size="small"
-                      onClick={() => addItem('projects', newProject)}
-                    >
-                      <Plus size={16} />
-                    </Button>
-                  </Flex>
-                  {formData.projects.length > 0 && (
-                    <Flex wrap="wrap" gap="small">
-                      {formData.projects.map((project, index) => (
-                        <Badge key={index} variation="info">
-                          {project}
-                          <button
-                            type="button"
-                            onClick={() => removeItem('projects', index)}
-                            style={{ marginLeft: '8px', background: 'none', border: 'none', color: 'inherit' }}
-                          >
-                            <X size={14} />
-                          </button>
-                        </Badge>
-                      ))}
-                    </Flex>
-                  )}
-                </Flex>
+                  </div>
+                  <Button
+                    type="button"
+                    onClick={() => addItem('projects', newProject)}
+                    className="add-button"
+                    style={{
+                      backgroundColor: isDark ? '#10B981' : '#059669',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '6px',
+                      padding: '0.75rem 1rem',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <Plus size={16} />
+                  </Button>
+                </div>
+                {formData.projects.length > 0 && (
+                  <div className="badges-container">
+                    {formData.projects.map((project, index) => (
+                      <Badge key={index} variation="info" style={{ cursor: 'pointer' }} onClick={() => removeItem('projects', index)}>
+                        {project} ×
+                      </Badge>
+                    ))}
+                  </div>
+                )}
               </View>
 
               {/* Examples (for Soft Skills) */}
@@ -638,40 +731,41 @@ const EditSkillClient: React.FC<EditSkillClientProps> = ({ locale, skillId }) =>
                   <Text fontSize="medium" fontWeight="semibold" marginBottom="small">
                     {t('skills.examples_label')}
                   </Text>
-                  <Flex direction="column" gap="small">
-                    <Flex gap="small">
+                  <div className="input-with-button-container">
+                    <div className="input-wrapper">
                       <TextField
                         label=""
                         placeholder={t('skills.examples_placeholder')}
                         value={newExample}
                         onChange={(e) => setNewExample(e.target.value)}
-                        flex="1"
+                        style={{ width: '100%' }}
                       />
-                      <Button
-                        variation="link"
-                        size="small"
-                        onClick={() => addItem('examples', newExample)}
-                      >
-                        <Plus size={16} />
-                      </Button>
-                    </Flex>
-                    {formData.examples.length > 0 && (
-                      <Flex wrap="wrap" gap="small">
-                        {formData.examples.map((example, index) => (
-                          <Badge key={index} variation="success">
-                            {example}
-                            <button
-                              type="button"
-                              onClick={() => removeItem('examples', index)}
-                              style={{ marginLeft: '8px', background: 'none', border: 'none', color: 'inherit' }}
-                            >
-                              <X size={14} />
-                            </button>
-                          </Badge>
-                        ))}
-                      </Flex>
-                    )}
-                  </Flex>
+                    </div>
+                    <Button
+                      type="button"
+                      onClick={() => addItem('examples', newExample)}
+                      className="add-button"
+                      style={{
+                        backgroundColor: isDark ? '#10B981' : '#059669',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '6px',
+                        padding: '0.75rem 1rem',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      <Plus size={16} />
+                    </Button>
+                  </div>
+                  {formData.examples.length > 0 && (
+                    <div className="badges-container">
+                      {formData.examples.map((example, index) => (
+                        <Badge key={index} variation="success" style={{ cursor: 'pointer' }} onClick={() => removeItem('examples', index)}>
+                          {example} ×
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
                 </View>
               )}
 
@@ -680,40 +774,41 @@ const EditSkillClient: React.FC<EditSkillClientProps> = ({ locale, skillId }) =>
                 <Text fontSize="medium" fontWeight="semibold" marginBottom="small">
                   {t('skills.achievements_label')}
                 </Text>
-                <Flex direction="column" gap="small">
-                  <Flex gap="small">
+                <div className="input-with-button-container">
+                  <div className="input-wrapper">
                     <TextField
                       label=""
                       placeholder={t('skills.achievements_placeholder')}
                       value={newAchievement}
                       onChange={(e) => setNewAchievement(e.target.value)}
-                      flex="1"
+                      style={{ width: '100%' }}
                     />
-                    <Button
-                      variation="link"
-                      size="small"
-                      onClick={() => addItem('achievements', newAchievement)}
-                    >
-                      <Plus size={16} />
-                    </Button>
-                  </Flex>
-                  {formData.achievements.length > 0 && (
-                    <Flex wrap="wrap" gap="small">
-                      {formData.achievements.map((achievement, index) => (
-                        <Badge key={index} variation="warning">
-                          {achievement}
-                          <button
-                            type="button"
-                            onClick={() => removeItem('achievements', index)}
-                            style={{ marginLeft: '8px', background: 'none', border: 'none', color: 'inherit' }}
-                          >
-                            <X size={14} />
-                          </button>
-                        </Badge>
-                      ))}
-                    </Flex>
-                  )}
-                </Flex>
+                  </div>
+                  <Button
+                    type="button"
+                    onClick={() => addItem('achievements', newAchievement)}
+                    className="add-button"
+                    style={{
+                      backgroundColor: isDark ? '#F59E0B' : '#D97706',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '6px',
+                      padding: '0.75rem 1rem',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <Plus size={16} />
+                  </Button>
+                </div>
+                {formData.achievements.length > 0 && (
+                  <div className="badges-container">
+                    {formData.achievements.map((achievement, index) => (
+                      <Badge key={index} variation="warning" style={{ cursor: 'pointer' }} onClick={() => removeItem('achievements', index)}>
+                        {achievement} ×
+                      </Badge>
+                    ))}
+                  </div>
+                )}
               </View>
 
               <Flex direction={{ base: 'column', medium: 'row' }} gap="medium">
@@ -750,31 +845,60 @@ const EditSkillClient: React.FC<EditSkillClientProps> = ({ locale, skillId }) =>
             </Flex>
           </Card>
 
-          {/* Submit Button */}
-          <Card padding="large">
-            <Flex justifyContent="space-between" alignItems="center">
-              <Button
-                variation="link"
-                onClick={() => router.push(getLocalizedPath('/admin/skills'))}
+              <Divider />
+
+              {/* Botones de acción */}
+              <Flex 
+                direction={{ base: 'column', medium: 'row' }}
+                justifyContent="space-between" 
+                gap="medium"
               >
-                {t('skills.cancel')}
-              </Button>
-              <Button
-                type="submit"
-                variation="primary"
-                isLoading={saving}
-                loadingText={t('skills.saving')}
-              >
-                <Flex alignItems="center" gap="xs">
+                <Button
+                  onClick={() => router.push(getLocalizedPath('/admin/skills'))}
+                  disabled={saving}
+                  style={{
+                    backgroundColor: 'transparent',
+                    color: isDark ? '#CBD5E1' : '#64748B',
+                    border: isDark ? '1px solid #475569' : '1px solid #CBD5E1',
+                    borderRadius: '6px',
+                    padding: '0.75rem 1.5rem',
+                    cursor: 'pointer',
+                    fontSize: '0.9rem',
+                    fontWeight: '500'
+                  }}
+                >
+                  {t('skills.cancel')}
+                </Button>
+
+                <Button
+                  type="submit"
+                  disabled={saving || !formData.name || !formData.type || !formData.category}
+                  style={{
+                    backgroundColor: isDark ? '#3B82F6' : '#2563EB',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '6px',
+                    padding: '0.75rem 1.5rem',
+                    cursor: saving ? 'not-allowed' : 'pointer',
+                    opacity: (saving || !formData.name || !formData.type || !formData.category) ? 0.6 : 1,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.5rem',
+                    fontSize: '0.9rem',
+                    fontWeight: '600',
+                    minWidth: '160px'
+                  }}
+                >
                   <Save size={16} />
-                  {t('skills.save_changes')}
-                </Flex>
-              </Button>
+                  {saving ? t('skills.saving') : t('skills.save_changes')}
+                </Button>
+              </Flex>
             </Flex>
-          </Card>
-        </Flex>
-      </form>
-    </View>
+          </form>
+        </Card>
+      </View>
+    </>
   );
 };
 

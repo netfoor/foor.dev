@@ -26,7 +26,9 @@ import {
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { generateClient } from 'aws-amplify/data';
-import { uploadData, getUrl, remove } from 'aws-amplify/storage';
+import { getUrl } from 'aws-amplify/storage';
+import { uploadImageWithMetadata } from '@/lib/utils/image-helpers';
+import S3Cleanup from '@/lib/utils/s3-cleanup';
 import type { Schema } from '../../../../../../amplify/data/resource';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation, useLocalizedPath } from '@/lib/i18n/client';
@@ -195,19 +197,9 @@ const EditCertificationClient: React.FC<EditCertificationClientProps> = ({
 
   // Subir imagen
   const uploadImage = async (file: File): Promise<string> => {
-    const timestamp = Date.now();
-    const fileName = `certifications/${timestamp}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
-    
     try {
-      const result = await uploadData({
-        path: fileName,
-        data: file,
-        options: {
-          contentType: file.type,
-        }
-      }).result;
-      
-      return fileName;
+      const key = await uploadImageWithMetadata(file, certificationId, 'Certifications', 'photoKey');
+      return key;
     } catch (error) {
       console.error('Error uploading image:', error);
       throw new Error('Error uploading certificate image');
@@ -246,19 +238,18 @@ const EditCertificationClient: React.FC<EditCertificationClientProps> = ({
       let photoKey = certification.photoKey;
       
       if (newCertificateImage) {
-        // Eliminar imagen anterior si existe
+        // Eliminar imagen anterior si existe (original + WEBP) usando utilidad centralizada
         if (certification.photoKey) {
           try {
-            const oldPath = certification.photoKey.startsWith('public/') 
-              ? certification.photoKey.slice(7) 
-              : certification.photoKey;
-            await remove({ path: oldPath });
+            console.log('🗑️ Deleting old certification image:', certification.photoKey);
+            await S3Cleanup.deleteSingleFile(certification.photoKey);
+            console.log('✅ Old certification image deleted successfully');
           } catch (removeError) {
-            console.warn('Error removing old image:', removeError);
+            console.error('❌ Error removing old image from S3:', removeError);
           }
         }
         
-        // Subir nueva imagen
+        // Subir nueva imagen con metadatos para optimización
         photoKey = await uploadImage(newCertificateImage);
       }
 
@@ -635,7 +626,8 @@ const EditCertificationClient: React.FC<EditCertificationClientProps> = ({
               <Flex direction="column" gap="1rem">
                 <Flex gap="0.5rem">
                   <TextField
-                    label=""
+                    label={t('certifications.skill_placeholder')}
+                    labelHidden
                     placeholder={t('certifications.skill_placeholder')}
                     value={skillInput}
                     onChange={(e) => setSkillInput(e.target.value)}

@@ -234,6 +234,56 @@ const CreateExperienceClient: React.FC = () => {
           margin-top: 0.25rem !important;
           font-weight: 500 !important;
         }
+        
+        .create-experience-form .amplify-checkboxfield {
+          margin-bottom: 0 !important;
+        }
+        
+        .create-experience-form .amplify-checkboxfield label {
+          display: flex !important;
+          align-items: center !important;
+          gap: 0.75rem !important;
+          cursor: pointer !important;
+          padding: 0.75rem 1rem !important;
+          background-color: var(--form-input-bg) !important;
+          border: 1px solid var(--form-input-border) !important;
+          border-radius: 6px !important;
+          transition: all 0.2s ease !important;
+          font-size: 0.9rem !important;
+          font-weight: 500 !important;
+          color: var(--form-input-text) !important;
+        }
+        
+        .create-experience-form .amplify-checkboxfield label:hover {
+          border-color: var(--form-focus-border) !important;
+          background-color: var(--form-input-bg) !important;
+        }
+        
+        .create-experience-form .amplify-checkboxfield input[type="checkbox"] {
+          width: 18px !important;
+          height: 18px !important;
+          accent-color: var(--form-focus-border) !important;
+          margin: 0 !important;
+        }
+        
+        .create-experience-form .amplify-checkboxfield input[type="checkbox"]:checked + label,
+        .create-experience-form .amplify-checkboxfield input[type="checkbox"]:checked ~ label {
+          background-color: rgba(59, 130, 246, 0.1) !important;
+          border-color: var(--form-focus-border) !important;
+          color: var(--form-focus-border) !important;
+        }
+        
+        @media (max-width: 768px) {
+          .create-experience-form .amplify-checkboxfield label {
+            padding: 1rem !important;
+            font-size: 1rem !important;
+          }
+          
+          .create-experience-form .amplify-checkboxfield input[type="checkbox"] {
+            width: 20px !important;
+            height: 20px !important;
+          }
+        }
       ` }} />
 
       {/* Header */}

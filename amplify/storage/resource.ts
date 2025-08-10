@@ -41,6 +41,7 @@ export const storage = defineStorage({
       // Sección About
       'about/profiles/*': baseAdminPermissions,
       'about/experiences/*': baseAdminPermissions,
+      'experiences/*': baseAdminPermissions,
       
       // Reconocimientos
       'recognitions/*': baseAdminPermissions,

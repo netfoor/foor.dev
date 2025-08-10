@@ -13,18 +13,20 @@ import {
   Badge,
   Alert,
   Loader,
-  Divider
+  Divider,
+  Image
 } from '@aws-amplify/ui-react';
 import { 
   ArrowLeft, 
   Save, 
-  Image as ImageIcon,
   X,
-  Briefcase
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { generateClient } from 'aws-amplify/data';
-import { uploadData, getUrl, remove } from 'aws-amplify/storage';
+// Replace storage imports with getUrl only and use helpers
+import { getUrl } from 'aws-amplify/storage';
+import { uploadImageWithMetadata } from '@/lib/utils/image-helpers';
+import S3Cleanup from '@/lib/utils/s3-cleanup';
 import type { Schema } from '../../../../../../../amplify/data/resource';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation, useLocalizedPath } from '@/lib/i18n/client';
@@ -45,71 +47,132 @@ const editExperienceStyles = `
   }
   
   .edit-experience-form .amplify-input,
-  .edit-experience-form .amplify-textarea {
-    background-color: var(--form-input-background) !important;
+  .edit-experience-form .amplify-textarea,
+  .edit-experience-form .amplify-select select {
+    background-color: var(--form-input-bg) !important;
     border: 1px solid var(--form-input-border) !important;
-    color: var(--form-input-color) !important;
+    color: var(--form-input-text) !important;
     border-radius: 6px !important;
     padding: 0.75rem !important;
-    font-size: 0.95rem !important;
-    transition: all 0.2s ease !important;
+    font-size: 0.9rem !important;
+  }
+  
+  .edit-experience-form .amplify-input::placeholder,
+  .edit-experience-form .amplify-textarea::placeholder {
+    color: var(--form-placeholder-color) !important;
+    opacity: 0.8 !important;
+    font-weight: 400 !important;
   }
   
   .edit-experience-form .amplify-input:focus,
-  .edit-experience-form .amplify-textarea:focus {
-    border-color: var(--amplify-colors-brand-primary-80) !important;
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1) !important;
+  .edit-experience-form .amplify-textarea:focus,
+  .edit-experience-form .amplify-select select:focus {
+    border-color: var(--form-focus-border) !important;
+    box-shadow: 0 0 0 2px var(--form-focus-shadow) !important;
     outline: none !important;
   }
-
-  .image-upload-container {
-    border: 2px dashed var(--form-input-border);
-    border-radius: 8px;
-    padding: 2rem;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    background-color: var(--form-input-background);
+  
+  .edit-experience-form .amplify-field-group__control .amplify-field__description {
+    color: var(--form-description-color) !important;
+    font-size: 0.8rem !important;
+    margin-top: 0.25rem !important;
+    font-weight: 500 !important;
   }
 
-  .image-upload-container:hover {
-    border-color: var(--amplify-colors-brand-primary-80);
-    background-color: var(--amplify-colors-brand-primary-10);
+  .edit-experience-form .amplify-select select {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'><path fill='%23666' d='M2 0L0 2h4zm0 5L0 3h4z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 0.65rem;
+    padding-right: 2.5rem !important;
   }
 
-  .image-preview {
-    position: relative;
-    display: inline-block;
-    margin-top: 1rem;
-  }
-
-  .image-preview img {
-    max-width: 150px;
-    max-height: 150px;
-    border-radius: 8px;
-    object-fit: cover;
-  }
-
-  .image-remove-button {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    background-color: rgba(239, 68, 68, 0.9);
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 32px;
-    height: 32px;
-    cursor: pointer;
+  .edit-experience-form .input-with-button-container {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
+    gap: 0.75rem;
+    align-items: end;
+    margin-bottom: 1rem;
   }
 
-  .image-remove-button:hover {
-    background-color: rgba(239, 68, 68, 1);
-    transform: scale(1.1);
+  .edit-experience-form .input-wrapper {
+    flex: 1;
+  }
+
+  .edit-experience-form .add-button {
+    flex-shrink: 0;
+    min-width: 120px;
+  }
+
+  .edit-experience-form .badges-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+  }
+
+  .edit-experience-form .image-remove-button {
+    position: absolute !important;
+    background-color: rgba(239, 68, 68, 0.9) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 6px !important;
+    padding: 0.5rem !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    max-width: 32px !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+    transition: all 0.2s ease !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    top: 8px !important;
+    right: 8px !important;
+    z-index: 10 !important;
+  }
+
+  .edit-experience-form .image-remove-button:hover {
+    background-color: rgba(239, 68, 68, 1) !important;
+    transform: scale(1.1) !important;
+  }
+
+  /* Responsive design improvements */
+  @media (max-width: 768px) {
+    .edit-experience-form .input-with-button-container {
+      flex-direction: column !important;
+      align-items: stretch !important;
+      gap: 0.5rem !important;
+    }
+    
+    .edit-experience-form .add-button {
+      width: 100% !important;
+      min-width: auto !important;
+    }
+    
+    .edit-experience-form .amplify-flex {
+      flex-direction: column !important;
+    }
+    
+    .edit-experience-form .amplify-button {
+      width: 100% !important;
+      margin-top: 0.5rem !important;
+    }
+
+    .edit-experience-form .image-remove-button {
+      width: 28px !important;
+      height: 28px !important;
+      min-width: 28px !important;
+      max-width: 28px !important;
+      padding: 0.25rem !important;
+      font-size: 12px !important;
+      border-radius: 4px !important;
+      top: 4px !important;
+      right: 4px !important;
+    }
   }
 `;
 
@@ -269,16 +332,9 @@ function EditExperienceClient({ locale, experienceId }: EditExperienceClientProp
     if (!experience?.photoKey) return;
 
     try {
-      const normalizedPath = experience.photoKey.startsWith('public/') 
-        ? experience.photoKey.slice(7) 
-        : experience.photoKey;
-      
-      await remove({
-        path: normalizedPath,
-      });
-
+      await S3Cleanup.deleteSingleFile(experience.photoKey);
       setCurrentImageUrl('');
-      console.log('✅ Current image removed from S3');
+      console.log('✅ Current image removed from S3 (including WEBP if exists)');
     } catch (removeError) {
       console.warn('Could not remove current image from S3:', removeError);
     }
@@ -322,28 +378,6 @@ function EditExperienceClient({ locale, experienceId }: EditExperienceClientProp
     }));
   }, []);
 
-  // Subir imagen a S3
-  const uploadImageToS3 = async (file: File): Promise<string> => {
-    const timestamp = Date.now();
-    const fileName = `about/experiences/${timestamp}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
-
-    try {
-      const result = await uploadData({
-        path: fileName,
-        data: file,
-        options: {
-          contentType: file.type,
-        }
-      }).result;
-
-      console.log('✅ Image uploaded to S3:', result.path);
-      return fileName;
-    } catch (uploadError) {
-      console.error('❌ Error uploading image to S3:', uploadError);
-      throw new Error(t('about.experiences.error_uploading_image'));
-    }
-  };
-
   // Enviar formulario
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -358,15 +392,16 @@ function EditExperienceClient({ locale, experienceId }: EditExperienceClientProp
     setSuccess('');
 
     try {
-      let photoKey = experience?.photoKey;
+      let photoKey = experience?.photoKey || undefined;
 
-      // Si hay una nueva imagen, subirla
+      // Si hay una nueva imagen, subirla con metadatos para optimización
       if (companyImage) {
-        // Remover imagen anterior si existe
+        // Remover imagen anterior si existe (original + webp)
         if (experience?.photoKey) {
-          await removeCurrentImage();
+          try { await S3Cleanup.deleteSingleFile(experience.photoKey); } catch {}
         }
-        photoKey = await uploadImageToS3(companyImage);
+        photoKey = await uploadImageWithMetadata(companyImage, experienceId, 'Experiences', 'photoKey');
+        // Preview ya fue seteado por FileReader
       }
 
       // Si se removió la imagen actual y no hay nueva imagen
@@ -407,353 +442,289 @@ function EditExperienceClient({ locale, experienceId }: EditExperienceClientProp
     }
   };
 
-  // Insertar estilos en el DOM
-  React.useEffect(() => {
-    const styleElement = document.createElement('style');
-    styleElement.textContent = editExperienceStyles;
-    document.head.appendChild(styleElement);
-    
-    return () => {
-      document.head.removeChild(styleElement);
-    };
-  }, []);
+
 
   if (isLoading) {
     return (
-      <View padding="large" textAlign="center">
+      <View padding="2rem" textAlign="center">
         <Loader size="large" />
-        <Text fontSize="medium" color="font.tertiary" marginTop="medium">
-          {t('about.experiences.loading')}
-        </Text>
-      </View>
-    );
-  }
-
-  if (!experience) {
-    return (
-      <View padding="large" textAlign="center">
-        <Text fontSize="large" color="font.primary">
-          {t('about.experiences.not_found')}
-        </Text>
+        <Text>{t('about.experiences.loading')}</Text>
       </View>
     );
   }
 
   return (
-    <View padding="large" className="edit-experience-form">
-      <Flex direction="column" gap="large" maxWidth="800px">
-        {/* Header */}
-        <Flex alignItems="center" gap="medium">
-          <Button
-            variation="link"
-            onClick={() => router.push(getLocalizedPath('/admin/about'))}
-            size="small"
-          >
-            <ArrowLeft size={16} />
-          </Button>
-          <View>
-            <Heading level={2}>{t('about.edit_experience')}</Heading>
-            <Text color="font.tertiary">{t('about.experiences.edit_description')}</Text>
-          </View>
-        </Flex>
-
-        {/* Alerts */}
-        {error && (
-          <Alert variation="error" isDismissible onDismiss={() => setError('')}>
-            {error}
-          </Alert>
-        )}
-
-        {success && (
-          <Alert variation="success">
-            {success}
-          </Alert>
-        )}
-
-        {/* Form */}
-        <Card padding="large">
+    <>
+      <style>{editExperienceStyles}</style>
+      <View padding="2rem" className="edit-experience-form">
+        <Button 
+          onClick={() => router.back()} 
+          variation="link" 
+          size="small"
+          marginBottom="1rem"
+        >
+          <ArrowLeft size={16} style={{ marginRight: 8 }} />
+          {t('common.back')}
+        </Button>
+        
+        <Card padding="2rem" borderRadius="8px" boxShadow="0 4px 8px rgba(0, 0, 0, 0.1)">
+          <Heading level={3} marginBottom="1.5rem">
+            {t('about.experiences.edit_experience')}
+          </Heading>
+          
+          {error && (
+            <Alert variation="error" marginBottom="1rem">
+              {error}
+            </Alert>
+          )}
+          
+          {success && (
+            <Alert variation="success" marginBottom="1rem">
+              {success}
+            </Alert>
+          )}
+          
           <form onSubmit={handleSubmit}>
-            <Flex direction="column" gap="large">
-              
-              {/* Company Logo Upload */}
-              <View>
-                <Text fontSize="medium" fontWeight="semibold" marginBottom="small">
-                  {t('about.experiences.company_logo')}
-                </Text>
-                
-                {/* Current Image */}
-                {currentImageUrl && !imagePreview && (
-                  <div className="image-preview">
-                    <img src={currentImageUrl} alt="Current company logo" />
-                    <button
-                      type="button"
-                      className="image-remove-button"
-                      onClick={() => {
-                        setCurrentImageUrl('');
-                        removeCurrentImage();
-                      }}
-                      title={t('about.experiences.remove_current_logo')}
-                    >
-                      <X size={16} />
-                    </button>
-                  </div>
-                )}
-
-                {/* New Image Preview */}
-                {imagePreview && (
-                  <div className="image-preview">
-                    <img src={imagePreview} alt="New company logo preview" />
-                    <button
-                      type="button"
-                      className="image-remove-button"
-                      onClick={removeNewImage}
-                      title={t('about.experiences.remove_new_logo')}
-                    >
-                      <X size={16} />
-                    </button>
-                  </div>
-                )}
-
-                {/* Upload Container */}
-                {!currentImageUrl && !imagePreview && (
-                  <div className="image-upload-container" onClick={() => document.getElementById('company-image-input')?.click()}>
-                    <Briefcase size={48} style={{ margin: '0 auto 16px', opacity: 0.5 }} />
-                    <Text fontSize="medium" color="font.secondary" marginBottom="small">
-                      {t('about.experiences.click_to_upload_logo')}
-                    </Text>
-                    <Text fontSize="small" color="font.tertiary">
-                      {t('about.experiences.logo_requirements')}
-                    </Text>
-                  </div>
-                )}
-
-                {/* Upload New Image Button */}
-                {(currentImageUrl || imagePreview) && (
-                  <Button
-                    variation="link"
-                    onClick={() => document.getElementById('company-image-input')?.click()}
-                    marginTop="small"
-                  >
-                    <Flex alignItems="center" gap="xs">
-                      <ImageIcon size={16} />
-                      {t('about.experiences.change_logo')}
-                    </Flex>
-                  </Button>
-                )}
-                
-                <input
-                  id="company-image-input"
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  style={{ display: 'none' }}
-                />
-              </View>
-
-              <Divider />
-
-              {/* Basic Information */}
-              <Flex direction="column" gap="medium">
-                <Text fontSize="large" fontWeight="semibold">
-                  {t('about.basic_info')}
-                </Text>
-
-                <Flex direction={{ base: 'column', medium: 'row' }} gap="medium">
-                  <TextField
-                    label={t('about.company_label')}
-                    value={formData.company}
-                    onChange={(e) => handleInputChange('company', e.target.value)}
-                    required
-                    placeholder={t('about.company_placeholder')}
-                    flex="1"
-                  />
-                  <TextField
-                    label={t('about.position_label')}
-                    value={formData.position}
-                    onChange={(e) => handleInputChange('position', e.target.value)}
-                    required
-                    placeholder={t('about.position_placeholder')}
-                    flex="1"
-                  />
-                </Flex>
-
-                <TextAreaField
-                  label={t('about.description_label')}
-                  value={formData.description}
-                  onChange={(e) => handleInputChange('description', e.target.value)}
-                  placeholder={t('about.description_placeholder')}
-                  rows={4}
-                />
-
+            <Flex direction={{ base: 'column', medium: 'row' }} gap="1.5rem">
+              <Flex direction="column" flex="1">
                 <TextField
-                  label={t('about.location_label')}
+                  label={t('about.experiences.company')}
+                  placeholder={t('about.experiences.company_placeholder')}
+                  value={formData.company}
+                  onChange={e => handleInputChange('company', e.target.value)}
+                  required
+                />
+                
+                <TextField
+                  label={t('about.experiences.position')}
+                  placeholder={t('about.experiences.position_placeholder')}
+                  value={formData.position}
+                  onChange={e => handleInputChange('position', e.target.value)}
+                  required
+                />
+                
+                <TextAreaField
+                  label={t('about.experiences.description')}
+                  placeholder={t('about.experiences.description_placeholder')}
+                  value={formData.description}
+                  onChange={e => handleInputChange('description', e.target.value)}
+                  resize="vertical"
+                  marginTop="0.5rem"
+                />
+                
+                <Flex gap="1rem" marginTop="0.5rem">
+                  <TextField
+                    label={t('about.experiences.start_date')}
+                    placeholder={t('about.experiences.start_date_placeholder')}
+                    type="date"
+                    value={formData.startDate}
+                    onChange={e => handleInputChange('startDate', e.target.value)}
+                    required
+                  />
+                  
+                  <TextField
+                    label={t('about.experiences.end_date')}
+                    placeholder={t('about.experiences.end_date_placeholder')}
+                    type="date"
+                    value={formData.endDate}
+                    onChange={e => handleInputChange('endDate', e.target.value)}
+                  />
+                </Flex>
+                
+                <TextField
+                  label={t('about.experiences.location')}
+                  placeholder={t('about.experiences.location_placeholder')}
                   value={formData.location}
-                  onChange={(e) => handleInputChange('location', e.target.value)}
-                  placeholder={t('about.location_placeholder')}
+                  onChange={e => handleInputChange('location', e.target.value)}
+                  marginTop="0.5rem"
                 />
               </Flex>
-
-              <Divider />
-
-              {/* Dates */}
-              <Flex direction="column" gap="medium">
-                <Text fontSize="large" fontWeight="semibold">
-                  {t('about.employment_period')}
+              
+              <Flex direction="column" flex="1">
+                <Text fontWeight="500" marginBottom="0.5rem" color="var(--form-label-color)">
+                  {t('about.experiences.skills')}
                 </Text>
-
-                <Flex direction={{ base: 'column', medium: 'row' }} gap="medium">
-                  <TextField
-                    label={t('about.start_date_label')}
-                    value={formData.startDate}
-                    onChange={(e) => handleInputChange('startDate', e.target.value)}
-                    type="date"
-                    required
-                    flex="1"
-                  />
-                  <TextField
-                    label={t('about.end_date_label')}
-                    value={formData.endDate}
-                    onChange={(e) => handleInputChange('endDate', e.target.value)}
-                    type="date"
-                    flex="1"
-                  />
+                
+                <Flex gap="0.5rem" className="badges-container" marginBottom="1rem">
+                  {formData.skills.map(skill => (
+                    <Badge 
+                      key={skill} 
+                      variation="info" 
+                      onClick={() => removeSkill(skill)}
+                      style={{ cursor: 'pointer' }}
+                    >
+                      {skill}
+                    </Badge>
+                  ))}
+                  
+                  <Flex gap="0.5rem" alignItems="center" className="input-with-button-container">
+                    <TextField
+                      label={t('about.experiences.add_skill')}
+                      labelHidden
+                      placeholder={t('about.experiences.add_skill')}
+                      value={skillInput}
+                      onChange={e => setSkillInput(e.target.value)}
+                      onKeyDown={e => e.key === 'Enter' ? addSkill() : null}
+                      size="small"
+                      flex="1"
+                    />
+                    
+                    <Button 
+                      onClick={addSkill} 
+                      variation="primary" 
+                      size="small"
+                      className="add-button"
+                    >
+                      {t('common.add')}
+                    </Button>
+                  </Flex>
+                </Flex>
+                
+                <Text fontWeight="500" marginBottom="0.5rem" color="var(--form-label-color)">
+                  {t('about.experiences.activities')}
+                </Text>
+                
+                <Flex gap="0.5rem" className="badges-container" marginBottom="1rem">
+                  {formData.activities.map(activity => (
+                    <Badge 
+                      key={activity} 
+                      variation="info" 
+                      onClick={() => removeActivity(activity)}
+                      style={{ cursor: 'pointer' }}
+                    >
+                      {activity}
+                    </Badge>
+                  ))}
+                  
+                  <Flex gap="0.5rem" alignItems="center" className="input-with-button-container">
+                    <TextField
+                      label={t('about.experiences.add_activity')}
+                      labelHidden
+                      placeholder={t('about.experiences.add_activity')}
+                      value={activityInput}
+                      onChange={e => setActivityInput(e.target.value)}
+                      onKeyDown={e => e.key === 'Enter' ? addActivity() : null}
+                      size="small"
+                      flex="1"
+                    />
+                    
+                    <Button 
+                      onClick={addActivity} 
+                      variation="primary" 
+                      size="small"
+                      className="add-button"
+                    >
+                      {t('common.add')}
+                    </Button>
+                  </Flex>
                 </Flex>
               </Flex>
-
-              <Divider />
-
-              {/* Skills */}
-              <Flex direction="column" gap="medium">
-                <Text fontSize="large" fontWeight="semibold">
-                  {t('about.skills')}
+            </Flex>
+            
+            <Divider margin="1.5rem 0" />
+            
+            <Flex direction={{ base: 'column', medium: 'row' }} gap="1.5rem">
+              <Flex direction="column" flex="1">
+                <Text fontWeight="500" marginBottom="0.5rem" color="var(--form-label-color)">
+                  {t('about.experiences.current_image')}
                 </Text>
-
-                <Flex direction={{ base: 'column', medium: 'row' }} gap="medium" alignItems="flex-end">
-                  <TextField
-                    label={t('about.add_skill')}
-                    value={skillInput}
-                    onChange={(e) => setSkillInput(e.target.value)}
-                    placeholder={t('about.skill_placeholder')}
-                    flex="1"
-                    onKeyPress={(e) => {
-                      if (e.key === 'Enter') {
-                        e.preventDefault();
-                        addSkill();
-                      }
-                    }}
-                  />
-                  <Button
-                    variation="primary"
-                    onClick={addSkill}
-                    isDisabled={!skillInput.trim()}
-                  >
-                    {t('about.add_skill')}
-                  </Button>
-                </Flex>
-
-                {formData.skills.length > 0 && (
-                  <Flex direction="row" gap="small" wrap="wrap">
-                    {formData.skills.map((skill, index) => (
-                      <Badge
-                        key={index}
-                        variation="info"
-                        style={{ 
-                          cursor: 'pointer',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '4px'
-                        }}
-                        onClick={() => removeSkill(skill)}
-                      >
-                        {skill}
-                        <X size={12} />
-                      </Badge>
-                    ))}
+                
+                {currentImageUrl ? (
+                  <Flex direction="column" gap="0.5rem">
+                    <Image 
+                      src={currentImageUrl} 
+                      alt={t('about.experiences.current_image_alt')}
+                      width={120}
+                      height={80}
+                      style={{ borderRadius: '8px', objectFit: 'cover' }}
+                    />
+                    
+                    <Button 
+                      onClick={removeCurrentImage} 
+                      variation="destructive" 
+                      size="small"
+                      width="fit-content"
+                    >
+                      <X size={16} style={{ marginRight: 6 }} />
+                      {t('about.experiences.remove_current_image')}
+                    </Button>
                   </Flex>
+                ) : (
+                  <Text color="var(--form-placeholder-color)" fontSize="0.875rem">
+                    {t('about.experiences.no_current_image')}
+                  </Text>
                 )}
               </Flex>
-
-              <Divider />
-
-              {/* Activities */}
-              <Flex direction="column" gap="medium">
-                <Text fontSize="large" fontWeight="semibold">
-                  {t('about.activities')}
+              
+              <Flex direction="column" flex="1">
+                <Text fontWeight="500" marginBottom="0.5rem" color="var(--form-label-color)">
+                  {t('about.experiences.new_image')}
                 </Text>
-
-                <Flex direction={{ base: 'column', medium: 'row' }} gap="medium" alignItems="flex-end">
-                  <TextField
-                    label={t('about.add_activity')}
-                    value={activityInput}
-                    onChange={(e) => setActivityInput(e.target.value)}
-                    placeholder={t('about.activity_placeholder')}
-                    flex="1"
-                    onKeyPress={(e) => {
-                      if (e.key === 'Enter') {
-                        e.preventDefault();
-                        addActivity();
-                      }
-                    }}
-                  />
-                  <Button
-                    variation="primary"
-                    onClick={addActivity}
-                    isDisabled={!activityInput.trim()}
-                  >
-                    {t('about.add_activity')}
-                  </Button>
-                </Flex>
-
-                {formData.activities.length > 0 && (
-                  <Flex direction="row" gap="small" wrap="wrap">
-                    {formData.activities.map((activity, index) => (
-                      <Badge
-                        key={index}
-                        variation="warning"
-                        style={{ 
-                          cursor: 'pointer',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '4px'
-                        }}
-                        onClick={() => removeActivity(activity)}
-                      >
-                        {activity}
-                        <X size={12} />
-                      </Badge>
-                    ))}
+                
+                {imagePreview ? (
+                  <Flex direction="column" gap="0.5rem">
+                    <Image 
+                      src={imagePreview} 
+                      alt={t('about.experiences.new_image_preview')}
+                      width={120}
+                      height={80}
+                      style={{ borderRadius: '8px', objectFit: 'cover' }}
+                    />
+                    
+                    <Button 
+                      onClick={removeNewImage} 
+                      variation="destructive" 
+                      size="small"
+                      width="fit-content"
+                    >
+                      <X size={16} style={{ marginRight: 6 }} />
+                      {t('about.experiences.remove_new_image')}
+                    </Button>
                   </Flex>
+                ) : (
+                  <label style={{ display: 'inline-block', width: 'fit-content' }}>
+                    <Button 
+                      variation="primary" 
+                      size="small"
+                    >
+                      {t('about.experiences.upload_image')}
+                    </Button>
+                    
+                    <input 
+                      type="file" 
+                      accept="image/*" 
+                      onChange={handleImageChange}
+                      style={{ display: 'none' }}
+                    />
+                  </label>
                 )}
               </Flex>
-
-              <Divider />
-
-              {/* Submit Buttons */}
-              <Flex direction={{ base: 'column', medium: 'row' }} gap="medium" justifyContent="flex-end">
-                <Button
-                  variation="link"
-                  onClick={() => router.push(getLocalizedPath('/admin/about'))}
-                  isDisabled={isSaving}
-                >
-                  {t('about.cancel')}
-                </Button>
-                <Button 
-                  type="submit"
-                  variation="primary"
-                  isLoading={isSaving}
-                  loadingText={t('about.saving')}
-                >
-                  <Flex alignItems="center" gap="xs">
-                    <Save size={16} />
-                    {t('about.save_changes')}
-                  </Flex>
-                </Button>
-              </Flex>
+            </Flex>
+            
+            <Divider margin="1.5rem 0" />
+            
+            <Flex justifyContent="flex-end" gap="1rem">
+              <Button 
+                onClick={() => router.back()} 
+                variation="link" 
+                size="large"
+              >
+                {t('common.cancel')}
+              </Button>
+              
+              <Button 
+                type="submit" 
+                variation="primary" 
+                size="large"
+                isLoading={isSaving}
+              >
+                {t('common.save')}
+              </Button>
             </Flex>
           </form>
         </Card>
-      </Flex>
-    </View>
+      </View>
+    </>
   );
 }
 
