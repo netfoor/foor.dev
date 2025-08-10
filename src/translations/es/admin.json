@@ -241,7 +241,26 @@
     "experiences": {
       "title": "Experiencias",
       "description": "Gestiona tus experiencias profesionales e historial laboral",
-      "manage": "Gestionar Experiencias"
+      "manage": "Gestionar Experiencias",
+      "create": "Crear Experiencia",
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "deleting": "Eliminando...",
+      "loading": "Cargando experiencias...",
+      "error_loading_data": "Error al cargar datos",
+      "company": "Empresa",
+      "position": "Posición",
+      "period": "Período",
+      "actions": "Acciones",
+      "present": "Presente",
+      "not_found": "Experiencia no encontrada",
+      "error_deleting": "Error al eliminar experiencia",
+      "confirm_delete": "¿Estás seguro de que quieres eliminar esta experiencia? Esta acción eliminará permanentemente la experiencia y su foto.",
+      "no_experiences": "No hay experiencias aún. ¡Crea tu primera experiencia!",
+      "unknown_error": "Error desconocido",
+      "total_experiences": "Total de Experiencias",
+      "current_positions": "Posiciones Actuales",
+      "companies": "Empresas"
     },
     "manage_profile": "Gestionar Perfil",
     "manage_experiences": "Gestionar Experiencias",
@@ -251,23 +270,6 @@
     "edit_experience": "Editar Experiencia",
     "create": "Crear",
     "edit": "Editar",
-    "delete": "Eliminar",
-    "deleting": "Eliminando...",
-    "loading": "Cargando experiencias...",
-    "error_loading_data": "Error al cargar datos",
-    "company": "Empresa",
-    "position": "Posición",
-    "period": "Período",
-    "actions": "Acciones",
-    "present": "Presente",
-    "not_found": "Experiencia no encontrada",
-    "error_deleting": "Error al eliminar experiencia",
-    "confirm_delete": "¿Estás seguro de que quieres eliminar esta experiencia? Esta acción eliminará permanentemente la experiencia y su foto.",
-    "no_experiences": "No hay experiencias aún. ¡Crea tu primera experiencia!",
-    "unknown_error": "Error desconocido",
-    "total_experiences": "Total de Experiencias",
-    "current_positions": "Posiciones Actuales",
-    "companies": "Empresas",
     "profile_info": "Información del Perfil",
     "basic_info": "Información Básica",
     "name_label": "Nombre Completo",
@@ -427,6 +429,7 @@
   },
   "recognitions": {
     "recognitions": "Reconocimientos",
+    "total_recognitions": "Total de Reconocimientos",
     "manage_recognitions": "Administra tus Premios y Reconocimientos",
     "manage_recognitions_description": "Añade, edita y gestiona tus premios, reconocimientos y honores profesionales.",
     "add_recognition": "Añadir Reconocimiento",
@@ -463,10 +466,12 @@
     "add_photo": "Añade una foto o imagen del certificado",
     "upload_photo": "Subir Imagen",
     "change_photo": "Cambiar Imagen",
-    "photo_description": "Sube una imagen que represente tu reconocimiento (certificado, insignia, etc.). Tamaño recomendado: 800x600px."
+    "photo_description": "Sube una imagen que represente tu reconocimiento (certificado, insignia, etc.). Tamaño recomendado: 800x600px.",
+    "basic_info": "Información Básica"
   },
   "publications": {
     "publications": "Publicaciones",
+    "total_publications": "Total de Publicaciones",
     "manage_publications": "Administra tus Publicaciones en Medios",
     "manage_publications_description": "Añade, edita y gestiona tus publicaciones en redes sociales, artículos, videos y otro contenido.",
     "add_publication": "Añadir Publicación",
@@ -504,7 +509,10 @@
     "add_photo": "Añade una miniatura o imagen de portada",
     "upload_photo": "Subir Imagen",
     "change_photo": "Cambiar Imagen",
-    "photo_description": "Sube una miniatura o imagen de portada para tu publicación. Tamaño recomendado: 800x450px."
+    "photo_description": "Sube una miniatura o imagen de portada para tu publicación. Tamaño recomendado: 800x450px.",
+    "basic_info": "Información Básica"
   },
-  "createProject": "Crear Nuevo Proyecto"
+  "createProject": "Crear Nuevo Proyecto",
+  "back_to_list": "Volver a la Lista",
+  "total_items": "Total de Elementos"
 }

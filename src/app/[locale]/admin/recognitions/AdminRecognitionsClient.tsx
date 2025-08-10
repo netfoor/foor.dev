@@ -1,17 +1,16 @@
-'use client';
-
+"use client";
 import React, { useState, useEffect } from 'react';
-import { 
-  View, 
-  Flex, 
-  Text, 
-  Button, 
-  Card, 
-  Badge, 
-  Table, 
-  TableHead, 
-  TableRow, 
-  TableCell, 
+import {
+  View,
+  Flex,
+  Text,
+  Button,
+  Card,
+  Badge,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
   TableBody,
   Loader,
   Alert,
@@ -265,26 +264,8 @@ const AdminRecognitionsClient: React.FC<AdminRecognitionsClientProps> = ({ local
     if (activeTab === 'recognitions') {
       if (recognitions.length === 0) {
         return (
-          <View style={{
-            textAlign: 'center',
-            padding: '3rem',
-            background: mode === 'dark'
-              ? 'linear-gradient(135deg, rgba(51, 65, 85, 0.8) 0%, rgba(71, 85, 105, 0.6) 100%)'
-              : 'linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.7) 100%)',
-            backdropFilter: 'blur(16px)',
-            border: mode === 'dark'
-              ? '1px solid rgba(148, 163, 184, 0.2)'
-              : '1px solid rgba(203, 213, 225, 0.3)',
-            borderRadius: '4px',
-          }}>
-            <Award size={48} style={{ 
-              color: mode === 'dark' ? '#60A5FA' : '#3B82F6',
-              margin: '0 auto 1rem'
-            }} />
-            <Text style={{ 
-              color: mode === 'dark' ? '#CBD5E1' : '#64748B',
-              fontSize: '1.25rem'
-            }}>
+          <View padding="3rem" textAlign="center">
+            <Text fontSize="1.125rem" color={mode === 'dark' ? '#CBD5E1' : '#64748B'} marginBottom="2rem">
               {t('recognitions.no_records')}
             </Text>
           </View>
@@ -292,371 +273,172 @@ const AdminRecognitionsClient: React.FC<AdminRecognitionsClientProps> = ({ local
       }
 
       return (
-        <View style={{
-          background: mode === 'dark'
-            ? 'linear-gradient(135deg, rgba(51, 65, 85, 0.8) 0%, rgba(71, 85, 105, 0.6) 100%)'
-            : 'linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.7) 100%)',
-          backdropFilter: 'blur(16px)',
-          border: mode === 'dark'
-            ? '1px solid rgba(148, 163, 184, 0.2)'
-            : '1px solid rgba(203, 213, 225, 0.3)',
-          borderRadius: '4px',
-          overflow: 'auto',
-          overflowX: 'auto',
-          minWidth: '100%',
-        }}>
-          <Table size="small" style={{ minWidth: '800px' }}>
-            <TableHead>
-              <TableRow style={{
-                background: mode === 'dark'
-                  ? 'linear-gradient(135deg, rgba(71, 85, 105, 0.7) 0%, rgba(51, 65, 85, 0.7) 100%)'
-                  : 'linear-gradient(135deg, rgba(241, 245, 249, 0.8) 0%, rgba(226, 232, 240, 0.8) 100%)',
-                borderBottom: mode === 'dark'
-                  ? '1px solid rgba(148, 163, 184, 0.3)'
-                  : '1px solid rgba(203, 213, 225, 0.4)',
-              }}>
-                <TableCell as="th" width="60px" style={{ 
-                  color: mode === 'dark' ? '#F1F5F9' : '#0F172A',
-                  fontWeight: '600',
-                  padding: '1rem 0.75rem'
-                }}>
-                  {t('image')}
-                </TableCell>
-                <TableCell as="th" style={{ 
-                  color: mode === 'dark' ? '#F1F5F9' : '#0F172A',
-                  fontWeight: '600',
-                  padding: '1rem 0.75rem'
-                }}>
-                  {t('title')}
-                </TableCell>
-                <TableCell as="th" style={{ 
-                  color: mode === 'dark' ? '#F1F5F9' : '#0F172A',
-                  fontWeight: '600',
-                  padding: '1rem 0.75rem'
-                }}>
-                  {t('recognitions.issuer')}
-                </TableCell>
-                <TableCell as="th" style={{ 
-                  color: mode === 'dark' ? '#F1F5F9' : '#0F172A',
-                  fontWeight: '600',
-                  padding: '1rem 0.75rem'
-                }}>
-                  {t('recognitions.date')}
-                </TableCell>
-                <TableCell as="th" width="120px" style={{ 
-                  color: mode === 'dark' ? '#F1F5F9' : '#0F172A',
-                  fontWeight: '600',
-                  padding: '1rem 0.75rem'
-                }}>
-                  {t('actions')}
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {recognitions.map((recognition, index) => (
-                <TableRow 
-                  key={recognition.id}
-                  style={{
-                    borderBottom: mode === 'dark'
-                      ? '1px solid rgba(148, 163, 184, 0.2)'
-                      : '1px solid rgba(203, 213, 225, 0.3)',
-                    transition: 'all 0.2s ease',
-                    cursor: 'pointer',
-                  }}
-                  onMouseEnter={(e) => {
-                    const row = e.currentTarget;
-                    row.style.background = mode === 'dark'
-                      ? 'rgba(59, 130, 246, 0.1)'
-                      : 'rgba(59, 130, 246, 0.05)';
-                  }}
-                  onMouseLeave={(e) => {
-                    const row = e.currentTarget;
-                    row.style.background = 'transparent';
-                  }}
-                >
-                  <TableCell style={{ padding: '1rem 0.75rem' }}>
-                    {recognition.photoKey ? (
-                      <View 
-                        style={{
-                          background: mode === 'dark' 
-                            ? 'rgba(71, 85, 105, 0.5)' 
-                            : 'rgba(241, 245, 249, 0.5)',
-                          width: '50px',
-                          height: '50px',
-                          borderRadius: '8px',
-                          overflow: 'hidden',
-                          border: mode === 'dark' 
-                            ? '1px solid rgba(148, 163, 184, 0.2)' 
-                            : '1px solid rgba(203, 213, 225, 0.3)',
-                        }}
-                      >
-                        <ImagePreview photoKey={recognition.photoKey} alt={recognition.title || ''} />
-                      </View>
-                    ) : (
-                      <Flex 
-                        style={{
-                          background: mode === 'dark' 
-                            ? 'rgba(71, 85, 105, 0.5)' 
-                            : 'rgba(241, 245, 249, 0.5)',
-                          width: '50px',
-                          height: '50px',
-                          borderRadius: '8px',
-                          border: mode === 'dark' 
-                            ? '1px solid rgba(148, 163, 184, 0.2)' 
-                            : '1px solid rgba(203, 213, 225, 0.3)',
-                        }}
-                        justifyContent="center"
-                        alignItems="center"
-                      >
-                        <Award size={24} style={{ 
-                          color: mode === 'dark' ? '#60A5FA' : '#3B82F6' 
-                        }} />
-                      </Flex>
-                    )}
-                  </TableCell>
-                  <TableCell style={{ padding: '1rem 0.75rem' }}>
-                    <Text 
-                      fontWeight="600" 
-                      style={{ 
-                        color: mode === 'dark' ? '#F8FAFC' : '#0F172A',
-                        marginBottom: '0.25rem'
+        <Table
+          style={{
+            backgroundColor: 'transparent',
+            width: '100%'
+          }}
+        >
+          <TableHead>
+            <TableRow>
+              <TableCell style={{ fontWeight: '600', color: mode === 'dark' ? '#F1F5F9' : '#1E293B' }}>
+                {t('recognitions.recognition') || 'Recognition'}
+              </TableCell>
+              <TableCell style={{ fontWeight: '600', color: mode === 'dark' ? '#F1F5F9' : '#1E293B' }}>
+                {t('recognitions.issuer')}
+              </TableCell>
+              <TableCell style={{ fontWeight: '600', color: mode === 'dark' ? '#F1F5F9' : '#1E293B' }}>
+                {t('recognitions.date')}
+              </TableCell>
+              <TableCell style={{ fontWeight: '600', color: mode === 'dark' ? '#F1F5F9' : '#1E293B' }}>
+                {t('actions') || 'Actions'}
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {recognitions.filter(recognition => recognition !== null).map((recognition) => (
+              <TableRow key={recognition.id}>
+                <TableCell>
+                  <Flex alignItems="center" gap="0.75rem">
+                    <View
+                      style={{
+                        width: '40px',
+                        height: '40px',
+                        borderRadius: '8px',
+                        backgroundColor: mode === 'dark' ? '#374151' : '#F3F4F6',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
                       }}
                     >
-                      {recognition.title}
-                    </Text>
-                    <Text 
-                      fontSize="0.875rem" 
-                      style={{ color: mode === 'dark' ? '#CBD5E1' : '#64748B' }}
-                    >
-                      {recognition.description?.length > 60 
-                        ? `${recognition.description.substring(0, 60)}...` 
-                        : recognition.description}
-                    </Text>
-                  </TableCell>
-                  <TableCell style={{ padding: '1rem 0.75rem' }}>
-                    <Text style={{ 
-                      color: mode === 'dark' ? '#E2E8F0' : '#1E293B',
-                      fontWeight: '500'
-                    }}>
-                      {recognition.issuer}
-                    </Text>
-                    {recognition.issuerUrl && (
-                      <Flex alignItems="center" gap="4px" marginTop="0.25rem">
-                        <ExternalLink size={12} style={{ 
-                          color: mode === 'dark' ? '#60A5FA' : '#3B82F6' 
-                        }} />
-                        <Text 
-                          fontSize="0.75rem" 
-                          style={{ color: mode === 'dark' ? '#60A5FA' : '#3B82F6' }}
-                          as="a"
-                          href={recognition.issuerUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          textDecoration="none"
-                        >
-                          {t('view_source')}
-                        </Text>
-                      </Flex>
-                    )}
-                  </TableCell>
-                  <TableCell style={{ padding: '1rem 0.75rem' }}>
-                    <Flex alignItems="center" gap="4px">
-                      <Calendar size={14} style={{ 
-                        color: mode === 'dark' ? '#94A3B8' : '#64748B' 
-                      }} />
-                      <Text style={{ 
-                        color: mode === 'dark' ? '#E2E8F0' : '#1E293B',
-                        fontSize: '0.875rem'
-                      }}>
-                        {formatDate(recognition.issueDate)}
+                      <Award size={20} color={mode === 'dark' ? '#9CA3AF' : '#6B7280'} />
+                    </View>
+                    <View>
+                      <Text 
+                        fontWeight="600" 
+                        style={{ color: mode === 'dark' ? '#F1F5F9' : '#1E293B' }}
+                      >
+                        {recognition.title}
                       </Text>
-                    </Flex>
-                    {recognition.credentialId && (
+                      <Text 
+                        fontSize="0.875rem" 
+                        style={{ color: mode === 'dark' ? '#CBD5E1' : '#64748B' }}
+                      >
+                        {recognition.description?.length > 60 
+                          ? `${recognition.description.substring(0, 60)}...` 
+                          : recognition.description}
+                      </Text>
+                    </View>
+                  </Flex>
+                </TableCell>
+                
+                <TableCell>
+                  <Text 
+                    fontWeight="600" 
+                    style={{ color: mode === 'dark' ? '#F1F5F9' : '#1E293B' }}
+                  >
+                    {recognition.issuer}
+                  </Text>
+                  {recognition.issuerUrl && (
+                    <Flex alignItems="center" gap="4px" marginTop="0.25rem">
+                      <ExternalLink size={12} style={{ 
+                        color: mode === 'dark' ? '#60A5FA' : '#3B82F6' 
+                      }} />
                       <Text 
                         fontSize="0.75rem" 
-                        style={{ 
-                          color: mode === 'dark' ? '#94A3B8' : '#64748B',
-                          marginTop: '0.25rem'
-                        }}
+                        style={{ color: mode === 'dark' ? '#60A5FA' : '#3B82F6' }}
+                        as="a"
+                        href={recognition.issuerUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        textDecoration="none"
                       >
-                        ID: {recognition.credentialId}
+                        {t('view_source') || 'View Source'}
                       </Text>
-                    )}
-                  </TableCell>
-                  <TableCell style={{ padding: '1rem 0.75rem', position: 'relative' }}>
-                    <Flex gap="8px" justifyContent="center">
-                      <Menu 
-                        trigger={
-                          <Button 
-                            size="small" 
-                            style={{
-                              background: mode === 'dark' 
-                                ? 'rgba(71, 85, 105, 0.8)' 
-                                : 'rgba(248, 250, 252, 0.8)',
-                              border: mode === 'dark' 
-                                ? '1px solid rgba(148, 163, 184, 0.4)' 
-                                : '1px solid rgba(203, 213, 225, 0.5)',
-                              borderRadius: '8px',
-                              padding: '8px',
-                              color: mode === 'dark' ? '#E2E8F0' : '#475569',
-                              cursor: 'pointer',
-                              minWidth: '32px',
-                              minHeight: '32px',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                            }}
-                          >
-                            <MoreVertical size={16} />
-                          </Button>
-                        }
-                        menuAlign="end"
-                        style={{
-                          background: mode === 'dark'
-                            ? 'rgba(30, 41, 59, 0.98)'
-                            : 'rgba(255, 255, 255, 0.98)',
-                          backdropFilter: 'blur(20px)',
-                          border: mode === 'dark'
-                            ? '1px solid rgba(148, 163, 184, 0.4)'
-                            : '1px solid rgba(203, 213, 225, 0.5)',
-                          borderRadius: '12px',
-                          boxShadow: mode === 'dark'
-                            ? '0 20px 60px rgba(0, 0, 0, 0.5), 0 8px 25px rgba(0, 0, 0, 0.3)'
-                            : '0 20px 60px rgba(0, 0, 0, 0.15), 0 8px 25px rgba(0, 0, 0, 0.1)',
-                          minWidth: '160px',
-                          zIndex: 1000,
-                        }}
-                      >
-                        <MenuItem 
-                          onClick={() => window.open(getLocalizedPath(`/recognitions`), '_blank')}
-                          style={{
-                            color: mode === 'dark' ? '#F1F5F9' : '#1E293B',
-                            padding: '12px 16px',
-                            borderRadius: '8px',
-                            cursor: 'pointer',
-                            transition: 'all 0.2s ease',
-                            margin: '4px',
-                            fontSize: '14px',
-                            fontWeight: '500',
-                          }}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.background = mode === 'dark'
-                              ? 'rgba(59, 130, 246, 0.25)'
-                              : 'rgba(59, 130, 246, 0.1)';
-                            e.currentTarget.style.color = mode === 'dark' ? '#FFFFFF' : '#1E293B';
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.background = 'transparent';
-                            e.currentTarget.style.color = mode === 'dark' ? '#F1F5F9' : '#1E293B';
-                          }}
-                        >
-                          <Flex alignItems="center" gap="10px">
-                            <Eye size={16} />
-                            <Text style={{ color: 'inherit', fontSize: 'inherit' }}>{t('view')}</Text>
-                          </Flex>
-                        </MenuItem>
-                        <MenuItem 
-                          onClick={() => window.location.href = getLocalizedPath(`/admin/recognitions/${recognition.id}`)}
-                          style={{
-                            color: mode === 'dark' ? '#F1F5F9' : '#1E293B',
-                            padding: '12px 16px',
-                            borderRadius: '8px',
-                            cursor: 'pointer',
-                            transition: 'all 0.2s ease',
-                            margin: '4px',
-                            fontSize: '14px',
-                            fontWeight: '500',
-                          }}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.background = mode === 'dark'
-                              ? 'rgba(59, 130, 246, 0.25)'
-                              : 'rgba(59, 130, 246, 0.1)';
-                            e.currentTarget.style.color = mode === 'dark' ? '#FFFFFF' : '#1E293B';
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.background = 'transparent';
-                            e.currentTarget.style.color = mode === 'dark' ? '#F1F5F9' : '#1E293B';
-                          }}
-                        >
-                          <Flex alignItems="center" gap="10px">
-                            <Edit3 size={16} />
-                            <Text style={{ color: 'inherit', fontSize: 'inherit' }}>{t('edit')}</Text>
-                          </Flex>
-                        </MenuItem>
-                        <View style={{
-                          height: '1px',
-                          background: mode === 'dark' 
-                            ? 'rgba(148, 163, 184, 0.4)' 
-                            : 'rgba(203, 213, 225, 0.5)',
-                          margin: '8px 12px'
-                        }} />
-                        <MenuItem 
-                          isDisabled={deleteLoading === recognition.id} 
-                          onClick={() => handleDeleteRecognition(recognition.id)}
-                          style={{
-                            color: '#EF4444',
-                            padding: '12px 16px',
-                            borderRadius: '8px',
-                            cursor: deleteLoading === recognition.id ? 'not-allowed' : 'pointer',
-                            opacity: deleteLoading === recognition.id ? 0.6 : 1,
-                            transition: 'all 0.2s ease',
-                            margin: '4px',
-                            fontSize: '14px',
-                            fontWeight: '500',
-                          }}
-                          onMouseEnter={(e) => {
-                            if (deleteLoading !== recognition.id) {
-                              e.currentTarget.style.background = 'rgba(239, 68, 68, 0.15)';
-                              e.currentTarget.style.color = '#DC2626';
-                            }
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.background = 'transparent';
-                            e.currentTarget.style.color = '#EF4444';
-                          }}
-                        >
-                          <Flex alignItems="center" gap="10px">
-                            {deleteLoading === recognition.id ? (
-                              <Loader size="small" />
-                            ) : (
-                              <Trash2 size={16} />
-                            )}
-                            <Text style={{ color: 'inherit', fontSize: 'inherit' }}>{t('delete')}</Text>
-                          </Flex>
-                        </MenuItem>
-                      </Menu>
                     </Flex>
-                  </TableCell>
+                  )}
+                </TableCell>
+                
+                <TableCell>
+                  <Text fontSize="0.875rem" color={mode === 'dark' ? '#CBD5E1' : '#64748B'}>
+                    {formatDate(recognition.issueDate)}
+                  </Text>
+                  {recognition.credentialId && (
+                    <Text 
+                      fontSize="0.75rem" 
+                      style={{ 
+                        color: mode === 'dark' ? '#94A3B8' : '#64748B',
+                        marginTop: '0.25rem'
+                      }}
+                    >
+                      ID: {recognition.credentialId}
+                    </Text>
+                  )}
+                </TableCell>
+                <TableCell>
+                  <Flex gap="0.5rem">
+                    {recognition.issuerUrl && (
+                      <Button
+                        size="small"
+                        style={{
+                          backgroundColor: 'transparent',
+                          color: mode === 'dark' ? '#93C5FD' : '#3B82F6',
+                          border: 'none',
+                          padding: '0.5rem',
+                        }}
+                        as="a"
+                        href={recognition.issuerUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <ExternalLink size={16} />
+                      </Button>
+                    )}
+                    
+                    <Button
+                      size="small"
+                      style={{
+                        backgroundColor: 'transparent',
+                        color: mode === 'dark' ? '#FBBF24' : '#F59E0B',
+                        border: 'none',
+                        padding: '0.5rem',
+                      }}
+                      as="a"
+                      href={getLocalizedPath(`/admin/recognitions/${recognition.id}`)}
+                    >
+                      <Edit3 size={16} />
+                    </Button>
+                    
+                    <Button
+                      size="small"
+                      style={{
+                        backgroundColor: 'transparent',
+                        color: mode === 'dark' ? '#F87171' : '#EF4444',
+                        border: 'none',
+                        padding: '0.5rem',
+                      }}
+                      onClick={() => handleDeleteRecognition(recognition.id)}
+                      isDisabled={deleteLoading === recognition.id}
+                    >
+                      {deleteLoading === recognition.id ? (
+                        <Loader size="small" />
+                      ) : (
+                        <Trash2 size={16} />
+                      )}
+                    </Button>
+                  </Flex>
+                </TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </View>
+            ))}
+          </TableBody>
+        </Table>
       );
     } else {
       // Publications tab
       if (publications.length === 0) {
         return (
-          <View style={{
-            textAlign: 'center',
-            padding: '3rem',
-            background: mode === 'dark'
-              ? 'linear-gradient(135deg, rgba(51, 65, 85, 0.8) 0%, rgba(71, 85, 105, 0.6) 100%)'
-              : 'linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.7) 100%)',
-            backdropFilter: 'blur(16px)',
-            border: mode === 'dark'
-              ? '1px solid rgba(148, 163, 184, 0.2)'
-              : '1px solid rgba(203, 213, 225, 0.3)',
-            borderRadius: '4px',
-          }}>
-            <BookOpen size={48} style={{ 
-              color: mode === 'dark' ? '#60A5FA' : '#3B82F6',
-              margin: '0 auto 1rem'
-            }} />
-            <Text style={{ 
-              color: mode === 'dark' ? '#CBD5E1' : '#64748B',
-              fontSize: '1.25rem'
-            }}>
+          <View padding="3rem" textAlign="center">
+            <Text fontSize="1.125rem" color={mode === 'dark' ? '#CBD5E1' : '#64748B'} marginBottom="2rem">
               {t('publications.no_records')}
             </Text>
           </View>
@@ -664,142 +446,53 @@ const AdminRecognitionsClient: React.FC<AdminRecognitionsClientProps> = ({ local
       }
 
       return (
-        <View style={{
-          background: mode === 'dark'
-            ? 'linear-gradient(135deg, rgba(51, 65, 85, 0.8) 0%, rgba(71, 85, 105, 0.6) 100%)'
-            : 'linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.7) 100%)',
-          backdropFilter: 'blur(16px)',
-          border: mode === 'dark'
-            ? '1px solid rgba(148, 163, 184, 0.2)'
-            : '1px solid rgba(203, 213, 225, 0.3)',
-          borderRadius: '4px',
-          overflow: 'auto',
-          overflowX: 'auto',
-          minWidth: '100%',
-        }}>
-          <Table size="small" style={{ minWidth: '900px' }}>
-            <TableHead>
-              <TableRow style={{
-                background: mode === 'dark'
-                  ? 'linear-gradient(135deg, rgba(71, 85, 105, 0.7) 0%, rgba(51, 65, 85, 0.7) 100%)'
-                  : 'linear-gradient(135deg, rgba(241, 245, 249, 0.8) 0%, rgba(226, 232, 240, 0.8) 100%)',
-                borderBottom: mode === 'dark'
-                  ? '1px solid rgba(148, 163, 184, 0.3)'
-                  : '1px solid rgba(203, 213, 225, 0.4)',
-              }}>
-                <TableCell as="th" width="60px" style={{ 
-                  color: mode === 'dark' ? '#F1F5F9' : '#0F172A',
-                  fontWeight: '600',
-                  padding: '1rem 0.75rem'
-                }}>
-                  {t('image')}
-                </TableCell>
-                <TableCell as="th" style={{ 
-                  color: mode === 'dark' ? '#F1F5F9' : '#0F172A',
-                  fontWeight: '600',
-                  padding: '1rem 0.75rem'
-                }}>
-                  {t('title')}
-                </TableCell>
-                <TableCell as="th" style={{ 
-                  color: mode === 'dark' ? '#F1F5F9' : '#0F172A',
-                  fontWeight: '600',
-                  padding: '1rem 0.75rem'
-                }}>
-                  {t('publications.source')}
-                </TableCell>
-                <TableCell as="th" style={{ 
-                  color: mode === 'dark' ? '#F1F5F9' : '#0F172A',
-                  fontWeight: '600',
-                  padding: '1rem 0.75rem'
-                }}>
-                  {t('publications.type')}
-                </TableCell>
-                <TableCell as="th" style={{ 
-                  color: mode === 'dark' ? '#F1F5F9' : '#0F172A',
-                  fontWeight: '600',
-                  padding: '1rem 0.75rem'
-                }}>
-                  {t('publications.date')}
-                </TableCell>
-                <TableCell as="th" width="120px" style={{ 
-                  color: mode === 'dark' ? '#F1F5F9' : '#0F172A',
-                  fontWeight: '600',
-                  padding: '1rem 0.75rem'
-                }}>
-                  {t('actions')}
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {publications.map((publication, index) => (
-                <TableRow 
-                  key={publication.id}
-                  style={{
-                    borderBottom: mode === 'dark'
-                      ? '1px solid rgba(148, 163, 184, 0.2)'
-                      : '1px solid rgba(203, 213, 225, 0.3)',
-                    transition: 'all 0.2s ease',
-                    cursor: 'pointer',
-                  }}
-                  onMouseEnter={(e) => {
-                    const row = e.currentTarget;
-                    row.style.background = mode === 'dark'
-                      ? 'rgba(59, 130, 246, 0.1)'
-                      : 'rgba(59, 130, 246, 0.05)';
-                  }}
-                  onMouseLeave={(e) => {
-                    const row = e.currentTarget;
-                    row.style.background = 'transparent';
-                  }}
-                >
-                  <TableCell style={{ padding: '1rem 0.75rem' }}>
-                    {publication.photoKey ? (
-                      <View 
-                        style={{
-                          background: mode === 'dark' 
-                            ? 'rgba(71, 85, 105, 0.5)' 
-                            : 'rgba(241, 245, 249, 0.5)',
-                          width: '50px',
-                          height: '50px',
-                          borderRadius: '8px',
-                          overflow: 'hidden',
-                          border: mode === 'dark' 
-                            ? '1px solid rgba(148, 163, 184, 0.2)' 
-                            : '1px solid rgba(203, 213, 225, 0.3)',
-                        }}
-                      >
-                        <ImagePreview photoKey={publication.photoKey} alt={publication.title || ''} />
-                      </View>
-                    ) : (
-                      <Flex 
-                        style={{
-                          background: mode === 'dark' 
-                            ? 'rgba(71, 85, 105, 0.5)' 
-                            : 'rgba(241, 245, 249, 0.5)',
-                          width: '50px',
-                          height: '50px',
-                          borderRadius: '8px',
-                          border: mode === 'dark' 
-                            ? '1px solid rgba(148, 163, 184, 0.2)' 
-                            : '1px solid rgba(203, 213, 225, 0.3)',
-                        }}
-                        justifyContent="center"
-                        alignItems="center"
-                      >
-                        <BookOpen size={24} style={{ 
-                          color: mode === 'dark' ? '#60A5FA' : '#3B82F6' 
-                        }} />
-                      </Flex>
-                    )}
-                  </TableCell>
-                  <TableCell style={{ padding: '1rem 0.75rem' }}>
+        <Table
+          style={{
+            backgroundColor: 'transparent',
+            width: '100%'
+          }}
+        >
+          <TableHead>
+            <TableRow>
+              <TableCell style={{ fontWeight: '600', color: mode === 'dark' ? '#F1F5F9' : '#1E293B' }}>
+                {t('publications.publication') || 'Publication'}
+              </TableCell>
+              <TableCell style={{ fontWeight: '600', color: mode === 'dark' ? '#F1F5F9' : '#1E293B' }}>
+                {t('publications.source')}
+              </TableCell>
+              <TableCell style={{ fontWeight: '600', color: mode === 'dark' ? '#F1F5F9' : '#1E293B' }}>
+                {t('publications.type')}
+              </TableCell>
+              <TableCell style={{ fontWeight: '600', color: mode === 'dark' ? '#F1F5F9' : '#1E293B' }}>
+                {t('publications.date')}
+              </TableCell>
+              <TableCell style={{ fontWeight: '600', color: mode === 'dark' ? '#F1F5F9' : '#1E293B' }}>
+                {t('actions') || 'Actions'}
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {publications.filter(publication => publication !== null).map((publication) => (
+              <TableRow key={publication.id}>
+              <TableCell>
+                <Flex alignItems="center" gap="0.75rem">
+                  <View
+                    style={{
+                      width: '40px',
+                      height: '40px',
+                      borderRadius: '8px',
+                      backgroundColor: mode === 'dark' ? '#374151' : '#F3F4F6',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <BookOpen size={20} color={mode === 'dark' ? '#9CA3AF' : '#6B7280'} />
+                  </View>
+                  <View>
                     <Text 
                       fontWeight="600" 
-                      style={{ 
-                        color: mode === 'dark' ? '#F8FAFC' : '#0F172A',
-                        marginBottom: '0.25rem'
-                      }}
+                      style={{ color: mode === 'dark' ? '#F1F5F9' : '#1E293B' }}
                     >
                       {publication.title}
                     </Text>
@@ -811,251 +504,254 @@ const AdminRecognitionsClient: React.FC<AdminRecognitionsClientProps> = ({ local
                         ? `${publication.description.substring(0, 60)}...` 
                         : publication.description}
                     </Text>
-                  </TableCell>
-                  <TableCell style={{ padding: '1rem 0.75rem' }}>
-                    <Badge
-                      size="small" 
+                  </View>
+                </Flex>
+              </TableCell>
+              <TableCell>
+                <Badge
+                  style={{
+                    backgroundColor: '#22C55E',
+                    color: '#FFFFFF',
+                    fontSize: '0.75rem',
+                    fontWeight: '600',
+                    borderRadius: '6px',
+                  }}
+                >
+                  {publication.source}
+                </Badge>
+              </TableCell>
+              <TableCell>
+                <Badge
+                  style={{
+                    backgroundColor: '#8B5CF6',
+                    color: '#FFFFFF',
+                    fontSize: '0.75rem',
+                    fontWeight: '600',
+                    borderRadius: '6px',
+                  }}
+                >
+                  {publication.type}
+                </Badge>
+              </TableCell>
+              <TableCell>
+                <Text fontSize="0.875rem" color={mode === 'dark' ? '#CBD5E1' : '#64748B'}>
+                  {formatDate(publication.publicationDate)}
+                </Text>
+              </TableCell>
+              <TableCell>
+                <Flex gap="0.5rem">
+                  {publication.publicationUrl && (
+                    <Button
+                      size="small"
                       style={{
-                        background: mode === 'dark' 
-                          ? 'linear-gradient(135deg, rgba(34, 197, 94, 0.8), rgba(22, 163, 74, 0.8))'
-                          : 'linear-gradient(135deg, rgba(34, 197, 94, 1), rgba(22, 163, 74, 1))',
-                        color: '#FFFFFF',
+                        backgroundColor: 'transparent',
+                        color: mode === 'dark' ? '#93C5FD' : '#3B82F6',
                         border: 'none',
-                        borderRadius: '6px',
-                        padding: '4px 8px',
-                        fontSize: '0.75rem',
-                        fontWeight: '500'
+                        padding: '0.5rem',
                       }}
+                      as="a"
+                      href={publication.publicationUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
                     >
-                      {publication.source}
-                    </Badge>
-                    {publication.publicationUrl && (
-                      <Flex alignItems="center" gap="4px" marginTop="0.25rem">
-                        <ExternalLink size={12} style={{ 
-                          color: mode === 'dark' ? '#60A5FA' : '#3B82F6' 
-                        }} />
-                        <Text 
-                          fontSize="0.75rem" 
-                          style={{ color: mode === 'dark' ? '#60A5FA' : '#3B82F6' }}
-                          as="a"
-                          href={publication.publicationUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          textDecoration="none"
-                        >
-                          {t('view_publication')}
-                        </Text>
-                      </Flex>
+                      <ExternalLink size={16} />
+                    </Button>
+                  )}
+                  
+                  <Button
+                    size="small"
+                    style={{
+                      backgroundColor: 'transparent',
+                      color: mode === 'dark' ? '#FBBF24' : '#F59E0B',
+                      border: 'none',
+                      padding: '0.5rem',
+                    }}
+                    as="a"
+                    href={getLocalizedPath(`/admin/publications/${publication.id}`)}
+                  >
+                    <Edit3 size={16} />
+                  </Button>
+                  
+                  <Button
+                    size="small"
+                    style={{
+                      backgroundColor: 'transparent',
+                      color: mode === 'dark' ? '#F87171' : '#EF4444',
+                      border: 'none',
+                      padding: '0.5rem',
+                    }}
+                    onClick={() => handleDeletePublication(publication.id)}
+                    isDisabled={deleteLoading === publication.id}
+                  >
+                    {deleteLoading === publication.id ? (
+                      <Loader size="small" />
+                    ) : (
+                      <Trash2 size={16} />
                     )}
-                  </TableCell>
-                  <TableCell style={{ padding: '1rem 0.75rem' }}>
-                    <Badge
-                      size="small" 
-                      style={{
-                        background: mode === 'dark' 
-                          ? 'linear-gradient(135deg, rgba(168, 85, 247, 0.8), rgba(147, 51, 234, 0.8))'
-                          : 'linear-gradient(135deg, rgba(168, 85, 247, 1), rgba(147, 51, 234, 1))',
-                        color: '#FFFFFF',
-                        border: 'none',
-                        borderRadius: '6px',
-                        padding: '4px 8px',
-                        fontSize: '0.75rem',
-                        fontWeight: '500'
-                      }}
-                    >
-                      {publication.type}
-                    </Badge>
-                  </TableCell>
-                  <TableCell style={{ padding: '1rem 0.75rem' }}>
-                    <Flex alignItems="center" gap="4px">
-                      <Calendar size={14} style={{ 
-                        color: mode === 'dark' ? '#94A3B8' : '#64748B' 
-                      }} />
-                      <Text style={{ 
-                        color: mode === 'dark' ? '#E2E8F0' : '#1E293B',
-                        fontSize: '0.875rem'
-                      }}>
-                        {formatDate(publication.publicationDate)}
-                      </Text>
-                    </Flex>
-                  </TableCell>
-                  <TableCell style={{ padding: '1rem 0.75rem', position: 'relative' }}>
-                    <Flex gap="8px" justifyContent="center">
-                      <Menu 
-                        trigger={
-                          <Button 
-                            size="small" 
-                            style={{
-                              background: mode === 'dark' 
-                                ? 'rgba(71, 85, 105, 0.8)' 
-                                : 'rgba(248, 250, 252, 0.8)',
-                              border: mode === 'dark' 
-                                ? '1px solid rgba(148, 163, 184, 0.4)' 
-                                : '1px solid rgba(203, 213, 225, 0.5)',
-                              borderRadius: '8px',
-                              padding: '8px',
-                              color: mode === 'dark' ? '#E2E8F0' : '#475569',
-                              cursor: 'pointer',
-                              minWidth: '32px',
-                              minHeight: '32px',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                            }}
-                          >
-                            <MoreVertical size={16} />
-                          </Button>
-                        }
-                        menuAlign="end"
-                        style={{
-                          background: mode === 'dark'
-                            ? 'rgba(30, 41, 59, 0.98)'
-                            : 'rgba(255, 255, 255, 0.98)',
-                          backdropFilter: 'blur(20px)',
-                          border: mode === 'dark'
-                            ? '1px solid rgba(148, 163, 184, 0.4)'
-                            : '1px solid rgba(203, 213, 225, 0.5)',
-                          borderRadius: '12px',
-                          boxShadow: mode === 'dark'
-                            ? '0 20px 60px rgba(0, 0, 0, 0.5), 0 8px 25px rgba(0, 0, 0, 0.3)'
-                            : '0 20px 60px rgba(0, 0, 0, 0.15), 0 8px 25px rgba(0, 0, 0, 0.1)',
-                          minWidth: '160px',
-                          zIndex: 1000,
-                        }}
-                      >
-                        <MenuItem 
-                          onClick={() => window.open(getLocalizedPath(`/recognitions`), '_blank')}
-                          style={{
-                            color: mode === 'dark' ? '#F1F5F9' : '#1E293B',
-                            padding: '12px 16px',
-                            borderRadius: '8px',
-                            cursor: 'pointer',
-                            transition: 'all 0.2s ease',
-                            margin: '4px',
-                            fontSize: '14px',
-                            fontWeight: '500',
-                          }}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.background = mode === 'dark'
-                              ? 'rgba(59, 130, 246, 0.25)'
-                              : 'rgba(59, 130, 246, 0.1)';
-                            e.currentTarget.style.color = mode === 'dark' ? '#FFFFFF' : '#1E293B';
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.background = 'transparent';
-                            e.currentTarget.style.color = mode === 'dark' ? '#F1F5F9' : '#1E293B';
-                          }}
-                        >
-                          <Flex alignItems="center" gap="10px">
-                            <Eye size={16} />
-                            <Text style={{ color: 'inherit', fontSize: 'inherit' }}>{t('view')}</Text>
-                          </Flex>
-                        </MenuItem>
-                        <MenuItem 
-                          onClick={() => window.location.href = getLocalizedPath(`/admin/publications/${publication.id}`)}
-                          style={{
-                            color: mode === 'dark' ? '#F1F5F9' : '#1E293B',
-                            padding: '12px 16px',
-                            borderRadius: '8px',
-                            cursor: 'pointer',
-                            transition: 'all 0.2s ease',
-                            margin: '4px',
-                            fontSize: '14px',
-                            fontWeight: '500',
-                          }}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.background = mode === 'dark'
-                              ? 'rgba(59, 130, 246, 0.25)'
-                              : 'rgba(59, 130, 246, 0.1)';
-                            e.currentTarget.style.color = mode === 'dark' ? '#FFFFFF' : '#1E293B';
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.background = 'transparent';
-                            e.currentTarget.style.color = mode === 'dark' ? '#F1F5F9' : '#1E293B';
-                          }}
-                        >
-                          <Flex alignItems="center" gap="10px">
-                            <Edit3 size={16} />
-                            <Text style={{ color: 'inherit', fontSize: 'inherit' }}>{t('edit')}</Text>
-                          </Flex>
-                        </MenuItem>
-                        <View style={{
-                          height: '1px',
-                          background: mode === 'dark' 
-                            ? 'rgba(148, 163, 184, 0.4)' 
-                            : 'rgba(203, 213, 225, 0.5)',
-                          margin: '8px 12px'
-                        }} />
-                        <MenuItem 
-                          isDisabled={deleteLoading === publication.id} 
-                          onClick={() => handleDeletePublication(publication.id)}
-                          style={{
-                            color: '#EF4444',
-                            padding: '12px 16px',
-                            borderRadius: '8px',
-                            cursor: deleteLoading === publication.id ? 'not-allowed' : 'pointer',
-                            opacity: deleteLoading === publication.id ? 0.6 : 1,
-                            transition: 'all 0.2s ease',
-                            margin: '4px',
-                            fontSize: '14px',
-                            fontWeight: '500',
-                          }}
-                          onMouseEnter={(e) => {
-                            if (deleteLoading !== publication.id) {
-                              e.currentTarget.style.background = 'rgba(239, 68, 68, 0.15)';
-                              e.currentTarget.style.color = '#DC2626';
-                            }
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.background = 'transparent';
-                            e.currentTarget.style.color = '#EF4444';
-                          }}
-                        >
-                          <Flex alignItems="center" gap="10px">
-                            {deleteLoading === publication.id ? (
-                              <Loader size="small" />
-                            ) : (
-                              <Trash2 size={16} />
-                            )}
-                            <Text style={{ color: 'inherit', fontSize: 'inherit' }}>{t('delete')}</Text>
-                          </Flex>
-                        </MenuItem>
-                      </Menu>
-                    </Flex>
-                  </TableCell>
+                  </Button>
+                </Flex>
+              </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
-        </View>
-      );
-    }
+        );
+      }
   };
 
   return (
-    <View width="100%">
-      {/* Header section */}
-      <Flex direction="column" gap="12px" marginBottom="1.5rem">
-        <Heading level={1}>
-          {activeTab === 'recognitions' 
-            ? t('recognitions.manage_recognitions') 
-            : t('publications.manage_publications')}
-        </Heading>
-        <Text>
-          {activeTab === 'recognitions' 
-            ? t('recognitions.manage_recognitions_description') 
-            : t('publications.manage_publications_description')}
-        </Text>
+    <View>
+      {/* Header */}
+      <Flex
+        direction={{ base: 'column', medium: 'row' }} 
+        justifyContent="space-between" 
+        alignItems={{ base: 'stretch', medium: 'flex-start' }}
+        gap="1rem"
+        marginBottom="2rem"
+        style={{ width: '100%' }}
+      >
+        <View style={{ flex: '1 1 auto', minWidth: 0 }}>
+          <Text
+            fontSize={{ base: '1.5rem', medium: '2rem' }}
+            fontWeight="700"
+            style={{
+              color: mode === 'dark' ? '#F1F5F9' : '#1E293B',
+            }}
+          >
+            {t('recognitions.manage_recognitions')}
+          </Text>
+          <Text
+            fontSize={{ base: '0.875rem', medium: '1rem' }}
+            style={{
+              color: mode === 'dark' ? '#CBD5E1' : '#64748B',
+            }}
+          >
+            {t('recognitions.manage_recognitions_description')}
+          </Text>
+        </View>
+
+        <View style={{ flexShrink: 0, width: '100%', maxWidth: '220px' }} className="md:w-auto">
+          <Button
+            variation="primary"
+            size="large"
+            onClick={() => {
+              window.location.href = getLocalizedPath('/admin/recognitions/new');
+            }}
+            style={{
+              backgroundColor: mode === 'dark' ? '#3B82F6' : '#2563EB',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              justifyContent: 'center',
+              width: '100%',
+              whiteSpace: 'nowrap'
+            }}
+          >
+            <Plus size={20} />
+            <Text>{t('recognitions.add_recognition')}</Text>
+          </Button>
+        </View>
       </Flex>
 
-      {/* Tabs and action buttons */}
-      <Card padding="0">
+      {/* Error Alert */}
+      {error && (
+        <Alert variation="error" marginBottom="1rem">
+          {error}
+        </Alert>
+      )}
+
+      {/* Statistics */}
+      <Flex 
+        direction={{ base: 'column', medium: 'row' }} 
+        gap="1.5rem" 
+        marginBottom="2rem"
+        style={{
+          width: '100%',
+          maxWidth: '100%'
+        }}
+      >
+        <Card
+          style={{
+            flex: 1,
+            minWidth: '160px',
+            maxWidth: '100%',
+            backgroundColor: mode === 'dark' ? 'rgba(51, 65, 85, 0.8)' : 'rgba(255, 255, 255, 0.9)',
+            border: mode === 'dark' ? '1px solid rgba(148, 163, 184, 0.1)' : '1px solid rgba(203, 213, 225, 0.2)',
+            boxSizing: 'border-box'
+          }}
+        >
+          <View padding="1rem">
+            <Text fontSize="1.25rem" fontWeight="700" color="#22C55E">
+              {recognitions.length}
+            </Text>
+            <Text fontSize="0.875rem" color={mode === 'dark' ? '#CBD5E1' : '#64748B'}>
+              {t('recognitions.total_recognitions') || 'Total Recognitions'}
+            </Text>
+          </View>
+        </Card>
+
+        <Card
+          style={{
+            flex: 1,
+            minWidth: '160px',
+            maxWidth: '100%',
+            backgroundColor: mode === 'dark' ? 'rgba(51, 65, 85, 0.8)' : 'rgba(255, 255, 255, 0.9)',
+            border: mode === 'dark' ? '1px solid rgba(148, 163, 184, 0.1)' : '1px solid rgba(203, 213, 225, 0.2)',
+            boxSizing: 'border-box'
+          }}
+        >
+          <View padding="1rem">
+            <Text fontSize="1.25rem" fontWeight="700" color="#3B82F6">
+              {publications.length}
+            </Text>
+            <Text fontSize="0.875rem" color={mode === 'dark' ? '#CBD5E1' : '#64748B'}>
+              {t('publications.total_publications') || 'Total Publications'}
+            </Text>
+          </View>
+        </Card>
+        
+        <Card
+          style={{
+            flex: 1,
+            minWidth: '160px',
+            maxWidth: '100%',
+            backgroundColor: mode === 'dark' ? 'rgba(51, 65, 85, 0.8)' : 'rgba(255, 255, 255, 0.9)',
+            border: mode === 'dark' ? '1px solid rgba(148, 163, 184, 0.1)' : '1px solid rgba(203, 213, 225, 0.2)',
+            boxSizing: 'border-box'
+          }}
+        >
+          <View padding="1rem">
+            <Text fontSize="1.25rem" fontWeight="700" color="#8B5CF6">
+              {recognitions.length + publications.length}
+            </Text>
+            <Text fontSize="0.875rem" color={mode === 'dark' ? '#CBD5E1' : '#64748B'}>
+              {t('total_items') || 'Total Items'}
+            </Text>
+          </View>
+        </Card>
+      </Flex>
+
+      {/* Tabs */}
+      <Card
+        style={{
+          backgroundColor: mode === 'dark' ? 'rgba(51, 65, 85, 0.8)' : 'rgba(255, 255, 255, 0.9)',
+          border: mode === 'dark' ? '1px solid rgba(148, 163, 184, 0.1)' : '1px solid rgba(203, 213, 225, 0.2)',
+          borderRadius: '12px',
+          overflow: 'hidden',
+          marginBottom: '1rem'
+        }}
+      >
         <Flex justifyContent="space-between" alignItems="center" padding="1rem">
           <Flex gap="0.5rem">
             <Button 
               size="small" 
               variation={activeTab === 'recognitions' ? 'primary' : 'link'}
               onClick={() => setActiveTab('recognitions')}
+              style={{
+                backgroundColor: activeTab === 'recognitions' 
+                  ? (mode === 'dark' ? '#3B82F6' : '#2563EB')
+                  : 'transparent'
+              }}
             >
               <Award size={16} />
               <Text>{t('recognitions.recognitions')}</Text>
@@ -1064,37 +760,56 @@ const AdminRecognitionsClient: React.FC<AdminRecognitionsClientProps> = ({ local
               size="small" 
               variation={activeTab === 'publications' ? 'primary' : 'link'}
               onClick={() => setActiveTab('publications')}
+              style={{
+                backgroundColor: activeTab === 'publications' 
+                  ? (mode === 'dark' ? '#3B82F6' : '#2563EB')
+                  : 'transparent'
+              }}
             >
               <BookOpen size={16} />
               <Text>{t('publications.publications')}</Text>
             </Button>
           </Flex>
-          <Flex gap="0.5rem">
-            <Button 
-              size="small" 
-              variation="primary"
-              onClick={() => {
-                window.location.href = getLocalizedPath(
-                  activeTab === 'recognitions' 
-                    ? '/admin/recognitions/new' 
-                    : '/admin/publications/new'
-                );
-              }}
-            >
-              <Plus size={16} />
-              <Text>
-                {activeTab === 'recognitions' 
-                  ? t('recognitions.add_recognition') 
-                  : t('publications.add_publication')}
-              </Text>
-            </Button>
-          </Flex>
+          <Button 
+            size="small" 
+            variation="primary"
+            onClick={() => {
+              window.location.href = getLocalizedPath(
+                activeTab === 'recognitions' 
+                  ? '/admin/recognitions/new' 
+                  : '/admin/publications/new'
+              );
+            }}
+            style={{
+              backgroundColor: mode === 'dark' ? '#22C55E' : '#16A34A'
+            }}
+          >
+            <Plus size={16} />
+            <Text>
+              {activeTab === 'recognitions' 
+                ? t('recognitions.add_recognition') 
+                : t('publications.add_publication')}
+            </Text>
+          </Button>
         </Flex>
-        
-        <Divider />
-        
-        {/* Table or empty state */}
-        <View padding={loading || error ? "0" : "1rem"}>
+      </Card>
+
+      {/* Table */}
+      <Card
+        style={{
+          backgroundColor: mode === 'dark' ? 'rgba(51, 65, 85, 0.8)' : 'rgba(255, 255, 255, 0.9)',
+          border: mode === 'dark' ? '1px solid rgba(148, 163, 184, 0.1)' : '1px solid rgba(203, 213, 225, 0.2)',
+          borderRadius: '12px',
+          overflow: 'hidden',
+        }}
+      >
+        <View 
+          className="table-container"
+          style={{
+            overflowX: 'auto',
+            width: '100%'
+          }}
+        >
           {renderTable()}
         </View>
       </Card>

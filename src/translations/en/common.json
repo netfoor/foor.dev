@@ -33,6 +33,8 @@
   "account": "Account",
   
   "loading": "Loading...",
+  "loading_profile": "Loading profile information...",
+  "current": "Current",
   "login": "Login",
   "language": "Language",
   "current_language": "Current language",

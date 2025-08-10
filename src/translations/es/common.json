@@ -33,6 +33,7 @@
   "profile": "Perfil",
   "account": "Cuenta",
   "loading": "Cargando...",
+  "loading_profile": "Cargando información del perfil...",
   "login": "Iniciar sesión",
   "language": "Idioma",
   "current_language": "Idioma actual",
@@ -183,6 +184,7 @@
   "active_projects": "Proyectos Activos", 
   "years_experience": "Años de Experiencia",
   "active": "Activo",
+  "current": "Actual",
   "project_details": {
     "description": "Descripción",
     "technologies_used": "Tecnologías Utilizadas",

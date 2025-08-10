@@ -20,7 +20,8 @@ import {
   FileText, 
   Settings,
   Menu,
-  X
+  X,
+  Zap
 } from 'lucide-react';
 import './admin.css';
 
@@ -45,6 +46,7 @@ export default function AdminLayout({
     { href: '/admin/projects', label: t('sections.projects'), icon: FolderOpen },
     { href: '/admin/certifications', label: t('sections.certifications'), icon: Award },
     { href: '/admin/recognitions', label: t('sections.recognitions'), icon: FileText },
+    { href: '/admin/skills', label: t('sections.skills'), icon: Zap },
     { href: '/admin/education', label: t('sections.education'), icon: GraduationCap },
     { href: '/admin/languages', label: t('sections.languages'), icon: Languages },
     { href: '/admin/settings', label: t('settings'), icon: Settings },

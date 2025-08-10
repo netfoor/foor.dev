@@ -17,7 +17,7 @@ const schema = a.schema({
       slug: a.string(),
     })
     .authorization((allow) => [
-      allow.guest().to(['read']),
+      allow.publicApiKey().to(['read']),
       allow.group('ADMINS').to(['create', 'read', 'update', 'delete'])
     ]),
 
@@ -44,7 +44,7 @@ const schema = a.schema({
       metaDescription: a.string(),
       tags: a.string().array(),
     }).authorization((allow) => [
-      allow.guest().to(['read']),
+      allow.publicApiKey().to(['read']),
       allow.group('ADMINS').to(['create', 'read', 'update', 'delete'])
     ]),
   Recognitions: a
@@ -58,7 +58,7 @@ const schema = a.schema({
       photoKey: a.string(), 
     })
     .authorization((allow) => [
-      allow.guest().to(['read']),
+      allow.publicApiKey().to(['read']),
       allow.group('ADMINS').to(['create', 'read', 'update', 'delete'])
     ]),
   Education: a
@@ -76,7 +76,7 @@ const schema = a.schema({
       Photos: a.string().array(),
     })
     .authorization((allow) => [
-      allow.guest().to(['read']),
+      allow.publicApiKey().to(['read']),
       allow.group('ADMINS').to(['create', 'read', 'update', 'delete'])
     ]),
   Languages: a
@@ -85,7 +85,7 @@ const schema = a.schema({
       proficiency: a.enum(['Basic', 'Conversational', 'Fluent', 'Native']),
     })
     .authorization((allow) => [
-      allow.guest().to(['read']),
+      allow.publicApiKey().to(['read']),
       allow.group('ADMINS').to(['create', 'read', 'update', 'delete'])
     ]),
   Experiences: a
@@ -101,7 +101,7 @@ const schema = a.schema({
       photoKey: a.string(), 
     })
     .authorization((allow) => [
-      allow.guest().to(['read']),
+      allow.publicApiKey().to(['read']),
       allow.group('ADMINS').to(['create', 'read', 'update', 'delete'])
     ]),
   SocialPublications: a
@@ -115,7 +115,7 @@ const schema = a.schema({
       publicationUrl: a.string().required()
     })
     .authorization((allow) => [
-      allow.guest().to(['read']),
+      allow.publicApiKey().to(['read']),
       allow.group('ADMINS').to(['create', 'read', 'update', 'delete'])
     ]),
 
@@ -137,7 +137,7 @@ const schema = a.schema({
       emailContact: a.string(),
     })
     .authorization((allow) => [
-      allow.guest().to(['read']),
+      allow.publicApiKey().to(['read']),
       allow.group('ADMINS').to(['create', 'read', 'update', 'delete'])
     ]),
 
@@ -161,7 +161,7 @@ const schema = a.schema({
       achievements: a.string().array(), // Achievements related to this skill
     })
     .authorization((allow) => [
-      allow.guest().to(['read']),
+      allow.publicApiKey().to(['read']),
       allow.group('ADMINS').to(['create', 'read', 'update', 'delete'])
     ]),
 
@@ -174,5 +174,8 @@ export const data = defineData({
   schema,
   authorizationModes: {
     defaultAuthorizationMode: 'userPool',
+    apiKeyAuthorizationMode: {
+      expiresInDays: 30,
+    },
   },
 });

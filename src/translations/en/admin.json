@@ -240,6 +240,7 @@
       "title": "Experiences",
       "description": "Manage your professional experiences and work history",
       "manage": "Manage Experiences",
+      "create": "Create Experience",
       "edit": "Edit",
       "delete": "Delete",
       "deleting": "Deleting...",
@@ -433,6 +434,7 @@
   },
   "recognitions": {
     "recognitions": "Recognitions",
+    "total_recognitions": "Total Recognitions",
     "manage_recognitions": "Manage Your Awards and Recognitions",
     "manage_recognitions_description": "Add, edit, and manage your awards, recognitions, and professional honors.",
     "add_recognition": "Add Recognition",
@@ -469,10 +471,12 @@
     "add_photo": "Add a photo or certificate image",
     "upload_photo": "Upload Image",
     "change_photo": "Change Image",
-    "photo_description": "Upload an image representing your recognition (certificate, badge, etc.). Recommended size: 800x600px."
+    "photo_description": "Upload an image representing your recognition (certificate, badge, etc.). Recommended size: 800x600px.",
+    "basic_info": "Basic Information"
   },
   "publications": {
     "publications": "Publications",
+    "total_publications": "Total Publications",
     "manage_publications": "Manage Your Media Publications",
     "manage_publications_description": "Add, edit, and manage your social media publications, articles, videos, and other content.",
     "add_publication": "Add Publication",
@@ -510,7 +514,10 @@
     "add_photo": "Add a thumbnail or cover image",
     "upload_photo": "Upload Image",
     "change_photo": "Change Image",
-    "photo_description": "Upload a thumbnail or cover image for your publication. Recommended size: 800x450px."
+    "photo_description": "Upload a thumbnail or cover image for your publication. Recommended size: 800x450px.",
+    "basic_info": "Basic Information"
   },
-  "createProject": "Create New Project"
+  "createProject": "Create New Project",
+  "back_to_list": "Back to List",
+  "total_items": "Total Items"
 }

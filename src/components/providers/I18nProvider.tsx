@@ -112,35 +112,24 @@ export function I18nProvider({
   const loadNamespace = useCallback(async (
     targetNamespace: TranslationNamespace
   ): Promise<NamespaceTranslations> => {
-    // Si ya está cargado, retornar inmediatamente
+    const currentLocale = state.locale;
+    const namespaceKey = `${currentLocale}-${targetNamespace}`;
+    
+    // Si ya está cargado para este locale, retornar inmediatamente
     if (state.translations[targetNamespace]) {
       return state.translations[targetNamespace];
-    }
-    
-    // Si ya está cargándose, esperar
-    if (state.loadingNamespaces.has(targetNamespace)) {
-      return new Promise((resolve) => {
-        const checkLoaded = () => {
-          if (state.translations[targetNamespace]) {
-            resolve(state.translations[targetNamespace]);
-          } else {
-            setTimeout(checkLoaded, 100);
-          }
-        };
-        checkLoaded();
-      });
     }
     
     try {
       dispatch({ type: 'START_LOADING', payload: targetNamespace });
       
       debugLog('translation-loading', 'Loading namespace on client', { 
-        locale: state.locale, 
+        locale: currentLocale, 
         namespace: targetNamespace 
       });
       
       // Cargar traducciones dinámicamente
-      const translations = await import(`@/translations/${state.locale}/${targetNamespace}.json`);
+      const translations = await import(`@/translations/${currentLocale}/${targetNamespace}.json`);
       const translationData = translations.default || translations;
       
       // Actualizar estado
@@ -157,50 +146,12 @@ export function I18nProvider({
       return translationData;
       
     } catch (error) {
-      console.error(`Error loading namespace ${targetNamespace} for locale ${state.locale}:`, error);
-      
-      // Intentar cargar idioma por defecto como fallback
-      if (state.locale !== DEFAULT_LOCALE) {
-        try {
-          debugLog('translation-loading', 'Loading fallback namespace', { 
-            namespace: targetNamespace,
-            fallbackLocale: DEFAULT_LOCALE
-          });
-          
-          const fallbackTranslations = await import(`@/translations/${DEFAULT_LOCALE}/${targetNamespace}.json`);
-          const fallbackData = fallbackTranslations.default || fallbackTranslations;
-          
-          dispatch({ 
-            type: 'SET_TRANSLATIONS', 
-            payload: { 
-              namespace: targetNamespace, 
-              translations: fallbackData 
-            } 
-          });
-          
-          dispatch({ type: 'FINISH_LOADING', payload: targetNamespace });
-          
-          return fallbackData;
-          
-        } catch (fallbackError) {
-          console.error(`Error loading fallback namespace ${targetNamespace}:`, fallbackError);
-        }
-      }
+      console.error(`Error loading namespace ${targetNamespace} for locale ${currentLocale}:`, error);
       
       dispatch({ type: 'FINISH_LOADING', payload: targetNamespace });
-      
-      // Retornar objeto vacío como último recurso
-      const emptyTranslations = {};
-      dispatch({ 
-        type: 'SET_TRANSLATIONS', 
-        payload: { 
-          namespace: targetNamespace, 
-          translations: emptyTranslations 
-        } 
-      });
-      
-      return emptyTranslations;    }
-  }, []); // Eliminamos dependencias problemáticas
+      return {};
+    }
+  }, [state.locale]);
   /**
    * Función para cambiar el locale
    */

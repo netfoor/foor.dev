@@ -14,38 +14,21 @@ import {
   TableCell, 
   TableBody,
   Loader,
-  Alert,
-  Menu,
-  MenuItem,
-  Divider,
-  Heading,
-  TextField,
-  SelectField,
-  Tabs
+  Alert
 } from '@aws-amplify/ui-react';
 import { 
   Plus, 
   Edit3, 
   Trash2, 
-  MoreVertical, 
-  Code,
-  Brain,
-  Star,
-  Calendar,
-  TrendingUp,
-  Search,
-  Filter
+  Zap
 } from 'lucide-react';
 import Link from 'next/link';
 import { generateClient } from 'aws-amplify/data';
-import { getUrl, remove } from 'aws-amplify/storage';
 import type { Schema } from '../../../../../amplify/data/resource';
 import { useTheme } from '@/hooks/useTheme';
-import { useAuthorization } from '@/hooks/useAuthorization';
 import { useTranslation, useLocalizedPath } from '@/lib/i18n/client';
 import type { SupportedLocale } from '@/lib/i18n/types';
 import S3Cleanup from '@/lib/utils/s3-cleanup';
-import { getImageUrl as getImageUrlHelper } from '@/lib/utils/image-helpers';
 
 // Tipos para Skills
 type Skill = Schema["Skills"]["type"];
@@ -59,26 +42,12 @@ const AdminSkillsClient: React.FC<AdminSkillsClientProps> = ({ locale }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [deleteLoading, setDeleteLoading] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [selectedType, setSelectedType] = useState('all');
-  const [skillImageUrls, setSkillImageUrls] = useState<Record<string, string>>({});
 
   const { mode } = useTheme();
   const { t } = useTranslation('admin');
   const getLocalizedPath = useLocalizedPath();
-  const { isUserAdmin } = useAuthorization();
 
-  // Categories for filtering
-  const categories = [
-    'Cloud Platforms',
-    'Programming Languages', 
-    'Frameworks & Libraries',
-    'DevOps & Tools',
-    'Databases',
-    'Architecture & Design',
-    'Soft Skills'
-  ];
+
 
   // Fetch skills from Amplify Data API
   const fetchSkills = async () => {
@@ -102,18 +71,6 @@ const AdminSkillsClient: React.FC<AdminSkillsClientProps> = ({ locale }) => {
         });
         
         setSkills(sortedSkills);
-        
-        // Fetch skill icons
-        const imageUrls: Record<string, string> = {};
-        for (const skill of sortedSkills) {
-          if (skill.iconKey) {
-            const imageUrl = await getImageUrl(skill.iconKey);
-            if (imageUrl) {
-              imageUrls[skill.id] = imageUrl;
-            }
-          }
-        }
-        setSkillImageUrls(imageUrls);
       }
     } catch (err) {
       console.error('Error fetching skills:', err);
@@ -135,12 +92,6 @@ const AdminSkillsClient: React.FC<AdminSkillsClientProps> = ({ locale }) => {
 
     try {
       setDeleteLoading(skillId);
-      
-      // Check if user is admin before proceeding
-      if (!isUserAdmin()) {
-        setError(t('common.admin_access_required'));
-        return;
-      }
       
       const client = generateClient<Schema>();
       
@@ -167,13 +118,6 @@ const AdminSkillsClient: React.FC<AdminSkillsClientProps> = ({ locale }) => {
       // Update local state
       setSkills(prev => prev.filter(skill => skill.id !== skillId));
       
-      // Remove image URL from state
-      setSkillImageUrls(prev => {
-        const newUrls = { ...prev };
-        delete newUrls[skillId];
-        return newUrls;
-      });
-      
       console.log(`🎉 Skill deleted successfully`);
       
     } catch (err) {
@@ -184,291 +128,330 @@ const AdminSkillsClient: React.FC<AdminSkillsClientProps> = ({ locale }) => {
     }
   };
 
-  // Get image URL from Storage
-  const getImageUrl = async (key: string | null | undefined) => {
-    if (!key) return null;
-    return await getImageUrlHelper(key);
-  };
-
-  // Filter skills based on search and filters
-  const filteredSkills = skills.filter(skill => {
-    const matchesSearch = skill.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         skill.description?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === 'all' || skill.category === selectedCategory;
-    const matchesType = selectedType === 'all' || skill.type === selectedType;
-    
-    return matchesSearch && matchesCategory && matchesType;
-  });
-
-  // Group skills by type for tab display
-  const technicalSkills = filteredSkills.filter(skill => skill.type === 'Technical');
-  const softSkills = filteredSkills.filter(skill => skill.type === 'Soft');
-
   // Get proficiency badge color
   const getProficiencyColor = (proficiency: string | null | undefined) => {
     switch (proficiency) {
-      case 'Expert': return 'success';
-      case 'Advanced': return 'info';
-      case 'Intermediate': return 'warning';
-      case 'Beginner': return 'error';
-      default: return 'neutral';
+      case 'Expert': return '#22C55E';
+      case 'Advanced': return '#3B82F6';
+      case 'Intermediate': return '#F59E0B';
+      case 'Beginner': return '#EF4444';
+      default: return '#6B7280';
+    }
+  };
+
+  // Get type badge color
+  const getTypeColor = (type: string | null | undefined) => {
+    switch (type) {
+      case 'Technical': return '#3B82F6';
+      case 'Soft': return '#8B5CF6';
+      default: return '#6B7280';
     }
   };
 
   if (loading) {
     return (
-      <View padding="large" textAlign="center">
+      <Flex direction="column" alignItems="center" gap="1rem" padding="2rem">
         <Loader size="large" />
-        <Text fontSize="medium" color="font.tertiary" marginTop="medium">
-          {t('skills.loading')}
-        </Text>
-      </View>
+        <Text>{t('skills.loading')}</Text>
+      </Flex>
     );
   }
 
   return (
-    <View padding="large">
-      <Flex direction="column" gap="large">
-        {/* Header */}
-        <Flex justifyContent="space-between" alignItems="center">
-          <View>
-            <Heading level={1} fontSize="xl" fontWeight="bold" color="font.primary">
-              {t('skills.title')}
-            </Heading>
-            <Text fontSize="medium" color="font.secondary">
-              {t('skills.description')}
-            </Text>
-          </View>
-          <Link href={getLocalizedPath('/admin/skills/new')}>
-            <Button variation="primary" size="small">
-              <Flex alignItems="center" gap="xs">
-                <Plus size={16} />
-                {t('skills.create')}
-              </Flex>
+    <View>
+      {/* Header */}
+      <Flex
+        direction={{ base: 'column', medium: 'row' }} 
+        justifyContent="space-between" 
+        alignItems={{ base: 'stretch', medium: 'flex-start' }}
+        gap="1rem"
+        marginBottom="2rem"
+        style={{ width: '100%' }}
+      >
+        <View style={{ flex: '1 1 auto', minWidth: 0 }}>
+          <Text
+            fontSize={{ base: '1.5rem', medium: '2rem' }}
+            fontWeight="700"
+            style={{
+              color: mode === 'dark' ? '#F1F5F9' : '#1E293B',
+            }}
+          >
+            {t('skills.title')}
+          </Text>
+          <Text
+            fontSize={{ base: '0.875rem', medium: '1rem' }}
+            style={{
+              color: mode === 'dark' ? '#CBD5E1' : '#64748B',
+            }}
+          >
+            {t('skills.description')}
+          </Text>
+        </View>
+
+        <View style={{ flexShrink: 0, width: '100%', maxWidth: '220px' }} className="md:w-auto">
+          <Link href={getLocalizedPath('/admin/skills/new')} style={{ textDecoration: 'none' }}>
+            <Button
+              variation="primary"
+              size="large"
+              style={{
+                backgroundColor: mode === 'dark' ? '#3B82F6' : '#2563EB',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                justifyContent: 'center',
+                width: '100%',
+                whiteSpace: 'nowrap'
+              }}
+            >
+              <Plus size={20} />
+              <Text>{t('skills.create')}</Text>
             </Button>
           </Link>
-        </Flex>
-
-        {/* Error Alert */}
-        {error && (
-          <Alert
-            variation="error"
-            isDismissible={true}
-            onDismiss={() => setError(null)}
-          >
-            {error}
-          </Alert>
-        )}
-
-        {/* Filters */}
-        <Card padding="medium">
-          <Flex direction={{ base: 'column', medium: 'row' }} gap="medium" alignItems="flex-end">
-            <TextField
-              label={t('skills.search')}
-              placeholder={t('skills.search_placeholder')}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              outerStartComponent={<Search size={16} />}
-              flex="1"
-            />
-            <SelectField
-              label={t('skills.filter_by_category')}
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-            >
-              <option value="all">{t('skills.all_categories')}</option>
-              {categories.map(category => (
-                <option key={category} value={category}>{category}</option>
-              ))}
-            </SelectField>
-            <SelectField
-              label={t('skills.filter_by_type')}
-              value={selectedType}
-              onChange={(e) => setSelectedType(e.target.value)}
-            >
-              <option value="all">{t('skills.all_types')}</option>
-              <option value="Technical">{t('skills.technical')}</option>
-              <option value="Soft">{t('skills.soft')}</option>
-            </SelectField>
-          </Flex>
-        </Card>
-
-        {/* Skills Content */}
-        <View>
-          {filteredSkills.length > 0 ? (
-            <Tabs defaultValue="technical" spacing="equal">
-              <Tabs.List>
-                <Tabs.Item value="technical">
-                  {t('skills.technical')} ({technicalSkills.length})
-                </Tabs.Item>
-                <Tabs.Item value="soft">
-                  {t('skills.soft')} ({softSkills.length})
-                </Tabs.Item>
-              </Tabs.List>
-              
-              <Tabs.Panel value="technical">
-                <SkillsTable 
-                  skills={technicalSkills}
-                  skillImageUrls={skillImageUrls}
-                  deleteLoading={deleteLoading}
-                  onDelete={handleDeleteSkill}
-                  getProficiencyColor={getProficiencyColor}
-                  t={t}
-                  getLocalizedPath={getLocalizedPath}
-                />
-              </Tabs.Panel>
-              
-              <Tabs.Panel value="soft">
-                <SkillsTable 
-                  skills={softSkills}
-                  skillImageUrls={skillImageUrls}
-                  deleteLoading={deleteLoading}
-                  onDelete={handleDeleteSkill}
-                  getProficiencyColor={getProficiencyColor}
-                  t={t}
-                  getLocalizedPath={getLocalizedPath}
-                />
-              </Tabs.Panel>
-            </Tabs>
-          ) : (
-            <Card padding="large" textAlign="center">
-              <Code size={48} style={{ margin: '0 auto 16px', opacity: 0.5 }} />
-              <Text fontSize="medium" color="font.secondary" marginBottom="medium">
-                {searchTerm || selectedCategory !== 'all' || selectedType !== 'all' 
-                  ? t('skills.no_skills_found') 
-                  : t('skills.no_skills')}
-              </Text>
-              <Link href={getLocalizedPath('/admin/skills/new')}>
-                <Button variation="primary">
-                  <Flex alignItems="center" gap="xs">
-                    <Plus size={16} />
-                    {t('skills.create')}
-                  </Flex>
-                </Button>
-              </Link>
-            </Card>
-          )}
         </View>
       </Flex>
+
+      {/* Error Alert */}
+      {error && (
+        <Alert variation="error" marginBottom="1rem">
+          {error}
+        </Alert>
+      )}
+
+      {/* Statistics */}
+      <Flex 
+        direction={{ base: 'column', medium: 'row' }} 
+        gap="1.5rem" 
+        marginBottom="2rem"
+        style={{
+          width: '100%',
+          maxWidth: '100%'
+        }}
+      >
+        <Card
+          style={{
+            flex: 1,
+            minWidth: '160px',
+            maxWidth: '100%',
+            backgroundColor: mode === 'dark' ? 'rgba(51, 65, 85, 0.8)' : 'rgba(255, 255, 255, 0.9)',
+            border: mode === 'dark' ? '1px solid rgba(148, 163, 184, 0.1)' : '1px solid rgba(203, 213, 225, 0.2)',
+            boxSizing: 'border-box'
+          }}
+        >
+          <View padding="1rem">
+            <Text fontSize="1.25rem" fontWeight="700" color="#3B82F6">
+              {skills.filter(s => s.type === 'Technical').length}
+            </Text>
+            <Text fontSize="0.875rem" color={mode === 'dark' ? '#CBD5E1' : '#64748B'}>
+              {t('skills.technical_skills')}
+            </Text>
+          </View>
+        </Card>
+
+        <Card
+          style={{
+            flex: 1,
+            minWidth: '160px',
+            maxWidth: '100%',
+            backgroundColor: mode === 'dark' ? 'rgba(51, 65, 85, 0.8)' : 'rgba(255, 255, 255, 0.9)',
+            border: mode === 'dark' ? '1px solid rgba(148, 163, 184, 0.1)' : '1px solid rgba(203, 213, 225, 0.2)',
+            boxSizing: 'border-box'
+          }}
+        >
+          <View padding="1rem">
+            <Text fontSize="1.25rem" fontWeight="700" color="#8B5CF6">
+              {skills.filter(s => s.type === 'Soft').length}
+            </Text>
+            <Text fontSize="0.875rem" color={mode === 'dark' ? '#CBD5E1' : '#64748B'}>
+              {t('skills.soft_skills')}
+            </Text>
+          </View>
+        </Card>
+        
+        <Card
+          style={{
+            flex: 1,
+            minWidth: '160px',
+            maxWidth: '100%',
+            backgroundColor: mode === 'dark' ? 'rgba(51, 65, 85, 0.8)' : 'rgba(255, 255, 255, 0.9)',
+            border: mode === 'dark' ? '1px solid rgba(148, 163, 184, 0.1)' : '1px solid rgba(203, 213, 225, 0.2)',
+            boxSizing: 'border-box'
+          }}
+        >
+          <View padding="1rem">
+            <Text fontSize="1.25rem" fontWeight="700" color="#F97316">
+              {skills.length}
+            </Text>
+            <Text fontSize="0.875rem" color={mode === 'dark' ? '#CBD5E1' : '#64748B'}>
+              {t('skills.total_skills')}
+            </Text>
+          </View>
+        </Card>
+      </Flex>
+
+      {/* Skills Table */}
+      <Card
+        style={{
+          backgroundColor: mode === 'dark' ? 'rgba(51, 65, 85, 0.8)' : 'rgba(255, 255, 255, 0.9)',
+          border: mode === 'dark' ? '1px solid rgba(148, 163, 184, 0.1)' : '1px solid rgba(203, 213, 225, 0.2)',
+          borderRadius: '12px',
+          overflow: 'hidden',
+        }}
+      >
+        {skills.length === 0 ? (
+          <View padding="3rem" textAlign="center">
+            <Text fontSize="1.125rem" color={mode === 'dark' ? '#CBD5E1' : '#64748B'} marginBottom="2rem">
+              {t('skills.no_skills')}
+            </Text>
+          </View>
+        ) : (
+          <View 
+            className="table-container"
+            style={{
+              overflowX: 'auto',
+              width: '100%'
+            }}
+          >
+            <Table
+              style={{
+                backgroundColor: 'transparent',
+                width: '100%'
+              }}
+            >
+              <TableHead>
+                <TableRow>
+                  <TableCell style={{ fontWeight: '600', color: mode === 'dark' ? '#F1F5F9' : '#1E293B' }}>
+                    {t('skills.skill_name')}
+                  </TableCell>
+                  <TableCell style={{ fontWeight: '600', color: mode === 'dark' ? '#F1F5F9' : '#1E293B' }}>
+                    {t('skills.type')}
+                  </TableCell>
+                  <TableCell style={{ fontWeight: '600', color: mode === 'dark' ? '#F1F5F9' : '#1E293B' }}>
+                    {t('skills.proficiency')}
+                  </TableCell>
+                  <TableCell style={{ fontWeight: '600', color: mode === 'dark' ? '#F1F5F9' : '#1E293B' }}>
+                    {t('skills.experience')}
+                  </TableCell>
+                  <TableCell style={{ fontWeight: '600', color: mode === 'dark' ? '#F1F5F9' : '#1E293B' }}>
+                    {t('skills.actions')}
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {skills.filter(skill => skill !== null).map((skill) => (
+                  <TableRow key={skill.id}>
+                    <TableCell>
+                      <Flex alignItems="center" gap="0.75rem">
+                        <View
+                          style={{
+                            width: '40px',
+                            height: '40px',
+                            borderRadius: '8px',
+                            backgroundColor: mode === 'dark' ? '#374151' : '#F3F4F6',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                          }}
+                        >
+                          <Zap size={20} color={mode === 'dark' ? '#9CA3AF' : '#6B7280'} />
+                        </View>
+                        <View>
+                          <Text 
+                            fontWeight="600" 
+                            style={{ color: mode === 'dark' ? '#F1F5F9' : '#1E293B' }}
+                          >
+                            {skill.name}
+                          </Text>
+                          <Text 
+                            fontSize="0.875rem" 
+                            style={{ color: mode === 'dark' ? '#CBD5E1' : '#64748B' }}
+                          >
+                            {skill.category}
+                          </Text>
+                        </View>
+                      </Flex>
+                    </TableCell>
+                    
+                    <TableCell>
+                      <Badge
+                        style={{
+                          backgroundColor: getTypeColor(skill.type),
+                          color: '#FFFFFF',
+                          fontSize: '0.75rem',
+                          fontWeight: '600',
+                          borderRadius: '6px',
+                        }}
+                      >
+                        {skill.type}
+                      </Badge>
+                    </TableCell>
+                    
+                    <TableCell>
+                      {skill.proficiency && (
+                        <Badge
+                          style={{
+                            backgroundColor: getProficiencyColor(skill.proficiency),
+                            color: '#FFFFFF',
+                            fontSize: '0.75rem',
+                            fontWeight: '600',
+                            borderRadius: '6px',
+                          }}
+                        >
+                          {skill.proficiency}
+                        </Badge>
+                      )}
+                    </TableCell>
+                    
+                    <TableCell>
+                      <Text fontSize="0.875rem" color={mode === 'dark' ? '#CBD5E1' : '#64748B'}>
+                        {skill.yearsOfExperience ? `${skill.yearsOfExperience} years` : t('skills.not_specified')}
+                      </Text>
+                    </TableCell>
+                    
+                    <TableCell>
+                      <Flex gap="0.5rem">
+                        {/* Edit */}
+                        <Button
+                          size="small"
+                          style={{
+                            backgroundColor: 'transparent',
+                            color: mode === 'dark' ? '#FBBF24' : '#F59E0B',
+                            border: 'none',
+                            padding: '0.5rem',
+                          }}
+                          as="a"
+                          href={getLocalizedPath(`/admin/skills/${skill.id}`)}
+                        >
+                          <Edit3 size={16} />
+                        </Button>
+                        
+                        {/* Delete */}
+                        <Button
+                          size="small"
+                          style={{
+                            backgroundColor: 'transparent',
+                            color: mode === 'dark' ? '#F87171' : '#EF4444',
+                            border: 'none',
+                            padding: '0.5rem',
+                          }}
+                          onClick={() => handleDeleteSkill(skill.id)}
+                          isDisabled={deleteLoading === skill.id}
+                        >
+                          {deleteLoading === skill.id ? (
+                            <Loader size="small" />
+                          ) : (
+                            <Trash2 size={16} />
+                          )}
+                        </Button>
+                      </Flex>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </View>
+        )}
+      </Card>
     </View>
-  );
-};
-
-// Skills Table Component
-interface SkillsTableProps {
-  skills: Skill[];
-  skillImageUrls: Record<string, string>;
-  deleteLoading: string | null;
-  onDelete: (id: string) => void;
-  getProficiencyColor: (proficiency: string | null | undefined) => string;
-  t: any;
-  getLocalizedPath: (path: string) => string;
-}
-
-const SkillsTable: React.FC<SkillsTableProps> = ({
-  skills,
-  skillImageUrls,
-  deleteLoading,
-  onDelete,
-  getProficiencyColor,
-  t,
-  getLocalizedPath
-}) => {
-  if (skills.length === 0) {
-    return (
-      <View padding="large" textAlign="center">
-        <Text fontSize="medium" color="font.secondary">
-          {t('skills.no_skills_in_category')}
-        </Text>
-      </View>
-    );
-  }
-
-  return (
-    <Table highlightOnHover>
-      <TableHead>
-        <TableRow>
-          <TableCell>{t('skills.skill_name')}</TableCell>
-          <TableCell>{t('skills.category')}</TableCell>
-          <TableCell>{t('skills.proficiency')}</TableCell>
-          <TableCell>{t('skills.experience')}</TableCell>
-          <TableCell>{t('skills.actions')}</TableCell>
-        </TableRow>
-      </TableHead>
-      <TableBody>
-        {skills.map((skill) => (
-          <TableRow key={skill.id}>
-            <TableCell>
-              <Flex alignItems="center" gap="small">
-                {skill.iconKey && skillImageUrls[skill.id] && (
-                  <div style={{ width: '32px', height: '32px' }}>
-                    <img 
-                      src={skillImageUrls[skill.id]} 
-                      alt="Skill Icon" 
-                      style={{ 
-                        width: '100%', 
-                        height: '100%', 
-                        objectFit: 'contain', 
-                        borderRadius: '4px' 
-                      }}
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).src = '/placeholder-skill.png';
-                      }}
-                    />
-                  </div>
-                )}
-                <View>
-                  <Text fontWeight="semibold">{skill.name}</Text>
-                  {skill.description && (
-                    <Text fontSize="small" color="font.tertiary">
-                      {skill.description}
-                    </Text>
-                  )}
-                </View>
-              </Flex>
-            </TableCell>
-            <TableCell>
-              <Badge variation="info">{skill.category}</Badge>
-            </TableCell>
-            <TableCell>
-              <Badge variation={getProficiencyColor(skill.proficiency) as any}>
-                {skill.proficiency}
-              </Badge>
-            </TableCell>
-            <TableCell>
-              <Text fontSize="small">
-                {skill.yearsOfExperience ? `${skill.yearsOfExperience} years` : t('skills.not_specified')}
-              </Text>
-            </TableCell>
-            <TableCell>
-              <Menu
-                trigger={
-                  <Button variation="link" size="small">
-                    <MoreVertical size={16} />
-                  </Button>
-                }
-                menuAlign="end"
-              >
-                <Link href={getLocalizedPath(`/admin/skills/${skill.id}`)}>
-                  <MenuItem>
-                    <Edit3 size={16} />
-                    {t('skills.edit')}
-                  </MenuItem>
-                </Link>
-                <Divider />
-                <MenuItem 
-                  onClick={() => onDelete(skill.id)}
-                  isDisabled={deleteLoading === skill.id}
-                >
-                  <Trash2 size={16} />
-                  {deleteLoading === skill.id ? t('skills.deleting') : t('skills.delete')}
-                </MenuItem>
-              </Menu>
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
   );
 };
 

@@ -132,6 +132,7 @@ const AdminProjectsClient: React.FC<AdminProjectsClientProps> = ({ locale }) => 
   };
   // Obtener URL de imagen desde Storage
   const getImageUrl = async (key: string | null | undefined) => {
+    if (!key) return '';
     return await getImageUrlHelper(key);
   };
 

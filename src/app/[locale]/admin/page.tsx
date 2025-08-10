@@ -21,7 +21,8 @@ import {
   ArrowRight,
   BarChart3,
   Calendar,
-  Globe
+  Globe,
+  Zap
 } from 'lucide-react';
 import { generateClient } from 'aws-amplify/data';
 import type { Schema } from '../../../../amplify/data/resource';
@@ -43,6 +44,7 @@ export default function AdminDashboard() {
     languages: 0,
     recognitions: 0,
     publications: 0,
+    skills: 0,
     loading: true
   });
 
@@ -61,7 +63,8 @@ export default function AdminDashboard() {
           experiencesResponse,
           languagesResponse,
           recognitionsResponse,
-          publicationsResponse
+          publicationsResponse,
+          skillsResponse
         ] = await Promise.all([
           client.models.Projects.list({ authMode: 'userPool' }),
           client.models.Certifications.list({ authMode: 'userPool' }),
@@ -69,7 +72,8 @@ export default function AdminDashboard() {
           client.models.Experiences.list({ authMode: 'userPool' }),
           client.models.Languages.list({ authMode: 'userPool' }),
           client.models.Recognitions.list({ authMode: 'userPool' }),
-          client.models.SocialPublications.list({ authMode: 'userPool' })
+          client.models.SocialPublications.list({ authMode: 'userPool' }),
+          client.models.Skills.list({ authMode: 'userPool' })
         ]);
 
         setStats({
@@ -80,6 +84,7 @@ export default function AdminDashboard() {
           languages: languagesResponse.data?.length || 0,
           recognitions: recognitionsResponse.data?.length || 0,
           publications: publicationsResponse.data?.length || 0,
+          skills: skillsResponse.data?.length || 0,
           loading: false
         });
       } catch (error) {
@@ -156,6 +161,14 @@ export default function AdminDashboard() {
       href: '/en/admin/publications',
       color: '#84CC16',
       description: tAdmin('sections.manage_publications')
+    },
+    {
+      title: tAdmin('sections.skills'),
+      count: stats.skills,
+      icon: Zap,
+      href: '/en/admin/skills',
+      color: '#F97316',
+      description: tAdmin('sections.manage_skills')
     }
   ];
 

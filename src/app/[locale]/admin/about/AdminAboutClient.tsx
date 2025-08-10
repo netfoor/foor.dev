@@ -204,7 +204,7 @@ const AdminAboutClient: React.FC<AdminAboutClientProps> = ({ locale }) => {
     return (
       <Flex direction="column" alignItems="center" gap="1rem" padding="2rem">
         <Loader size="large" />
-        <Text>Cargando información del perfil...</Text>
+        <Text>{t('common.loading_profile')}</Text>
       </Flex>
     );
   }
@@ -448,7 +448,7 @@ const AdminAboutClient: React.FC<AdminAboutClientProps> = ({ locale }) => {
                           marginTop: '0.5rem'
                         }}
                       >
-                        Activo
+                        {t('common.active')}
                       </Badge>
                     )}
                   </View>
@@ -607,7 +607,7 @@ const AdminAboutClient: React.FC<AdminAboutClientProps> = ({ locale }) => {
                   {experiences.filter(exp => exp && isCurrentPosition(exp)).length}
                 </Text>
                 <Text fontSize="0.875rem" color={mode === 'dark' ? '#CBD5E1' : '#64748B'}>
-                  Posiciones Actuales
+                  {t('about.experiences.current_positions')}
                 </Text>
               </View>
             </Card>
@@ -627,7 +627,7 @@ const AdminAboutClient: React.FC<AdminAboutClientProps> = ({ locale }) => {
                   {experiences.length}
                 </Text>
                 <Text fontSize="0.875rem" color={mode === 'dark' ? '#CBD5E1' : '#64748B'}>
-                  Total de Experiencias
+                  {t('about.experiences.total_experiences')}
                 </Text>
               </View>
             </Card>
@@ -647,7 +647,7 @@ const AdminAboutClient: React.FC<AdminAboutClientProps> = ({ locale }) => {
                   {new Set(experiences.map(exp => exp.company)).size}
                 </Text>
                 <Text fontSize="0.875rem" color={mode === 'dark' ? '#CBD5E1' : '#64748B'}>
-                  Empresas
+                  {t('about.experiences.companies')}
                 </Text>
               </View>
             </Card>
@@ -701,19 +701,19 @@ const AdminAboutClient: React.FC<AdminAboutClientProps> = ({ locale }) => {
                   <TableHead>
                     <TableRow>
                       <TableCell style={{ fontWeight: '600', color: mode === 'dark' ? '#F1F5F9' : '#1E293B' }}>
-                        Empresa
+                        {t('about.experiences.company')}
                       </TableCell>
                       <TableCell style={{ fontWeight: '600', color: mode === 'dark' ? '#F1F5F9' : '#1E293B' }}>
-                        Posición
+                        {t('about.experiences.position')}
                       </TableCell>
                       <TableCell style={{ fontWeight: '600', color: mode === 'dark' ? '#F1F5F9' : '#1E293B' }}>
-                        Estado
+                        {t('about.status')}
                       </TableCell>
                       <TableCell style={{ fontWeight: '600', color: mode === 'dark' ? '#F1F5F9' : '#1E293B' }}>
-                        Período
+                        {t('about.experiences.period')}
                       </TableCell>
                       <TableCell style={{ fontWeight: '600', color: mode === 'dark' ? '#F1F5F9' : '#1E293B' }}>
-                        Acciones
+                        {t('about.experiences.actions')}
                       </TableCell>
                     </TableRow>
                   </TableHead>
@@ -774,7 +774,7 @@ const AdminAboutClient: React.FC<AdminAboutClientProps> = ({ locale }) => {
                             borderRadius: '6px',
                           }}
                         >
-                          {isCurrentPosition(experience) ? 'Actual' : 'Anterior'}
+                          {isCurrentPosition(experience) ? t('common.current') : t('common.previous')}
                         </Badge>
                       </TableCell>
                       

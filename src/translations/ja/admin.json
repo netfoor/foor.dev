@@ -241,7 +241,26 @@
     "experiences": {
       "title": "経験",
       "description": "職歴と専門経験を管理",
-      "manage": "経験管理"
+      "manage": "経験管理",
+      "create": "経験を作成",
+      "edit": "編集",
+      "delete": "削除",
+      "deleting": "削除中...",
+      "loading": "経験を読み込み中...",
+      "error_loading_data": "データの読み込みエラー",
+      "company": "会社",
+      "position": "職位",
+      "period": "期間",
+      "actions": "アクション",
+      "present": "現在",
+      "not_found": "経験が見つかりません",
+      "error_deleting": "経験の削除エラー",
+      "confirm_delete": "この経験を削除してもよろしいですか？この操作により経験とその写真が完全に削除されます。",
+      "no_experiences": "まだ経験がありません。最初の経験を作成しましょう！",
+      "unknown_error": "不明なエラー",
+      "total_experiences": "総経験数",
+      "current_positions": "現在の職位",
+      "companies": "会社数"
     },
     "manage_profile": "プロフィール管理",
     "manage_experiences": "経験管理",
@@ -251,23 +270,6 @@
     "edit_experience": "経験編集",
     "create": "作成",
     "edit": "編集",
-    "delete": "削除",
-    "deleting": "削除中...",
-    "loading": "経験を読み込み中...",
-    "error_loading_data": "データの読み込みエラー",
-    "company": "会社",
-    "position": "職位",
-    "period": "期間",
-    "actions": "アクション",
-    "present": "現在",
-    "not_found": "経験が見つかりません",
-    "error_deleting": "経験の削除エラー",
-    "confirm_delete": "この経験を削除してもよろしいですか？この操作により経験とその写真が完全に削除されます。",
-    "no_experiences": "まだ経験がありません。最初の経験を作成しましょう！",
-    "unknown_error": "不明なエラー",
-    "total_experiences": "総経験数",
-    "current_positions": "現在の職位",
-    "companies": "会社数",
     "profile_info": "プロフィール情報",
     "basic_info": "基本情報",
     "name_label": "フルネーム",
@@ -427,6 +429,7 @@
   },
   "recognitions": {
     "recognitions": "表彰",
+    "total_recognitions": "総表彰数",
     "manage_recognitions": "賞と表彰を管理",
     "manage_recognitions_description": "あなたの賞、表彰、専門的な栄誉を追加、編集、管理します。",
     "add_recognition": "表彰を追加",
@@ -463,10 +466,12 @@
     "add_photo": "写真または証明書の画像を追加",
     "upload_photo": "画像をアップロード",
     "change_photo": "画像を変更",
-    "photo_description": "あなたの表彰を表す画像（証明書、バッジなど）をアップロードしてください。推奨サイズ：800x600px。"
+    "photo_description": "あなたの表彰を表す画像（証明書、バッジなど）をアップロードしてください。推奨サイズ：800x600px。",
+    "basic_info": "基本情報"
   },
   "publications": {
     "publications": "出版物",
+    "total_publications": "総出版物数",
     "manage_publications": "メディア出版物を管理",
     "manage_publications_description": "ソーシャルメディアの出版物、記事、動画、その他のコンテンツを追加、編集、管理します。",
     "add_publication": "出版物を追加",
@@ -504,7 +509,10 @@
     "add_photo": "サムネイルまたはカバー画像を追加",
     "upload_photo": "画像をアップロード",
     "change_photo": "画像を変更",
-    "photo_description": "あなたの出版物のサムネイルまたはカバー画像をアップロードしてください。推奨サイズ：800x450px。"
+    "photo_description": "あなたの出版物のサムネイルまたはカバー画像をアップロードしてください。推奨サイズ：800x450px。",
+    "basic_info": "基本情報"
   },
-  "createProject": "新しいプロジェクトを作成"
+  "createProject": "新しいプロジェクトを作成",
+  "back_to_list": "リストに戻る",
+  "total_items": "総アイテム数"
 }
