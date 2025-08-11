@@ -20,16 +20,11 @@ import {
 import '../../admin.css';
 import { 
   ArrowLeft, 
-  Save, 
-  Image as ImageIcon,
-  X,
-  Plus
+  Save 
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { generateClient } from 'aws-amplify/data';
 import { getUrl } from 'aws-amplify/storage';
-import { uploadImageWithMetadata } from '@/lib/utils/image-helpers';
-import S3Cleanup from '@/lib/utils/s3-cleanup';
 import type { Schema } from '../../../../../../amplify/data/resource';
 import { useAuth } from '@/context/auth-context';
 import { useAuthorization } from '@/hooks/useAuthorization';
@@ -61,11 +56,9 @@ const EditSkillClient: React.FC<EditSkillClientProps> = ({ locale, skillId }) =>
     isActive: true,
     isCore: false,
     lastUsed: '',
+    iconUrl: '',
   });
 
-  const [iconFile, setIconFile] = useState<File | null>(null);
-  const [iconPreview, setIconPreview] = useState<string | null>(null);
-  const [currentIconUrl, setCurrentIconUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -98,7 +91,7 @@ const EditSkillClient: React.FC<EditSkillClientProps> = ({ locale, skillId }) =>
       try {
         const client = generateClient<Schema>();
         const response = await client.models.Skills.get({ id: skillId });
-        
+
         if (response.data) {
           const skillData = response.data;
           setSkill(skillData);
@@ -119,13 +112,8 @@ const EditSkillClient: React.FC<EditSkillClientProps> = ({ locale, skillId }) =>
             isActive: skillData.isActive ?? true,
             isCore: skillData.isCore ?? false,
             lastUsed: skillData.lastUsed || '',
+            iconUrl: (skillData.iconKey || '') as string,
           });
-
-          // Load current icon
-          if (skillData.iconKey) {
-            const imageUrl = await getImageUrl(skillData.iconKey);
-            setCurrentIconUrl(imageUrl);
-          }
         } else {
           setError(t('skills.skill_not_found'));
         }
@@ -140,10 +128,11 @@ const EditSkillClient: React.FC<EditSkillClientProps> = ({ locale, skillId }) =>
     fetchSkill();
   }, [skillId, t]);
 
-  // Get image URL from Storage
+  // Helper: treat iconKey as URL when it looks like one; otherwise fetch S3 URL
+  const isHttpUrl = (v?: string | null) => !!v && /^https?:\/\//i.test(v);
   const getImageUrl = async (key: string | null | undefined) => {
     if (!key) return null;
-    
+    if (isHttpUrl(key)) return key;
     try {
       const normalizedPath = key.startsWith('public/') ? key.slice(7) : key;
       const url = await getUrl({ path: normalizedPath });
@@ -161,52 +150,7 @@ const EditSkillClient: React.FC<EditSkillClientProps> = ({ locale, skillId }) =>
     }));
   }, []);
 
-  const handleIconChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      if (file.size > 5 * 1024 * 1024) { // 5MB limit
-        setError(t('projects.image_size_error'));
-        return;
-      }
-      
-      setIconFile(file);
-      
-      // Create preview
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setIconPreview(e.target?.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  }, [t]);
-
-  const removeIcon = useCallback(() => {
-    setIconFile(null);
-    setIconPreview(null);
-  }, []);
-
-  const addItem = useCallback((field: 'certifications' | 'projects' | 'examples' | 'achievements', value: string) => {
-    if (value.trim()) {
-      setFormData(prev => ({
-        ...prev,
-        [field]: [...prev[field], value.trim()]
-      }));
-      // Clear the input
-      if (field === 'certifications') setNewCertification('');
-      if (field === 'projects') setNewProject('');
-      if (field === 'examples') setNewExample('');
-      if (field === 'achievements') setNewAchievement('');
-    }
-  }, []);
-
-  const removeItem = useCallback((field: 'certifications' | 'projects' | 'examples' | 'achievements', index: number) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: prev[field].filter((_, i) => i !== index)
-    }));
-  }, []);
-
-  // Handle submit with optimized upload and cleanup
+  // Handle submit using icon URL (no S3 upload/cleanup)
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -219,43 +163,26 @@ const EditSkillClient: React.FC<EditSkillClientProps> = ({ locale, skillId }) =>
     setError(null);
 
     try {
-      // Check if user is admin before proceeding
       if (!isUserAdmin()) {
         setError(t('common.admin_access_required'));
         return;
       }
 
       const client = generateClient<Schema>();
-      
-      let iconKey = skill?.iconKey || undefined;
-      
-      // Handle icon upload
-      if (iconFile) {
-        // Remove old icon if exists (original + webp)
-        if (skill?.iconKey) {
-          try { await S3Cleanup.deleteSingleFile(skill.iconKey); } catch {}
-        }
-        iconKey = await uploadImageWithMetadata(iconFile, skillId, 'Skills', 'iconKey');
-      }
 
-      // Update skill
       const skillData = {
         id: skillId,
         name: formData.name,
         description: formData.description || null,
         category: formData.category as any,
         type: formData.type as any,
-        proficiency: formData.proficiency as any || null,
+        proficiency: (formData.proficiency as any) || null,
         yearsOfExperience: formData.yearsOfExperience ? parseInt(formData.yearsOfExperience) : null,
-        certifications: formData.certifications.length > 0 ? formData.certifications : null,
-        projects: formData.projects.length > 0 ? formData.projects : null,
-        examples: formData.examples.length > 0 ? formData.examples : null,
-        achievements: formData.achievements.length > 0 ? formData.achievements : null,
-        iconKey,
-        priority: formData.priority ? parseInt(formData.priority) : null,
-        isActive: formData.isActive,
+        // Store URL directly in iconKey field
+        iconKey: formData.iconUrl?.trim() ? formData.iconUrl.trim() : null,
+        // Keep optional fields
         isCore: formData.isCore,
-        lastUsed: formData.lastUsed ? new Date(formData.lastUsed).toISOString().split('T')[0] : null,
+        isActive: formData.isActive,
       };
 
       // Map category labels to schema
@@ -271,14 +198,14 @@ const EditSkillClient: React.FC<EditSkillClientProps> = ({ locale, skillId }) =>
 
       const mappedSkillData = { ...skillData, category: categoryMapping[skillData.category as string] as any };
 
-      const result = await client.models.Skills.update(mappedSkillData);
+      const result = await client.models.Skills.update(mappedSkillData as any, { authMode: 'userPool' });
       
-      if (result.errors) {
-        throw new Error(result.errors[0].message);
+      if ((result as any).errors) {
+        throw new Error((result as any).errors[0].message);
       }
       
       setSuccess(t('skills.skill_updated_success'));
-      setTimeout(() => { router.push(getLocalizedPath('/admin/skills')); }, 2000);
+      setTimeout(() => { router.push(getLocalizedPath('/admin/skills')); }, 1200);
       
     } catch (err) {
       console.error('Error updating skill:', err);
@@ -334,6 +261,11 @@ const EditSkillClient: React.FC<EditSkillClientProps> = ({ locale, skillId }) =>
       margin-bottom: 0.5rem !important;
       display: block !important;
       font-size: 0.95rem !important;
+    }
+    
+    .edit-skill-form .amplify-switchfield label {
+      color: var(--form-label-color) !important;
+      font-weight: 600 !important;
     }
     
     .edit-skill-form .amplify-input,
@@ -515,6 +447,26 @@ const EditSkillClient: React.FC<EditSkillClientProps> = ({ locale, skillId }) =>
                 rows={3}
               />
 
+              <TextField
+                label={t('skills.icon_url_label') || 'Icon URL'}
+                placeholder={t('skills.icon_url_placeholder') || 'https://example.com/icon.png'}
+                value={formData.iconUrl}
+                onChange={(e) => handleInputChange('iconUrl', e.target.value)}
+              />
+
+              {formData.iconUrl?.trim() && (
+                <Flex alignItems="center" gap="medium">
+                  <Text fontSize="small" color="font.tertiary">{t('skills.current_icon') || 'Current Icon'}</Text>
+                  <div style={{ position: 'relative', width: '64px', height: '64px' }}>
+                    <img 
+                      src={formData.iconUrl}
+                      alt="Icon"
+                      style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: '8px', border: '1px solid var(--amplify-colors-border-primary)' }}
+                    />
+                  </div>
+                </Flex>
+              )}
+
               <Flex direction={{ base: 'column', medium: 'row' }} gap="medium">
                 <SelectField
                   label={t('skills.category_label')}
@@ -563,281 +515,10 @@ const EditSkillClient: React.FC<EditSkillClientProps> = ({ locale, skillId }) =>
                   max="50"
                 />
               </Flex>
-            </Flex>
-          </Card>
 
-          {/* Skill Icon */}
-          <Card padding="large">
-            <Heading level={3} fontSize="large" fontWeight="semibold" marginBottom="medium">
-              {t('skills.skill_icon')}
-            </Heading>
-            
-            <View>
-              {(iconPreview || currentIconUrl) && (
-                <Flex alignItems="center" gap="medium" marginBottom="medium">
-                  <Text fontSize="medium" fontWeight="semibold">
-                    {t('skills.current_icon')}
-                  </Text>
-                  <div style={{ position: 'relative', width: '64px', height: '64px' }}>
-                    <img 
-                      src={iconPreview || currentIconUrl || ''} 
-                      alt="Icon" 
-                      style={{ 
-                        width: '100%', 
-                        height: '100%', 
-                        objectFit: 'contain', 
-                        borderRadius: '8px',
-                        border: '1px solid var(--amplify-colors-border-primary)'
-                      }}
-                    />
-                    <button
-                      type="button"
-                      onClick={removeIcon}
-                      style={{
-                        position: 'absolute',
-                        top: '-8px',
-                        right: '-8px',
-                        background: 'rgba(239, 68, 68, 0.9)',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '50%',
-                        width: '20px',
-                        height: '20px',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: '12px'
-                      }}
-                    >
-                      <X size={12} />
-                    </button>
-                  </div>
-                </Flex>
-              )}
-              
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleIconChange}
-                style={{ display: 'none' }}
-                id="icon-upload"
-              />
-              <label htmlFor="icon-upload">
-                <Button as="span" variation="link" size="small">
-                  <Flex alignItems="center" gap="xs">
-                    <ImageIcon size={16} />
-                    {t('skills.add_new_icon')}
-                  </Flex>
-                </Button>
-              </label>
-            </View>
-          </Card>
-
-          {/* Additional Information */}
-          <Card padding="large">
-            <Heading level={3} fontSize="large" fontWeight="semibold" marginBottom="medium">
-              {t('skills.additional_info')}
-            </Heading>
-            
-            <Flex direction="column" gap="medium">
-              {/* Certifications */}
-              <View>
-                <Text fontSize="medium" fontWeight="semibold" marginBottom="small">
-                  {t('skills.certifications_label')}
-                </Text>
-                <div className="input-with-button-container">
-                  <div className="input-wrapper">
-                    <TextField
-                      label=""
-                      placeholder={t('skills.certifications_placeholder')}
-                      value={newCertification}
-                      onChange={(e) => setNewCertification(e.target.value)}
-                      style={{ width: '100%' }}
-                    />
-                  </div>
-                  <Button
-                    type="button"
-                    onClick={() => addItem('certifications', newCertification)}
-                    className="add-button"
-                    style={{
-                      backgroundColor: isDark ? '#3B82F6' : '#2563EB',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '6px',
-                      padding: '0.75rem 1rem',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    <Plus size={16} />
-                  </Button>
-                </div>
-                {formData.certifications.length > 0 && (
-                  <div className="badges-container">
-                    {formData.certifications.map((cert, index) => (
-                      <Badge key={index} variation="info" style={{ cursor: 'pointer' }} onClick={() => removeItem('certifications', index)}>
-                        {cert} ×
-                      </Badge>
-                    ))}
-                  </div>
-                )}
-              </View>
-
-              {/* Projects */}
-              <View>
-                <Text fontSize="medium" fontWeight="semibold" marginBottom="small">
-                  {t('skills.projects_label')}
-                </Text>
-                <div className="input-with-button-container">
-                  <div className="input-wrapper">
-                    <TextField
-                      label=""
-                      placeholder={t('skills.projects_placeholder')}
-                      value={newProject}
-                      onChange={(e) => setNewProject(e.target.value)}
-                      style={{ width: '100%' }}
-                    />
-                  </div>
-                  <Button
-                    type="button"
-                    onClick={() => addItem('projects', newProject)}
-                    className="add-button"
-                    style={{
-                      backgroundColor: isDark ? '#10B981' : '#059669',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '6px',
-                      padding: '0.75rem 1rem',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    <Plus size={16} />
-                  </Button>
-                </div>
-                {formData.projects.length > 0 && (
-                  <div className="badges-container">
-                    {formData.projects.map((project, index) => (
-                      <Badge key={index} variation="info" style={{ cursor: 'pointer' }} onClick={() => removeItem('projects', index)}>
-                        {project} ×
-                      </Badge>
-                    ))}
-                  </div>
-                )}
-              </View>
-
-              {/* Examples (for Soft Skills) */}
-              {formData.type === 'Soft' && (
-                <View>
-                  <Text fontSize="medium" fontWeight="semibold" marginBottom="small">
-                    {t('skills.examples_label')}
-                  </Text>
-                  <div className="input-with-button-container">
-                    <div className="input-wrapper">
-                      <TextField
-                        label=""
-                        placeholder={t('skills.examples_placeholder')}
-                        value={newExample}
-                        onChange={(e) => setNewExample(e.target.value)}
-                        style={{ width: '100%' }}
-                      />
-                    </div>
-                    <Button
-                      type="button"
-                      onClick={() => addItem('examples', newExample)}
-                      className="add-button"
-                      style={{
-                        backgroundColor: isDark ? '#10B981' : '#059669',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '6px',
-                        padding: '0.75rem 1rem',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      <Plus size={16} />
-                    </Button>
-                  </div>
-                  {formData.examples.length > 0 && (
-                    <div className="badges-container">
-                      {formData.examples.map((example, index) => (
-                        <Badge key={index} variation="success" style={{ cursor: 'pointer' }} onClick={() => removeItem('examples', index)}>
-                          {example} ×
-                        </Badge>
-                      ))}
-                    </div>
-                  )}
-                </View>
-              )}
-
-              {/* Achievements */}
-              <View>
-                <Text fontSize="medium" fontWeight="semibold" marginBottom="small">
-                  {t('skills.achievements_label')}
-                </Text>
-                <div className="input-with-button-container">
-                  <div className="input-wrapper">
-                    <TextField
-                      label=""
-                      placeholder={t('skills.achievements_placeholder')}
-                      value={newAchievement}
-                      onChange={(e) => setNewAchievement(e.target.value)}
-                      style={{ width: '100%' }}
-                    />
-                  </div>
-                  <Button
-                    type="button"
-                    onClick={() => addItem('achievements', newAchievement)}
-                    className="add-button"
-                    style={{
-                      backgroundColor: isDark ? '#F59E0B' : '#D97706',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '6px',
-                      padding: '0.75rem 1rem',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    <Plus size={16} />
-                  </Button>
-                </div>
-                {formData.achievements.length > 0 && (
-                  <div className="badges-container">
-                    {formData.achievements.map((achievement, index) => (
-                      <Badge key={index} variation="warning" style={{ cursor: 'pointer' }} onClick={() => removeItem('achievements', index)}>
-                        {achievement} ×
-                      </Badge>
-                    ))}
-                  </div>
-                )}
-              </View>
-
-              <Flex direction={{ base: 'column', medium: 'row' }} gap="medium">
-                <TextField
-                  label={t('skills.priority_label')}
-                  placeholder={t('skills.priority_placeholder')}
-                  type="number"
-                  value={formData.priority}
-                  onChange={(e) => handleInputChange('priority', e.target.value)}
-                  min="1"
-                  max="100"
-                />
-
-                <TextField
-                  label={t('skills.last_used_label')}
-                  type="date"
-                  value={formData.lastUsed}
-                  onChange={(e) => handleInputChange('lastUsed', e.target.value)}
-                />
-              </Flex>
-
+              {/* Keep only isCore toggle; remove Active Skill */}
               <SwitchField
-                label={t('skills.is_active_label')}
-                isChecked={formData.isActive}
-                onChange={(e) => handleInputChange('isActive', e.target.checked)}
-              />
-              
-              <SwitchField
-                label={t('skills.is_core_label') || "Show on Home Page (Core Skill)"}
+                label={t('skills.is_core_label') || 'Show on Home Page (Core Skill)'}
                 isChecked={formData.isCore}
                 onChange={(e) => handleInputChange('isCore', e.target.checked)}
                 labelPosition="end"
@@ -845,7 +526,7 @@ const EditSkillClient: React.FC<EditSkillClientProps> = ({ locale, skillId }) =>
             </Flex>
           </Card>
 
-              <Divider />
+          <Divider />
 
               {/* Botones de acción */}
               <Flex 

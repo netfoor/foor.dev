@@ -71,7 +71,7 @@ const CertificationsSection: React.FC<CertificationsSectionProps> = ({
       const client = generateClient<Schema>();
       
       const response = await client.models.Certifications.list({
-        authMode: isAuthenticated ? 'userPool' : 'identityPool' // Usar authMode dinámico basado en autenticación
+        authMode: isAuthenticated ? 'userPool' : 'apiKey' // Usar authMode dinámico basado en autenticación
       });
       
       if (response.data) {

@@ -221,7 +221,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ className = '' }) => {
   // Función para obtener datos del perfil
   const fetchProfile = async () => {
     try {
-      const authMode = isAuthenticated ? 'userPool' : 'identityPool';
+      const authMode = isAuthenticated ? 'userPool' : 'apiKey';
       const { data: profiles } = await client.models.Profile.list({
         authMode,
         filter: {

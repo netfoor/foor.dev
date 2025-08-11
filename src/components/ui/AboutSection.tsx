@@ -116,7 +116,7 @@ const AboutSection: React.FC<AboutSectionProps> = ({ locale, className = '' }) =
   // Función para obtener datos del perfil
   const fetchProfile = async () => {
     try {
-      const authMode = isAuthenticated ? 'userPool' : 'identityPool';
+      const authMode = isAuthenticated ? 'userPool' : 'apiKey';
       const { data: profiles } = await client.models.Profile.list({
         authMode,
         filter: {
@@ -138,7 +138,7 @@ const AboutSection: React.FC<AboutSectionProps> = ({ locale, className = '' }) =
   // Función para obtener experiencias
   const fetchExperiences = async () => {
     try {
-      const authMode = isAuthenticated ? 'userPool' : 'identityPool';
+      const authMode = isAuthenticated ? 'userPool' : 'apiKey';
       const { data: experienceData } = await client.models.Experiences.list({
         authMode
       });

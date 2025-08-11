@@ -438,6 +438,8 @@
     "all_types": "すべてのタイプ",
     "technical": "技術的スキル",
     "soft": "ソフトスキル",
+    "Technical": "技術的",
+    "Soft": "ソフト",
     "skill_name": "スキル名",
     "category": "カテゴリー",
     "proficiency": "習熟度",

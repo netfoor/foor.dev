@@ -95,8 +95,8 @@ const AdminSkillsClient: React.FC<AdminSkillsClientProps> = ({ locale }) => {
       
       const client = generateClient<Schema>();
       
-      // Get skill data to clean up icons if any
-      const skillResponse = await client.models.Skills.get({ id: skillId });
+      // Get skill data to clean up icons if any (use user auth)
+      const skillResponse = await client.models.Skills.get({ id: skillId }, { authMode: 'userPool' });
       const skillData = skillResponse.data;
       
       if (!skillData) {
@@ -108,10 +108,11 @@ const AdminSkillsClient: React.FC<AdminSkillsClientProps> = ({ locale }) => {
         await S3Cleanup.deleteSingleFile(skillData.iconKey);
       }
 
-      // Delete from DynamoDB
-      await client.models.Skills.delete({
-        id: skillId
-      });
+      // Delete from DynamoDB with user auth and handle errors
+      const deleteResult = await client.models.Skills.delete({ id: skillId }, { authMode: 'userPool' });
+      if ((deleteResult as any)?.errors?.length) {
+        throw new Error((deleteResult as any).errors[0].message);
+      }
       
       console.log(`✅ Skill ${skillId} deleted from DynamoDB`);
       

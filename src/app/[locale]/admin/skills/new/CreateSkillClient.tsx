@@ -10,17 +10,14 @@ import {
   TextField,
   TextAreaField,
   SelectField,
-  Badge,
   Alert,
-  Heading
+  Heading,
+  SwitchField
 } from '@aws-amplify/ui-react';
 import '../../admin.css';
 import { 
   ArrowLeft, 
-  Save, 
-  Zap,
-  X,
-  Plus
+  Save 
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { generateClient } from 'aws-amplify/data';
@@ -41,20 +38,13 @@ const CreateSkillClient: React.FC<CreateSkillClientProps> = ({ locale }) => {
     type: '',
     proficiency: '',
     yearsOfExperience: '',
-    certifications: [] as string[],
-    projects: [] as string[],
-    examples: [] as string[],
-    achievements: [] as string[],
-    priority: '',
+    iconUrl: '',
     isActive: true,
+    isCore: false,
   });
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [newCertification, setNewCertification] = useState('');
-  const [newProject, setNewProject] = useState('');
-  const [newExample, setNewExample] = useState('');
-  const [newAchievement, setNewAchievement] = useState('');
 
   const { mode } = useTheme();
   const { t } = useTranslation('admin');
@@ -78,29 +68,6 @@ const CreateSkillClient: React.FC<CreateSkillClientProps> = ({ locale }) => {
     }));
   }, []);
 
-
-
-  const addItem = useCallback((field: 'certifications' | 'projects' | 'examples' | 'achievements', value: string) => {
-    if (value.trim()) {
-      setFormData(prev => ({
-        ...prev,
-        [field]: [...prev[field], value.trim()]
-      }));
-      // Clear the input
-      if (field === 'certifications') setNewCertification('');
-      if (field === 'projects') setNewProject('');
-      if (field === 'examples') setNewExample('');
-      if (field === 'achievements') setNewAchievement('');
-    }
-  }, []);
-
-  const removeItem = useCallback((field: 'certifications' | 'projects' | 'examples' | 'achievements', index: number) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: prev[field].filter((_, i) => i !== index)
-    }));
-  }, []);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -115,23 +82,16 @@ const CreateSkillClient: React.FC<CreateSkillClientProps> = ({ locale }) => {
     try {
       const client = generateClient<Schema>();
 
-      // Create skill
       const skillData = {
         name: formData.name,
         description: formData.description || null,
         category: formData.category as any,
         type: formData.type as any,
-        proficiency: formData.proficiency as any || null,
+        proficiency: (formData.proficiency as any) || null,
         yearsOfExperience: formData.yearsOfExperience ? parseInt(formData.yearsOfExperience) : null,
-        certifications: formData.certifications.length > 0 ? formData.certifications : null,
-        projects: formData.projects.length > 0 ? formData.projects : null,
-        examples: formData.examples.length > 0 ? formData.examples : null,
-        achievements: formData.achievements.length > 0 ? formData.achievements : null,
-        priority: formData.priority ? parseInt(formData.priority) : null,
-        isActive: formData.isActive,
+        iconKey: formData.iconUrl?.trim() ? formData.iconUrl.trim() : null,
       };
 
-      // Map the category from UI-friendly format to schema format
       const categoryMapping: Record<string, string> = {
         'Cloud Platforms': 'CLOUD_PLATFORMS',
         'Programming Languages': 'PROGRAMMING_LANGUAGES',
@@ -142,22 +102,19 @@ const CreateSkillClient: React.FC<CreateSkillClientProps> = ({ locale }) => {
         'Soft Skills': 'SOFT_SKILLS'
       };
 
-      // Update the skillData with the correct category format
       const mappedSkillData = {
         ...skillData,
-        category: categoryMapping[skillData.category as string] as any
+        category: categoryMapping[skillData.category as string] as any,
+        isActive: formData.isActive,
+        isCore: formData.isCore,
       };
 
-      console.log('Creating skill with data:', mappedSkillData);
-      const result = await client.models.Skills.create(mappedSkillData);
+      const result = await client.models.Skills.create(mappedSkillData as any, { authMode: 'userPool' });
       
-      if (result.errors) {
-        throw new Error(result.errors[0].message);
+      if ((result as any).errors) {
+        throw new Error((result as any).errors[0].message);
       }
       
-      console.log('Skill created successfully:', result);
-      
-      // Redirect to skills list
       router.push(getLocalizedPath('/admin/skills'));
       
     } catch (err) {
@@ -236,6 +193,11 @@ const CreateSkillClient: React.FC<CreateSkillClientProps> = ({ locale }) => {
           background-size: 0.65rem;
           padding-right: 2.5rem !important;
         }
+        
+        .create-skill-form .amplify-switchfield label {
+          color: var(--form-label-color) !important;
+          font-weight: 600 !important;
+        }
       ` }} />
 
       {/* Header */}
@@ -304,6 +266,23 @@ const CreateSkillClient: React.FC<CreateSkillClientProps> = ({ locale }) => {
                   rows={4}
                 />
 
+                {/* Icon URL */}
+                <TextField
+                  label={t('skills.icon_url_label') || 'Icon URL'}
+                  placeholder={t('skills.icon_url_placeholder') || 'https://example.com/icon.png'}
+                  value={formData.iconUrl}
+                  onChange={(e) => handleInputChange('iconUrl', e.target.value)}
+                />
+                {formData.iconUrl?.trim() && (
+                  <div style={{ width: '64px', height: '64px' }}>
+                    <img
+                      src={formData.iconUrl}
+                      alt="Icon"
+                      style={{ width: '100%', height: '100%', objectFit: 'contain', borderRadius: '8px', border: '1px solid var(--amplify-colors-border-primary)' }}
+                    />
+                  </div>
+                )}
+
                 <Flex direction={{ base: 'column', medium: 'row' }} gap="1rem">
                   <SelectField
                     label={`${t('skills.category_label')} *`}
@@ -352,230 +331,23 @@ const CreateSkillClient: React.FC<CreateSkillClientProps> = ({ locale }) => {
                     max="50"
                   />
                 </Flex>
-              </Flex>
-            </View>
-          </Card>
 
+                {/* Toggles */}
+                <Flex direction={{ base: 'column', medium: 'row' }} gap="1rem">
+                  <SwitchField
+                    label={t('skills.is_active_label')}
+                    isChecked={formData.isActive}
+                    onChange={(e) => handleInputChange('isActive', e.target.checked)}
+                    labelPosition="end"
+                  />
 
-
-          {/* Additional Information */}
-          <Card style={{
-            backgroundColor: mode === 'dark' ? 'rgba(51, 65, 85, 0.8)' : 'rgba(255, 255, 255, 0.9)',
-            border: mode === 'dark' ? '1px solid rgba(148, 163, 184, 0.1)' : '1px solid rgba(203, 213, 225, 0.2)',
-            borderRadius: '12px'
-          }}>
-            <View padding="1.5rem">
-              <Heading level={3} marginBottom="1rem" style={{
-                color: mode === 'dark' ? '#F1F5F9' : '#1E293B',
-                fontSize: '1.125rem'
-              }}>
-                {t('skills.additional_info')}
-              </Heading>
-              <Flex direction="column" gap="1rem">
-                {/* Certifications */}
-                <View>
-                  <Flex gap="0.5rem">
-                    <TextField
-                      label={t('skills.certifications_label')}
-                      placeholder={t('skills.certifications_placeholder')}
-                      value={newCertification}
-                      onChange={(e) => setNewCertification(e.target.value)}
-                      onKeyPress={(e) => {
-                        if (e.key === 'Enter') {
-                          e.preventDefault();
-                          addItem('certifications', newCertification);
-                        }
-                      }}
-                      style={{ flex: 1 }}
-                    />
-                    <Button
-                      type="button"
-                      onClick={() => addItem('certifications', newCertification)}
-                      variation="primary"
-                      style={{
-                        backgroundColor: mode === 'dark' ? '#3B82F6' : '#2563EB',
-                        alignSelf: 'flex-end'
-                      }}
-                    >
-                      <Plus size={16} />
-                      {t('skills.add_certification')}
-                    </Button>
-                  </Flex>
-
-                  {formData.certifications.length > 0 && (
-                    <Flex wrap="wrap" gap="0.5rem" marginTop="0.5rem">
-                      {formData.certifications.map((cert, index) => (
-                        <Badge
-                          key={index}
-                          style={{
-                            backgroundColor: mode === 'dark' ? 'rgba(59, 130, 246, 0.2)' : 'rgba(37, 99, 235, 0.1)',
-                            color: mode === 'dark' ? '#93C5FD' : '#2563EB',
-                            border: mode === 'dark' ? '1px solid rgba(59, 130, 246, 0.3)' : '1px solid rgba(37, 99, 235, 0.2)',
-                            borderRadius: '6px',
-                            padding: '0.5rem 1rem',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '0.5rem'
-                          }}
-                        >
-                          {cert}
-                          <Button
-                            type="button"
-                            onClick={() => removeItem('certifications', index)}
-                            style={{
-                              backgroundColor: 'transparent',
-                              border: 'none',
-                              color: 'inherit',
-                              padding: '0',
-                              width: '16px',
-                              height: '16px',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center'
-                            }}
-                          >
-                            <X size={12} />
-                          </Button>
-                        </Badge>
-                      ))}
-                    </Flex>
-                  )}
-                </View>
-
-              {/* Projects */}
-              <View>
-                <Text fontSize="medium" fontWeight="semibold" marginBottom="small">
-                  {t('skills.projects_label')}
-                </Text>
-                <Flex direction="column" gap="small">
-                  <Flex gap="small">
-                    <TextField
-                      label=""
-                      placeholder={t('skills.projects_placeholder')}
-                      value={newProject}
-                      onChange={(e) => setNewProject(e.target.value)}
-                      flex="1"
-                    />
-                    <Button
-                      variation="link"
-                      size="small"
-                      onClick={() => addItem('projects', newProject)}
-                    >
-                      <Plus size={16} />
-                    </Button>
-                  </Flex>
-                  {formData.projects.length > 0 && (
-                    <Flex wrap="wrap" gap="small">
-                      {formData.projects.map((project, index) => (
-                        <Badge key={index} variation="info">
-                          {project}
-                          <button
-                            type="button"
-                            onClick={() => removeItem('projects', index)}
-                            style={{ marginLeft: '8px', background: 'none', border: 'none', color: 'inherit' }}
-                          >
-                            <X size={14} />
-                          </button>
-                        </Badge>
-                      ))}
-                    </Flex>
-                  )}
+                  <SwitchField
+                    label={t('skills.is_core_label') || 'Show on Home Page (Core Skill)'}
+                    isChecked={formData.isCore}
+                    onChange={(e) => handleInputChange('isCore', e.target.checked)}
+                    labelPosition="end"
+                  />
                 </Flex>
-              </View>
-
-              {/* Examples (for Soft Skills) */}
-              {formData.type === 'Soft' && (
-                <View>
-                  <Text fontSize="medium" fontWeight="semibold" marginBottom="small">
-                    {t('skills.examples_label')}
-                  </Text>
-                  <Flex direction="column" gap="small">
-                    <Flex gap="small">
-                      <TextField
-                        label=""
-                        placeholder={t('skills.examples_placeholder')}
-                        value={newExample}
-                        onChange={(e) => setNewExample(e.target.value)}
-                        flex="1"
-                      />
-                      <Button
-                        variation="link"
-                        size="small"
-                        onClick={() => addItem('examples', newExample)}
-                      >
-                        <Plus size={16} />
-                      </Button>
-                    </Flex>
-                    {formData.examples.length > 0 && (
-                      <Flex wrap="wrap" gap="small">
-                        {formData.examples.map((example, index) => (
-                          <Badge key={index} variation="success">
-                            {example}
-                            <button
-                              type="button"
-                              onClick={() => removeItem('examples', index)}
-                              style={{ marginLeft: '8px', background: 'none', border: 'none', color: 'inherit' }}
-                            >
-                              <X size={14} />
-                            </button>
-                          </Badge>
-                        ))}
-                      </Flex>
-                    )}
-                  </Flex>
-                </View>
-              )}
-
-              {/* Achievements */}
-              <View>
-                <Text fontSize="medium" fontWeight="semibold" marginBottom="small">
-                  {t('skills.achievements_label')}
-                </Text>
-                <Flex direction="column" gap="small">
-                  <Flex gap="small">
-                    <TextField
-                      label=""
-                      placeholder={t('skills.achievements_placeholder')}
-                      value={newAchievement}
-                      onChange={(e) => setNewAchievement(e.target.value)}
-                      flex="1"
-                    />
-                    <Button
-                      variation="link"
-                      size="small"
-                      onClick={() => addItem('achievements', newAchievement)}
-                    >
-                      <Plus size={16} />
-                    </Button>
-                  </Flex>
-                  {formData.achievements.length > 0 && (
-                    <Flex wrap="wrap" gap="small">
-                      {formData.achievements.map((achievement, index) => (
-                        <Badge key={index} variation="warning">
-                          {achievement}
-                          <button
-                            type="button"
-                            onClick={() => removeItem('achievements', index)}
-                            style={{ marginLeft: '8px', background: 'none', border: 'none', color: 'inherit' }}
-                          >
-                            <X size={14} />
-                          </button>
-                        </Badge>
-                      ))}
-                    </Flex>
-                  )}
-                </Flex>
-              </View>
-
-                <TextField
-                  label={t('skills.priority_label')}
-                  placeholder={t('skills.priority_placeholder')}
-                  type="number"
-                  value={formData.priority}
-                  onChange={(e) => handleInputChange('priority', e.target.value)}
-                  min="1"
-                  max="100"
-                />
               </Flex>
             </View>
           </Card>

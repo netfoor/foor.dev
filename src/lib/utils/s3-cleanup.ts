@@ -17,6 +17,9 @@ const getWebpKey = (originalKey: string): string | null => {
   return [...pathParts, 'webp', `${fileNameWithoutExtension}.webp`].join('/');
 };
 
+// NEW: simple URL detector
+const isHttpUrl = (key?: string | null) => !!key && /^https?:\/\//i.test(key);
+
 // NEW: Detect if a key points to the optimized WebP version
 const isWebpKey = (key: string): boolean => key.includes('/webp/');
 
@@ -56,6 +59,12 @@ export class S3Cleanup {
    */
   static async deleteSingleFile(fileKey: string | null | undefined): Promise<boolean> {
     if (!fileKey) return true; // Nada que eliminar
+
+    // Ignore external URLs (not stored in S3)
+    if (isHttpUrl(fileKey)) {
+      console.log(`ℹ️ Skip S3 cleanup for external URL: ${fileKey}`);
+      return true;
+    }
     
     try {
       // Normalizar el path - remover 'public/' si existe (compatibilidad Gen 1)
@@ -162,11 +171,18 @@ export class S3Cleanup {
     const filesToDelete: string[] = [];
     
     validKeys.forEach(key => {
+      // Skip external URLs
+      if (isHttpUrl(key)) return;
       filesToDelete.push(key);
       const webpKey = getWebpKey(key);
       if (webpKey) filesToDelete.push(webpKey);
     });
     
+    if (filesToDelete.length === 0) {
+      console.log(`ℹ️ No hay archivos S3 para eliminar en ${entityType} ${entityId} (solo URLs externas)`);
+      return;
+    }
+
     console.log(`🗑️ Eliminando ${filesToDelete.length} archivos de S3 para ${entityType} ${entityId}:`, filesToDelete);
     
     // Eliminar archivos de S3 en paralelo
@@ -217,17 +233,17 @@ export class S3ProjectCleanup {
   ): Promise<void> {
     const filesToDelete: string[] = [];
     
-    // Agregar imagen principal y su versión WebP si existe
-    if (photoKey) {
+    // Agregar imagen principal y su versión WebP si existe (skip URLs)
+    if (photoKey && !isHttpUrl(photoKey)) {
       filesToDelete.push(photoKey);
       const webpKey = getWebpKey(photoKey);
       if (webpKey) filesToDelete.push(webpKey);
     }
     
-    // Agregar imágenes de galería y sus versiones WebP si existen
+    // Agregar imágenes de galería y sus versiones WebP si existen (skip URLs)
     if (galleryKeys && galleryKeys.length > 0) {
       galleryKeys.forEach(key => {
-        if (key) {
+        if (key && !isHttpUrl(key)) {
           filesToDelete.push(key);
           const webpKey = getWebpKey(key);
           if (webpKey) filesToDelete.push(webpKey);

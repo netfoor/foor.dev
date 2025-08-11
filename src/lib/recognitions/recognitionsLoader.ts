@@ -12,7 +12,7 @@ export const loadRecognitionsFromAmplify = async (limit?: number, isAuthenticate
     const client = generateClient<Schema>();
     const response = await client.models.Recognitions.list({
       limit: limit || undefined,
-      authMode: isAuthenticated ? 'userPool' : 'identityPool',
+      authMode: isAuthenticated ? 'userPool' : 'apiKey',
     });
     
     if (response.data) {
@@ -39,7 +39,7 @@ export const loadPublicationsFromAmplify = async (limit?: number, isAuthenticate
     const client = generateClient<Schema>();
     const response = await client.models.SocialPublications.list({
       limit: limit || undefined,
-      authMode: isAuthenticated ? 'userPool' : 'identityPool',
+      authMode: isAuthenticated ? 'userPool' : 'apiKey',
     });
     
     if (response.data) {

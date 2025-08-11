@@ -466,7 +466,7 @@ const ExperienceTimeline: React.FC<ExperienceTimelineProps> = ({ className = '' 
   // Función para obtener experiencias
   const fetchExperiences = async () => {
     try {
-      const authMode = isAuthenticated ? 'userPool' : 'identityPool';
+      const authMode = isAuthenticated ? 'userPool' : 'apiKey';
       const { data: experienceData } = await client.models.Experiences.list({
         authMode
       });

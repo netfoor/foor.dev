@@ -34,9 +34,11 @@ const CoreSkillsSection: React.FC<CoreSkillsSectionProps> = ({
   const { isAuthenticated } = useAuth();
   const getLocalizedPath = useLocalizedPath();
 
-  // Get image URL from S3
+  // Get image URL from S3 or return external URL
+  const isHttpUrl = (v?: string | null) => !!v && /^https?:\/\//i.test(v);
   const getImageUrl = async (iconKey: string | null | undefined): Promise<string | null> => {
     if (!iconKey) return null;
+    if (isHttpUrl(iconKey)) return iconKey;
     
     try {
       // Normalize path - remove 'public/' if exists (for Gen 1 compatibility)
