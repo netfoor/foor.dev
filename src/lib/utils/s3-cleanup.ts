@@ -34,7 +34,7 @@ const getOriginalCandidatesFromWebpKey = (webpKey: string): string[] => {
     const basePath = pathParts.join('/');
 
     // Include lower and upper case variants and more formats (covers scanners/cameras)
-    const lower = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'tiff', 'heic', 'avif', 'webp', 'jfif', 'svg'];
+    const lower = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'];
     const variants = [...lower, ...lower.map(ext => ext.toUpperCase())];
 
     const candidates = variants.map(ext => `${basePath}/${nameWithoutExt}.${ext}`);

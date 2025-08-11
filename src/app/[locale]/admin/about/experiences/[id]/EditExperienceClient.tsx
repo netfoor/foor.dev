@@ -20,6 +20,8 @@ import {
   ArrowLeft, 
   Save, 
   X,
+  Building,
+  Image as ImageIcon,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { generateClient } from 'aws-amplify/data';
@@ -140,6 +142,37 @@ const editExperienceStyles = `
     transform: scale(1.1) !important;
   }
 
+  .edit-experience-form .image-preview {
+    position: relative !important;
+    display: inline-block !important;
+    margin-bottom: 1rem !important;
+  }
+
+  .edit-experience-form .image-preview img {
+    width: 200px !important;
+    height: 150px !important;
+    object-fit: cover !important;
+    border-radius: 8px !important;
+    border: 2px solid var(--form-input-border) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+  }
+
+  .edit-experience-form .image-upload-container {
+    border: 2px dashed var(--form-input-border) !important;
+    border-radius: 8px !important;
+    padding: 2rem !important;
+    text-align: center !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    background-color: var(--form-input-bg) !important;
+    margin-bottom: 1rem !important;
+  }
+
+  .edit-experience-form .image-upload-container:hover {
+    border-color: var(--form-focus-border) !important;
+    background-color: var(--form-focus-shadow) !important;
+  }
+
   /* Responsive design improvements */
   @media (max-width: 768px) {
     .edit-experience-form .input-with-button-container {
@@ -220,6 +253,7 @@ function EditExperienceClient({ locale, experienceId }: EditExperienceClientProp
   const [companyImage, setCompanyImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>('');
   const [currentImageUrl, setCurrentImageUrl] = useState<string>('');
+  const [imagesToDelete, setImagesToDelete] = useState<string[]>([]);
 
   // Estados de la UI
   const [isLoading, setIsLoading] = useState(true);
@@ -328,16 +362,12 @@ function EditExperienceClient({ locale, experienceId }: EditExperienceClientProp
   }, []);
 
   // Remover imagen actual
-  const removeCurrentImage = useCallback(async () => {
-    if (!experience?.photoKey) return;
-
-    try {
-      await S3Cleanup.deleteSingleFile(experience.photoKey);
-      setCurrentImageUrl('');
-      console.log('✅ Current image removed from S3 (including WEBP if exists)');
-    } catch (removeError) {
-      console.warn('Could not remove current image from S3:', removeError);
+  const removeCurrentImage = useCallback(() => {
+    if (experience?.photoKey) {
+      console.log('Marking image for deletion:', experience.photoKey);
+      setImagesToDelete(prev => [...prev, experience.photoKey!]);
     }
+    setCurrentImageUrl('');
   }, [experience?.photoKey]);
 
   // Agregar habilidad
@@ -394,19 +424,28 @@ function EditExperienceClient({ locale, experienceId }: EditExperienceClientProp
     try {
       let photoKey = experience?.photoKey || undefined;
 
-      // Si hay una nueva imagen, subirla con metadatos para optimización
-      if (companyImage) {
-        // Remover imagen anterior si existe (original + webp)
-        if (experience?.photoKey) {
-          try { await S3Cleanup.deleteSingleFile(experience.photoKey); } catch {}
+      // Eliminar archivos marcados para borrar usando utilidad S3
+      for (const keyToDelete of imagesToDelete) {
+        console.log('Attempting to delete file:', keyToDelete);
+        const success = await S3Cleanup.deleteSingleFile(keyToDelete);
+        if (!success) {
+          console.warn(`⚠️ No se pudo eliminar el archivo: ${keyToDelete}`);
+        } else {
+          console.log(`✅ Archivo eliminado: ${keyToDelete}`);
         }
-        photoKey = await uploadImageWithMetadata(companyImage, experienceId, 'Experiences', 'photoKey');
-        // Preview ya fue seteado por FileReader
       }
 
-      // Si se removió la imagen actual y no hay nueva imagen
-      if (!currentImageUrl && !companyImage && experience?.photoKey) {
+      // Si se removió la imagen actual, limpiar el key
+      if (imagesToDelete.includes(experience?.photoKey || '')) {
+        console.log('Current image was deleted, clearing photoKey');
         photoKey = undefined;
+      }
+
+      // Si hay una nueva imagen, subirla con metadatos para optimización
+      if (companyImage) {
+        console.log('Uploading new company image:', companyImage.name);
+        photoKey = await uploadImageWithMetadata(companyImage, experienceId, 'Experiences', 'photoKey');
+        console.log('New company image uploaded with key:', photoKey);
       }
 
       // Actualizar la experiencia en DynamoDB
@@ -453,38 +492,87 @@ function EditExperienceClient({ locale, experienceId }: EditExperienceClientProp
     );
   }
 
+  const isDark = mode === 'dark';
+  
+  // Definir variables CSS para el tema con mejor contraste
+  const cssVariables = {
+    '--form-label-color': isDark ? '#F8FAFC' : '#0F172A',
+    '--form-input-bg': isDark ? '#1E293B' : '#FFFFFF',
+    '--form-input-border': isDark ? '#64748B' : '#D1D5DB',
+    '--form-input-text': isDark ? '#F8FAFC' : '#111827',
+    '--form-placeholder-color': isDark ? '#94A3B8' : '#6B7280',
+    '--form-focus-border': isDark ? '#3B82F6' : '#2563EB',
+    '--form-focus-shadow': isDark ? 'rgba(59, 130, 246, 0.35)' : 'rgba(37, 99, 235, 0.25)',
+    '--form-description-color': isDark ? '#D1D5DB' : '#6B7280'
+  } as React.CSSProperties;
+
   return (
     <>
-      <style>{editExperienceStyles}</style>
-      <View padding="2rem" className="edit-experience-form">
-        <Button 
-          onClick={() => router.back()} 
-          variation="link" 
-          size="small"
-          marginBottom="1rem"
+      <style dangerouslySetInnerHTML={{ __html: editExperienceStyles }} />
+      <View 
+        style={{
+          padding: '1.5rem',
+          backgroundColor: isDark ? '#0F172A' : '#F8FAFC',
+          minHeight: '100vh',
+          ...cssVariables
+        }}
+        className="edit-experience-form"
+      >
+        <Card
+          style={{
+            padding: '2rem',
+            backgroundColor: isDark ? 'rgba(51, 65, 85, 0.9)' : 'rgba(255, 255, 255, 0.9)',
+            border: isDark ? '1px solid rgba(148, 163, 184, 0.1)' : '1px solid rgba(203, 213, 225, 0.2)',
+            borderRadius: '12px',
+            backdropFilter: 'blur(10px)',
+            maxWidth: '800px',
+            margin: '0 auto'
+          }}
         >
-          <ArrowLeft size={16} style={{ marginRight: 8 }} />
-          {t('common.back')}
-        </Button>
-        
-        <Card padding="2rem" borderRadius="8px" boxShadow="0 4px 8px rgba(0, 0, 0, 0.1)">
-          <Heading level={3} marginBottom="1.5rem">
-            {t('about.experiences.edit_experience')}
-          </Heading>
-          
-          {error && (
-            <Alert variation="error" marginBottom="1rem">
-              {error}
-            </Alert>
-          )}
-          
-          {success && (
-            <Alert variation="success" marginBottom="1rem">
-              {success}
-            </Alert>
-          )}
-          
-          <form onSubmit={handleSubmit}>
+          <Flex direction="column" gap="large">
+            {/* Header */}
+            <Flex justifyContent="space-between" alignItems="center">
+              <Flex alignItems="center" gap="medium">
+                <Button
+                  style={{
+                    backgroundColor: 'transparent',
+                    border: 'none',
+                    color: isDark ? '#CBD5E1' : '#64748B',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem'
+                  }}
+                  onClick={() => router.push(getLocalizedPath('/admin/about'))}
+                >
+                  <ArrowLeft size={20} />
+                </Button>
+                <Heading 
+                  level={2} 
+                  style={{
+                    color: isDark ? '#F1F5F9' : '#1E293B',
+                    margin: 0
+                  }}
+                >
+                  {t('about.experiences.edit_experience')}
+                </Heading>
+              </Flex>
+            </Flex>
+            {error && (
+              <Alert variation="error" hasIcon={true}>
+                {error}
+              </Alert>
+            )}
+
+            {success && (
+              <Alert variation="success" hasIcon={true}>
+                {success}
+              </Alert>
+            )}
+
+            {/* Formulario */}
+            <form onSubmit={handleSubmit} className="edit-experience-form">
+              <Flex direction="column" gap="large">
             <Flex direction={{ base: 'column', medium: 'row' }} gap="1.5rem">
               <Flex direction="column" flex="1">
                 <TextField
@@ -620,108 +708,133 @@ function EditExperienceClient({ locale, experienceId }: EditExperienceClientProp
                 </Flex>
               </Flex>
             </Flex>
+            </Flex>
             
             <Divider margin="1.5rem 0" />
             
-            <Flex direction={{ base: 'column', medium: 'row' }} gap="1.5rem">
-              <Flex direction="column" flex="1">
-                <Text fontWeight="500" marginBottom="0.5rem" color="var(--form-label-color)">
-                  {t('about.experiences.current_image')}
-                </Text>
-                
-                {currentImageUrl ? (
-                  <Flex direction="column" gap="0.5rem">
-                    <Image 
-                      src={currentImageUrl} 
-                      alt={t('about.experiences.current_image_alt')}
-                      width={120}
-                      height={80}
-                      style={{ borderRadius: '8px', objectFit: 'cover' }}
-                    />
-                    
-                    <Button 
-                      onClick={removeCurrentImage} 
-                      variation="destructive" 
-                      size="small"
-                      width="fit-content"
-                    >
-                      <X size={16} style={{ marginRight: 6 }} />
-                      {t('about.experiences.remove_current_image')}
-                    </Button>
-                  </Flex>
-                ) : (
-                  <Text color="var(--form-placeholder-color)" fontSize="0.875rem">
-                    {t('about.experiences.no_current_image')}
+            {/* Company Image Upload */}
+            <View>
+              <Text fontSize="medium" fontWeight="semibold" marginBottom="small">
+                {t('about.experiences.company_image')}
+              </Text>
+              
+              {/* Current Image */}
+              {currentImageUrl && !imagePreview && (
+                <div className="image-preview">
+                  <img src={currentImageUrl} alt="Current company image" />
+                  <button
+                    type="button"
+                    className="image-remove-button"
+                    onClick={removeCurrentImage}
+                    title={t('about.experiences.remove_current_image')}
+                  >
+                    <X size={16} />
+                  </button>
+                </div>
+              )}
+
+              {/* New Image Preview */}
+              {imagePreview && (
+                <div className="image-preview">
+                  <img src={imagePreview} alt="New company image preview" />
+                  <button
+                    type="button"
+                    className="image-remove-button"
+                    onClick={removeNewImage}
+                    title={t('about.experiences.remove_new_image')}
+                  >
+                    <X size={16} />
+                  </button>
+                </div>
+              )}
+
+              {/* Upload Container */}
+              {!currentImageUrl && !imagePreview && (
+                <div className="image-upload-container" onClick={() => document.getElementById('company-image-input')?.click()}>
+                  <Building size={48} style={{ margin: '0 auto 16px', opacity: 0.5 }} />
+                  <Text fontSize="medium" color="font.secondary" marginBottom="small">
+                    {t('about.experiences.click_to_upload_image')}
                   </Text>
-                )}
-              </Flex>
-              
-              <Flex direction="column" flex="1">
-                <Text fontWeight="500" marginBottom="0.5rem" color="var(--form-label-color)">
-                  {t('about.experiences.new_image')}
-                </Text>
-                
-                {imagePreview ? (
-                  <Flex direction="column" gap="0.5rem">
-                    <Image 
-                      src={imagePreview} 
-                      alt={t('about.experiences.new_image_preview')}
-                      width={120}
-                      height={80}
-                      style={{ borderRadius: '8px', objectFit: 'cover' }}
-                    />
-                    
-                    <Button 
-                      onClick={removeNewImage} 
-                      variation="destructive" 
-                      size="small"
-                      width="fit-content"
-                    >
-                      <X size={16} style={{ marginRight: 6 }} />
-                      {t('about.experiences.remove_new_image')}
-                    </Button>
+                  <Text fontSize="small" color="font.tertiary">
+                    {t('about.experiences.image_requirements')}
+                  </Text>
+                </div>
+              )}
+
+              {/* Upload New Image Button */}
+              {(currentImageUrl || imagePreview) && (
+                <Button
+                  variation="link"
+                  onClick={() => document.getElementById('company-image-input')?.click()}
+                  marginTop="small"
+                >
+                  <Flex alignItems="center" gap="xs">
+                    <ImageIcon size={16} />
+                    {t('about.experiences.change_image')}
                   </Flex>
-                ) : (
-                  <label style={{ display: 'inline-block', width: 'fit-content' }}>
-                    <Button 
-                      variation="primary" 
-                      size="small"
-                    >
-                      {t('about.experiences.upload_image')}
-                    </Button>
-                    
-                    <input 
-                      type="file" 
-                      accept="image/*" 
-                      onChange={handleImageChange}
-                      style={{ display: 'none' }}
-                    />
-                  </label>
-                )}
-              </Flex>
-            </Flex>
+                </Button>
+              )}
+              
+              <input
+                id="company-image-input"
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                style={{ display: 'none' }}
+              />
+            </View>
             
             <Divider margin="1.5rem 0" />
             
-            <Flex justifyContent="flex-end" gap="1rem">
-              <Button 
-                onClick={() => router.back()} 
-                variation="link" 
-                size="large"
+            {/* Botones de acción */}
+            <Flex 
+              direction={{ base: 'column', medium: 'row' }}
+              justifyContent="space-between" 
+              gap="medium"
+            >
+              <Button
+                onClick={() => router.push(getLocalizedPath('/admin/about'))}
+                disabled={isSaving}
+                style={{
+                  backgroundColor: 'transparent',
+                  color: isDark ? '#CBD5E1' : '#64748B',
+                  border: isDark ? '1px solid #475569' : '1px solid #CBD5E1',
+                  borderRadius: '6px',
+                  padding: '0.75rem 1.5rem',
+                  cursor: 'pointer',
+                  fontSize: '0.9rem',
+                  fontWeight: '500'
+                }}
               >
-                {t('common.cancel')}
+                {t('about.cancel')}
               </Button>
-              
-              <Button 
-                type="submit" 
-                variation="primary" 
-                size="large"
-                isLoading={isSaving}
+
+              <Button
+                type="submit"
+                disabled={isSaving || !formData.company.trim() || !formData.position.trim() || !formData.startDate}
+                style={{
+                  backgroundColor: isDark ? '#3B82F6' : '#2563EB',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '6px',
+                  padding: '0.75rem 1.5rem',
+                  cursor: isSaving ? 'not-allowed' : 'pointer',
+                  opacity: (isSaving || !formData.company.trim() || !formData.position.trim() || !formData.startDate) ? 0.6 : 1,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.5rem',
+                  fontSize: '0.9rem',
+                  fontWeight: '600',
+                  minWidth: '160px'
+                }}
               >
-                {t('common.save')}
+                <Save size={16} />
+                {isSaving ? t('about.saving') : t('about.save_changes')}
               </Button>
             </Flex>
-          </form>
+            </form>
+          </Flex>
         </Card>
       </View>
     </>

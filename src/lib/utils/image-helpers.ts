@@ -127,6 +127,21 @@ export const getResponsiveImageSources = async (key: string) => {
         // Normalize the key before processing
         const normalizedKey = normalizeS3Key(key);
         
+        // Check if the key is already a WebP path to avoid double webp folders
+        if (normalizedKey.includes('/webp/')) {
+            console.log('[getResponsiveImageSources] Key is already a WebP path, using as-is:', normalizedKey);
+            try {
+                const webpResult = await getUrl({path: normalizedKey});
+                return {
+                    original: webpResult.url.toString(),
+                    webp: webpResult.url.toString()
+                };
+            } catch (error) {
+                console.log('[getResponsiveImageSources] Failed to get WebP image:', error);
+                return { original: null, webp: null };
+            }
+        }
+        
         let webpUrl = null;
         const webpKey = getWebpKey(normalizedKey);
         

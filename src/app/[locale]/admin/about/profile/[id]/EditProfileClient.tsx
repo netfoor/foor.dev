@@ -578,52 +578,52 @@ function EditProfileClient({ locale, profileId }: EditProfileClientProps): React
 
                 <Flex direction={{ base: 'column', medium: 'row' }} gap="medium">
                   <TextField
-                    label={t('about.profile.name')}
+                    label={t('about.name_label')}
                     value={formData.name}
                     onChange={(e) => handleInputChange('name', e.target.value)}
                     required
-                    placeholder={t('about.profile.name_placeholder')}
+                    placeholder={t('about.name_placeholder')}
                     flex="1"
                   />
                   <TextField
-                    label={t('about.profile.position')}
+                    label={t('about.current_position_label')}
                     value={formData.currentPosition}
                     onChange={(e) => handleInputChange('currentPosition', e.target.value)}
                     required
-                    placeholder={t('about.profile.position_placeholder')}
+                    placeholder={t('about.current_position_placeholder')}
                     flex="1"
                   />
                 </Flex>
 
                 <TextAreaField
-                  label={t('about.profile.description')}
+                  label={t('about.description_label')}
                   value={formData.description}
                   onChange={(e) => handleInputChange('description', e.target.value)}
-                  placeholder={t('about.profile.description_placeholder')}
+                  placeholder={t('about.description_placeholder')}
                   rows={4}
                 />
 
                 <TextAreaField
-                  label={t('about.profile.mission')}
+                  label={t('about.mission_label')}
                   value={formData.mission}
                   onChange={(e) => handleInputChange('mission', e.target.value)}
-                  placeholder={t('about.profile.mission_placeholder')}
+                  placeholder={t('about.mission_placeholder')}
                   rows={3}
                 />
 
                 <TextAreaField
-                  label={t('about.profile.vision')}
+                  label={t('about.vision_label')}
                   value={formData.vision}
                   onChange={(e) => handleInputChange('vision', e.target.value)}
-                  placeholder={t('about.profile.vision_placeholder')}
+                  placeholder={t('about.vision_placeholder')}
                   rows={3}
                 />
 
                 <TextAreaField
-                  label={t('about.profile.philosophy')}
+                  label={t('about.philosophy_label')}
                   value={formData.philosophy}
                   onChange={(e) => handleInputChange('philosophy', e.target.value)}
-                  placeholder={t('about.profile.philosophy_placeholder')}
+                  placeholder={t('about.philosophy_placeholder')}
                   rows={3}
                 />
               </Flex>
@@ -638,11 +638,11 @@ function EditProfileClient({ locale, profileId }: EditProfileClientProps): React
 
                 <Flex direction={{ base: 'column', medium: 'row' }} gap="medium">
                   <TextField
-                    label={t('about.profile.email')}
+                    label={t('about.email_contact_label')}
                     value={formData.emailContact}
                     onChange={(e) => handleInputChange('emailContact', e.target.value)}
                     type="email"
-                    placeholder={t('about.profile.email_placeholder')}
+                    placeholder={t('about.email_contact_placeholder')}
                     flex="1"
                   />
                 </Flex>
@@ -653,34 +653,34 @@ function EditProfileClient({ locale, profileId }: EditProfileClientProps): React
               {/* Social Links */}
               <Flex direction="column" gap="medium">
                 <Text fontSize="large" fontWeight="semibold">
-                  {t('about.profile.social_links')}
+                  {t('about.social_links')}
                 </Text>
 
                 <Flex direction={{ base: 'column', medium: 'row' }} gap="medium">
                   <TextField
-                    label={t('about.profile.linkedin')}
+                    label={t('about.linkedin_url_label')}
                     value={formData.linkedinUrl}
                     onChange={(e) => handleInputChange('linkedinUrl', e.target.value)}
                     type="url"
-                    placeholder={t('about.profile.linkedin_placeholder')}
+                    placeholder={t('about.linkedin_url_placeholder')}
                     flex="1"
                   />
                   <TextField
-                    label={t('about.profile.github')}
+                    label={t('about.github_url_label')}
                     value={formData.githubUrl}
                     onChange={(e) => handleInputChange('githubUrl', e.target.value)}
                     type="url"
-                    placeholder={t('about.profile.github_placeholder')}
+                    placeholder={t('about.github_url_placeholder')}
                     flex="1"
                   />
                 </Flex>
 
                 <TextField
-                  label={t('about.profile.twitter')}
+                  label={t('about.twitter_url_label')}
                   value={formData.twitterUrl}
                   onChange={(e) => handleInputChange('twitterUrl', e.target.value)}
                   type="url"
-                  placeholder={t('about.profile.twitter_placeholder')}
+                  placeholder={t('about.twitter_url_placeholder')}
                 />
               </Flex>
 
@@ -689,7 +689,7 @@ function EditProfileClient({ locale, profileId }: EditProfileClientProps): React
               {/* Flags */}
               <Flex direction="column" gap="medium">
                 <Text fontSize="large" fontWeight="semibold">
-                  {t('about.profile.flags')}
+                  {t('about.flags')}
                 </Text>
                 
                 {formData.flags.length > 0 && (
@@ -739,7 +739,7 @@ function EditProfileClient({ locale, profileId }: EditProfileClientProps): React
                     fontWeight: '500'
                   }}
                 >
-                  {t('about.profile.cancel')}
+                  {t('about.cancel')}
                 </Button>
 
                 <Button
@@ -763,7 +763,7 @@ function EditProfileClient({ locale, profileId }: EditProfileClientProps): React
                   }}
                 >
                   <Save size={16} />
-                  {isSaving ? t('about.profile.updating') : t('about.profile.update_profile')}
+                  {isSaving ? t('about.saving') : t('about.save_changes')}
                 </Button>
               </Flex>
               </Flex>

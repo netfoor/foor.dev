@@ -1,14 +1,14 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { View, Flex, Text, Heading, Card, Badge, Loader, Alert, Image } from '@aws-amplify/ui-react';
+import { View, Flex, Text, Heading, Card, Badge, Loader, Alert } from '@aws-amplify/ui-react';
 import { Building, MapPin, Calendar, Clock, Briefcase, Star, ChevronDown, ChevronUp } from 'lucide-react';
 import { generateClient } from 'aws-amplify/data';
-import { getUrl } from 'aws-amplify/storage';
 import type { Schema } from '../../../amplify/data/resource';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation } from '@/lib/i18n/client';
 import { useAuth } from '@/context/auth-context';
+import { OptimizedImage } from '@/components/optimitation/OptimizedImage';
 
 // Tipos para los datos
 type Experience = Schema["Experiences"]["type"];
@@ -301,7 +301,6 @@ const timelineStyles = `
 
 const ExperienceTimeline: React.FC<ExperienceTimelineProps> = ({ className = '' }) => {
   const [experiences, setExperiences] = useState<Experience[]>([]);
-  const [experienceImages, setExperienceImages] = useState<{ [key: string]: string }>({});
   const [expandedActivities, setExpandedActivities] = useState<{ [key: string]: boolean }>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -462,25 +461,7 @@ const ExperienceTimeline: React.FC<ExperienceTimelineProps> = ({ className = '' 
     setMounted(true);
   }, []);
 
-  // Función para obtener URL de imagen desde S3
-  const getImageUrl = async (photoKey: string | null | undefined): Promise<string | null> => {
-    if (!photoKey) return null;
-    
-    try {
-      // Normalize path - remove 'public/' prefix if present
-      const normalizedPath = photoKey.startsWith('public/') 
-        ? photoKey.slice(7) 
-        : photoKey;
-      
-      const result = await getUrl({
-        path: normalizedPath,
-      });
-      return result.url.toString();
-    } catch (error) {
-      console.error('Error getting image URL:', error);
-      return null;
-    }
-  };
+
 
   // Función para obtener experiencias
   const fetchExperiences = async () => {
@@ -498,21 +479,7 @@ const ExperienceTimeline: React.FC<ExperienceTimelineProps> = ({ className = '' 
         });
         setExperiences(sortedExperiences);
 
-        // Obtener URLs de imágenes
-        const imagePromises = sortedExperiences.map(async (exp) => {
-          if (exp.photoKey) {
-            const imageUrl = await getImageUrl(exp.photoKey);
-            return { id: exp.id, imageUrl };
-          }
-          return { id: exp.id, imageUrl: null };
-        });
 
-        const imageResults = await Promise.all(imagePromises);
-        const imageMap: { [key: string]: string } = {};
-        imageResults.forEach(({ id, imageUrl }) => {
-          if (imageUrl) imageMap[id] = imageUrl;
-        });
-        setExperienceImages(imageMap);
       }
     } catch (err) {
       console.error('Error fetching experiences:', err);
@@ -697,19 +664,12 @@ const ExperienceTimeline: React.FC<ExperienceTimelineProps> = ({ className = '' 
                     gap: '0.75rem'
                   }}
                 >
-                  {experienceImages[experience.id] ? (
-                    <Image
-                      src={experienceImages[experience.id]}
+                  {experience.photoKey ? (
+                    <OptimizedImage
+                      s3Key={experience.photoKey}
                       alt={experience.company}
-                      style={{
-                        width: '40px',
-                        height: '40px',
-                        borderRadius: '8px',
-                        objectFit: 'cover' as const,
-                        border: mode === 'dark' 
-                          ? '2px solid rgba(148, 163, 184, 0.2)' 
-                          : '2px solid rgba(203, 213, 225, 0.3)',
-                      }}
+                      className="timeline-company-image"
+                      showPlaceholder={false}
                     />
                   ) : (
                     <View style={companyImagePlaceholderStyles}>

@@ -17,7 +17,8 @@ import {
   Alert,
   Menu,
   MenuItem,
-  Divider
+  Divider,
+  Collection
 } from '@aws-amplify/ui-react';
 import { 
   Plus, 
@@ -56,6 +57,7 @@ const AdminAboutClient: React.FC<AdminAboutClientProps> = ({ locale }) => {
   const [activeTab, setActiveTab] = useState('profile');
   const { mode } = useTheme();
   const { t } = useTranslation('admin');
+  const { t: tc } = useTranslation('common');
   const getLocalizedPath = useLocalizedPath();
 
   // Fetch profile and experiences from Amplify Data API
@@ -448,7 +450,7 @@ const AdminAboutClient: React.FC<AdminAboutClientProps> = ({ locale }) => {
                           marginTop: '0.5rem'
                         }}
                       >
-                        {t('common.active')}
+                        {tc('active')}
                       </Badge>
                     )}
                   </View>
@@ -685,149 +687,113 @@ const AdminAboutClient: React.FC<AdminAboutClientProps> = ({ locale }) => {
                 </Link>
               </View>
             ) : (
-              <View 
-                className="table-container"
-                style={{
-                  overflowX: 'auto',
-                  width: '100%'
-                }}
-              >
-                <Table
-                  style={{
-                    backgroundColor: 'transparent',
-                    width: '100%'
-                  }}
+              // Replace table with a responsive card list similar to Projects admin
+              <View padding="1rem">
+                <Collection
+                  items={experiences.filter((exp) => exp !== null)}
+                  type="list"
+                  direction="row"
+                  gap="1rem"
+                  wrap="wrap"
                 >
-                  <TableHead>
-                    <TableRow>
-                      <TableCell style={{ fontWeight: '600', color: mode === 'dark' ? '#F1F5F9' : '#1E293B' }}>
-                        {t('about.experiences.company')}
-                      </TableCell>
-                      <TableCell style={{ fontWeight: '600', color: mode === 'dark' ? '#F1F5F9' : '#1E293B' }}>
-                        {t('about.experiences.position')}
-                      </TableCell>
-                      <TableCell style={{ fontWeight: '600', color: mode === 'dark' ? '#F1F5F9' : '#1E293B' }}>
-                        {t('about.status')}
-                      </TableCell>
-                      <TableCell style={{ fontWeight: '600', color: mode === 'dark' ? '#F1F5F9' : '#1E293B' }}>
-                        {t('about.experiences.period')}
-                      </TableCell>
-                      <TableCell style={{ fontWeight: '600', color: mode === 'dark' ? '#F1F5F9' : '#1E293B' }}>
-                        {t('about.experiences.actions')}
-                      </TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                  {experiences.filter(experience => experience !== null).map((experience) => (
-                    <TableRow key={experience.id}>
-                      <TableCell>
-                        <Flex alignItems="center" gap="0.75rem">
-                          <View
-                            style={{
-                              width: '40px',
-                              height: '40px',
-                              borderRadius: '8px',
-                              backgroundColor: mode === 'dark' ? '#374151' : '#F3F4F6',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                            }}
-                          >
-                            <Briefcase size={20} color={mode === 'dark' ? '#9CA3AF' : '#6B7280'} />
-                          </View>
-                          <View>
-                            <Text 
-                              fontWeight="600" 
-                              style={{ color: mode === 'dark' ? '#F1F5F9' : '#1E293B' }}
-                            >
-                              {experience.company}
-                            </Text>
-                            {experience.location && (
-                              <Text 
-                                fontSize="0.875rem" 
-                                style={{ color: mode === 'dark' ? '#CBD5E1' : '#64748B' }}
-                              >
-                                <MapPin size={12} style={{ display: 'inline', marginRight: '4px' }} />
-                                {experience.location}
-                              </Text>
-                            )}
-                          </View>
-                        </Flex>
-                      </TableCell>
-                      
-                      <TableCell>
-                        <Text 
-                          fontWeight="500" 
-                          style={{ color: mode === 'dark' ? '#F1F5F9' : '#1E293B' }}
-                        >
-                          {experience.position}
-                        </Text>
-                      </TableCell>
-                      
-                      <TableCell>
-                        <Badge
+                  {(experience, index) => (
+                    <Card key={experience.id || index} variation="outlined" style={{ width: '100%' }}>
+                      <Flex>
+                        <View
                           style={{
-                            backgroundColor: isCurrentPosition(experience) ? '#22C55E' : '#6B7280',
-                            color: '#FFFFFF',
-                            fontSize: '0.75rem',
-                            fontWeight: '600',
-                            borderRadius: '6px',
+                            width: '120px',
+                            height: '120px',
+                            borderRadius: '8px',
+                            backgroundColor: mode === 'dark' ? '#374151' : '#F3F4F6',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            flexShrink: 0
                           }}
                         >
-                          {isCurrentPosition(experience) ? t('common.current') : t('common.previous')}
-                        </Badge>
-                      </TableCell>
-                      
-                      <TableCell>
-                        <Flex alignItems="center" gap="0.25rem">
-                          <Calendar size={14} color={mode === 'dark' ? '#9CA3AF' : '#6B7280'} />
-                          <Text fontSize="0.875rem" color={mode === 'dark' ? '#CBD5E1' : '#64748B'}>
-                            {new Date(experience.startDate).toLocaleDateString()} - {experience.endDate ? new Date(experience.endDate).toLocaleDateString() : t('about.present')}
-                          </Text>
+                          <Briefcase size={28} color={mode === 'dark' ? '#9CA3AF' : '#6B7280'} />
+                        </View>
+
+                        <Flex direction="column" padding="1rem" flex={1} gap="0.5rem">
+                          <Flex justifyContent="space-between" alignItems="flex-start" gap="0.5rem" wrap="wrap">
+                            <View>
+                              <Text 
+                                fontWeight="600" 
+                                style={{ color: mode === 'dark' ? '#F1F5F9' : '#1E293B' }}
+                              >
+                                {experience.company}
+                              </Text>
+                              <Text 
+                                fontSize="0.95rem" 
+                                style={{ color: mode === 'dark' ? '#CBD5E1' : '#64748B' }}
+                              >
+                                {experience.position}
+                              </Text>
+                              {experience.location && (
+                                <Text fontSize="0.875rem" style={{ color: mode === 'dark' ? '#CBD5E1' : '#64748B' }}>
+                                  <MapPin size={12} style={{ display: 'inline', marginRight: '4px' }} />
+                                  {experience.location}
+                                </Text>
+                              )}
+                            </View>
+                            <Badge
+                              style={{
+                                backgroundColor: isCurrentPosition(experience) ? '#22C55E' : '#6B7280',
+                                color: '#FFFFFF',
+                                fontSize: '0.75rem',
+                                fontWeight: 600,
+                                borderRadius: '6px',
+                                height: 'fit-content'
+                              }}
+                            >
+                              {isCurrentPosition(experience) ? tc('current') : tc('previous')}
+                            </Badge>
+                          </Flex>
+
+                          <Flex alignItems="center" gap="0.25rem">
+                            <Calendar size={14} color={mode === 'dark' ? '#9CA3AF' : '#6B7280'} />
+                            <Text fontSize="0.875rem" color={mode === 'dark' ? '#CBD5E1' : '#64748B'}>
+                              {new Date(experience.startDate).toLocaleDateString()} - {experience.endDate ? new Date(experience.endDate).toLocaleDateString() : t('about.present')}
+                            </Text>
+                          </Flex>
+
+                          <Flex gap="0.5rem" marginTop="auto">
+                            <Button
+                              size="small"
+                              style={{
+                                backgroundColor: 'transparent',
+                                color: mode === 'dark' ? '#FBBF24' : '#F59E0B',
+                                border: 'none',
+                                padding: '0.5rem',
+                              }}
+                              as="a"
+                              href={getLocalizedPath(`/admin/about/experiences/${experience.id}`)}
+                            >
+                              <Edit3 size={16} />
+                            </Button>
+                            <Button
+                              size="small"
+                              style={{
+                                backgroundColor: 'transparent',
+                                color: mode === 'dark' ? '#F87171' : '#EF4444',
+                                border: 'none',
+                                padding: '0.5rem',
+                              }}
+                              onClick={() => handleDeleteExperience(experience.id)}
+                              isDisabled={deleteLoading === experience.id}
+                            >
+                              {deleteLoading === experience.id ? (
+                                <Loader size="small" />
+                              ) : (
+                                <Trash2 size={16} />
+                              )}
+                            </Button>
+                          </Flex>
                         </Flex>
-                      </TableCell>
-                      
-                      <TableCell>
-                        <Flex gap="0.5rem">
-                          {/* Editar */}
-                          <Button
-                            size="small"
-                            style={{
-                              backgroundColor: 'transparent',
-                              color: mode === 'dark' ? '#FBBF24' : '#F59E0B',
-                              border: 'none',
-                              padding: '0.5rem',
-                            }}
-                            as="a"
-                            href={getLocalizedPath(`/admin/about/experiences/${experience.id}`)}
-                          >
-                            <Edit3 size={16} />
-                          </Button>
-                          
-                          {/* Eliminar */}
-                          <Button
-                            size="small"
-                            style={{
-                              backgroundColor: 'transparent',
-                              color: mode === 'dark' ? '#F87171' : '#EF4444',
-                              border: 'none',
-                              padding: '0.5rem',
-                            }}
-                            onClick={() => handleDeleteExperience(experience.id)}
-                            isDisabled={deleteLoading === experience.id}
-                          >
-                            {deleteLoading === experience.id ? (
-                              <Loader size="small" />
-                            ) : (
-                              <Trash2 size={16} />
-                            )}
-                          </Button>
-                        </Flex>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-                </Table>
+                      </Flex>
+                    </Card>
+                  )}
+                </Collection>
               </View>
             )}
           </Card>
