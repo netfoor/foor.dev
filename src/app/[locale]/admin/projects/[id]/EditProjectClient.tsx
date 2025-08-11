@@ -608,14 +608,7 @@ function EditProjectClient({ locale, projectId }: EditProjectClientProps): React
         skills: formData.skills,
         categories: formData.categories,
         photoKey: uploadResults.photoKey || undefined,
-        galleryKeys: uploadResults.galleryKeys,
-        startDate: formData.startDate || undefined,
-        endDate: formData.endDate || undefined,
-        status: formData.status,
-        featured: formData.featured,
-        slug: formData.slug,
-        metaDescription: formData.metaDescription || undefined,
-        tags: formData.tags
+        galleryKeys: uploadResults.galleryKeys
       }, { authMode: 'userPool' }
     );
 

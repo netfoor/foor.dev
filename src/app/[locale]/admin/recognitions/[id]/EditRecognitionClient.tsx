@@ -321,7 +321,7 @@ const EditRecognitionClient: React.FC<EditRecognitionClientProps> = ({ locale, r
         credentialId: credentialId || undefined,
         issuerUrl: issuerUrl || undefined,
         photoKey: newPhotoKey || undefined,
-      });
+      }, { authMode: 'userPool' });
       
       if (updatedRecognition.errors) {
         throw new Error(updatedRecognition.errors[0].message);

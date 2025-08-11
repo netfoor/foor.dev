@@ -190,7 +190,7 @@ const CreateCertificationClient: React.FC = () => {
         slug: formData.slug || generateSlug(formData.title),
       };
 
-      const createResponse = await client.models.Certifications.create(certificationData);
+      const createResponse = await client.models.Certifications.create(certificationData, { authMode: 'userPool' });
       
       if (createResponse.errors) {
         throw new Error(createResponse.errors[0].message);
@@ -210,7 +210,7 @@ const CreateCertificationClient: React.FC = () => {
         await client.models.Certifications.update({
           id: certificationId,
           photoKey
-        });
+        }, { authMode: 'userPool' });
       }
 
       console.log('✅ Certificación creada exitosamente:', createResponse.data);

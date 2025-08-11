@@ -32,7 +32,17 @@ import { FileUploadInput } from '../../../projects/new/FileUploadInput';
 import { uploadImageWithMetadata } from '@/lib/utils/image-helpers';
 
 const CreateExperienceClient: React.FC = () => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    company: string;
+    position: string;
+    description: string;
+    startDate: string;
+    endDate: string;
+    current: boolean;
+    location: string;
+    skills: string[];
+    activities: string[];
+  }>({
     company: '',
     position: '',
     description: '',
@@ -145,7 +155,7 @@ const CreateExperienceClient: React.FC = () => {
         activities: formData.activities || [],
       };
 
-      const createResponse = await client.models.Experiences.create(experienceData);
+      const createResponse = await client.models.Experiences.create(experienceData, { authMode: 'userPool' });
       
       if (createResponse.errors) {
         throw new Error(createResponse.errors[0].message);
@@ -162,7 +172,7 @@ const CreateExperienceClient: React.FC = () => {
         await client.models.Experiences.update({
           id: experienceId,
           photoKey
-        });
+        }, { authMode: 'userPool' });
       }
 
       console.log('✅ Experiencia creada exitosamente:', createResponse.data);

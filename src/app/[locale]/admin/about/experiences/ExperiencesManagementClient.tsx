@@ -126,7 +126,7 @@ const ExperiencesManagementClient: React.FC<ExperiencesManagementClientProps> = 
       const client = generateClient<Schema>();
       
       // Get experience data to clean up images if any
-      const experienceResponse = await client.models.Experiences.get({ id: experienceId });
+      const experienceResponse = await client.models.Experiences.get({ id: experienceId }, { authMode: 'userPool' });
       const experienceData = experienceResponse.data;
       
       if (!experienceData) {
@@ -152,8 +152,8 @@ const ExperiencesManagementClient: React.FC<ExperiencesManagementClientProps> = 
       // Delete from DynamoDB
       await client.models.Experiences.delete({
         id: experienceId
-      });
-      
+      }, { authMode: 'userPool' });
+
       console.log(`✅ Experience ${experienceId} deleted from DynamoDB`);
       
       // Update local state
@@ -178,6 +178,9 @@ const ExperiencesManagementClient: React.FC<ExperiencesManagementClientProps> = 
 
   // Get image URL from Storage
   const getImageUrl = async (key: string | null | undefined) => {
+    if (!key) {
+      return null;
+    }
     return await getImageUrlHelper(key);
   };
 
@@ -424,7 +427,7 @@ const ExperiencesManagementClient: React.FC<ExperiencesManagementClientProps> = 
                               onClick={() => handleDeleteExperience(experience.id)}
                               isDisabled={deleteLoading === experience.id}
                               style={{
-                                color: tokens.colors.font.error
+                                color: mode === 'dark' ? '#EF4444' : '#DC2626'
                               }}
                             >
                               <Flex alignItems="center" gap="small">
@@ -449,9 +452,9 @@ const ExperiencesManagementClient: React.FC<ExperiencesManagementClientProps> = 
                       padding="medium"
                       className="admin-experience-card"
                       style={{
-                        backgroundColor: mode === 'dark' ? tokens.colors.background.secondary : tokens.colors.background.primary,
-                        border: `1px solid ${tokens.colors.border.primary}`,
-                        borderRadius: tokens.radii.medium
+                        backgroundColor: mode === 'dark' ? String(tokens.colors.background.secondary) : String(tokens.colors.background.primary),
+                        border: `1px solid ${String(tokens.colors.border.primary)}`,
+                        borderRadius: String(tokens.radii.medium)
                       }}
                     >
                       <Flex direction="column" gap="small">
@@ -532,7 +535,7 @@ const ExperiencesManagementClient: React.FC<ExperiencesManagementClientProps> = 
                               onClick={() => handleDeleteExperience(experience.id)}
                               isDisabled={deleteLoading === experience.id}
                               style={{
-                                color: tokens.colors.font.error
+                                color: mode === 'dark' ? '#EF4444' : '#DC2626'
                               }}
                             >
                               <Flex alignItems="center" gap="small">

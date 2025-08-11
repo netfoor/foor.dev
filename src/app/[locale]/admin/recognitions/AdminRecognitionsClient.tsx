@@ -104,7 +104,7 @@ const AdminRecognitionsClient: React.FC<AdminRecognitionsClientProps> = ({ local
       const client = generateClient<Schema>();
       
       // 1. Get recognition data to access S3 keys
-      const recognitionResponse = await client.models.Recognitions.get({ id });
+      const recognitionResponse = await client.models.Recognitions.get({ id }, { authMode: 'userPool' });
       const recognitionData = recognitionResponse.data;
       
       if (!recognitionData) {
@@ -117,9 +117,7 @@ const AdminRecognitionsClient: React.FC<AdminRecognitionsClientProps> = ({ local
       }
 
       // 3. Delete DynamoDB record
-      await client.models.Recognitions.delete({
-        id
-      });
+      await client.models.Recognitions.delete({ id }, { authMode: 'userPool' });
       
       console.log(`✅ Recognition ${id} deleted completely`);
       
@@ -159,9 +157,7 @@ const AdminRecognitionsClient: React.FC<AdminRecognitionsClientProps> = ({ local
       }
 
       // 3. Delete DynamoDB record
-      await client.models.SocialPublications.delete({
-        id
-      });
+      await client.models.SocialPublications.delete({ id }, { authMode: 'userPool' });
       
       console.log(`✅ Publication ${id} deleted completely`);
       

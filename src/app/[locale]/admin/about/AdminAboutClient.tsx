@@ -39,6 +39,7 @@ import { useTheme } from '@/hooks/useTheme';
 import { useTranslation, useLocalizedPath } from '@/lib/i18n/client';
 import type { SupportedLocale } from '@/lib/i18n/types';
 import S3Cleanup from '@/lib/utils/s3-cleanup';
+import { auth } from '../../../../../amplify/auth/resource';
 
 // Tipos para Profile y Experience
 type Profile = Schema["Profile"]["type"];
@@ -117,7 +118,7 @@ const AdminAboutClient: React.FC<AdminAboutClientProps> = ({ locale }) => {
       const client = generateClient<Schema>();
       
       // 1. PRIMERO: Obtener los datos de la experiencia para acceder a la clave de S3
-      const experienceResponse = await client.models.Experiences.get({ id: experienceId });
+      const experienceResponse = await client.models.Experiences.get({ id: experienceId }, { authMode: 'userPool' });
       const experienceData = experienceResponse.data;
       
       if (!experienceData) {
@@ -132,8 +133,8 @@ const AdminAboutClient: React.FC<AdminAboutClientProps> = ({ locale }) => {
       // 3. TERCERO: Eliminar el registro de DynamoDB
       await client.models.Experiences.delete({
         id: experienceId
-      });
-      
+      }, { authMode: 'userPool' });
+
       console.log(`✅ Experiencia ${experienceId} eliminada completamente de DynamoDB`);
       
       // 4. CUARTO: Actualizar la lista local
@@ -163,7 +164,7 @@ const AdminAboutClient: React.FC<AdminAboutClientProps> = ({ locale }) => {
       const client = generateClient<Schema>();
       
       // 1. PRIMERO: Obtener los datos del perfil para acceder a la clave de S3
-      const profileResponse = await client.models.Profile.get({ id: profileId });
+      const profileResponse = await client.models.Profile.get({ id: profileId }, { authMode: 'userPool' });
       const profileData = profileResponse.data;
       
       if (!profileData) {
@@ -178,8 +179,8 @@ const AdminAboutClient: React.FC<AdminAboutClientProps> = ({ locale }) => {
       // 3. TERCERO: Eliminar el registro de DynamoDB
       await client.models.Profile.delete({
         id: profileId
-      });
-      
+      }, { authMode: 'userPool' });
+
       console.log(`✅ Perfil ${profileId} eliminado completamente de DynamoDB`);
       
       // 4. CUARTO: Actualizar el estado local

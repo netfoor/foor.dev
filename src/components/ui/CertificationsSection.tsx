@@ -171,6 +171,7 @@ const CertificationsSection: React.FC<CertificationsSectionProps> = ({
           .certification-card {
             max-width: 100% !important;
             min-width: 0 !important;
+            border-radius: 16px !important;
           }
           .custom-search-input, .custom-select-input {
             font-size: 15px !important;

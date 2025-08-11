@@ -98,7 +98,7 @@ const AdminCertificationsClient: React.FC<AdminCertificationsClientProps> = ({ l
       const client = generateClient<Schema>();
       
       // 1. PRIMERO: Obtener los datos de la certificación para acceder a la clave de S3
-      const certificationResponse = await client.models.Certifications.get({ id: certificationId });
+      const certificationResponse = await client.models.Certifications.get({ id: certificationId }, { authMode: 'userPool' });
       const certificationData = certificationResponse.data;
       
       if (!certificationData) {
@@ -113,7 +113,7 @@ const AdminCertificationsClient: React.FC<AdminCertificationsClientProps> = ({ l
       // 3. TERCERO: Eliminar el registro de DynamoDB
       await client.models.Certifications.delete({
         id: certificationId
-      });
+      }, { authMode: 'userPool' });
       
       console.log(`✅ Certificación ${certificationId} eliminada completamente de DynamoDB`);
       

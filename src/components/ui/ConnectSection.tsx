@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { View, Flex, Text, Heading, Button } from '@aws-amplify/ui-react';
-import { Linkedin, Github, Twitter, Mail, ExternalLink, Heart } from 'lucide-react';
+import { Linkedin, Github, Instagram, Mail, ExternalLink, Heart } from 'lucide-react';
 import { generateClient } from 'aws-amplify/data';
 import type { Schema } from '../../../amplify/data/resource';
 import { useTheme } from '@/hooks/useTheme';
@@ -103,15 +103,15 @@ const connectStyles = `
         border-color: var(--amplify-colors-border-focus);
     }
 
-    .connect-button-twitter {
-        border-color: #1DA1F2;
+    .connect-button-instagram {
+        border-color: #E4405F;
     }
 
-    .connect-button-twitter:hover {
+    .connect-button-instagram:hover {
         background: linear-gradient(135deg, 
-            rgba(29, 161, 242, 0.15) 0%, 
-            rgba(29, 161, 242, 0.05) 100%);
-        border-color: #1DA1F2;
+            rgba(228, 64, 95, 0.15) 0%, 
+            rgba(228, 64, 95, 0.05) 100%);
+        border-color: #E4405F;
     }
 
     .connect-button-email {
@@ -214,7 +214,7 @@ const connectStyles = `
 const defaultLinks = {
     linkedin: "https://linkedin.com/in/fortino-romero-mantilla",
     github: "https://github.com/fortino-romero",
-    twitter: "https://twitter.com/fortino_romero",
+    instagram: "https://instagram.com/foor.rm",
     email: "fortino.rom@gmail.com"
 };
 
@@ -294,7 +294,7 @@ const ConnectSection: React.FC<ConnectSectionProps> = ({ className = '' }) => {
         const colors = {
             linkedin: '2px solid #0A66C2',
             github: mode === 'dark' ? '2px solid rgba(148, 163, 184, 0.3)' : '2px solid rgba(203, 213, 225, 0.4)',
-            twitter: '2px solid #1DA1F2',
+            instagram: '2px solid #E4405F',
             email: '2px solid #EA580C',
         };
         return colors[type as keyof typeof colors] || colors.github;
@@ -357,7 +357,7 @@ const ConnectSection: React.FC<ConnectSectionProps> = ({ className = '' }) => {
     const links = {
         linkedin: profile?.linkedinUrl || defaultLinks.linkedin,
         github: profile?.githubUrl || defaultLinks.github,
-        twitter: profile?.twitterUrl || defaultLinks.twitter,
+        instagram: profile?.instagramUrl || defaultLinks.instagram,
         email: profile?.emailContact || defaultLinks.email
     };
 
@@ -465,13 +465,13 @@ const ConnectSection: React.FC<ConnectSectionProps> = ({ className = '' }) => {
               </Text>
             </button>
 
-            {/* Twitter */}
+            {/* Instagram */}
             <button
-              style={getButtonStyles('twitter')}
-              onClick={() => handleLinkClick(links.twitter)}
+              style={getButtonStyles('instagram')}
+              onClick={() => handleLinkClick(links.instagram)}
             >
               <View style={getIconBackgroundStyles()}>
-                <Twitter size={20} color="#1DA1F2" />
+                <Instagram size={20} color="#E4405F" />
               </View>
               <Text 
                 fontSize="1rem"
@@ -479,7 +479,7 @@ const ConnectSection: React.FC<ConnectSectionProps> = ({ className = '' }) => {
                 margin="0"
                 style={{ color: mode === 'dark' ? '#F8FAFC' : '#0F172A' }}
               >
-                {t('about.connect.actions.twitter')}
+                {t('hero.social.instagram')}
               </Text>
               <Text 
                 fontSize="0.875rem"
@@ -487,7 +487,7 @@ const ConnectSection: React.FC<ConnectSectionProps> = ({ className = '' }) => {
                 textAlign="center"
                 style={{ color: mode === 'dark' ? '#94A3B8' : '#64748B' }}
               >
-                Tech thoughts & updates
+                Visual content & updates
               </Text>
             </button>
 

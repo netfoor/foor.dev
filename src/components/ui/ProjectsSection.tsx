@@ -339,10 +339,21 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
                       justifyContent: 'center',
                     }}
                   >
-                    <OptimizedImage 
-                      s3Key={project.photoKey} 
-                      alt={project.title || 'Project image'} 
-                      className="w-full h-full object-cover"
+                    <style>
+                      {`
+                        .certification-image {
+                          width: 100%;
+                          height: 100%;
+                          object-fit: contain;
+                          border-radius: 8px;
+                        }
+                      `}
+                    </style>
+                    <OptimizedImage
+
+                      s3Key={project.photoKey}
+                      alt={project.title || 'Project image'}
+                      className="certification-image"
                     />
                   </View>
                 ) : (

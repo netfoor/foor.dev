@@ -112,7 +112,7 @@ const CreateRecognitionClient: React.FC<CreateRecognitionClientProps> = () => {
         issuerUrl: issuerUrl?.trim() || undefined
       };
       
-      const newRecognition = await client.models.Recognitions.create(createData);
+      const newRecognition = await client.models.Recognitions.create(createData, { authMode: 'userPool' });
       
       if (newRecognition.errors) {
         throw new Error(newRecognition.errors[0].message);
@@ -137,7 +137,7 @@ const CreateRecognitionClient: React.FC<CreateRecognitionClientProps> = () => {
         await client.models.Recognitions.update({
           id: recognitionId,
           photoKey
-        });
+        }, { authMode: 'userPool' });
       }
       
       console.log('✅ Recognition created successfully');

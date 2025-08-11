@@ -84,7 +84,10 @@ const ProfileManagementClient: React.FC<ProfileManagementClientProps> = ({ local
 
   // Get image URL from Storage
   const getImageUrl = async (key: string | null | undefined) => {
-    return await getImageUrlHelper(key);
+    if (key) {
+      return await getImageUrlHelper(key);
+    }
+    return null;
   };
 
   if (loading) {

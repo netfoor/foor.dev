@@ -155,8 +155,8 @@ const CreateProfileClient: React.FC = () => {
         isActive: formData.isActive || true,
       };
 
-      const createResponse = await client.models.Profile.create(profileData);
-      
+      const createResponse = await client.models.Profile.create(profileData, { authMode: 'userPool' });
+
       if (createResponse.errors) {
         throw new Error(createResponse.errors[0].message);
       }
@@ -172,7 +172,7 @@ const CreateProfileClient: React.FC = () => {
         await client.models.Profile.update({
           id: profileId,
           profilePhotoKey
-        });
+        }, { authMode: 'userPool' });
       }
 
       console.log('✅ Perfil creado exitosamente:', createResponse.data);

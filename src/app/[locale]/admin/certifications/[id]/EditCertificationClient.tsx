@@ -97,7 +97,7 @@ const EditCertificationClient: React.FC<EditCertificationClientProps> = ({
         const client = generateClient<Schema>();
         const response = await client.models.Certifications.get({ 
           id: certificationId
-        });
+        }, { authMode: 'userPool' });
         
         if (!response.data) {
           throw new Error(t('certifications.certification_not_found'));
