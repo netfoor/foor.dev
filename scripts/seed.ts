@@ -35,55 +35,55 @@ async function seedDatabase() {
 
     // Seed Certifications
     for (const cert of certifications) {
-      await client.models.Certifications.create(cert);
+      await client.models.Certifications.create(cert, { authMode: 'userPool' });
     }
     console.log('Certifications seeded.');
 
     // Seed Projects
     for (const project of projects) {
-      await client.models.Projects.create(project);
+      await client.models.Projects.create(project, { authMode: 'userPool' });
     }
     console.log('Projects seeded.');
 
     // Seed Recognitions
     for (const recognition of recognitions) {
-      await client.models.Recognitions.create(recognition);
+      await client.models.Recognitions.create(recognition, { authMode: 'userPool' });
     }
     console.log('Recognitions seeded.');
 
     // Seed Education
     for (const edu of education) {
-      await client.models.Education.create(edu);
+      await client.models.Education.create(edu, { authMode: 'userPool' });
     }
     console.log('Education seeded.');
 
     // Seed Languages
     for (const lang of languages) {
-      await client.models.Languages.create(lang);
+      await client.models.Languages.create(lang, { authMode: 'userPool' });
     }
     console.log('Languages seeded.');
 
     // Seed Experiences
     for (const exp of experiences) {
-      await client.models.Experiences.create(exp);
+      await client.models.Experiences.create(exp, { authMode: 'userPool' });
     }
     console.log('Experiences seeded.');
 
     // Seed SocialPublications
     for (const pub of socialPublications) {
-      await client.models.SocialPublications.create(pub);
+      await client.models.SocialPublications.create(pub, { authMode: 'userPool' });
     }
     console.log('SocialPublications seeded.');
 
     // Seed Profile
     for (const profile of profiles) {
-      await client.models.Profile.create(profile);
+      await client.models.Profile.create(profile, { authMode: 'userPool' });
     }
     console.log('Profile seeded.');
 
     // Seed Skills
     for (const skill of skills) {
-      await client.models.Skills.create(skill);
+      await client.models.Skills.create(skill, { authMode: 'userPool' });
     }
     console.log('Skills seeded.');
 
