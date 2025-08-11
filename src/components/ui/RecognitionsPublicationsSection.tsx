@@ -1,12 +1,11 @@
-'use client';
-
+"use client";
 import React, { useState, useEffect } from 'react';
-import { View, Flex, Text, Card, Button, Badge, Loader, Alert, Heading } from '@aws-amplify/ui-react';
-import { 
+import { View, Flex, Text, Card, Button, Badge, Loader, Alert } from '@aws-amplify/ui-react';
+import {
   Award,
-  ExternalLink, 
-  Calendar, 
-  Share2, 
+  ExternalLink,
+  Calendar,
+  Share2,
   Youtube,
   Twitter,
   Github,
@@ -18,8 +17,8 @@ import { useTheme } from '@/hooks/useTheme';
 import { useTranslation } from '@/lib/i18n/client';
 import { useAuth } from '@/context/auth-context';
 import { OptimizedImage } from '@/components/optimitation/OptimizedImage';
-import { 
-  loadRecognitionsFromAmplify, 
+import {
+  loadRecognitionsFromAmplify,
   loadPublicationsFromAmplify,
   type Recognition,
   type Publication
@@ -159,6 +158,17 @@ const RecognitionsPublicationsSection: React.FC<RecognitionsPublicationsProps> =
         }}
       />
       
+      {/* Responsive tab button style for mobile */}
+      <style jsx global>{`
+        @media (max-width: 600px) {
+          .tab-toggle-btn {
+            min-width: 90px !important;
+            font-size: 14px !important;
+            padding: 10px 10px !important;
+            border-radius: 12px !important;
+          }
+        }
+      `}</style>
       <Flex 
         direction="column" 
         maxWidth="1200px" 
@@ -235,6 +245,7 @@ const RecognitionsPublicationsSection: React.FC<RecognitionsPublicationsProps> =
           }}
         >
           <button
+            className="tab-toggle-btn"
             onClick={() => setActiveTab('recognitions')}
             style={{
               padding: '12px 24px',
@@ -284,6 +295,7 @@ const RecognitionsPublicationsSection: React.FC<RecognitionsPublicationsProps> =
             {t('recognitions.tabs.recognitions') || 'Recognitions'}
           </button>
           <button
+            className="tab-toggle-btn"
             onClick={() => setActiveTab('publications')}
             style={{
               padding: '12px 24px',

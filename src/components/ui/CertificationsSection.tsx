@@ -167,6 +167,16 @@ const CertificationsSection: React.FC<CertificationsSectionProps> = ({
           object-fit: contain;
           border-radius: 8px;
         }
+        @media (max-width: 600px) {
+          .certification-card {
+            max-width: 100% !important;
+            min-width: 0 !important;
+          }
+          .custom-search-input, .custom-select-input {
+            font-size: 15px !important;
+            padding: 12px 38px 12px 38px !important;
+          }
+        }
       `}</style>
       <View className={`${className} certifications-section`} padding="4rem 2rem">
         <Flex direction="column" gap="xl">
@@ -213,16 +223,17 @@ const CertificationsSection: React.FC<CertificationsSectionProps> = ({
           </Text>
         </Flex>
 
-        {/* Filters Section - Solo mostrar si showAll es true */}
+        {/* Filters Section - Responsive for mobile */}
         {showAll && (
           <View style={containerStyles} padding="2rem" marginBottom="3rem" marginLeft="2rem" marginRight="2rem">
             <Flex 
               direction={{ base: 'column', medium: 'row' }} 
               gap="1.5rem" 
-              alignItems="center"
+              alignItems="stretch"
               justifyContent="center"
+              width="100%"
             >
-              <Flex direction="column" gap="0.5rem">
+              <Flex direction="column" gap="0.5rem" style={{ flex: 1, minWidth: 0 }}>
                 <Text 
                   fontSize="small" 
                   fontWeight="600"
@@ -232,7 +243,7 @@ const CertificationsSection: React.FC<CertificationsSectionProps> = ({
                 </Text>
                 <View 
                   position="relative" 
-                  width="320px"
+                  width={{ base: '100%', medium: '320px' }}
                   style={{
                     background: mode === 'dark' 
                       ? 'linear-gradient(135deg, rgba(51, 65, 85, 0.95) 0%, rgba(71, 85, 105, 0.85) 100%)'
@@ -248,6 +259,8 @@ const CertificationsSection: React.FC<CertificationsSectionProps> = ({
                       : '0 8px 32px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.05)',
                     transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                     overflow: 'hidden',
+                    width: '100%',
+                    minWidth: 0,
                   }}
                 >
                   <View 
@@ -264,7 +277,7 @@ const CertificationsSection: React.FC<CertificationsSectionProps> = ({
                   </View>
                   <input
                     type="text"
-                    placeholder="Search by title, issuer, or skills..."
+                    placeholder="   Search by..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="custom-search-input"
@@ -278,6 +291,7 @@ const CertificationsSection: React.FC<CertificationsSectionProps> = ({
                       fontWeight: '500',
                       color: mode === 'dark' ? '#E2E8F0' : '#1E293B',
                       fontFamily: 'inherit',
+                      boxSizing: 'border-box',
                     }}
                   />
                   {searchTerm && (
@@ -310,7 +324,7 @@ const CertificationsSection: React.FC<CertificationsSectionProps> = ({
                   )}
                 </View>
               </Flex>
-              <Flex direction="column" gap="0.5rem">
+              <Flex direction="column" gap="0.5rem" style={{ flex: 1, minWidth: 0 }}>
                 <Text 
                   fontSize="small" 
                   fontWeight="600"
@@ -320,7 +334,7 @@ const CertificationsSection: React.FC<CertificationsSectionProps> = ({
                 </Text>
                 <View 
                   position="relative" 
-                  width="240px"
+                  width={{ base: '100%', medium: '240px' }}
                   className="custom-select-container"
                   style={{
                     background: mode === 'dark' 
@@ -337,6 +351,8 @@ const CertificationsSection: React.FC<CertificationsSectionProps> = ({
                       : '0 8px 32px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.05)',
                     transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                     overflow: 'hidden',
+                    width: '100%',
+                    minWidth: 0,
                   }}
                 >
                   <View 
@@ -369,6 +385,7 @@ const CertificationsSection: React.FC<CertificationsSectionProps> = ({
                       appearance: 'none',
                       WebkitAppearance: 'none',
                       MozAppearance: 'none',
+                      boxSizing: 'border-box',
                     }}
                   >
                     <option value="all">{t('certifications.allCategories')}</option>
