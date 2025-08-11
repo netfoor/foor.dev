@@ -143,7 +143,8 @@
       "issuer": "Issued by",
       "issueDate": "Issued",
       "expirationDate": "Expires",
-      "skills": "Skills Validated"
+      "skills": "Skills Validated",
+      "issuedBy": "Issued by {{issuer}}"
     },
     "categories": {
       "Technology": "Technology",
@@ -217,7 +218,8 @@
     },
     "actions": {
       "viewCredential": "View Credential",
-      "viewPublication": "View Publication"
+      "viewPublication": "View Publication",
+      "viewIssuer": "View Issuer"
     },
     "noRecognitions": "No recognitions available.",
     "noPublications": "No publications available.",

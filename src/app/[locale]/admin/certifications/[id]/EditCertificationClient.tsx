@@ -253,6 +253,11 @@ const EditCertificationClient: React.FC<EditCertificationClientProps> = ({
         photoKey = await uploadImage(newCertificateImage);
       }
 
+      // Normalizar clave con prefijo legacy 'public/' antes de guardar
+      const normalizedPhotoKey = photoKey && photoKey.startsWith('public/')
+        ? photoKey.slice(7)
+        : photoKey;
+
       // Actualizar certificación
       const updateData = {
         id: certification.id,
@@ -263,13 +268,13 @@ const EditCertificationClient: React.FC<EditCertificationClientProps> = ({
         credentialId: formData.credentialId?.trim() || null,
         credentialUrl: formData.credentialUrl?.trim() || null,
         content: formData.description?.trim() || null,
-        photoKey,
+        photoKey: normalizedPhotoKey,
         skills: formData.skills,
         category: formData.category as "Technology" | "Business" | "Arts" | "Health" | "Languages",
         slug: formData.slug || generateSlug(formData.title),
       };
 
-      const response = await client.models.Certifications.update(updateData);
+      const response = await client.models.Certifications.update(updateData, { authMode: 'userPool' });
       
       if (response.errors) {
         throw new Error(response.errors[0].message);

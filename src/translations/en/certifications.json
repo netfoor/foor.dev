@@ -19,7 +19,7 @@
     "Languages": "Languages"
   },
   "labels": {
-    "issuedBy": "Issued by {{issuer}}",
+    "issuedBy": "Issued by",
     "skills": "Skills"
   },
   "actions": {

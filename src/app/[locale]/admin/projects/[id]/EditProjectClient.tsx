@@ -208,9 +208,6 @@ const editProjectStyles = `
   }
 `;
 
-// Generar el cliente de Amplify
-const client = generateClient<Schema>();
-
 // Tipos para el proyecto
 type Project = Schema["Projects"]["type"];
 
@@ -284,13 +281,20 @@ function EditProjectClient({ locale, projectId }: EditProjectClientProps): React
   const [success, setSuccess] = useState<string>('');
   const [skillInput, setSkillInput] = useState('');
   const [tagInput, setTagInput] = useState('');
+  const [mounted, setMounted] = useState(false);
+
+  // Efecto para controlar la hidratación
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Cargar proyecto existente
   const loadProject = async () => {
     try {
       setInitialLoading(true);
-      const response = await client.models.Projects.get({ id: projectId });
-      
+      const client = generateClient<Schema>();
+      const response = await client.models.Projects.get({ id: projectId }, { authMode: 'userPool' });
+
       if (response.errors || !response.data) {
         setError(t('projects.error_loading_project'));
         return;
@@ -321,7 +325,10 @@ function EditProjectClient({ locale, projectId }: EditProjectClientProps): React
       // Cargar URLs de imágenes existentes
       if (projectData.photoKey) {
         try {
-          const url = await getUrl({ path: projectData.photoKey });
+          const normalizedPath = projectData.photoKey.startsWith('public/')
+            ? projectData.photoKey.slice(7)
+            : projectData.photoKey;
+          const url = await getUrl({ path: normalizedPath });
           setCurrentMainImageUrl(url.url.toString());
         } catch (err) {
           console.error('Error loading main image:', err);
@@ -333,7 +340,8 @@ function EditProjectClient({ locale, projectId }: EditProjectClientProps): React
           const urlPromises = projectData.galleryKeys
             .filter((key): key is string => !!key)
             .map(async (key) => {
-              const url = await getUrl({ path: key });
+              const normalizedKey = key.startsWith('public/') ? key.slice(7) : key;
+              const url = await getUrl({ path: normalizedKey });
               return url.url.toString();
             });
           const urls = await Promise.all(urlPromises);
@@ -498,11 +506,16 @@ function EditProjectClient({ locale, projectId }: EditProjectClientProps): React
       // Eliminar archivos marcados para borrar usando utilidad S3
       for (const keyToDelete of imagesToDelete) {
         console.log('Attempting to delete file:', keyToDelete);
-        const success = await S3Cleanup.deleteSingleFile(keyToDelete);
-        if (!success) {
-          console.warn(`⚠️ No se pudo eliminar el archivo: ${keyToDelete}`);
-        } else {
-          console.log(`✅ Archivo eliminado: ${keyToDelete}`);
+        try {
+          const success = await S3Cleanup.deleteSingleFile(keyToDelete);
+          if (!success) {
+            console.warn(`⚠️ No se pudo eliminar el archivo: ${keyToDelete}`);
+          } else {
+            console.log(`✅ Archivo eliminado: ${keyToDelete}`);
+          }
+        } catch (error) {
+          console.warn(`⚠️ Error de permisos eliminando archivo: ${keyToDelete}`, error);
+          // Continue with the update even if deletion fails
         }
       }
 
@@ -583,6 +596,7 @@ function EditProjectClient({ locale, projectId }: EditProjectClientProps): React
       });
 
       // Actualizar el proyecto en la base de datos
+      const client = generateClient<Schema>();
       const result = await client.models.Projects.update({
         id: projectId,
         title: formData.title,
@@ -602,7 +616,8 @@ function EditProjectClient({ locale, projectId }: EditProjectClientProps): React
         slug: formData.slug,
         metaDescription: formData.metaDescription || undefined,
         tags: formData.tags
-      });
+      }, { authMode: 'userPool' }
+    );
 
       if (result.errors) {
         throw new Error(result.errors[0].message);
@@ -623,8 +638,9 @@ function EditProjectClient({ locale, projectId }: EditProjectClientProps): React
   };
 
   useEffect(() => {
+    if (!mounted || typeof window === 'undefined') return;
     loadProject();
-  }, [projectId]);
+  }, [projectId, mounted]);
   const isDark = mode === 'dark';
   
   // Definir variables CSS para el tema con mejor contraste

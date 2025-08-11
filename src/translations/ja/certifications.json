@@ -19,7 +19,7 @@
     "Languages": "言語"
   },
   "labels": {
-    "issuedBy": "発行者 {{issuer}}",
+    "issuedBy": "発行者",
     "skills": "スキル"
   },
   "actions": {

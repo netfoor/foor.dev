@@ -143,7 +143,8 @@
       "issuer": "発行者",
       "issueDate": "発行日",
       "expirationDate": "有効期限",
-      "skills": "検証されたスキル"
+      "skills": "検証されたスキル",
+      "issuedBy": "{{issuer}}が発行"
     },
     "categories": {
       "Technology": "テクノロジー",
@@ -217,7 +218,8 @@
     },
     "actions": {
       "viewCredential": "資格を見る",
-      "viewPublication": "出版物を見る"
+      "viewPublication": "出版物を見る",
+      "viewIssuer": "発行者を見る"
     },
     "noRecognitions": "表彰はありません。",
     "noPublications": "出版物はありません。",

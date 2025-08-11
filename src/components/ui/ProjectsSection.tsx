@@ -163,7 +163,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
   return (
     <View
       as="section"
-      padding="6rem 4rem"
+      padding={{ base: '4rem 1rem', small: '5rem 2rem', medium: '6rem 4rem' }}
       className={`${className}`}
       style={{
         minHeight: '70vh',
@@ -233,7 +233,11 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
         </Flex>
 
         {/* Category Filter */}
-        <View style={containerStyles} padding="2rem" marginBottom="3rem">
+        <View 
+          style={containerStyles} 
+          padding={{ base: '1.5rem 1rem', small: '2rem' }} 
+          marginBottom="3rem"
+        >
           <Flex
             direction={{ base: 'column', medium: 'row' }}
             gap="1rem"
@@ -294,16 +298,19 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
           <Flex
             direction="row"
             wrap="wrap"
-            gap="2rem"
+            gap={{ base: '1.5rem', medium: '2rem' }}
             justifyContent="center"
+            padding={{ base: '0 0.5rem', small: '0' }}
           >            {filteredProjects.map((project) => (
               <Card
                 key={project.id}
                 onClick={(event) => handleCardClick(project, event)}
+                width="100%"
+                maxWidth={{ base: '90%', small: '95%', medium: '400px' }}
+                minWidth={{ base: '280px', small: '320px' }}
+                margin={{ base: '0 auto', medium: '0' }}
                 style={{
                   ...cardStyles,
-                  width: '100%',
-                  maxWidth: '400px',
                   overflow: 'hidden',
                   cursor: 'pointer',
                   transition: 'all 0.3s ease',
@@ -356,7 +363,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
                   </View>
                 )}
 
-                <View padding="1.5rem">
+                <View padding={{ base: '1.25rem', small: '1.5rem' }}>
                   {/* Category Badge */}
                   {project.categories && (
                     <Badge

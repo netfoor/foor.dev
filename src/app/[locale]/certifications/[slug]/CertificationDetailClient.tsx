@@ -403,12 +403,9 @@ function CertificationDetailClient({ locale, slug }: CertificationDetailClientPr
         <div className="certification-content">
           <HeaderControls />
           
-          <View 
-            style={{
-              padding: '6rem 4rem',
-              maxWidth: '1200px',
-              margin: '0 auto'
-            }}
+          <View
+            padding={{ base: '2rem 1rem', medium: '6rem 4rem' }}
+            style={{ maxWidth: '1200px', margin: '3rem auto' }}
           >
             {/* Botón de regreso */}
             <Button

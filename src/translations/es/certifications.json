@@ -19,7 +19,7 @@
     "Languages": "Idiomas"
   },
   "labels": {
-    "issuedBy": "Emitido por {{issuer}}",
+    "issuedBy": "Emitido por",
     "skills": "Habilidades"
   },
   "actions": {

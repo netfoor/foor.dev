@@ -143,7 +143,8 @@
       "issuer": "Emitido por",
       "issueDate": "Emitido",
       "expirationDate": "Expira",
-      "skills": "Habilidades Validadas"
+      "skills": "Habilidades Validadas",
+      "issuedBy": "Emitido por {{issuer}}"
     },
     "categories": {
       "Technology": "Tecnología",
@@ -217,7 +218,8 @@
     },
     "actions": {
       "viewCredential": "Ver Credencial",
-      "viewPublication": "Ver Publicación"
+      "viewPublication": "Ver Publicación",
+      "viewIssuer": "Ver Emisor"
     },
     "noRecognitions": "No hay reconocimientos disponibles.",
     "noPublications": "No hay publicaciones disponibles.",
