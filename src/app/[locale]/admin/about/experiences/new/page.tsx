@@ -44,7 +44,7 @@ export default async function CreateExperiencePage({ params }: CreateExperienceP
 
   return (
     <main className="flex-1 p-6">
-      <CreateExperienceClient locale={locale} />
+  <CreateExperienceClient />
     </main>
   );
 }

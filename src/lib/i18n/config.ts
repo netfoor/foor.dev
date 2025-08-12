@@ -216,7 +216,8 @@ export const I18N_DEBUG = {
   enabled: process.env.NODE_ENV === 'development',
   logMissingKeys: false, // Desactivado temporalmente para reducir ruido
   logLocaleDetection: true,
-  logTranslationLoading: true,
+  // Desactivar para evitar spam en consola durante el desarrollo
+  logTranslationLoading: false,
 };
 
 /**

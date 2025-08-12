@@ -328,7 +328,7 @@ const EditPublicationClient: React.FC<EditPublicationClientProps> = ({ locale, p
       setLoading(true);
       setError(null);
       
-      const client = generateClient<Schema>();
+      const client = generateClient<Schema>({ authMode: 'userPool' });
       let newPhotoKey = photoKey;
       
       // Upload new photo to S3 if provided (with metadata for optimization)
@@ -376,11 +376,11 @@ const EditPublicationClient: React.FC<EditPublicationClientProps> = ({ locale, p
       
       // Enhanced error reporting
       if (err instanceof Error) {
-        console.error('❌ Error details:', {
+        console.error('❌ Error details:', JSON.stringify({
           message: err.message,
           stack: err.stack,
           formData: { title, description, source, type, publicationDate, publicationUrl }
-        });
+        }, null, 2));
         
         // Check for specific error types
         if (err.message.includes('access')) {

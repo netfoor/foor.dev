@@ -44,7 +44,7 @@ export default async function CreateProfilePage({ params }: CreateProfilePagePro
 
   return (
     <main className="flex-1 p-6">
-      <CreateProfileClient locale={locale} />
+  <CreateProfileClient />
     </main>
   );
 }

@@ -13,14 +13,15 @@ import {
   Github,
   Linkedin,
   BookOpen,
-  FileText
+  FileText,
+  Image as ImageIcon
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { getUrl } from 'aws-amplify/storage';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation, useLocalizedPath } from '@/lib/i18n/client';
 import { useAuth } from '@/context/auth-context';
+import { OptimizedImage } from '@/components/optimitation/OptimizedImage';
 import { 
   loadRecognitionsFromAmplify, 
   loadPublicationsFromAmplify,
@@ -37,7 +38,6 @@ const FeaturedRecognitionsPublications: React.FC<FeaturedRecognitionsPublication
 }) => {
   const [recognitions, setRecognitions] = useState<Recognition[]>([]);
   const [publications, setPublications] = useState<Publication[]>([]);
-  const [images, setImages] = useState<{ [key: string]: string }>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
@@ -49,21 +49,7 @@ const FeaturedRecognitionsPublications: React.FC<FeaturedRecognitionsPublication
   const router = useRouter();
   const { isAuthenticated } = useAuth();
 
-  // Get image URL from S3
-  const getImageUrl = async (photoKey: string | null | undefined): Promise<string | null> => {
-    if (!photoKey) return null;
-    
-    try {
-      // Normalize path - remove 'public/' if exists (for Gen 1 compatibility)
-      const normalizedPath = photoKey.startsWith('public/') ? photoKey.slice(7) : photoKey;
-      
-      const url = await getUrl({ path: normalizedPath });
-      return url.url.toString();
-    } catch (err) {
-      console.error('Error getting image URL for key:', photoKey, err);
-      return null;
-    }
-  };
+
 
   // Handle mounting to avoid hydration issues
   useEffect(() => {
@@ -82,38 +68,11 @@ const FeaturedRecognitionsPublications: React.FC<FeaturedRecognitionsPublication
         setLoading(true);
         setError(null);
         
-        // Load recognitions (limit to 3 for featured section)
         const recognitionsData = await loadRecognitionsFromAmplify(3, isAuthenticated);
         setRecognitions(recognitionsData);
         
-        // Load publications (limit to 3 for featured section)
         const publicationsData = await loadPublicationsFromAmplify(3, isAuthenticated);
         setPublications(publicationsData);
-        
-        // Load images for both types
-        const imageUrls: { [key: string]: string } = {};
-        
-        // Process recognition images
-        for (const recognition of recognitionsData) {
-          if (recognition.photoKey) {
-            const imageUrl = await getImageUrl(recognition.photoKey);
-            if (imageUrl) {
-              imageUrls[recognition.id] = imageUrl;
-            }
-          }
-        }
-        
-        // Process publication images
-        for (const publication of publicationsData) {
-          if (publication.photoKey) {
-            const imageUrl = await getImageUrl(publication.photoKey);
-            if (imageUrl) {
-              imageUrls[publication.id] = imageUrl;
-            }
-          }
-        }
-        
-        setImages(imageUrls);
       } catch (err) {
         console.error('Error fetching data:', err);
         setError('Failed to load data');
@@ -196,17 +155,24 @@ const FeaturedRecognitionsPublications: React.FC<FeaturedRecognitionsPublication
         position: 'relative',
       }}
     >
-      {/* Background pattern */}
-      <div 
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          pointerEvents: 'none',
-        }}
-      />
+      <style jsx global>{`
+        .recognition-image-container, .publication-image-container {
+          width: 100%;
+          height: 180px;
+          position: relative;
+          overflow: hidden;
+        }
+        .recognition-image, .publication-image {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          transition: transform 0.5s ease;
+        }
+        .recognition-card:hover .recognition-image,
+        .publication-card:hover .publication-image {
+          transform: scale(1.05);
+        }
+      `}</style>
       
       <Flex 
         direction="column" 
@@ -300,42 +266,24 @@ const FeaturedRecognitionsPublications: React.FC<FeaturedRecognitionsPublication
                   padding="0"
                   borderRadius="12px"
                   variation="elevated"
+                  className="recognition-card hover:shadow-lg"
                   style={{
                     backgroundColor: mode === 'dark' ? 'rgba(30, 41, 59, 0.6)' : 'white',
                     border: mode === 'dark' ? '1px solid rgba(51, 65, 85, 0.5)' : '1px solid rgba(226, 232, 240, 0.8)',
                     overflow: 'hidden',
                     transition: 'transform 0.3s, box-shadow 0.3s',
                   }}
-                  className="hover:shadow-lg"
                 >
                   <Flex 
                     direction={{ base: 'column', medium: 'row' }}
                     alignItems="stretch"
                   >
-                    {/* Recognition Image */}
-                    {recognition.photoKey && images[recognition.id] ? (
-                      <View
-                        style={{
-                          width: '100%',
-                          minHeight: '180px',
-                          backgroundColor: mode === 'dark' ? 'rgba(15, 23, 42, 0.5)' : 'rgba(241, 245, 249, 0.5)',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          overflow: 'hidden',
-                        }}
-                      >
-                        <img
-                          src={images[recognition.id]}
+                    {recognition.photoKey ? (
+                      <View className="recognition-image-container">
+                        <OptimizedImage
+                          s3Key={recognition.photoKey}
                           alt={recognition.title || 'Recognition'}
-                          style={{
-                            width: '100%',
-                            height: '100%',
-                            objectFit: 'cover',
-                          }}
-                          onError={(e) => {
-                            (e.target as HTMLImageElement).style.display = 'none';
-                          }}
+                          className="recognition-image"
                         />
                       </View>
                     ) : (
@@ -479,42 +427,24 @@ const FeaturedRecognitionsPublications: React.FC<FeaturedRecognitionsPublication
                   padding="0"
                   borderRadius="12px"
                   variation="elevated"
+                  className="publication-card hover:shadow-lg"
                   style={{
                     backgroundColor: mode === 'dark' ? 'rgba(30, 41, 59, 0.6)' : 'white',
                     border: mode === 'dark' ? '1px solid rgba(51, 65, 85, 0.5)' : '1px solid rgba(226, 232, 240, 0.8)',
                     overflow: 'hidden',
                     transition: 'transform 0.3s, box-shadow 0.3s',
                   }}
-                  className="hover:shadow-lg"
                 >
                   <Flex 
                     direction={{ base: 'column', medium: 'row' }}
                     alignItems="stretch"
                   >
-                    {/* Publication Image */}
-                    {publication.photoKey && images[publication.id] ? (
-                      <View
-                        width={{ base: '100%', medium: '200px' }}
-                        minHeight={{ base: '180px', medium: 'auto' }}
-                        style={{
-                          backgroundColor: mode === 'dark' ? 'rgba(15, 23, 42, 0.5)' : 'rgba(241, 245, 249, 0.5)',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          overflow: 'hidden',
-                        }}
-                      >
-                        <img
-                          src={images[publication.id]}
+                    {publication.photoKey ? (
+                      <View className="publication-image-container" style={{ width: '100%' }}>
+                        <OptimizedImage
+                          s3Key={publication.photoKey}
                           alt={publication.title || 'Publication'}
-                          style={{
-                            width: '100%',
-                            height: '100%',
-                            objectFit: 'cover',
-                          }}
-                          onError={(e) => {
-                            (e.target as HTMLImageElement).style.display = 'none';
-                          }}
+                          className="publication-image"
                         />
                       </View>
                     ) : (

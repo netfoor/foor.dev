@@ -14,8 +14,16 @@ export const auth = defineAuth({
           familyName: 'family_name'
         },
       },
-      callbackUrls: ['http://localhost:3000/auth/callback'],
-      logoutUrls: ['http://localhost:3000/'],
+      callbackUrls: [
+        'http://localhost:3000/auth/callback',
+        'https://foor.dev/auth/callback',
+        'https://www.foor.dev/auth/callback'
+      ],
+      logoutUrls: [
+        'http://localhost:3000/',
+        'https://foor.dev/',
+        'https://www.foor.dev/'
+      ],
     }
   },
   userAttributes: {

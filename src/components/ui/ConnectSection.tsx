@@ -354,12 +354,12 @@ const ConnectSection: React.FC<ConnectSectionProps> = ({ className = '' }) => {
     }
 
     // Usar enlaces del perfil o predeterminados
-    const links = {
-        linkedin: profile?.linkedinUrl || defaultLinks.linkedin,
-        github: profile?.githubUrl || defaultLinks.github,
-        instagram: profile?.instagramUrl || defaultLinks.instagram,
-        email: profile?.emailContact || defaultLinks.email
-    };
+  const links = {
+    linkedin: profile?.linkedinUrl || defaultLinks.linkedin,
+    github: profile?.githubUrl || defaultLinks.github,
+    instagram: profile?.twitterUrl || defaultLinks.instagram,
+    email: profile?.emailContact || defaultLinks.email
+  };
 
     const handleEmailClick = () => {
         window.location.href = `mailto:${links.email}`;
