@@ -1,242 +1,192 @@
 # Foor.dev - AWS Cloud Engineer Portfolio
 
-A modern, SEO-optimized portfolio website for AWS Cloud Engineer services, built with Next.js, AWS Amplify, and TypeScript.
+A modern, SEO-optimized portfolio built with Next.js, AWS Amplify (Gen 2), and TypeScript. Includes a secure Admin Panel, multilingual content, and AWS-native integrations.
 
 ## 🚀 About
 
 Professional portfolio showcasing AWS Cloud Engineering services, specializing in:
 
-- **Serverless Architecture** - AWS Lambda, API Gateway, DynamoDB
-- **DevOps Automation** - CI/CD pipelines, Infrastructure as Code
-- **Cloud Infrastructure** - AWS architecture design and optimization
-- **Cloud Migration** - Legacy system modernization and cloud adoption
+- Serverless Architecture (Lambda, API Gateway, DynamoDB)
+- DevOps Automation (CI/CD, IaC)
+- Cloud Infrastructure (design, cost, performance)
+- Cloud Migration (modernization and adoption)
 
 ## 🛠️ Tech Stack
 
-- **Framework**: Next.js 15 with TypeScript
-- **UI Library**: AWS Amplify UI React
-- **Styling**: Tailwind CSS + AWS Amplify UI
-- **Authentication**: AWS Amplify Auth
-- **Internationalization**: next-i18next (English, Spanish, Japanese)
-- **Theme**: Dynamic light/dark mode with system preference detection
-- **SEO**: Optimized metadata, Schema.org markup, multilingual support
+- Framework: Next.js 15 + TypeScript (App Router)
+- AWS: Amplify Gen 2 (Auth, Data, Hosting), Cognito User Pools, S3
+- UI: AWS Amplify UI React + custom CSS
+- Auth: Amplify Auth with Cognito Groups, Next.js middleware guard
+- i18n: Custom library in `src/lib/i18n` with server/client helpers and JSON translations (`en`, `es`, `ja`)
+- SEO: Dynamic metadata per locale, Schema.org, multi-language routing
 
 ## 🌟 Features
 
-### Core Features
-- ✅ **Multilingual SEO** - English, Spanish, Japanese
-- ✅ **Dynamic Theming** - Light/dark mode with smooth transitions
-- ✅ **Responsive Design** - Mobile-first approach
-- ✅ **Performance Optimized** - Core Web Vitals optimized
-- ✅ **Accessibility** - WCAG compliant components
+### Core
+- ✅ Multilingual site (English, Spanish, Japanese)
+- ✅ Dynamic theming (light/dark + system)
+- ✅ Responsive and accessible UI
+- ✅ Strong SEO and metadata per locale
 
-### AWS Integration
-- ✅ **Amplify Auth** - Secure user authentication
-- ✅ **Amplify UI** - Consistent design system
-- ✅ **Cloud-native** - Built for AWS deployment
+### Admin Panel (secured)
+- ✅ CRUD for Projects, Certifications, Education, Recognitions, Skills, Profile
+- ✅ File uploads to S3, image gallery support
+- ✅ Full deletion flow: DynamoDB + S3 cleanup (see `src/lib/utils/s3-cleanup.ts` and docs)
+- ✅ Token verification via middleware and client token sync
 
-### SEO Optimization
-- ✅ **Schema.org Markup** - Rich snippets for better search visibility
-- ✅ **Meta Tags** - Dynamic, language-specific metadata
-- ✅ **Sitemap Generation** - Automated multilingual sitemaps
-- ✅ **Canonical URLs** - Proper URL structure for SEO
+### AWS Integrations
+- ✅ Amplify Data models with Cognito Groups authorization
+- ✅ Middleware-based auth (`src/lib/amplify/middleware-auth.ts`)
+- ✅ Image optimization function (`amplify/functions/image-optimitation`)
 
-## 🎯 Target Keywords
+## 📱 Routes
 
-### Primary
-- AWS Cloud Engineer
-- Serverless Architecture
-- DevOps Automation
-- Cloud Infrastructure
+Localized routes under `/{locale}` (en, es, ja):
 
-### Secondary
-- AWS Lambda
-- Infrastructure as Code
-- Cloud Migration
-- AWS Solutions Architect
-
-## 📱 Pages & Components
-
-### Pages
-- **Home** (`/`) - Hero section with professional introduction
-- **About** (`/about`) - Detailed background and expertise
-- **Services** (`/services`) - AWS cloud engineering services
-- **Portfolio** (`/portfolio`) - Case studies and projects
-- **Contact** (`/contact`) - Get in touch form
-
-### Key Components
-- **Hero** - SEO-optimized introduction with Schema markup
-- **NavBar** - Multilingual navigation with theme toggle
-- **ThemeToggle** - Dynamic light/dark mode switching
-- **LanguageSelector** - Multi-language support
-- **HeaderControls** - Combined navigation controls
+- Public
+  - `/{locale}` – Home
+  - `/{locale}/projects` and `/{locale}/projects/[slug]`
+  - `/{locale}/certifications`, `/{locale}/recognitions`, `/{locale}/skills`, `/{locale}/about`
+  - `/{locale}/login`
+- Admin (requires Cognito Admin group)
+  - `/{locale}/admin` dashboard
+  - `/{locale}/admin/projects`, `/{locale}/admin/certifications`, `/{locale}/admin/education`, `/{locale}/admin/recognitions`, `/{locale}/admin/skills`, `/{locale}/admin/about/profile`
 
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js 18+ 
-- npm or yarn
-- AWS Amplify CLI (optional, for deployment)
+- Node.js 18+
+- npm
+- An Amplify Gen 2 app connected to this repo (for production)
 
-### Installation
+### Install & Run
 
 ```bash
-# Clone the repository
+# Clone
 git clone https://github.com/netfoor/foor.dev.git
 cd foor.dev
 
-# Install dependencies
+# Install deps
 npm install
 
-# Start development server
+# Dev server
 npm run dev
 ```
 
-### Environment Setup
+### Environment
 
-Create a `.env.local` file:
-
-```env
-# AWS Amplify Configuration
-NEXT_PUBLIC_AMPLIFY_APP_ID=your_app_id
-NEXT_PUBLIC_AMPLIFY_BRANCH=main
-
-# SEO Configuration
-NEXT_PUBLIC_BASE_URL=https://foor.dev
-NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION=your_verification_code
-```
+- Amplify Gen 2 injects config via `amplify_outputs.json` (committed). A `.env.local` is optional.
+- Optional vars:
+  - `NEXT_PUBLIC_BASE_URL=https://foor.dev`
+  - `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION=...`
 
 ## 📁 Project Structure
 
 ```
 src/
-├── app/                    # Next.js 13+ App Router
-│   ├── [locale]/          # Internationalized routes
-│   ├── globals.css        # Global styles
-│   └── layout.tsx         # Root layout
-├── components/            # Reusable components
-│   ├── navigation/        # Navigation components
-│   ├── theme/            # Theme-related components
-│   └── ui/               # UI components
-├── hooks/                # Custom React hooks
-├── lib/                  # Utility libraries
-│   ├── amplify/          # AWS Amplify configuration
-│   └── i18n/             # Internationalization setup
-└── translations/         # Language files
-    ├── en/               # English translations
-    ├── es/               # Spanish translations
-    └── ja/               # Japanese translations
+├── app/
+│   ├── [locale]/                # Localized routes (public + admin)
+│   ├── globals.css              # Global styles
+│   └── layout.tsx               # Root layout
+├── components/
+│   ├── navigation/              # NavBar and header controls
+│   ├── theme/                   # Theme providers and toggles
+│   └── ui/                      # UI sections (Home, Projects, etc.)
+├── hooks/                       # useTheme, useAuthorization, etc.
+├── lib/
+│   ├── amplify/                 # Auth, middleware, token sync
+│   ├── i18n/                    # i18n server/client/config/types
+│   └── utils/                   # S3 cleanup, images, helpers
+└── translations/                # en/, es/, ja/ JSON files
 ```
 
 ## 🌍 Internationalization
 
-Supports three languages with full SEO optimization:
+- Translations live in `src/translations/{en,es,ja}`.
+- i18n helpers in `src/lib/i18n/{server,client,config}.ts`.
+- Add a language by updating config and adding JSON files.
 
-- **English** (`en`) - Primary language
-- **Spanish** (`es`) - Secondary language  
-- **Japanese** (`ja`) - Additional market
-
-### Adding New Languages
-
-1. Add locale to `src/lib/i18n/config.ts`
-2. Create translation files in `src/translations/[locale]/`
-3. Update SEO metadata in page components
+Utilities:
+- `scripts/validate-translations.js` – validates keys across locales
+- `scripts/manage-translations.js` and `scripts/translation-diff.js`
 
 ## 🎨 Theming
 
-Dynamic theme system with:
+- Theme provider at `src/components/theme/ThemeProviderWrapper.tsx`
+- Toggle via `ThemeToggle` or `ThemeSelector`
+- CSS helpers in `src/components/theme/theme-sync.css`
 
-- **Light Mode** - Professional appearance for daytime browsing
-- **Dark Mode** - Modern dark theme with optimized colors
-- **System Preference** - Automatically detects user's OS preference
-- **Smooth Transitions** - Animated theme changes
+## 🧰 Scripts
 
-## 📊 SEO Strategy
+From `package.json`:
 
-### Technical SEO
-- Server-side rendering (SSR)
-- Dynamic meta tags per language
-- Structured data (Schema.org)
-- Optimized Core Web Vitals
-- Multilingual hreflang tags
+- `npm run dev` – start dev server
+- `npm run build` – production build
+- `npm run start` – start production server
+- `npm run lint` – lint the codebase
+- `npm run seed` – seed sample data (development only)
 
-### Content SEO
-- AWS Cloud Engineer focused keywords
-- Technical blog content (planned)
-- Case studies and portfolio pieces
-- Professional service descriptions
+Other helpful scripts (run manually):
 
-## 🚀 Deployment
+- `node scripts/pre-build-check.js` – sanity checks before build
+- `node scripts/validate-translations.js` – translation validation
+- `node scripts/translation-diff.js` – diff translation keys
 
-### AWS Amplify Deployment
+## 🔐 Admin Access
 
-```bash
-# Install Amplify CLI
-npm install -g @aws-amplify/cli
+1. Create a Cognito user in your User Pool.
+2. Add the user to the Admin group.
+3. Log in via `/{locale}/login` and access `/{locale}/admin`.
 
-# Initialize Amplify project
-amplify init
+## 🖼️ Image & Data Management
 
-# Deploy
-amplify publish
-```
+- Image optimization function under `amplify/functions/image-optimitation`.
+- Project deletion removes related S3 files via `src/lib/utils/s3-cleanup.ts`.
+- See docs: [`COMPLETE_PROJECT_DELETION_SYSTEM.md`](./docs/COMPLETE_PROJECT_DELETION_SYSTEM.md)
 
-### Manual Deployment
+## 📊 SEO
 
-```bash
-# Build for production
-npm run build
+- Locale-aware metadata and structured data.
+- Consistent positioning for “AWS Cloud Engineer”.
+- See: [`COMMON_ERRORS_GUIDE.md`](./docs/COMMON_ERRORS_GUIDE.md) for SEO consistency tips.
 
-# Export static files (if needed)
-npm run export
-```
+## 🚢 Deployment (Amplify Gen 2)
 
-## � Common Issues & Solutions
+- Connect the GitHub repo to Amplify Hosting and set `main` as the default branch.
+- Configure your custom domain (e.g., `foor.dev`, `www.foor.dev`).
+- Ensure Cognito callback/logout URLs include your domain in `amplify/auth/resource.ts`.
+- On push to `main`, Amplify builds and deploys automatically.
 
-### Cognito Groups Authorization Issue
-If you get "Unauthorized" errors when trying to create/edit content as an admin:
+Related docs:
+- [`AMPLIFY_NEXTJS_MIDDLEWARE_AUTH.md`](./docs/AMPLIFY_NEXTJS_MIDDLEWARE_AUTH.md)
+- [`TOKEN_SYNC_SOLUTION.md`](./docs/TOKEN_SYNC_SOLUTION.md)
+- [`DOMAIN.md`](./docs/DOMAIN.md)
 
-**Problem:** `defaultAuthorizationMode` was set to `'identityPool'` instead of `'userPool'`
+## 🧩 Troubleshooting
 
-**Solution:** 
-```typescript
-// amplify/data/resource.ts
-export const data = defineData({
-  schema,
-  authorizationModes: {
-    defaultAuthorizationMode: 'userPool', // Must be 'userPool' for Cognito groups
-  },
-});
-```
+- Common issues: [`COMMON_ERRORS_GUIDE.md`](./docs/COMMON_ERRORS_GUIDE.md)
+- Auth errors: [`AUTHENTICATION_TROUBLESHOOTING_GUIDE.md`](./docs/AUTHENTICATION_TROUBLESHOOTING_GUIDE.md)
+- Authorization (groups): [`COGNITO_GROUPS_AUTHORIZATION_SOLUTION.md`](./docs/COGNITO_GROUPS_AUTHORIZATION_SOLUTION.md)
 
-See [COGNITO_GROUPS_AUTHORIZATION_SOLUTION.md](./docs/COGNITO_GROUPS_AUTHORIZATION_SOLUTION.md) for complete details.
+## 📈 Performance
 
-### Other Solutions
-- [Common Errors Guide](./docs/COMMON_ERRORS_GUIDE.md)
-- [Amplify Client SSR Solution](./docs/AMPLIFY_CLIENT_ERROR_SOLUTION.md)
-
-## �📈 Performance
-
-- **Lighthouse Score**: 90+ across all metrics
-- **Core Web Vitals**: Optimized for LCP, FID, CLS
-- **Bundle Size**: Optimized with dynamic imports
-- **Image Optimization**: Next.js Image component with lazy loading
+- Core Web Vitals optimized; production build recommendations in [`PRODUCTION_OPTIMIZATION.md`](./docs/PRODUCTION_OPTIMIZATION.md)
 
 ## 🤝 Contributing
 
-This is a personal portfolio project, but suggestions and feedback are welcome!
+Personal portfolio – suggestions and feedback welcome.
 
 ## 📄 License
 
-© 2024 Fortino Romero Mantilla. All rights reserved.
+© 2024–2025 Fortino Romero Mantilla. All rights reserved.
 
 ## 📞 Contact
 
-- **Website**: [foor.dev](https://foor.dev)
-- **LinkedIn**: [fortino-romero-mantilla](https://linkedin.com/in/fortino-romero-mantilla)
-- **GitHub**: [netfoor](https://github.com/netfoor)
-- **Email**: fortino.rom@gmail.com
+- Website: https://foor.dev
+- LinkedIn: https://linkedin.com/in/fortino-romero-mantilla
+- GitHub: https://github.com/netfoor
+- Email: fortino.rom@gmail.com
 
----
+—
 
-**Specializing in AWS Cloud Solutions | DevOps Automation | Serverless Architecture**
+Specializing in AWS Cloud Solutions • DevOps Automation • Serverless Architecture
