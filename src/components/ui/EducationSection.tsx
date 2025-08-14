@@ -79,7 +79,7 @@ const EducationSection: React.FC<EducationSectionProps> = ({
       setEducation(educationData);
     } catch (err) {
       console.error('Error cargando datos de educación:', err);
-      setError('Error al cargar la información educativa. Por favor, intente más tarde.');
+      setError(t('education.error'));
     } finally {
       setLoading(false);
     }
@@ -106,7 +106,10 @@ const EducationSection: React.FC<EducationSectionProps> = ({
       ? '1px solid rgba(148, 163, 184, 0.2)'
       : '1px solid rgba(203, 213, 225, 0.3)',
     borderRadius: '24px',
-    padding: '3rem',
+  // Responsive padding: keep horizontal compact on mobile, add more vertical space
+  paddingInline: 'clamp(1rem, 3.5vw, 2rem)',
+  paddingTop: 'clamp(2rem, 6vw, 4rem)',
+  paddingBottom: 'clamp(2rem, 6vw, 4rem)',
     position: 'relative' as const,
     overflow: 'hidden' as const,
     marginBottom: '3rem',
@@ -167,19 +170,19 @@ const EducationSection: React.FC<EducationSectionProps> = ({
   };
 
   const getEducationPeriod = (startDate: string | null | undefined, endDate: string | null | undefined) => {
-    if (!startDate) return 'Date not specified';
+    if (!startDate) return t('education.dateNotSpecified');
     const start = formatDate(startDate);
-    const end = endDate ? formatDate(endDate) : 'Present';
+    const end = endDate ? formatDate(endDate) : t('education.present');
     return `${start} - ${end}`;
   };
 
   if (loading) {
     return (
-      <View style={containerStyles} className={className}>
+  <View style={containerStyles} className={className}>
         <Flex direction="column" alignItems="center" gap="1rem">
           <Loader size="large" />
           <Text style={{ color: mode === 'dark' ? '#CBD5E1' : '#64748B' }}>
-            Loading education information...
+    {t('education.loading')}
           </Text>
         </Flex>
       </View>
@@ -198,7 +201,7 @@ const EducationSection: React.FC<EducationSectionProps> = ({
 
   if (!education.length) {
     return (
-      <View style={containerStyles} className={className}>
+  <View style={containerStyles} className={className}>
         <Flex direction="column" alignItems="center" gap="2rem">
           <View style={{
             padding: '2rem',
@@ -217,7 +220,7 @@ const EducationSection: React.FC<EducationSectionProps> = ({
             textAlign="center"
             style={{ color: mode === 'dark' ? '#CBD5E1' : '#64748B' }}
           >
-            No education information available yet.
+            {t('education.empty')}
           </Text>
         </Flex>
       </View>
@@ -235,7 +238,7 @@ const EducationSection: React.FC<EducationSectionProps> = ({
         }
       `}</style>
       {/* Header */}
-      <Flex direction="column" alignItems="center" gap="1rem" marginBottom="3rem">
+  <Flex direction="column" alignItems="center" gap="1rem" marginBottom="3rem">
         <Text
           as="h2"
           fontSize={{ base: '2rem', medium: '2.5rem' }}
@@ -244,17 +247,15 @@ const EducationSection: React.FC<EducationSectionProps> = ({
           lineHeight="1.1"
           style={titleStyles}
         >
-          Academic {' '}
-          <span style={titleHighlightStyles}>
-            Journey
-          </span>
+          {t('education.title')} {' '}
+          <span style={titleHighlightStyles}>{t('education.titleHighlight')}</span>
         </Text>
         <Text 
           fontSize="1.25rem"
           textAlign="center"
           style={{ color: mode === 'dark' ? '#CBD5E1' : '#64748B' }}
         >
-          Educational background and academic achievements
+          {t('education.description')}
         </Text>
       </Flex>
 
@@ -281,7 +282,7 @@ const EducationSection: React.FC<EducationSectionProps> = ({
                 }}>
                   <OptimizedImage
                     s3Key={edu.photoKey}
-                    alt={edu.institution || 'Institution logo'}
+                    alt={edu.institution || t('education.institutionAlt')}
                     className="education-image"
                   />
                 </View>
@@ -377,7 +378,7 @@ const EducationSection: React.FC<EducationSectionProps> = ({
                         fontWeight="600"
                         style={{ color: mode === 'dark' ? '#F59E0B' : '#D97706' }}
                       >
-                        Recognition & Honors
+                        {t('education.recognitionLabel')}
                       </Text>
                     </Flex>
                     <Flex wrap="wrap" gap="0.5rem">
@@ -438,7 +439,7 @@ const EducationSection: React.FC<EducationSectionProps> = ({
                       }}
                     >
                       <ExternalLink size={16} />
-                      View Certificate
+                      {t('education.viewCertificate')}
                     </button>
                   </Flex>
                 )}

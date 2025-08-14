@@ -41,6 +41,7 @@ const AdminEducationClient: React.FC<AdminEducationClientProps> = ({ locale }) =
 
   const { mode } = useTheme();
   const { t } = useTranslation('admin');
+  const { t: tCommon } = useTranslation('common');
   const router = useRouter();
   const getLocalizedPath = useLocalizedPath();
 
@@ -91,8 +92,8 @@ const AdminEducationClient: React.FC<AdminEducationClientProps> = ({ locale }) =
 
       await Promise.all(imagePromises);
     } catch (err) {
-      console.error('Error cargando educación:', err);
-      setError('Error al cargar la información educativa. Por favor, intente más tarde.');
+  console.error('Error cargando educación:', err);
+  setError(t('education.error_loading_data'));
     } finally {
       setLoading(false);
     }
@@ -100,7 +101,7 @@ const AdminEducationClient: React.FC<AdminEducationClientProps> = ({ locale }) =
 
   // Función para eliminar educación
   const handleDelete = async (id: string) => {
-    if (!confirm('¿Estás seguro de que quieres eliminar esta entrada educativa?')) {
+  if (!confirm(tCommon('confirmation.are_you_sure'))){
       return;
     }
 
@@ -147,8 +148,8 @@ const AdminEducationClient: React.FC<AdminEducationClientProps> = ({ locale }) =
         return newImages;
       });
     } catch (err) {
-      console.error('Error eliminando educación:', err);
-      setError(`Error al eliminar la entrada educativa: ${err instanceof Error ? err.message : 'Error desconocido'}`);
+  console.error('Error eliminando educación:', err);
+  setError(t('education.error_deleting'));
     } finally {
       setDeleteLoading(null);
     }
@@ -218,7 +219,7 @@ const AdminEducationClient: React.FC<AdminEducationClientProps> = ({ locale }) =
         <Flex direction="column" alignItems="center" gap="1rem">
           <Loader size="large" />
           <Text style={{ color: mode === 'dark' ? '#CBD5E1' : '#64748B' }}>
-            Cargando información educativa...
+            {t('education.loading')}
           </Text>
         </Flex>
       </View>
@@ -240,13 +241,13 @@ const AdminEducationClient: React.FC<AdminEducationClientProps> = ({ locale }) =
                 marginBottom: '0.5rem'
               }}
             >
-              Gestionar Educación
+              {t('education.title')}
             </Text>
             <Text 
               fontSize="1.125rem"
               style={{ color: mode === 'dark' ? '#CBD5E1' : '#64748B' }}
             >
-              Administra tu formación académica y logros educativos
+              {t('sections.manage_education')}
             </Text>
           </View>
           <Button
@@ -269,7 +270,7 @@ const AdminEducationClient: React.FC<AdminEducationClientProps> = ({ locale }) =
             }}
           >
             <Plus size={20} />
-            Nueva Educación
+            {t('education.create')}
           </Button>
         </Flex>
 
@@ -289,7 +290,7 @@ const AdminEducationClient: React.FC<AdminEducationClientProps> = ({ locale }) =
             <Search size={20} color={mode === 'dark' ? '#94A3B8' : '#64748B'} />
             <TextField
               label=""
-              placeholder="Buscar por institución, título o campo de estudio..."
+              placeholder={t('skills.search_placeholder')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               style={{
@@ -332,7 +333,7 @@ const AdminEducationClient: React.FC<AdminEducationClientProps> = ({ locale }) =
               textAlign="center"
               style={{ color: mode === 'dark' ? '#CBD5E1' : '#64748B' }}
             >
-              {searchTerm ? 'No se encontraron entradas educativas que coincidan con tu búsqueda.' : 'No hay información educativa aún. ¡Comienza agregando tu primera entrada!'}
+              {t('education.no_records')}
             </Text>
             {!searchTerm && (
               <Button
@@ -349,7 +350,7 @@ const AdminEducationClient: React.FC<AdminEducationClientProps> = ({ locale }) =
                 }}
               >
                 <Plus size={20} style={{ marginRight: '8px' }} />
-                Agregar Primera Educación
+                {t('education.create')}
               </Button>
             )}
           </Flex>
@@ -439,7 +440,7 @@ const AdminEducationClient: React.FC<AdminEducationClientProps> = ({ locale }) =
                           fontSize="0.75rem"
                           style={{ color: mode === 'dark' ? '#F59E0B' : '#D97706' }}
                         >
-                          {edu.recognition.length} reconocimiento(s)
+                          {edu.recognition.length} {t('recognitions.recognitions')}
                         </Text>
                       </Flex>
                     )}

@@ -227,4 +227,18 @@
     "viewAll": "Ver Todos los Reconocimientos",
     "viewAllPublications": "Ver Todas las Publicaciones"
   }
+  ,
+  "education": {
+    "title": "Trayectoria",
+    "titleHighlight": "Académica",
+    "description": "Formación académica y logros educativos",
+    "loading": "Cargando información educativa...",
+    "error": "Error al cargar datos de educación",
+    "empty": "Aún no hay información educativa disponible.",
+    "recognitionLabel": "Reconocimientos y Honores",
+    "viewCertificate": "Ver Certificado",
+    "institutionAlt": "Logo de la institución",
+    "dateNotSpecified": "Fecha no especificada",
+    "present": "Presente"
+  }
 }

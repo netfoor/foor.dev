@@ -227,4 +227,18 @@
     "viewAll": "View All Recognitions",
     "viewAllPublications": "View All Publications"
   }
+  ,
+  "education": {
+    "title": "Academic",
+    "titleHighlight": "Journey",
+    "description": "Educational background and academic achievements",
+    "loading": "Loading education information...",
+    "error": "Failed to load education data",
+    "empty": "No education information available yet.",
+    "recognitionLabel": "Recognition & Honors",
+    "viewCertificate": "View Certificate",
+    "institutionAlt": "Institution logo",
+    "dateNotSpecified": "Date not specified",
+    "present": "Present"
+  }
 }

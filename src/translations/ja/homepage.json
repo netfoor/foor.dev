@@ -227,4 +227,18 @@
     "viewAll": "すべての表彰を見る",
     "viewAllPublications": "すべての出版物を見る"
   }
+  ,
+  "education": {
+    "title": "学術",
+    "titleHighlight": "の歩み",
+    "description": "学歴と学術的な実績",
+    "loading": "教育情報を読み込み中...",
+    "error": "教育データの読み込みに失敗しました",
+    "empty": "教育情報はまだありません。",
+    "recognitionLabel": "表彰・栄誉",
+    "viewCertificate": "証明書を見る",
+    "institutionAlt": "教育機関のロゴ",
+    "dateNotSpecified": "日付未指定",
+    "present": "現在"
+  }
 }
