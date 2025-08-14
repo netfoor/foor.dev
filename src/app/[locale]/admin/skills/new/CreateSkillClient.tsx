@@ -94,6 +94,7 @@ const CreateSkillClient: React.FC<CreateSkillClientProps> = ({ locale }) => {
 
       const categoryMapping: Record<string, string> = {
         'Cloud Platforms': 'CLOUD_PLATFORMS',
+        'Artificial Intelligence': 'ARTIFICIAL_INTELLIGENCE',
         'Programming Languages': 'PROGRAMMING_LANGUAGES',
         'Frameworks & Libraries': 'FRAMEWORKS_LIBRARIES',
         'DevOps & Tools': 'DEVOPS_TOOLS',

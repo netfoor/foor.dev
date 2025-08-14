@@ -149,6 +149,40 @@ const RecognitionsPublicationsSection: React.FC<RecognitionsPublicationsProps> =
         
       }}
     >
+
+
+      <style jsx global>{`
+        .recognition-image-container, .publication-image-container {
+          width: 100%;
+          height: 180px;
+          position: relative;
+          overflow: hidden;
+        }
+        .recognition-image, .publication-image {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          transition: transform 0.5s ease;
+        }
+        .recognition-card:hover .recognition-image,
+        .publication-card:hover .publication-image {
+          transform: scale(1.05);
+        }
+
+        /* Recognitions: desktop should match mobile (stacked image above text)
+           and display the full image without cropping */
+        .recognition-image {
+          object-fit: cover;
+          background-color: ${mode === 'dark' ? 'rgba(30, 41, 59, 0.8)' : 'rgba(241, 245, 249, 0.8)'};
+        }
+        @media (min-width: 768px) {
+          .recognition-image-container {
+            height: 280px; /* give more vertical room on desktop */
+          }
+        }
+      `}</style>
+
+
       {/* Background pattern */}
       <div 
         className="absolute inset-0 opacity-10 pointer-events-none"
@@ -408,7 +442,7 @@ const RecognitionsPublicationsSection: React.FC<RecognitionsPublicationsProps> =
                           <OptimizedImage 
                             s3Key={recognition.photoKey} 
                             alt={recognition.title || 'Recognition image'}
-                            className="w-full h-full object-contain hover:scale-105 transition-all duration-500"
+                            className="recognition-image"
                           />
                         ) : (
                           <Award 
@@ -573,7 +607,7 @@ const RecognitionsPublicationsSection: React.FC<RecognitionsPublicationsProps> =
                           <OptimizedImage 
                             s3Key={publication.photoKey} 
                             alt={publication.title || 'Publication image'}
-                            className="w-full h-full object-contain hover:scale-105 transition-all duration-500"
+                            className="recognition-image"
                           />
                         ) : (
                           <div style={{

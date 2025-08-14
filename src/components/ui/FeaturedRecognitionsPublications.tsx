@@ -172,6 +172,18 @@ const FeaturedRecognitionsPublications: React.FC<FeaturedRecognitionsPublication
         .publication-card:hover .publication-image {
           transform: scale(1.05);
         }
+
+        /* Recognitions: desktop should match mobile (stacked image above text)
+           and display the full image without cropping */
+        .recognition-image {
+          object-fit: cover;
+          background-color: ${mode === 'dark' ? 'rgba(30, 41, 59, 0.8)' : 'rgba(241, 245, 249, 0.8)'};
+        }
+        @media (min-width: 768px) {
+          .recognition-image-container {
+            height: 280px; /* give more vertical room on desktop */
+          }
+        }
       `}</style>
       
       <Flex 
@@ -275,7 +287,7 @@ const FeaturedRecognitionsPublications: React.FC<FeaturedRecognitionsPublication
                   }}
                 >
                   <Flex 
-                    direction={{ base: 'column', medium: 'row' }}
+                    direction={{ base: 'column', medium: 'column' }}
                     alignItems="stretch"
                   >
                     {recognition.photoKey ? (

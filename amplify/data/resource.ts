@@ -144,7 +144,7 @@ const schema = a.schema({
   Skills: a
     .model({
       name: a.string().required(),
-      category: a.enum(['CLOUD_PLATFORMS', 'PROGRAMMING_LANGUAGES', 'FRAMEWORKS_LIBRARIES', 'DEVOPS_TOOLS', 'DATABASES', 'ARCHITECTURE_DESIGN', 'SOFT_SKILLS']),
+      category: a.enum(['CLOUD_PLATFORMS', 'PROGRAMMING_LANGUAGES', 'FRAMEWORKS_LIBRARIES', 'DEVOPS_TOOLS', 'DATABASES', 'ARCHITECTURE_DESIGN', 'SOFT_SKILLS', 'ARTIFICIAL_INTELLIGENCE']),
       type: a.enum(['Technical', 'Soft']),
       proficiency: a.enum(['Beginner', 'Intermediate', 'Advanced', 'Expert']),
       yearsOfExperience: a.integer(),

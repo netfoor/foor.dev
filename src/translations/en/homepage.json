@@ -171,6 +171,7 @@
     "filter": "Filter",
     "categories": {
       "cloud_platforms": "Cloud Platforms",
+      "artificial_intelligence": "Artificial Intelligence",
       "programming_languages": "Programming Languages",
       "frameworks_libraries": "Frameworks & Libraries",
       "devops_tools": "DevOps & Tools",

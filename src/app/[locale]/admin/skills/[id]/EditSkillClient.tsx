@@ -188,6 +188,7 @@ const EditSkillClient: React.FC<EditSkillClientProps> = ({ locale, skillId }) =>
       // Map category labels to schema
       const categoryMapping: Record<string, string> = {
         'Cloud Platforms': 'CLOUD_PLATFORMS',
+        'Artificial Intelligence': 'ARTIFICIAL_INTELLIGENCE',
         'Programming Languages': 'PROGRAMMING_LANGUAGES',
         'Frameworks & Libraries': 'FRAMEWORKS_LIBRARIES',
         'DevOps & Tools': 'DEVOPS_TOOLS',

@@ -24,6 +24,20 @@ const profileStyles = `
     z-index: 1;
   }
 
+  /* Responsive container padding for the profile card */
+  .profile-card {
+    padding: 2rem;
+  }
+  @media (max-width: 640px) {
+    .profile-card {
+      /* Reduce horizontal padding on small screens to use more width */
+      padding-left: 1.25rem;
+      padding-right: 1.25rem;
+      padding-top: 1.25rem;
+      padding-bottom: 1.25rem;
+    }
+  }
+
   .profile-image {
     width: 200px;
     height: 200px;
@@ -157,7 +171,6 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ className = '' }) => {
       ? '1px solid rgba(148, 163, 184, 0.1)'
       : '1px solid rgba(203, 213, 225, 0.2)',
     borderRadius: '16px',
-    padding: '2rem',
     position: 'relative' as const,
     overflow: 'hidden' as const,
     marginBottom: '4rem',
@@ -266,7 +279,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ className = '' }) => {
   if (!mounted || loading) {
     return (
       <View 
-        className={className}
+  className={`profile-card ${className}`}
         style={containerStyles}
       >
         <style>{profileStyles}</style>
@@ -294,7 +307,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ className = '' }) => {
   if (error) {
     return (
       <View 
-        className={className}
+  className={`profile-card ${className}`}
         style={containerStyles}
       >
         <style>{profileStyles}</style>
@@ -322,7 +335,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ className = '' }) => {
   if (!profile) {
     return (
       <View 
-        className={className}
+  className={`profile-card ${className}`}
         style={containerStyles}
       >
         <style>{profileStyles}</style>
@@ -375,7 +388,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ className = '' }) => {
 
   return (
     <View 
-      className={className}
+  className={`profile-card ${className}`}
       style={containerStyles}
     >
       <style>{profileStyles}</style>

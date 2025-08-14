@@ -130,7 +130,7 @@ const CreatePublicationClient: React.FC<CreatePublicationClientProps> = () => {
         publicationUrl: publicationUrl.trim()
       };
       
-      const newPublication = await client.models.SocialPublications.create(createData);
+      const newPublication = await client.models.SocialPublications.create(createData, { authMode: 'userPool'});
       
       if (newPublication.errors) {
         throw new Error(newPublication.errors[0].message);
@@ -155,7 +155,7 @@ const CreatePublicationClient: React.FC<CreatePublicationClientProps> = () => {
         await client.models.SocialPublications.update({
           id: publicationId,
           photoKey
-        });
+        }, { authMode: 'userPool' });
       }
       
       console.log('✅ Publication created successfully');

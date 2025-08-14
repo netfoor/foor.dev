@@ -127,6 +127,11 @@ const SkillsSection: React.FC<SkillsSectionProps> = ({
       icon: <Code size={16} />, 
       color: '#45B7D1' 
     },
+    'ARTIFICIAL_INTELLIGENCE': { 
+      name: t('skills.categories.artificial_intelligence'), 
+      icon: <Code size={16} />, 
+      color: '#FF6B6B' 
+    },
     'PROGRAMMING_LANGUAGES': { 
       name: t('skills.categories.programming_languages'), 
       icon: <Code size={16} />, 
@@ -191,7 +196,7 @@ const SkillsSection: React.FC<SkillsSectionProps> = ({
 
   // Filter skills based on the active tab
   const technicalCategories = ['CLOUD_PLATFORMS', 'PROGRAMMING_LANGUAGES', 'FRAMEWORKS_LIBRARIES', 
-                              'DEVOPS_TOOLS', 'DATABASES', 'ARCHITECTURE_DESIGN'];
+                              'DEVOPS_TOOLS', 'DATABASES', 'ARCHITECTURE_DESIGN', 'ARTIFICIAL_INTELLIGENCE'];
   const softCategories = ['SOFT_SKILLS'];
   
   const relevantCategories = activeTab === 'technical' ? technicalCategories : softCategories;

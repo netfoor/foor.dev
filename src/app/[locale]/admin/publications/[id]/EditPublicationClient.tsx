@@ -34,6 +34,7 @@ import { useTheme } from '@/hooks/useTheme';
 import { useTranslation, useLocalizedPath } from '@/lib/i18n/client';
 import type { SupportedLocale } from '@/lib/i18n/types';
 import { FileUploadInput } from '../../recognitions/new/FileUploadInput';
+import { auth } from '../../../../../../amplify/auth/resource';
 
 // Types for Publications model
 type Publication = Schema["SocialPublications"]["type"];
@@ -358,7 +359,7 @@ const EditPublicationClient: React.FC<EditPublicationClientProps> = ({ locale, p
         ...(newPhotoKey && { photoKey: newPhotoKey })
       };
       
-      const updatedPublication = await client.models.SocialPublications.update(updateData);
+      const updatedPublication = await client.models.SocialPublications.update(updateData, { authMode: 'userPool'});
       
       if (updatedPublication.errors && updatedPublication.errors.length > 0) {
         throw new Error(`DynamoDB Error: ${updatedPublication.errors.map(e => e.message).join(', ')}`);
