@@ -370,7 +370,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ className = '' }) => {
             }}
           >
             <Award size={20} />
-            Cloud Engineer | AWS Advocate | DevOps Enthusiast
+            Software Engineer | AWS Advocate | MLOps Enthusiast
           </Text>
           
           <Text 
@@ -455,7 +455,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ className = '' }) => {
           }}
         >
           <Award size={20} />
-          {profile.currentPosition || 'Cloud Engineer | AWS Advocate | DevOps Enthusiast'}
+          {profile.currentPosition || 'Software Engineer | AWS Advocate | MLOps Enthusiast'}
         </Text>
         
         {/* Descripción */}

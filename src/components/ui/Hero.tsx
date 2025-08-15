@@ -11,9 +11,9 @@ interface HeroProps {
 }
 
 /**
- * Componente Hero optimizado para SEO - AWS Cloud Engineer
- * Enfocado en: AWS, Cloud, Serverless, DevOps
- * Keywords: Cloud Engineer, AWS Advocate, DevOps, Serverless
+ * Componente Hero optimizado para SEO - Software Engineer
+ * Enfocado en: AWS, Cloud, Serverless, DevOps, MLOps
+ * Keywords: Software Engineer, AWS Advocate, MLOps, DevOps, Serverless
  */
 export const Hero: React.FC<HeroProps> = ({ className = '' }) => {
   const { t } = useTranslation('homepage');
@@ -209,8 +209,8 @@ export const Hero: React.FC<HeroProps> = ({ className = '' }) => {
               "@context": "https://schema.org",
               "@type": "Person",
               "name": "Fortino Romero Mantilla",
-              "jobTitle": "Cloud Engineer",
-              "description": "AWS Advocate and DevOps Enthusiast specializing in serverless architecture and cloud solutions",
+              "jobTitle": "Software Engineer",
+              "description": "AWS Advocate and MLOps Enthusiast specializing in serverless architecture and cloud solutions",
               "url": "https://foor.dev",
               "sameAs": [
                 "https://linkedin.com/in/fortino-romero-mantilla",
