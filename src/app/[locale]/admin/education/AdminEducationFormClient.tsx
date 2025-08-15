@@ -109,7 +109,7 @@ const AdminEducationFormClient: React.FC<AdminEducationFormClientProps> = ({
       }
     } catch (err) {
       console.error('Error cargando datos de educación:', err);
-      setError('Error al cargar los datos de educación');
+      setError(t('education.error_loading_data'));
     } finally {
       setInitialLoading(false);
     }
@@ -120,7 +120,7 @@ const AdminEducationFormClient: React.FC<AdminEducationFormClientProps> = ({
     const file = e.target.files?.[0];
     if (file) {
       if (file.size > 5 * 1024 * 1024) { // 5MB limit
-        setError('La imagen debe ser menor a 5MB');
+        setError(t('education.image_size_error'));
         return;
       }
       
@@ -160,7 +160,7 @@ const AdminEducationFormClient: React.FC<AdminEducationFormClientProps> = ({
       return path;
     } catch (err) {
       console.error('Error subiendo imagen:', err);
-      throw new Error('Error al subir la imagen');
+      throw new Error('upload_failed');
     }
   };
 
@@ -189,12 +189,12 @@ const AdminEducationFormClient: React.FC<AdminEducationFormClientProps> = ({
     
     // Validaciones básicas
     if (!formData.degree.trim() || !formData.institution.trim()) {
-      setError('El grado y la institución son requeridos');
+      setError(t('education.required_fields_missing'));
       return;
     }
 
     if (!formData.startDate) {
-      setError('La fecha de inicio es requerida');
+      setError(t('education.error_start_date_required'));
       return;
     }
 
@@ -232,7 +232,7 @@ const AdminEducationFormClient: React.FC<AdminEducationFormClientProps> = ({
           });
         }
         
-        setSuccess('Educación creada exitosamente');
+  setSuccess(t('education.create_success'));
       } else {
         // For edit mode, upload image first if there's a new one
         const photoKey = imageFile ? await uploadImage(educationId!) : educationData.photoKey;
@@ -244,7 +244,7 @@ const AdminEducationFormClient: React.FC<AdminEducationFormClientProps> = ({
         } as UpdateEducationInput, {
           authMode: 'userPool'
         });
-        setSuccess('Educación actualizada exitosamente');
+  setSuccess(t('education.update_success'));
       }
 
       // Redirigir después de un momento
@@ -254,7 +254,7 @@ const AdminEducationFormClient: React.FC<AdminEducationFormClientProps> = ({
 
     } catch (err) {
       console.error('Error guardando educación:', err);
-      setError(mode === 'create' ? 'Error al crear la educación' : 'Error al actualizar la educación');
+      setError(mode === 'create' ? t('education.error_creating') : t('education.error_updating'));
     } finally {
       setLoading(false);
     }
@@ -291,7 +291,7 @@ const AdminEducationFormClient: React.FC<AdminEducationFormClientProps> = ({
         <Flex direction="column" alignItems="center" gap="1rem">
           <Loader size="large" />
           <Text style={{ color: themeMode === 'dark' ? '#CBD5E1' : '#64748B' }}>
-            Cargando datos de educación...
+            {t('education.loading')}
           </Text>
         </Flex>
       </View>
@@ -317,7 +317,7 @@ const AdminEducationFormClient: React.FC<AdminEducationFormClientProps> = ({
             >
               <ArrowLeft size={20} />
             </Button>
-            <View>
+      <View>
               <Text 
                 as="h1" 
                 fontSize="2rem" 
@@ -327,13 +327,13 @@ const AdminEducationFormClient: React.FC<AdminEducationFormClientProps> = ({
                   marginBottom: '0.5rem'
                 }}
               >
-                {mode === 'create' ? 'Nueva Educación' : 'Editar Educación'}
+        {mode === 'create' ? t('education.header_create') : t('education.header_edit')}
               </Text>
               <Text 
                 fontSize="1.125rem"
                 style={{ color: themeMode === 'dark' ? '#CBD5E1' : '#64748B' }}
               >
-                {mode === 'create' ? 'Agrega una nueva entrada educativa' : 'Modifica la información educativa'}
+        {mode === 'create' ? t('education.subheader_create') : t('education.subheader_edit')}
               </Text>
             </View>
           </Flex>
@@ -369,42 +369,42 @@ const AdminEducationFormClient: React.FC<AdminEducationFormClientProps> = ({
                   }}
                 >
                   <GraduationCap size={20} />
-                  Información Básica
+                  {t('education.basic_info')}
                 </Text>
                 
                 <Flex direction="column" gap="1rem">
                   <TextField
-                    label="Grado/Título *"
+                    label={`${t('education.degree')} *`}
                     value={formData.degree}
                     onChange={(e) => setFormData(prev => ({ ...prev, degree: e.target.value }))}
-                    placeholder="Ej: Licenciatura en Ingeniería de Sistemas"
-                    descriptiveText="El título académico que obtuviste o estás obteniendo"
+                    placeholder={t('education.degree_placeholder')}
+                    descriptiveText={t('education.degree_description')}
                     required
                   />
                   
                   <TextField
-                    label="Institución *"
+                    label={`${t('education.institution')} *`}
                     value={formData.institution}
                     onChange={(e) => setFormData(prev => ({ ...prev, institution: e.target.value }))}
-                    placeholder="Ej: Universidad Nacional"
-                    descriptiveText="Nombre completo de la institución educativa"
+                    placeholder={t('education.institution_placeholder')}
+                    descriptiveText={t('education.institution_description')}
                     required
                   />
                   
                   <TextField
-                    label="Campo de Estudio"
+                    label={t('education.field')}
                     value={formData.fieldOfStudy}
                     onChange={(e) => setFormData(prev => ({ ...prev, fieldOfStudy: e.target.value }))}
-                    placeholder="Ej: Ciencias de la Computación"
-                    descriptiveText="Área específica de especialización (opcional)"
+                    placeholder={t('education.field_placeholder')}
+                    descriptiveText={t('education.field_description')}
                   />
                   
                   <TextField
-                    label="Ubicación"
+                    label={t('education.location')}
                     value={formData.location}
                     onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
-                    placeholder="Ej: Madrid, España"
-                    descriptiveText="Ciudad y país donde se encuentra la institución"
+                    placeholder={t('education.location_placeholder')}
+                    descriptiveText={t('education.location_description')}
                   />
                 </Flex>
               </View>
@@ -423,31 +423,31 @@ const AdminEducationFormClient: React.FC<AdminEducationFormClientProps> = ({
                   }}
                 >
                   <Calendar size={20} />
-                  Período de Estudios
+                  {t('education.study_period')}
                 </Text>
                 
                 <Flex direction={{ base: 'column', medium: 'row' }} gap="1rem">
                   <TextField
-                    label="Fecha de Inicio *"
+                    label={`${t('education.start_date_label')} *`}
                     type="date"
                     value={formData.startDate}
                     onChange={(e) => setFormData(prev => ({ ...prev, startDate: e.target.value }))}
-                    descriptiveText="Cuándo comenzaste estos estudios"
+                    descriptiveText={t('education.start_date_description')}
                     required
                   />
                   
                   <TextField
-                    label="Fecha de Fin"
+                    label={t('education.end_date_label')}
                     type="date"
                     value={formData.endDate}
                     onChange={(e) => setFormData(prev => ({ ...prev, endDate: e.target.value }))}
-                    descriptiveText="Deja en blanco si es actual"
+                    descriptiveText={t('education.end_date_description')}
                   />
                 </Flex>
               </View>
 
               {/* Recognition */}
-              <View>
+        <View>
                 <Text 
                   fontSize="1.25rem" 
                   fontWeight="600" 
@@ -460,15 +460,15 @@ const AdminEducationFormClient: React.FC<AdminEducationFormClientProps> = ({
                   }}
                 >
                   <Award size={20} />
-                  Reconocimientos
+          {t('education.recognitions')}
                 </Text>
                 
                 <Flex direction="column" gap="1rem">
                   <Flex gap="0.5rem">
                     <TextField
-                      label="Nuevo reconocimiento"
-                      placeholder="Agregar reconocimiento..."
-                      descriptiveText="Menciones honoríficas, becas, premios académicos..."
+            label={t('education.new_recognition')}
+            placeholder={t('education.new_recognition_placeholder')}
+            descriptiveText={t('education.new_recognition_description')}
                       value={newRecognition}
                       onChange={(e) => setNewRecognition(e.target.value)}
                       onKeyDown={(e) => {
@@ -533,19 +533,19 @@ const AdminEducationFormClient: React.FC<AdminEducationFormClientProps> = ({
               </View>
 
               {/* Description */}
-              <View>
+        <View>
                 <TextAreaField
-                  label="Descripción"
+          label={t('education.description_label')}
                   value={formData.description}
                   onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                  placeholder="Descripción adicional de tus estudios, proyectos destacados, etc."
-                  descriptiveText="Información adicional sobre tus estudios, proyectos destacados, logros específicos..."
+          placeholder={t('education.description_placeholder')}
+          descriptiveText={t('education.description_help')}
                   rows={4}
                 />
               </View>
 
               {/* Image Upload */}
-              <View>
+        <View>
                 <Text 
                   fontSize="1.25rem" 
                   fontWeight="600" 
@@ -558,7 +558,7 @@ const AdminEducationFormClient: React.FC<AdminEducationFormClientProps> = ({
                   }}
                 >
                   <Upload size={20} />
-                  Logo de la Institución
+          {t('education.institution_logo')}
                 </Text>
                 
                 <View style={{
@@ -571,7 +571,7 @@ const AdminEducationFormClient: React.FC<AdminEducationFormClientProps> = ({
                     <Flex direction="column" alignItems="center" gap="1rem">
                       <img
                         src={imagePreview}
-                        alt="Preview"
+            alt="Preview"
                         style={{
                           width: '120px',
                           height: '120px',
@@ -593,7 +593,7 @@ const AdminEducationFormClient: React.FC<AdminEducationFormClientProps> = ({
                           color: '#EF4444',
                         }}
                       >
-                        Remover Imagen
+            {t('education.remove_image')}
                       </Button>
                     </Flex>
                   ) : (
@@ -603,7 +603,7 @@ const AdminEducationFormClient: React.FC<AdminEducationFormClientProps> = ({
                         color: themeMode === 'dark' ? '#CBD5E1' : '#64748B',
                         marginBottom: '1rem'
                       }}>
-                        Arrastra una imagen aquí o haz clic para seleccionar
+            {t('education.image_drag_or_click')}
                       </Text>
                       <input
                         type="file"
@@ -625,7 +625,7 @@ const AdminEducationFormClient: React.FC<AdminEducationFormClientProps> = ({
                           padding: '8px 16px',
                         }}
                       >
-                        Seleccionar Imagen
+            {t('education.select_image')}
                       </Button>
                     </>
                   )}
@@ -646,7 +646,7 @@ const AdminEducationFormClient: React.FC<AdminEducationFormClientProps> = ({
                     cursor: 'pointer',
                   }}
                 >
-                  Cancelar
+                  {t('education.cancel')}
                 </Button>
                 <Button
                   type="submit"
@@ -672,7 +672,7 @@ const AdminEducationFormClient: React.FC<AdminEducationFormClientProps> = ({
                   ) : (
                     <>
                       <Save size={16} />
-                      {mode === 'create' ? 'Crear Educación' : 'Actualizar Educación'}
+                      {mode === 'create' ? t('education.create') : t('education.edit')}
                     </>
                   )}
                 </Button>
