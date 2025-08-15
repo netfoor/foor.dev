@@ -53,6 +53,7 @@ const CreateSkillClient: React.FC<CreateSkillClientProps> = ({ locale }) => {
 
   const categories = [
     'Cloud Platforms',
+    'Artificial Intelligence',
     'Programming Languages', 
     'Frameworks & Libraries',
     'DevOps & Tools',
