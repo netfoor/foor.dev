@@ -79,24 +79,49 @@ export const handler = async (event: S3Event): Promise<void> => {
             }));
 
             // update the Amplify Data record
+            // Prevent upserts: only update if the item already exists
+            // Also support array index notation in fieldName, e.g., "galleryKeys[0]"
+
+            // Detect array-like field names: attribute[index]
+            const arrayMatch = fieldName.match(/^(\w+)\[(\d+)\]$/);
+
+            let UpdateExpression: string;
+            let ExpressionAttributeNames: Record<string, string>;
+            let ExpressionAttributeValues: Record<string, any> = { ':webpKey': webpKey };
+
+            if (arrayMatch) {
+                const attr = arrayMatch[1];
+                const index = Number(arrayMatch[2]);
+                // Initialize list if it doesn't exist, then set by index
+                // Note: left-to-right evaluation ensures initialization before index set
+                UpdateExpression = `SET #attr = if_not_exists(#attr, :emptyList), #attr[${index}] = :webpKey`;
+                ExpressionAttributeNames = { '#attr': attr };
+                ExpressionAttributeValues[':emptyList'] = [];
+            } else {
+                // Simple attribute set
+                UpdateExpression = 'SET #fieldName = :webpKey';
+                ExpressionAttributeNames = { '#fieldName': fieldName };
+            }
 
             const updateCommand = new UpdateCommand({
                 TableName: amplifyDataTableName,
-                Key: {
-                    id: recordID,
-                },
-                UpdateExpression: `SET #fieldName = :webpKey`,
-                ExpressionAttributeValues: {
-                    ':webpKey': webpKey
-                },
-                ExpressionAttributeNames: {
-                    '#fieldName': fieldName
-                }
+                Key: { id: recordID },
+                UpdateExpression,
+                ExpressionAttributeValues,
+                ExpressionAttributeNames,
+                ConditionExpression: 'attribute_exists(id)'
             });
 
-
-            await dynamoClient.send(updateCommand);
-            console.log(`Record ${recordID} on ${modelName} updated with new image key: ${webpKey}`);
+            try {
+                await dynamoClient.send(updateCommand);
+                console.log(`Record ${recordID} on ${modelName} updated with new image key: ${webpKey}`);
+            } catch (updateError: any) {
+                if (updateError?.name === 'ConditionalCheckFailedException') {
+                    console.error(`Skip updating non-existent record ${recordID}; avoiding upsert for key ${key}`);
+                } else {
+                    throw updateError;
+                }
+            }
 
         } catch (error) {
             console.error(`Error processing S3 object ${key}:`, error);

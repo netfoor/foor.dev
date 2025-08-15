@@ -107,7 +107,7 @@ const schema = a.schema({
   SocialPublications: a
     .model({
       title: a.string().required(),
-      source: a.enum(['LinkedIn', 'Twitter', 'GitHub', 'Blog', 'Youtube']),
+  source: a.enum(['LinkedIn', 'Twitter', 'GitHub', 'Blog', 'Youtube', 'Instagram', 'Facebook']),
       photoKey: a.string(), 
       description: a.string().required(),
       publicationDate: a.date().required(),

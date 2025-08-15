@@ -29,7 +29,7 @@ import { FileUploadInput } from '../../projects/new/FileUploadInput';
 import { uploadImageWithMetadata } from '@/lib/utils/image-helpers';
 
 // Publication source and type options
-const SOURCE_OPTIONS = ['LinkedIn', 'Twitter', 'GitHub', 'Blog', 'Youtube'];
+const SOURCE_OPTIONS = ['LinkedIn', 'Twitter', 'GitHub', 'Blog', 'Youtube', 'Instagram', 'Facebook'];
 const TYPE_OPTIONS = [
   'Article', 'Blog', 'Video', 'Podcast', 'Book', 'Course', 
   'Conference', 'Presentation', 'Research', 'Workshop', 'Other'
@@ -124,7 +124,7 @@ const CreatePublicationClient: React.FC<CreatePublicationClientProps> = () => {
       const createData = {
         title: title.trim(),
         description: description.trim(),
-        source: source as "LinkedIn" | "Twitter" | "GitHub" | "Blog" | "Youtube",
+        source: source as "LinkedIn" | "Twitter" | "GitHub" | "Blog" | "Youtube" | "Instagram" | "Facebook",
         type: type as "Article" | "Blog" | "Video" | "Podcast" | "Book" | "Course" | "Conference" | "Presentation" | "Research" | "Workshop" | "Other",
         publicationDate,
         publicationUrl: publicationUrl.trim()
@@ -161,7 +161,7 @@ const CreatePublicationClient: React.FC<CreatePublicationClientProps> = () => {
       console.log('✅ Publication created successfully');
       
       // Navigate to admin publications list after successful creation
-      router.push(getLocalizedPath('/admin/publications'));
+      router.push(getLocalizedPath('/admin/recognitions'));
       
     } catch (err) {
       console.error('Error creating publication:', err);
@@ -246,7 +246,7 @@ const CreatePublicationClient: React.FC<CreatePublicationClientProps> = () => {
         <Flex alignItems="center" gap="1rem">
           <Button
             variation="link"
-            onClick={() => router.push(getLocalizedPath('/admin/publications'))}
+            onClick={() => router.push(getLocalizedPath('/admin/recognitions'))}
             style={{
               color: mode === 'dark' ? '#93C5FD' : '#3B82F6',
               padding: '0.5rem',
@@ -464,7 +464,7 @@ const CreatePublicationClient: React.FC<CreatePublicationClientProps> = () => {
           <Button
             type="button"
             variation="link"
-            onClick={() => router.push(getLocalizedPath('/admin/publications'))}
+            onClick={() => router.push(getLocalizedPath('/admin/recognitions'))}
             style={{
               color: mode === 'dark' ? '#9CA3AF' : '#6B7280'
             }}

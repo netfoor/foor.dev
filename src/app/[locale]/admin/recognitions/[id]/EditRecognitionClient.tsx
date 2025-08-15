@@ -96,8 +96,9 @@ const editFormStyles = `
     position: relative;
     overflow: hidden;
     border-radius: 8px;
-    background-color: var(--amplify-colors-background-secondary);
-    border: 1px dashed var(--amplify-colors-border-secondary);
+  background-color: var(--image-preview-bg);
+  border: 1px dashed var(--image-preview-border);
+  color: var(--image-empty-color);
     width: 100%;
     height: 220px;
     display: flex;
@@ -150,6 +151,34 @@ const editFormStyles = `
       width: 100% !important;
       margin-top: 0.5rem !important;
     }
+  }
+
+  /* Improve dark mode contrast for upload button */
+  .edit-form .file-upload-container .file-upload-button {
+    background-color: var(--upload-bg) !important;
+    border-color: var(--upload-border) !important;
+    color: var(--upload-text) !important;
+  }
+
+  .edit-form .file-upload-container .file-upload-button svg {
+    color: var(--upload-text) !important;
+    stroke: var(--upload-text) !important;
+  }
+
+  .edit-form .file-upload-container .file-upload-button:hover {
+    background-color: var(--upload-hover-bg) !important;
+    border-color: var(--upload-hover-border) !important;
+    color: var(--upload-hover-text) !important;
+  }
+
+  .edit-form .file-upload-container .file-info {
+    background-color: var(--upload-bg) !important;
+    color: var(--upload-text) !important;
+    border: 1px solid var(--upload-border) !important;
+  }
+
+  .edit-form .file-upload-container .file-info .clear-button {
+    color: var(--upload-hover-text) !important;
   }
 `;
 
@@ -372,7 +401,17 @@ const EditRecognitionClient: React.FC<EditRecognitionClientProps> = ({ locale, r
     '--form-placeholder-color': isDark ? '#94A3B8' : '#6B7280',
     '--form-focus-border': isDark ? '#3B82F6' : '#2563EB',
     '--form-focus-shadow': isDark ? 'rgba(59, 130, 246, 0.35)' : 'rgba(37, 99, 235, 0.25)',
-    '--form-description-color': isDark ? '#D1D5DB' : '#6B7280'
+  '--form-description-color': isDark ? '#D1D5DB' : '#6B7280',
+  // Image preview & upload button contrast variables
+  '--image-preview-bg': isDark ? '#111827' : 'var(--amplify-colors-background-secondary)',
+  '--image-preview-border': isDark ? '#475569' : 'var(--amplify-colors-border-secondary)',
+  '--image-empty-color': isDark ? '#CBD5E1' : '#64748B',
+  '--upload-bg': isDark ? '#1F2937' : 'var(--amplify-colors-background-secondary)',
+  '--upload-border': isDark ? '#475569' : 'var(--amplify-colors-border-secondary)',
+  '--upload-text': isDark ? '#E5E7EB' : 'var(--amplify-colors-font-primary)',
+  '--upload-hover-bg': isDark ? '#374151' : 'var(--amplify-colors-background-tertiary)',
+  '--upload-hover-border': isDark ? '#64748B' : 'var(--amplify-colors-border-hover)',
+  '--upload-hover-text': isDark ? '#FFFFFF' : 'var(--amplify-colors-font-primary)'
   } as React.CSSProperties;
 
   return (

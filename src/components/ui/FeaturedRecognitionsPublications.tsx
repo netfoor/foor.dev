@@ -95,6 +95,10 @@ const FeaturedRecognitionsPublications: React.FC<FeaturedRecognitionsPublication
         return <Github size={16} />;
       case 'LinkedIn':
         return <Linkedin size={16} />;
+      case 'Instagram':
+        return <Share2 size={16} />;
+      case 'Facebook':
+        return <Share2 size={16} />;
       case 'Blog':
         return <BookOpen size={16} />;
       default:

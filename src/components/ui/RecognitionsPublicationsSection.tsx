@@ -88,6 +88,10 @@ const RecognitionsPublicationsSection: React.FC<RecognitionsPublicationsProps> =
         return <Github size={18} />;
       case 'LinkedIn':
         return <Linkedin size={18} />;
+      case 'Instagram':
+        return <Share2 size={18} />;
+      case 'Facebook':
+        return <Share2 size={18} />;
       case 'Blog':
         return <BookOpen size={18} />;
       default:

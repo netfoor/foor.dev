@@ -405,7 +405,7 @@ function CreateProjectClient(): React.JSX.Element {
         slug: formData.slug,
         metaDescription: formData.metaDescription || undefined,
         tags: formData.tags
-      });
+      }, { authMode: 'userPool'});
 
       if (newProject.errors) {
         throw new Error(newProject.errors[0].message);
@@ -421,8 +421,8 @@ function CreateProjectClient(): React.JSX.Element {
           id: newProject.data.id,
           photoKey: uploadResults.photoKey || undefined,
           galleryKeys: uploadResults.galleryKeys.length > 0 ? uploadResults.galleryKeys : undefined
-        });
-        
+        }, { authMode: 'userPool' });
+
         console.log('Manually updated project with image keys:', {
           photoKey: uploadResults.photoKey,
           galleryKeys: uploadResults.galleryKeys

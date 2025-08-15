@@ -15,7 +15,8 @@ import {
   Award
 } from 'lucide-react';
 import { generateClient } from 'aws-amplify/data';
-import { uploadData } from 'aws-amplify/storage';
+import { uploadImageWithMetadata } from '@/lib/utils/image-helpers';
+import S3Cleanup from '@/lib/utils/s3-cleanup';
 import { useRouter } from 'next/navigation';
 import type { Schema } from '../../../../../amplify/data/resource';
 import { useTheme } from '@/hooks/useTheme';
@@ -135,29 +136,13 @@ const AdminEducationFormClient: React.FC<AdminEducationFormClientProps> = ({
     }
   };
 
-  // Subir imagen a S3
+  // Subir imagen a S3 usando helper común (agrega metadata estándar)
   const uploadImage = async (recordId: string): Promise<string | null> => {
     if (!imageFile) return formData.photoKey;
-    
-    try {
-      const fileExtension = imageFile.name.split('.').pop();
-      const fileName = `education-${Date.now()}.${fileExtension}`;
-      const path = `education/${fileName}`;
-      
-      await uploadData({
-        path,
-        data: imageFile,
-        options: {
-          metadata: {
-            'recordid': recordId,
-            'modelname': 'Education',
-            'fieldname': 'photoKey',
-          },
-          contentType: imageFile.type,
-        }
-      });
 
-      return path;
+    try {
+  const newKey = await uploadImageWithMetadata(imageFile, recordId, 'Education', 'photoKey');
+      return newKey;
     } catch (err) {
       console.error('Error subiendo imagen:', err);
       throw new Error('upload_failed');
@@ -234,17 +219,27 @@ const AdminEducationFormClient: React.FC<AdminEducationFormClientProps> = ({
         
   setSuccess(t('education.create_success'));
       } else {
-        // For edit mode, upload image first if there's a new one
-        const photoKey = imageFile ? await uploadImage(educationId!) : educationData.photoKey;
-        
+        // Modo edición: si hay nueva imagen, sube primero la nueva y luego intenta eliminar la anterior (best-effort)
+        let newPhotoKey = educationData.photoKey;
+        if (imageFile) {
+          newPhotoKey = await uploadImage(educationId!);
+          if (educationData.photoKey) {
+            try {
+              await S3Cleanup.deleteSingleFile(educationData.photoKey);
+            } catch (delErr) {
+              console.warn('No se pudo eliminar la imagen anterior de S3 (continuando):', delErr);
+            }
+          }
+        }
+
         await client.models.Education.update({
           id: educationId!,
           ...educationData,
-          photoKey
+          photoKey: newPhotoKey
         } as UpdateEducationInput, {
           authMode: 'userPool'
         });
-  setSuccess(t('education.update_success'));
+        setSuccess(t('education.update_success'));
       }
 
       // Redirigir después de un momento

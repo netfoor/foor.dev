@@ -40,7 +40,7 @@ import { auth } from '../../../../../../amplify/auth/resource';
 type Publication = Schema["SocialPublications"]["type"];
 
 // Publication source and type options
-const SOURCE_OPTIONS = ['LinkedIn', 'Twitter', 'GitHub', 'Blog', 'Youtube'];
+const SOURCE_OPTIONS = ['LinkedIn', 'Twitter', 'GitHub', 'Blog', 'Youtube', 'Instagram', 'Facebook'];
 const TYPE_OPTIONS = [
   'Article', 'Blog', 'Video', 'Podcast', 'Book', 'Course', 
   'Conference', 'Presentation', 'Research', 'Workshop', 'Other'
@@ -161,6 +161,8 @@ const editFormStyles = `
       margin-top: 0.5rem !important;
     }
   }
+
+  /* (Reverted) No custom overrides for FileUploadInput here */
 `;
 
 interface EditPublicationClientProps {
@@ -352,7 +354,7 @@ const EditPublicationClient: React.FC<EditPublicationClientProps> = ({ locale, p
         id: publicationId,
         title,
         description,
-        source: source as "LinkedIn" | "Twitter" | "GitHub" | "Blog" | "Youtube",
+        source: source as "LinkedIn" | "Twitter" | "GitHub" | "Blog" | "Youtube" | "Instagram" | "Facebook",
         type: type as "Article" | "Blog" | "Video" | "Podcast" | "Book" | "Course" | "Conference" | "Presentation" | "Research" | "Workshop" | "Other",
         publicationDate,
         publicationUrl,
@@ -429,7 +431,7 @@ const EditPublicationClient: React.FC<EditPublicationClientProps> = ({ locale, p
     '--form-placeholder-color': isDark ? '#94A3B8' : '#6B7280',
     '--form-focus-border': isDark ? '#3B82F6' : '#2563EB',
     '--form-focus-shadow': isDark ? 'rgba(59, 130, 246, 0.35)' : 'rgba(37, 99, 235, 0.25)',
-    '--form-description-color': isDark ? '#D1D5DB' : '#6B7280'
+  '--form-description-color': isDark ? '#D1D5DB' : '#6B7280'
   } as React.CSSProperties;
 
   return (
@@ -537,6 +539,7 @@ const EditPublicationClient: React.FC<EditPublicationClientProps> = ({ locale, p
                       onChange={handlePhotoChange}
                       accept="image/*"
                       label={photoKey ? t('publications.change_photo') : t('publications.upload_photo')}
+                      
                     />
                     
                     <Text fontSize="0.8rem" color="var(--amplify-colors-font-tertiary)" marginTop="0.5rem">
