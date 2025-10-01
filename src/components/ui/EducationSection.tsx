@@ -46,7 +46,7 @@ const EducationSection: React.FC<EducationSectionProps> = ({
   // Función para cargar educación desde Amplify
   const loadEducationFromAmplify = async (): Promise<Education[]> => {
     try {
-      const authMode = isAuthenticated ? 'userPool' : 'apiKey';
+      const authMode = isAuthenticated ? 'userPool' : 'identityPool';
       const { data: educationData } = await client.models.Education.list({
         authMode,
         limit: showAll ? 1000 : maxItems

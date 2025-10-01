@@ -1,6 +1,5 @@
 import { type ClientSchema, a, defineData } from '@aws-amplify/backend';
 
-
 const schema = a.schema({
   Certifications: a
     .model({
@@ -17,7 +16,7 @@ const schema = a.schema({
       slug: a.string(),
     })
     .authorization((allow) => [
-      allow.publicApiKey().to(['read']),
+      allow.guest().to(['read']),
       allow.group('ADMINS').to(['create', 'read', 'update', 'delete'])
     ]),
 
@@ -31,22 +30,20 @@ const schema = a.schema({
       demoUrl: a.string(),
       skills: a.string().array(),
       categories: a.enum(['Hackathon', 'Research', 'Professional', 'Academic', 'Personal']),
-      // Storage paths para las imágenes
       photoKey: a.string(), 
       galleryKeys: a.string().array(), 
-      // Metadata adicional
       startDate: a.date(),
       endDate: a.date(),
       status: a.enum(['Draft', 'Published', 'Archived']),
       featured: a.boolean(),
-      // SEO
       slug: a.string(),      
       metaDescription: a.string(),
       tags: a.string().array(),
     }).authorization((allow) => [
-      allow.publicApiKey().to(['read']),
+      allow.guest().to(['read']),
       allow.group('ADMINS').to(['create', 'read', 'update', 'delete'])
     ]),
+
   Recognitions: a
     .model({
       title: a.string().required(),
@@ -58,9 +55,10 @@ const schema = a.schema({
       photoKey: a.string(), 
     })
     .authorization((allow) => [
-      allow.publicApiKey().to(['read']),
+      allow.guest().to(['read']),
       allow.group('ADMINS').to(['create', 'read', 'update', 'delete'])
     ]),
+
   Education: a
     .model({
       institution: a.string().required(),
@@ -76,18 +74,20 @@ const schema = a.schema({
       Photos: a.string().array(),
     })
     .authorization((allow) => [
-      allow.publicApiKey().to(['read']),
+      allow.guest().to(['read']),
       allow.group('ADMINS').to(['create', 'read', 'update', 'delete'])
     ]),
+
   Languages: a
     .model({
       language: a.string().required(),
       proficiency: a.enum(['Basic', 'Conversational', 'Fluent', 'Native']),
     })
     .authorization((allow) => [
-      allow.publicApiKey().to(['read']),
+      allow.guest().to(['read']),
       allow.group('ADMINS').to(['create', 'read', 'update', 'delete'])
     ]),
+
   Experiences: a
     .model({
       company: a.string().required(),
@@ -101,13 +101,14 @@ const schema = a.schema({
       photoKey: a.string(), 
     })
     .authorization((allow) => [
-      allow.publicApiKey().to(['read']),
+      allow.guest().to(['read']),
       allow.group('ADMINS').to(['create', 'read', 'update', 'delete'])
     ]),
+
   SocialPublications: a
     .model({
       title: a.string().required(),
-  source: a.enum(['LinkedIn', 'Twitter', 'GitHub', 'Blog', 'Youtube', 'Instagram', 'Facebook']),
+      source: a.enum(['LinkedIn', 'Twitter', 'GitHub', 'Blog', 'Youtube', 'Instagram', 'Facebook']),
       photoKey: a.string(), 
       description: a.string().required(),
       publicationDate: a.date().required(),
@@ -115,7 +116,7 @@ const schema = a.schema({
       publicationUrl: a.string().required()
     })
     .authorization((allow) => [
-      allow.publicApiKey().to(['read']),
+      allow.guest().to(['read']),
       allow.group('ADMINS').to(['create', 'read', 'update', 'delete'])
     ]),
 
@@ -124,20 +125,19 @@ const schema = a.schema({
       name: a.string().required(),
       currentPosition: a.string().required(),
       description: a.string().required(),
-      profilePhotoKey: a.string(), // Key de S3 para la foto de perfil
-      flags: a.string().array(), // ["Cloud Engineer", "AWS Advocate", "DevOps Enthusiast"]
+      profilePhotoKey: a.string(),
+      flags: a.string().array(),
       mission: a.string(),
       vision: a.string(),
       philosophy: a.string(),
-      isActive: a.boolean(), // Solo uno activo a la vez
-      // Enlaces de redes sociales
+      isActive: a.boolean(),
       linkedinUrl: a.string(),
       githubUrl: a.string(),
       twitterUrl: a.string(),
       emailContact: a.string(),
     })
     .authorization((allow) => [
-      allow.publicApiKey().to(['read']),
+      allow.guest().to(['read']),
       allow.group('ADMINS').to(['create', 'read', 'update', 'delete'])
     ]),
 
@@ -149,23 +149,20 @@ const schema = a.schema({
       proficiency: a.enum(['Beginner', 'Intermediate', 'Advanced', 'Expert']),
       yearsOfExperience: a.integer(),
       description: a.string(),
-      certifications: a.string().array(), // Related certifications
-      projects: a.string().array(), // Related project IDs
-      iconKey: a.string(), // S3 key for skill icon/logo
-      priority: a.integer(), // For ordering
-      isActive: a.boolean(), // Show/hide skill
-      isCore: a.boolean(), // Mark as core skill for homepage
-      lastUsed: a.date(), // When this skill was last used
-      // Soft skill specific fields
-      examples: a.string().array(), // Examples of how this skill was applied
-      achievements: a.string().array(), // Achievements related to this skill
+      certifications: a.string().array(),
+      projects: a.string().array(),
+      iconKey: a.string(),
+      priority: a.integer(),
+      isActive: a.boolean(),
+      isCore: a.boolean(),
+      lastUsed: a.date(),
+      examples: a.string().array(),
+      achievements: a.string().array(),
     })
     .authorization((allow) => [
-      allow.publicApiKey().to(['read']),
+      allow.guest().to(['read']),
       allow.group('ADMINS').to(['create', 'read', 'update', 'delete'])
     ]),
-
-
 });
 
 export type Schema = ClientSchema<typeof schema>;
@@ -173,9 +170,6 @@ export type Schema = ClientSchema<typeof schema>;
 export const data = defineData({
   schema,
   authorizationModes: {
-    defaultAuthorizationMode: 'apiKey',
-    apiKeyAuthorizationMode: {
-      expiresInDays: 30,
-    },
+    defaultAuthorizationMode: 'identityPool',
   },
 });

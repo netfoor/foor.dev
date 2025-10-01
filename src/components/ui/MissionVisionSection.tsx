@@ -282,7 +282,7 @@ const MissionVisionSection: React.FC<MissionVisionSectionProps> = ({ className =
   // Función para obtener datos del perfil
   const fetchProfile = async () => {
     try {
-      const authMode = isAuthenticated ? 'userPool' : 'apiKey';
+      const authMode = isAuthenticated ? 'userPool' : 'identityPool';
       const { data: profiles } = await client.models.Profile.list({
         authMode,
         filter: {

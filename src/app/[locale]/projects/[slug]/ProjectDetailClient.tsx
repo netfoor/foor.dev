@@ -299,7 +299,7 @@ function ProjectDetailClient({ locale, slug }: ProjectDetailClientProps): React.
         const client = generateClient<Schema>();
         const response = await client.models.Projects.list({
           filter: { slug: { eq: slug } },
-          authMode: isAuthenticated ? 'userPool' : 'apiKey'
+          authMode: isAuthenticated ? 'userPool' : 'identityPool'
         });
 
         const foundProject = response.data?.[0];

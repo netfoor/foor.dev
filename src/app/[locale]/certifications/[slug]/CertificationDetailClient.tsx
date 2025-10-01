@@ -235,7 +235,7 @@ function CertificationDetailClient({ locale, slug }: CertificationDetailClientPr
         const client = generateClient<Schema>();
         const response = await client.models.Certifications.list({
           filter: { slug: { eq: slug } },
-          authMode: isAuthenticated ? 'userPool' : 'apiKey'
+          authMode: isAuthenticated ? 'userPool' : 'identityPool'
         });
 
         const foundCertification = response.data?.[0];
