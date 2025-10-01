@@ -50,10 +50,6 @@ export function AuthGuardStable({
     // Solo procesar si no hemos hecho el check inicial
     if (!authResult.initialCheckDone && !isLoading) {
       const isAuthorized = isAuthenticated && hasRole(role);
-        isAuthenticated,
-        hasRequiredRole: hasRole(role),
-        isAuthorized
-      });
       
       setAuthResult({
         status: isAuthorized ? 'authorized' : 'unauthorized',
