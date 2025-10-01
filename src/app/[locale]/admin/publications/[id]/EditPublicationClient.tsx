@@ -284,7 +284,6 @@ const EditPublicationClient: React.FC<EditPublicationClientProps> = ({ locale, p
       setPhotoKey(null);
       setPhotoPreview(null);
       setPhotoFile(null);
-      console.log('✅ Photo deleted from S3 (including WEBP if exists):', photoKey);
     } catch (err) {
       console.error('Error deleting photo:', err);
       setError(`${t('publications.error_deleting_photo')}: ${err instanceof Error ? err.message : t('unknown_error')}`);
@@ -371,7 +370,6 @@ const EditPublicationClient: React.FC<EditPublicationClientProps> = ({ locale, p
         throw new Error('Update operation returned no data. Publication may not have been updated.');
       }
       
-      console.log('✅ Publication updated successfully:', updatedPublication.data?.id);
       setSuccess(true);
       setTimeout(() => { router.push(getLocalizedPath('/admin/recognitions')); }, 1500);
     } catch (err) {

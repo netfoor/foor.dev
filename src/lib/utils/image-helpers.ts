@@ -28,7 +28,6 @@ const normalizeS3Key = (key: string): string => {
         // This might be a case where we need to insert 'main'
         // Format: projects/filename.jpg -> projects/main/filename.jpg
         // We'll log this but keep both versions to try
-        console.log('[normalizeS3Key] Project path without main folder:', key);
     }
     
     // Handle old experiences paths
@@ -42,7 +41,6 @@ const normalizeS3Key = (key: string): string => {
     }
     
     if (originalKey !== key) {
-        console.log('[normalizeS3Key] Normalized path:', originalKey, '->', key);
     }
     
     return key;
@@ -81,7 +79,6 @@ export const getOptimizedImageUrl = async (originalKey: string): Promise<string 
                 const optimizedUrl = await getUrl({ path: optimizedKey });
                 return optimizedUrl.url.toString();
             } catch (error) {
-                console.log('Optimized image not found, falling back to original:', error);
                 
                 // Try legacy path for WebP if normalized path failed
                 if (originalKey !== normalizedKey) {
@@ -91,7 +88,6 @@ export const getOptimizedImageUrl = async (originalKey: string): Promise<string 
                             const legacyUrl = await getUrl({ path: legacyOptimizedKey });
                             return legacyUrl.url.toString();
                         } catch (legacyError) {
-                            console.log('Legacy WebP path also failed:', legacyError);
                         }
                     }
                 }
@@ -122,14 +118,12 @@ export const getResponsiveImageSources = async (key: string) => {
     if (!key) return { original: null, webp: null };
 
     try {
-        console.log('[getResponsiveImageSources] Processing key:', key);
         
         // Normalize the key before processing
         const normalizedKey = normalizeS3Key(key);
         
         // Check if the key is already a WebP path to avoid double webp folders
         if (normalizedKey.includes('/webp/')) {
-            console.log('[getResponsiveImageSources] Key is already a WebP path, using as-is:', normalizedKey);
             try {
                 const webpResult = await getUrl({path: normalizedKey});
                 return {
@@ -137,7 +131,6 @@ export const getResponsiveImageSources = async (key: string) => {
                     webp: webpResult.url.toString()
                 };
             } catch (error) {
-                console.log('[getResponsiveImageSources] Failed to get WebP image:', error);
                 return { original: null, webp: null };
             }
         }
@@ -145,28 +138,21 @@ export const getResponsiveImageSources = async (key: string) => {
         let webpUrl = null;
         const webpKey = getWebpKey(normalizedKey);
         
-        console.log('[getResponsiveImageSources] WebP key:', webpKey);
 
         if (webpKey) {
             try {
-                console.log('[getResponsiveImageSources] Attempting to get WebP at:', webpKey);
                 const webpResponse = await getUrl({path: webpKey});
                 webpUrl = webpResponse.url.toString();
-                console.log('[getResponsiveImageSources] Successfully found WebP image at:', webpKey);
             } catch (error) {
-                console.log('[getResponsiveImageSources] WebP image not found at path:', webpKey);
                 // Try alternative WebP path for legacy images
                 if (key !== normalizedKey) {
                     try {
                         const legacyWebpKey = getWebpKey(key);
                         if (legacyWebpKey) {
-                            console.log('[getResponsiveImageSources] Trying legacy WebP path:', legacyWebpKey);
                             const legacyWebpResponse = await getUrl({path: legacyWebpKey});
                             webpUrl = legacyWebpResponse.url.toString();
-                            console.log('[getResponsiveImageSources] Successfully found WebP image using legacy path');
                         }
                     } catch (legacyError) {
-                        console.log('[getResponsiveImageSources] Legacy WebP image also not found');
                     }
                 }
             }
@@ -174,17 +160,14 @@ export const getResponsiveImageSources = async (key: string) => {
 
         // Try to get the original image with normalized path first
         try {
-            console.log('[getResponsiveImageSources] Trying to get original image at:', normalizedKey);
             const originalResult = await getUrl({path: normalizedKey});
             const originalUrl = originalResult.url.toString();
-            console.log('[getResponsiveImageSources] Successfully found original image at normalized path');
             
             return {
                 original: originalUrl,
                 webp: webpUrl || null
             };
         } catch (originalError) {
-            console.log('[getResponsiveImageSources] Failed to get image at normalized path:', normalizedKey);
             
             // If normalized path fails, try special case for projects folder structure
             if (normalizedKey.startsWith('projects/') && !normalizedKey.includes('/main/')) {
@@ -194,26 +177,21 @@ export const getResponsiveImageSources = async (key: string) => {
                     partsWithMain.splice(1, 0, 'main');
                     const keyWithMain = partsWithMain.join('/');
                     
-                    console.log('[getResponsiveImageSources] Trying with /main/ folder:', keyWithMain);
                     const mainResult = await getUrl({path: keyWithMain});
                     const mainUrl = mainResult.url.toString();
-                    console.log('[getResponsiveImageSources] Successfully found image with /main/ folder');
                     
                     return {
                         original: mainUrl,
                         webp: webpUrl || null
                     };
                 } catch (mainError) {
-                    console.log('[getResponsiveImageSources] Failed to find image with /main/ folder');
                 }
             }
             
             // If all else fails, try the original path
             if (key !== normalizedKey) {
-                console.log('[getResponsiveImageSources] Trying original non-normalized path:', key);
                 const fallbackResult = await getUrl({path: key});
                 const fallbackUrl = fallbackResult.url.toString();
-                console.log('[getResponsiveImageSources] Successfully found image at original path');
                 
                 return {
                     original: fallbackUrl,

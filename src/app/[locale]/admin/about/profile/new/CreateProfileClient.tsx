@@ -175,7 +175,6 @@ const CreateProfileClient: React.FC = () => {
         }, { authMode: 'userPool' });
       }
 
-      console.log('✅ Perfil creado exitosamente:', createResponse.data);
       router.push(getLocalizedPath('/admin/about'));
       
     } catch (err) {

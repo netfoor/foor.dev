@@ -115,13 +115,11 @@ const AdminProjectsClient: React.FC<AdminProjectsClientProps> = ({ locale }) => 
         id: projectId
       });
       
-      console.log(`✅ Proyecto ${projectId} eliminado completamente de DynamoDB`);
       
       // 4. CUARTO: Actualizar la lista local
       setProjects(prev => prev.filter(p => p.id !== projectId));
       
       // Mensaje de éxito
-      console.log(`🎉 Proyecto eliminado exitosamente: ${projectData.title}`);
       
     } catch (err) {
       console.error('Error deleting project:', err);

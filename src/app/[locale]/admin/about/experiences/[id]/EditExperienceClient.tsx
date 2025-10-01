@@ -364,7 +364,6 @@ function EditExperienceClient({ locale, experienceId }: EditExperienceClientProp
   // Remover imagen actual
   const removeCurrentImage = useCallback(() => {
     if (experience?.photoKey) {
-      console.log('Marking image for deletion:', experience.photoKey);
       setImagesToDelete(prev => [...prev, experience.photoKey!]);
     }
     setCurrentImageUrl('');
@@ -426,26 +425,21 @@ function EditExperienceClient({ locale, experienceId }: EditExperienceClientProp
 
       // Eliminar archivos marcados para borrar usando utilidad S3
       for (const keyToDelete of imagesToDelete) {
-        console.log('Attempting to delete file:', keyToDelete);
         const success = await S3Cleanup.deleteSingleFile(keyToDelete);
         if (!success) {
           console.warn(`⚠️ No se pudo eliminar el archivo: ${keyToDelete}`);
         } else {
-          console.log(`✅ Archivo eliminado: ${keyToDelete}`);
         }
       }
 
       // Si se removió la imagen actual, limpiar el key
       if (imagesToDelete.includes(experience?.photoKey || '')) {
-        console.log('Current image was deleted, clearing photoKey');
         photoKey = undefined;
       }
 
       // Si hay una nueva imagen, subirla con metadatos para optimización
       if (companyImage) {
-        console.log('Uploading new company image:', companyImage.name);
         photoKey = await uploadImageWithMetadata(companyImage, experienceId, 'Experiences', 'photoKey');
-        console.log('New company image uploaded with key:', photoKey);
       }
 
       // Actualizar la experiencia en DynamoDB
@@ -465,7 +459,6 @@ function EditExperienceClient({ locale, experienceId }: EditExperienceClientProp
       });
 
       if (response.data) {
-        console.log('✅ Experience updated successfully:', response.data);
         setSuccess(t('about.experiences.updated_successfully'));
         
         // Redirect después de un delay

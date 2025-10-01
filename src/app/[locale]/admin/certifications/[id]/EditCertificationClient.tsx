@@ -243,7 +243,6 @@ const EditCertificationClient: React.FC<EditCertificationClientProps> = ({
           try {
             console.log('🗑️ Deleting old certification image:', certification.photoKey);
             await S3Cleanup.deleteSingleFile(certification.photoKey);
-            console.log('✅ Old certification image deleted successfully');
           } catch (removeError) {
             console.error('❌ Error removing old image from S3:', removeError);
           }
@@ -280,7 +279,6 @@ const EditCertificationClient: React.FC<EditCertificationClientProps> = ({
         throw new Error(response.errors[0].message);
       }
 
-      console.log('✅ Certificación actualizada exitosamente');
       router.push(getLocalizedPath('/admin/certifications'));
       
     } catch (err) {

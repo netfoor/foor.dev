@@ -76,7 +76,6 @@ export class S3Cleanup {
         // 1) Delete the WebP itself first
         try {
           await remove({ path: normalizedPath });
-          console.log(`✅ Versión WebP eliminada de S3: ${normalizedPath}`);
           anyDeleted = true;
         } catch (err) {
           console.log(`ℹ️ No se pudo eliminar WebP (puede no existir): ${normalizedPath}`, err);
@@ -87,7 +86,6 @@ export class S3Cleanup {
         for (const originalKey of originals) {
           try {
             await remove({ path: originalKey });
-            console.log(`✅ Original eliminado de S3: ${originalKey}`);
             anyDeleted = true;
             // Do not break; try to delete other potential duplicates too
           } catch (err) {
@@ -111,7 +109,6 @@ export class S3Cleanup {
           for (const candidate of toDelete) {
             try {
               await remove({ path: candidate });
-              console.log(`✅ Original (by listing) eliminado de S3: ${candidate}`);
               anyDeleted = true;
             } catch (err) {
               console.log(`ℹ️ No se pudo eliminar (listing): ${candidate}`);
@@ -126,14 +123,12 @@ export class S3Cleanup {
 
       // Case B: the key points to the original
       await remove({ path: normalizedPath });
-      console.log(`✅ Archivo eliminado de S3: ${normalizedPath}`);
       
       // Intentar eliminar la versión WebP si existe
       const webpKey = getWebpKey(normalizedPath);
       if (webpKey) {
         try {
           await remove({ path: webpKey });
-          console.log(`✅ Versión WebP eliminada de S3: ${webpKey}`);
         } catch (webpErr) {
           console.log(`ℹ️ No se encontró versión WebP o error al eliminar: ${webpKey}`, webpErr);
           // No consideramos un error si la versión WebP no existe
@@ -191,7 +186,6 @@ export class S3Cleanup {
         // Normalizar el path - remover 'public/' si existe (compatibilidad Gen 1)
         const normalizedPath = fileKey.startsWith('public/') ? fileKey.slice(7) : fileKey;
         await remove({ path: normalizedPath });
-        console.log(`✅ Archivo eliminado de S3: ${normalizedPath}`);
         return { success: true, key: fileKey };
       } catch (err) {
         console.error(`❌ Error eliminando archivo de S3: ${fileKey}`, err);
@@ -264,7 +258,6 @@ export class S3ProjectCleanup {
         // Normalizar el path - remover 'public/' si existe (compatibilidad Gen 1)
         const normalizedPath = fileKey.startsWith('public/') ? fileKey.slice(7) : fileKey;
         await remove({ path: normalizedPath });
-        console.log(`✅ Archivo eliminado de S3: ${normalizedPath}`);
         return { success: true, key: fileKey };
       } catch (err) {
         console.error(`❌ Error eliminando archivo de S3: ${fileKey}`, err);

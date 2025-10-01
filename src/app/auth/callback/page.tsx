@@ -23,7 +23,6 @@ function CallbackContent() {
       
       // Get current user to verify auth
       const user = await getCurrentUser();
-      console.log('Auth callback - User:', user);
       
       // Redirect to intended destination or home
       const redirectTo = searchParams?.get('redirect') || '/en';
@@ -46,7 +45,6 @@ function CallbackContent() {
     const unsubscribe = Hub.listen('auth', ({ payload }) => {
       switch (payload.event) {
         case 'signedIn':
-          console.log('User signed in via callback');
           if (!hasProcessed) {
             completeAuthAndRedirect();
           }

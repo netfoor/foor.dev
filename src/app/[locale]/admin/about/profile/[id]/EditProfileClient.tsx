@@ -302,7 +302,6 @@ function EditProfileClient({ locale, profileId }: EditProfileClientProps): React
     try {
       await S3Cleanup.deleteSingleFile(profile.profilePhotoKey);
       setCurrentImageUrl('');
-      console.log('✅ Current image removed from S3');
     } catch (removeError) {
       console.warn('Could not remove current image from S3:', removeError);
     }
@@ -371,7 +370,6 @@ function EditProfileClient({ locale, profileId }: EditProfileClientProps): React
       });
 
       if (response.data) {
-        console.log('✅ Profile updated successfully:', response.data);
         setSuccess(t('about.profile.updated_successfully'));
         
         // Redirect después de un delay

@@ -505,13 +505,11 @@ function EditProjectClient({ locale, projectId }: EditProjectClientProps): React
     try {
       // Eliminar archivos marcados para borrar usando utilidad S3
       for (const keyToDelete of imagesToDelete) {
-        console.log('Attempting to delete file:', keyToDelete);
         try {
           const success = await S3Cleanup.deleteSingleFile(keyToDelete);
           if (!success) {
             console.warn(`⚠️ No se pudo eliminar el archivo: ${keyToDelete}`);
           } else {
-            console.log(`✅ Archivo eliminado: ${keyToDelete}`);
           }
         } catch (error) {
           console.warn(`⚠️ Error de permisos eliminando archivo: ${keyToDelete}`, error);
@@ -534,14 +532,12 @@ function EditProjectClient({ locale, projectId }: EditProjectClientProps): React
 
       // Subir nueva imagen principal
       if (newMainImage) {
-        console.log('Uploading new main image:', newMainImage.name);
         const photoKey = await uploadImageWithMetadata(
           newMainImage,
           projectId,
           'Projects',
           'photoKey'
         );
-        console.log('New main image uploaded with key:', photoKey);
         uploadResults.photoKey = photoKey;
       }
 

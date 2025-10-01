@@ -213,7 +213,6 @@ const CreateCertificationClient: React.FC = () => {
         }, { authMode: 'userPool' });
       }
 
-      console.log('✅ Certificación creada exitosamente:', createResponse.data);
       
       // Redirigir a la lista de certificaciones
       router.push(getLocalizedPath('/admin/certifications'));

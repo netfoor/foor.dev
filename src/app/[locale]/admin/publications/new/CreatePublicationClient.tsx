@@ -158,7 +158,6 @@ const CreatePublicationClient: React.FC<CreatePublicationClientProps> = () => {
         }, { authMode: 'userPool' });
       }
       
-      console.log('✅ Publication created successfully');
       
       // Navigate to admin publications list after successful creation
       router.push(getLocalizedPath('/admin/recognitions'));

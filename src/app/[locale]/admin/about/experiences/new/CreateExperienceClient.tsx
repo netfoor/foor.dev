@@ -175,7 +175,6 @@ const CreateExperienceClient: React.FC = () => {
         }, { authMode: 'userPool' });
       }
 
-      console.log('✅ Experiencia creada exitosamente:', createResponse.data);
       router.push(getLocalizedPath('/admin/about'));
       
     } catch (err) {

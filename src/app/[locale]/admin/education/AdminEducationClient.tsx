@@ -138,7 +138,6 @@ const AdminEducationClient: React.FC<AdminEducationClientProps> = ({ locale }) =
       // 3. Delete DynamoDB record
       await client.models.Education.delete({ id }, { authMode: 'userPool' });
       
-      console.log(`✅ Education ${id} deleted completely`);
       
       // 4. Update local state
       setEducation(prev => prev.filter(edu => edu.id !== id));

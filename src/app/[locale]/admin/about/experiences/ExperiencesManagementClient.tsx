@@ -143,7 +143,6 @@ const ExperiencesManagementClient: React.FC<ExperiencesManagementClientProps> = 
           await remove({
             path: normalizedPath,
           });
-          console.log(`✅ Image deleted from S3: ${experienceData.photoKey}`);
         } catch (imgError) {
           console.warn('Could not delete image from S3:', imgError);
         }
@@ -154,7 +153,6 @@ const ExperiencesManagementClient: React.FC<ExperiencesManagementClientProps> = 
         id: experienceId
       }, { authMode: 'userPool' });
 
-      console.log(`✅ Experience ${experienceId} deleted from DynamoDB`);
       
       // Update local state
       setExperiences(prev => prev.filter(exp => exp.id !== experienceId));
@@ -166,7 +164,6 @@ const ExperiencesManagementClient: React.FC<ExperiencesManagementClientProps> = 
         return newUrls;
       });
       
-      console.log(`🎉 Experience deleted successfully`);
       
     } catch (err) {
       console.error('Error deleting experience:', err);

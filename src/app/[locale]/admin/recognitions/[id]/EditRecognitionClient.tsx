@@ -301,7 +301,6 @@ const EditRecognitionClient: React.FC<EditRecognitionClientProps> = ({ locale, r
       setPhotoKey(null);
       setPhotoPreview(null);
       setPhotoFile(null);
-      console.log('✅ Photo deleted from S3 (including WEBP if exists):', photoKey);
     } catch (err) {
       console.error('Error deleting photo:', err);
       setError(`${t('recognitions.error_deleting_photo')}: ${err instanceof Error ? err.message : t('unknown_error')}`);
@@ -356,7 +355,6 @@ const EditRecognitionClient: React.FC<EditRecognitionClientProps> = ({ locale, r
         throw new Error(updatedRecognition.errors[0].message);
       }
       
-      console.log('✅ Recognition updated:', updatedRecognition.data?.id);
       
       setSuccess(true);
       

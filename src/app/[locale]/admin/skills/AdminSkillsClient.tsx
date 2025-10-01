@@ -114,12 +114,10 @@ const AdminSkillsClient: React.FC<AdminSkillsClientProps> = ({ locale }) => {
         throw new Error((deleteResult as any).errors[0].message);
       }
       
-      console.log(`✅ Skill ${skillId} deleted from DynamoDB`);
       
       // Update local state
       setSkills(prev => prev.filter(skill => skill.id !== skillId));
       
-      console.log(`🎉 Skill deleted successfully`);
       
     } catch (err) {
       console.error('Error deleting skill:', err);

@@ -26,15 +26,12 @@ export function OptimizedImage({ s3Key, alt, className, showPlaceholder = true }
 
     const fetchUrls = async () => {
       try {
-        console.log('[OptimizedImage] Fetching image for key:', s3Key);
         const urls = await getResponsiveImageSources(s3Key);
         
         if (!urls.original) {
           console.error('[OptimizedImage] Failed to load image for key:', s3Key);
           setError(true);
         } else {
-          console.log('[OptimizedImage] Successfully loaded image for key:', s3Key);
-          console.log('[OptimizedImage] WebP available:', !!urls.webp);
         }
         
         setSources(urls);

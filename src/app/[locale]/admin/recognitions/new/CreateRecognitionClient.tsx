@@ -140,7 +140,6 @@ const CreateRecognitionClient: React.FC<CreateRecognitionClientProps> = () => {
         }, { authMode: 'userPool' });
       }
       
-      console.log('✅ Recognition created successfully');
       
       // Navigate to admin recognitions list after successful creation
       router.push(getLocalizedPath('/admin/recognitions'));

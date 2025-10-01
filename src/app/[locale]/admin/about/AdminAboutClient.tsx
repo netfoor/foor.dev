@@ -135,13 +135,11 @@ const AdminAboutClient: React.FC<AdminAboutClientProps> = ({ locale }) => {
         id: experienceId
       }, { authMode: 'userPool' });
 
-      console.log(`✅ Experiencia ${experienceId} eliminada completamente de DynamoDB`);
       
       // 4. CUARTO: Actualizar la lista local
       setExperiences(prev => prev.filter(exp => exp.id !== experienceId));
       
       // Mensaje de éxito
-      console.log(`🎉 Experiencia eliminada exitosamente: ${experienceData.company}`);
       
     } catch (err) {
       console.error('Error deleting experience:', err);
@@ -181,13 +179,11 @@ const AdminAboutClient: React.FC<AdminAboutClientProps> = ({ locale }) => {
         id: profileId
       }, { authMode: 'userPool' });
 
-      console.log(`✅ Perfil ${profileId} eliminado completamente de DynamoDB`);
       
       // 4. CUARTO: Actualizar el estado local
       setProfile(null);
       
       // Mensaje de éxito
-      console.log(`🎉 Perfil eliminado exitosamente: ${profileData.name}`);
       
     } catch (err) {
       console.error('Error deleting profile:', err);

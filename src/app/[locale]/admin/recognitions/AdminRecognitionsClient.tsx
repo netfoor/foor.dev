@@ -119,7 +119,6 @@ const AdminRecognitionsClient: React.FC<AdminRecognitionsClientProps> = ({ local
       // 3. Delete DynamoDB record
       await client.models.Recognitions.delete({ id }, { authMode: 'userPool' });
       
-      console.log(`✅ Recognition ${id} deleted completely`);
       
       // 4. Update local state
       setRecognitions(prev => prev.filter(r => r.id !== id));
@@ -159,7 +158,6 @@ const AdminRecognitionsClient: React.FC<AdminRecognitionsClientProps> = ({ local
       // 3. Delete DynamoDB record
       await client.models.SocialPublications.delete({ id }, { authMode: 'userPool' });
       
-      console.log(`✅ Publication ${id} deleted completely`);
       
       // 4. Update local state
       setPublications(prev => prev.filter(p => p.id !== id));

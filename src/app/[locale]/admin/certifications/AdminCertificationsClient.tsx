@@ -115,13 +115,11 @@ const AdminCertificationsClient: React.FC<AdminCertificationsClientProps> = ({ l
         id: certificationId
       }, { authMode: 'userPool' });
       
-      console.log(`✅ Certificación ${certificationId} eliminada completamente de DynamoDB`);
       
       // 4. CUARTO: Actualizar la lista local
       setCertifications(prev => prev.filter(c => c.id !== certificationId));
       
       // Mensaje de éxito
-      console.log(`🎉 Certificación eliminada exitosamente: ${certificationData.title}`);
       
     } catch (err) {
       console.error('Error deleting certification:', err);
