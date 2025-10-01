@@ -37,15 +37,15 @@ export const loadSkillsFromAmplify = async (filterOptions?: { onlyCore?: boolean
       };
     }
 
-    // Determine auth mode: try apiKey, but if user signed in use userPool
-    let authMode: 'apiKey' | 'userPool' = 'apiKey';
+    // Determine auth mode: try identityPool, but if user signed in use userPool
+    let authMode: 'identityPool' | 'userPool' = 'identityPool';
     try {
       const session = await fetchAuthSession();
       if (session?.tokens?.idToken || session?.tokens?.accessToken) {
         authMode = 'userPool';
       }
     } catch (_) {
-      // ignore, fallback to apiKey
+      // ignore, fallback to identityPool
     }
     
     const response = await client.models.Skills.list({ 
