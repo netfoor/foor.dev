@@ -54,3 +54,6 @@ amplifyconfiguration*
 *.tfvars
 .terraformrc
 terraform.rc
+# Terraform: planes locales
+tfplan
+*.tfplan
