@@ -2,7 +2,7 @@
 
 A modern, SEO-optimized portfolio built with Next.js, AWS Amplify (Gen 2), and TypeScript. Includes a secure Admin Panel, multilingual content, and AWS-native integrations.
 
-## 🚀 About
+## About
 
 Professional portfolio showcasing AWS Cloud Engineering services, specializing in:
 
@@ -11,7 +11,7 @@ Professional portfolio showcasing AWS Cloud Engineering services, specializing i
 - Cloud Infrastructure (design, cost, performance)
 - Cloud Migration (modernization and adoption)
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - Framework: Next.js 15 + TypeScript (App Router)
 - AWS: Amplify Gen 2 (Auth, Data, Hosting), Cognito User Pools, S3
@@ -20,26 +20,26 @@ Professional portfolio showcasing AWS Cloud Engineering services, specializing i
 - i18n: Custom library in `src/lib/i18n` with server/client helpers and JSON translations (`en`, `es`, `ja`)
 - SEO: Dynamic metadata per locale, Schema.org, multi-language routing
 
-## 🌟 Features
+## Features
 
 ### Core
-- ✅ Multilingual site (English, Spanish, Japanese)
-- ✅ Dynamic theming (light/dark + system)
-- ✅ Responsive and accessible UI
-- ✅ Strong SEO and metadata per locale
+- Multilingual site (English, Spanish, Japanese)
+- Dynamic theming (light/dark + system)
+- Responsive and accessible UI
+- Strong SEO and metadata per locale
 
 ### Admin Panel (secured)
-- ✅ CRUD for Projects, Certifications, Education, Recognitions, Skills, Profile
-- ✅ File uploads to S3, image gallery support
-- ✅ Full deletion flow: DynamoDB + S3 cleanup (see `src/lib/utils/s3-cleanup.ts` and docs)
-- ✅ Token verification via middleware and client token sync
+- CRUD for Projects, Certifications, Education, Recognitions, Skills, Profile
+- File uploads to S3, image gallery support
+- Full deletion flow: DynamoDB + S3 cleanup (see `src/lib/utils/s3-cleanup.ts` and docs)
+- Token verification via middleware and client token sync
 
 ### AWS Integrations
-- ✅ Amplify Data models with Cognito Groups authorization
-- ✅ Middleware-based auth (`src/lib/amplify/middleware-auth.ts`)
-- ✅ Image optimization function (`amplify/functions/image-optimitation`)
+- Amplify Data models with Cognito Groups authorization
+- Middleware-based auth (`src/lib/amplify/middleware-auth.ts`)
+- Image optimization function (`amplify/functions/image-optimitation`)
 
-## 📱 Routes
+## Routes
 
 Localized routes under `/{locale}` (en, es, ja):
 
@@ -52,7 +52,7 @@ Localized routes under `/{locale}` (en, es, ja):
   - `/{locale}/admin` dashboard
   - `/{locale}/admin/projects`, `/{locale}/admin/certifications`, `/{locale}/admin/education`, `/{locale}/admin/recognitions`, `/{locale}/admin/skills`, `/{locale}/admin/about/profile`
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 - Node.js 18+
@@ -80,7 +80,7 @@ npm run dev
   - `NEXT_PUBLIC_BASE_URL=https://foor.dev`
   - `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION=...`
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 src/
@@ -100,7 +100,7 @@ src/
 └── translations/                # en/, es/, ja/ JSON files
 ```
 
-## 🌍 Internationalization
+## Internationalization
 
 - Translations live in `src/translations/{en,es,ja}`.
 - i18n helpers in `src/lib/i18n/{server,client,config}.ts`.
@@ -110,13 +110,13 @@ Utilities:
 - `scripts/validate-translations.js` – validates keys across locales
 - `scripts/manage-translations.js` and `scripts/translation-diff.js`
 
-## 🎨 Theming
+## Theming
 
 - Theme provider at `src/components/theme/ThemeProviderWrapper.tsx`
 - Toggle via `ThemeToggle` or `ThemeSelector`
 - CSS helpers in `src/components/theme/theme-sync.css`
 
-## 🧰 Scripts
+## Scripts
 
 From `package.json`:
 
@@ -132,25 +132,25 @@ Other helpful scripts (run manually):
 - `node scripts/validate-translations.js` – translation validation
 - `node scripts/translation-diff.js` – diff translation keys
 
-## 🔐 Admin Access
+## Admin Access
 
 1. Create a Cognito user in your User Pool.
 2. Add the user to the Admin group.
 3. Log in via `/{locale}/login` and access `/{locale}/admin`.
 
-## 🖼️ Image & Data Management
+## Image & Data Management
 
 - Image optimization function under `amplify/functions/image-optimitation`.
 - Project deletion removes related S3 files via `src/lib/utils/s3-cleanup.ts`.
 - See docs: [`COMPLETE_PROJECT_DELETION_SYSTEM.md`](./docs/COMPLETE_PROJECT_DELETION_SYSTEM.md)
 
-## 📊 SEO
+## SEO
 
 - Locale-aware metadata and structured data.
 - Consistent positioning for “AWS Cloud Engineer”.
 - See: [`COMMON_ERRORS_GUIDE.md`](./docs/COMMON_ERRORS_GUIDE.md) for SEO consistency tips.
 
-## 🚢 Deployment (Amplify Gen 2)
+## Deployment (Amplify Gen 2)
 
 - Connect the GitHub repo to Amplify Hosting and set `main` as the default branch.
 - Configure your custom domain (e.g., `foor.dev`, `www.foor.dev`).
@@ -162,25 +162,25 @@ Related docs:
 - [`TOKEN_SYNC_SOLUTION.md`](./docs/TOKEN_SYNC_SOLUTION.md)
 - [`DOMAIN.md`](./docs/DOMAIN.md)
 
-## 🧩 Troubleshooting
+## Troubleshooting
 
 - Common issues: [`COMMON_ERRORS_GUIDE.md`](./docs/COMMON_ERRORS_GUIDE.md)
 - Auth errors: [`AUTHENTICATION_TROUBLESHOOTING_GUIDE.md`](./docs/AUTHENTICATION_TROUBLESHOOTING_GUIDE.md)
 - Authorization (groups): [`COGNITO_GROUPS_AUTHORIZATION_SOLUTION.md`](./docs/COGNITO_GROUPS_AUTHORIZATION_SOLUTION.md)
 
-## 📈 Performance
+## Performance
 
 - Core Web Vitals optimized; production build recommendations in [`PRODUCTION_OPTIMIZATION.md`](./docs/PRODUCTION_OPTIMIZATION.md)
 
-## 🤝 Contributing
+## Contributing
 
 Personal portfolio – suggestions and feedback welcome.
 
-## 📄 License
+## License
 
-© 2024–2025 Fortino Romero Mantilla. All rights reserved.
+MIT. See the `LICENSE` file.
 
-## 📞 Contact
+## Contact
 
 - Website: https://foor.dev
 - LinkedIn: https://linkedin.com/in/fortino-romero-mantilla
